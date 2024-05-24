@@ -1,0 +1,2592 @@
+{
+	"currentId": 571,
+	"moduleMap": {
+		"jest-mock@29.5.0": {
+			"id": 0,
+			"children": {
+				"build": {
+					"children": {
+						"index.js": {
+							"id": 1,
+							"file": {
+								"{root}": {
+									"children": {
+										"{class:ModuleMocker}": {
+											"children": {
+												"{method:spyOn}": {
+													"id": 2
+												},
+												"{method:isMockFunction}": {
+													"id": 204
+												},
+												"{method:_makeComponent}": {
+													"id": 297,
+													"children": {
+														"{arrowFunction:(anonymous:4)}": {
+															"id": 384
+														},
+														"{arrowFunction:(anonymous:10)}": {
+															"id": 529
+														},
+														"{arrowFunction:(anonymous:9)}": {
+															"id": 535
+														}
+													}
+												},
+												"{method:fn}": {
+													"id": 302
+												}
+											}
+										},
+										"{function:matchArity}": {
+											"id": 461
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"{self}": {
+			"id": 3,
+			"children": {
+				"packages": {
+					"children": {
+						"profiler-core": {
+							"children": {
+								"src": {
+									"children": {
+										"system": {
+											"children": {
+												"UnifiedPath.ts": {
+													"id": 4,
+													"file": {
+														"{root}": {
+															"id": 306,
+															"children": {
+																"{class:UnifiedPath}": {
+																	"children": {
+																		"{method:pathUntilSubDir}": {
+																			"id": 5
+																		},
+																		"{method:dirName}": {
+																			"id": 26
+																		},
+																		"{method:toString}": {
+																			"id": 289
+																		},
+																		"{method:join}": {
+																			"id": 294
+																		},
+																		"{constructor:constructor}": {
+																			"id": 304
+																		},
+																		"{method:pathTo}": {
+																			"id": 439
+																		},
+																		"{method:split}": {
+																			"id": 518
+																		},
+																		"{method:toPlatformString}": {
+																			"id": 533
+																		},
+																		"{method:toJSON}": {
+																			"id": 567
+																		}
+																	}
+																},
+																"{function:cov_px9npjjph}": {
+																	"id": 175
+																}
+															}
+														}
+													}
+												},
+												"GlobalIdentifier.ts": {
+													"id": 18,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:GlobalIdentifier}": {
+																	"id": 524,
+																	"children": {
+																		"{constructor:constructor}": {
+																			"id": 19
+																		},
+																		"{method:fromIdentifier}": {
+																			"id": 121
+																		},
+																		"{method:regexString}": {
+																			"id": 197
+																		},
+																		"{method:isLangInternalPath}": {
+																			"id": 337
+																		},
+																		"{method:regex}": {
+																			"id": 392
+																		},
+																		"{method:toJSON}": {
+																			"id": 424
+																		}
+																	}
+																},
+																"{function:cov_7q9pi21l1}": {
+																	"id": 51
+																}
+															}
+														}
+													}
+												},
+												"Crypto.ts": {
+													"id": 159,
+													"file": {
+														"{root}": {
+															"id": 160,
+															"children": {
+																"{class:Crypto}": {
+																	"children": {
+																		"{method:validateUniqueID}": {
+																			"id": 437
+																		}
+																	}
+																},
+																"{function:cov_2fthcwqimg}": {
+																	"id": 541
+																}
+															}
+														}
+													}
+												}
+											}
+										},
+										"model": {
+											"children": {
+												"index": {
+													"children": {
+														"PathIndex.ts": {
+															"id": 6,
+															"file": {
+																"{root}": {
+																	"children": {
+																		"{function:cov_t472kcc5d}": {
+																			"id": 7
+																		},
+																		"{class:PathIndex}": {
+																			"children": {
+																				"{method:getSourceNodeIndex}": {
+																					"id": 320
+																				},
+																				"{method:toJSON}": {
+																					"id": 351
+																				},
+																				"{method:fromJSON}": {
+																					"id": 366
+																				},
+																				"{constructor:constructor}": {
+																					"id": 419
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														},
+														"ModuleIndex.ts": {
+															"id": 24,
+															"file": {
+																"{root}": {
+																	"children": {
+																		"{class:ModuleIndex}": {
+																			"children": {
+																				"{method:fromJSON}": {
+																					"id": 25
+																				},
+																				"{constructor:constructor}": {
+																					"id": 307
+																				},
+																				"{method:toJSON}": {
+																					"id": 463
+																				},
+																				"{method:getFilePathIndex}": {
+																					"id": 516
+																				}
+																			}
+																		},
+																		"{function:cov_oiuvupor8}": {
+																			"id": 111
+																		}
+																	}
+																}
+															}
+														},
+														"SourceNodeIndex.ts": {
+															"id": 41,
+															"file": {
+																"{root}": {
+																	"children": {
+																		"{class:SourceNodeIndex}": {
+																			"children": {
+																				"{method:toJSON}": {
+																					"id": 42
+																				},
+																				"{constructor:constructor}": {
+																					"id": 266
+																				},
+																				"{method:fromJSON}": {
+																					"id": 386
+																				}
+																			}
+																		},
+																		"{function:cov_12r1k9tdfo}": {
+																			"id": 203
+																		}
+																	}
+																}
+															}
+														},
+														"GlobalIndex.ts": {
+															"id": 80,
+															"file": {
+																"{root}": {
+																	"children": {
+																		"{class:GlobalIndex}": {
+																			"children": {
+																				"{method:getModuleIndex}": {
+																					"id": 81
+																				},
+																				"{method:fromJSON}": {
+																					"id": 148
+																				},
+																				"{method:getNodeInternalIndex}": {
+																					"id": 282
+																				},
+																				"{constructor:constructor}": {
+																					"id": 303
+																				},
+																				"{method:toJSON}": {
+																					"id": 346
+																				},
+																				"{method:newId}": {
+																					"id": 443
+																				},
+																				"{method:addGlobalIdentifier}": {
+																					"id": 507
+																				}
+																			}
+																		},
+																		"{function:cov_27aeph03cq}": {
+																			"id": 345
+																		}
+																	}
+																}
+															}
+														}
+													}
+												},
+												"NodeModule.ts": {
+													"id": 22,
+													"file": {
+														"{root}": {
+															"id": 559,
+															"children": {
+																"{class:NodeModule}": {
+																	"id": 30,
+																	"children": {
+																		"{method:fromNodeModulePath}": {
+																			"id": 23
+																		},
+																		"{method:fromIdentifier}": {
+																			"id": 74
+																		},
+																		"{method:fromJSON}": {
+																			"id": 110
+																		},
+																		"{constructor:constructor}": {
+																			"id": 207
+																		},
+																		"{method:toJSON}": {
+																			"id": 409
+																		}
+																	}
+																},
+																"{function:cov_tip2kfz1q}": {
+																	"id": 534
+																}
+															}
+														}
+													}
+												},
+												"ProfilerConfig.ts": {
+													"id": 31,
+													"file": {
+														"{root}": {
+															"id": 285,
+															"children": {
+																"{class:ProfilerConfig}": {
+																	"children": {
+																		"{constructor:constructor}": {
+																			"id": 32
+																		},
+																		"{method:toJSON}": {
+																			"id": 78
+																		},
+																		"{method:implement}": {
+																			"id": 142
+																		},
+																		"{method:configAsExtended}": {
+																			"id": 147
+																		},
+																		"{method:getOutDir}": {
+																			"id": 202
+																		},
+																		"{method:resolveFromFile}": {
+																			"id": 224
+																		},
+																		"{method:getDefaultConfig}": {
+																			"id": 257
+																		},
+																		"{method:getRootDir}": {
+																			"id": 296
+																		},
+																		"{method:getProjectIdentifier}": {
+																			"id": 305
+																		},
+																		"{method:autoResolve}": {
+																			"id": 497
+																		},
+																		"{method:fromJSON}": {
+																			"id": 520
+																		},
+																		"{method:storeToFile}": {
+																			"id": 543
+																		},
+																		"{method:loadFromFile}": {
+																			"id": 570
+																		}
+																	}
+																},
+																"{function:cov_16z0r5671p}": {
+																	"id": 372
+																}
+															}
+														}
+													}
+												},
+												"SourceNodeMetaData.ts": {
+													"id": 35,
+													"file": {
+														"{root}": {
+															"id": 394,
+															"children": {
+																"{class:SourceNodeMetaData}": {
+																	"id": 482,
+																	"children": {
+																		"{method:equals}": {
+																			"id": 182,
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 36
+																				}
+																			}
+																		},
+																		"{method:max}": {
+																			"id": 514,
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 139
+																				}
+																			}
+																		},
+																		"{method:merge}": {
+																			"id": 192
+																		},
+																		"{method:addSensorValuesToLangInternal}": {
+																			"id": 200
+																		},
+																		"{method:sum}": {
+																			"id": 445,
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 214
+																				}
+																			}
+																		},
+																		"{method:removeFromIntern}": {
+																			"id": 227
+																		},
+																		"{method:fromJSON}": {
+																			"id": 276
+																		},
+																		"{method:addSensorValuesToExtern}": {
+																			"id": 385
+																		},
+																		"{constructor:constructor}": {
+																			"id": 492
+																		},
+																		"{method:addSensorValuesToIntern}": {
+																			"id": 495
+																		},
+																		"{method:toJSON}": {
+																			"id": 505
+																		},
+																		"{method:validate}": {
+																			"id": 506
+																		},
+																		"{method:addToSensorValues}": {
+																			"id": 557
+																		}
+																	}
+																},
+																"{function:validateSourceNodeIdentifier}": {
+																	"id": 98
+																},
+																"{function:cov_1lheh32vjt}": {
+																	"id": 411
+																},
+																"{function:areNumbersClose}": {
+																	"id": 530
+																}
+															}
+														}
+													}
+												},
+												"BackwardsCompatibility": {
+													"children": {
+														"versionTransformers": {
+															"children": {
+																"ProjectReportTransformer-00001-0.0.9.ts": {
+																	"id": 39,
+																	"file": {
+																		"{root}": {
+																			"children": {
+																				"{function:cov_xgt4betre}": {
+																					"id": 40
+																				},
+																				"{class:ProjectReportTransformer}": {
+																					"children": {
+																						"{method:transform_langInternal}": {
+																							"id": 323,
+																							"children": {
+																								"{arrowFunction:(anonymous:0)}": {
+																									"id": 188
+																								}
+																							}
+																						},
+																						"{method:transform_GlobalSourceNodeIdentifier_string_ISourceNodeMetaData_Record}": {
+																							"id": 201,
+																							"children": {
+																								"{arrowFunction:(anonymous:0)}": {
+																									"id": 527
+																								}
+																							}
+																						},
+																						"{method:transform_projectReport}": {
+																							"id": 259
+																						},
+																						"{method:transform_SourceNodeMetaDataType}": {
+																							"id": 262
+																						},
+																						"{method:transform_SourceFileMetaData}": {
+																							"id": 293,
+																							"children": {
+																								"{arrowFunction:(anonymous:0)}": {
+																									"id": 451
+																								}
+																							}
+																						},
+																						"{method:transform_intern}": {
+																							"id": 354,
+																							"children": {
+																								"{arrowFunction:(anonymous:0)}": {
+																									"id": 397
+																								}
+																							}
+																						},
+																						"{method:transform_extern}": {
+																							"id": 459,
+																							"children": {
+																								"{arrowFunction:(anonymous:0)}": {
+																									"id": 369
+																								}
+																							}
+																						},
+																						"{method:transform_moduleReport}": {
+																							"id": 532
+																						},
+																						"{method:transform_ISourceNodeMetaData}": {
+																							"id": 562
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														},
+														"versionFormats": {
+															"children": {
+																"ProjectReportFormat-00002-0.0.10.ts": {
+																	"id": 221,
+																	"file": {
+																		"{root}": {
+																			"id": 444,
+																			"children": {
+																				"{function:cov_119ewilpv8}": {
+																					"id": 222
+																				}
+																			}
+																		}
+																	}
+																},
+																"ProjectReportFormat-00001-0.0.9.ts": {
+																	"id": 240,
+																	"file": {
+																		"{root}": {
+																			"children": {
+																				"{function:cov_2g4bx7oyyw}": {
+																					"id": 241
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												},
+												"SystemInformation.ts": {
+													"id": 44,
+													"file": {
+														"{root}": {
+															"id": 114,
+															"children": {
+																"{class:SystemInformation}": {
+																	"children": {
+																		"{method:batteryInfo}": {
+																			"id": 324,
+																			"children": {
+																				"{function:convert}": {
+																					"id": 45
+																				}
+																			}
+																		},
+																		"{method:collect}": {
+																			"id": 120
+																		},
+																		"{method:sameSystem}": {
+																			"id": 191
+																		},
+																		"{method:memoryInfo}": {
+																			"id": 208
+																		},
+																		"{method:systemInfo}": {
+																			"id": 230
+																		},
+																		"{method:memoryLayoutInfo}": {
+																			"id": 347,
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 252
+																				}
+																			}
+																		},
+																		"{method:fromJSON}": {
+																			"id": 280
+																		},
+																		"{method:toJSON}": {
+																			"id": 288
+																		},
+																		"{constructor:constructor}": {
+																			"id": 412
+																		},
+																		"{method:osInfo}": {
+																			"id": 464
+																		},
+																		"{method:chassisInfo}": {
+																			"id": 542
+																		},
+																		"{method:cpuInfo}": {
+																			"id": 565
+																		},
+																		"{method:baseBoardInfo}": {
+																			"id": 566
+																		}
+																	}
+																},
+																"{function:cov_1qaaqfcsff}": {
+																	"id": 246
+																},
+																"{function:adopt}": {
+																	"id": 483
+																},
+																"{function:step}": {
+																	"id": 528
+																}
+															}
+														}
+													}
+												},
+												"SourceFileMetaDataTree.ts": {
+													"id": 52,
+													"file": {
+														"{root}": {
+															"id": 364,
+															"children": {
+																"{class:SourceFileMetaDataTree}": {
+																	"id": 53,
+																	"children": {
+																		"{method:validate}": {
+																			"id": 104
+																		},
+																		"{method:addExternReport}": {
+																			"id": 176
+																		},
+																		"{method:toJSON}": {
+																			"id": 225
+																		},
+																		"{method:fromJSON}": {
+																			"id": 267
+																		},
+																		"{method:addInternReport}": {
+																			"id": 269
+																		},
+																		"{method:addProjectReport}": {
+																			"id": 308
+																		},
+																		"{method:insertPath}": {
+																			"id": 313
+																		},
+																		"{method:loadFromFile}": {
+																			"id": 333
+																		},
+																		"{method:storeToFile}": {
+																			"id": 363
+																		},
+																		"{constructor:constructor}": {
+																			"id": 413
+																		},
+																		"{method:fromProjectReport}": {
+																			"id": 476
+																		},
+																		"{method:addToAggregatedInternSourceNodeMetaDataOfTree}": {
+																			"id": 531
+																		}
+																	}
+																},
+																"{function:cov_2or21opx21}": {
+																	"id": 350
+																}
+															}
+														}
+													}
+												},
+												"SourceMap.ts": {
+													"id": 58,
+													"file": {
+														"{root}": {
+															"id": 339,
+															"children": {
+																"{class:SourceMap}": {
+																	"id": 138,
+																	"children": {
+																		"{method:asConsumer}": {
+																			"id": 59
+																		},
+																		"{method:fromCompiledJSString}": {
+																			"id": 99
+																		},
+																		"{method:getOriginalSourceLocation}": {
+																			"id": 168
+																		},
+																		"{method:fromJsonString}": {
+																			"id": 242,
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 430
+																				}
+																			}
+																		},
+																		"{constructor:constructor}": {
+																			"id": 270,
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 379
+																				}
+																			}
+																		},
+																		"{method:toJSON}": {
+																			"id": 375
+																		},
+																		"{method:fromCompiledJSFile}": {
+																			"id": 481
+																		},
+																		"{method:isSourceMap}": {
+																			"id": 552
+																		},
+																		"{method:fromJSON}": {
+																			"id": 568
+																		}
+																	}
+																},
+																"{function:cov_kdpb89aok}": {
+																	"id": 480
+																}
+															}
+														}
+													}
+												},
+												"ModelMap.ts": {
+													"id": 66,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:ModelMap}": {
+																	"children": {
+																		"{method:set}": {
+																			"id": 67
+																		},
+																		"{method:values}": {
+																			"id": 75
+																		},
+																		"{method:entries}": {
+																			"id": 173
+																		},
+																		"{method:get}": {
+																			"id": 251
+																		},
+																		"{method:forEach}": {
+																			"id": 340
+																		},
+																		"{method:toJSON}": {
+																			"id": 360
+																		},
+																		"{method:delete}": {
+																			"id": 407
+																		},
+																		"{method:has}": {
+																			"id": 462
+																		},
+																		"{method:(expression:0)}": {
+																			"id": 467
+																		},
+																		"{constructor:constructor}": {
+																			"id": 503
+																		}
+																	}
+																},
+																"{function:cov_2m7ksltivz}": {
+																	"id": 521
+																}
+															}
+														}
+													}
+												},
+												"ModuleReport.ts": {
+													"id": 70,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:ModuleReport}": {
+																	"children": {
+																		"{method:toJSON}": {
+																			"id": 71
+																		},
+																		"{method:fromJSON}": {
+																			"id": 427
+																		},
+																		"{method:merge}": {
+																			"id": 450
+																		},
+																		"{constructor:constructor}": {
+																			"id": 512
+																		}
+																	}
+																},
+																"{function:cov_1au3k0cc4m}": {
+																	"id": 509
+																}
+															}
+														}
+													}
+												},
+												"Report.ts": {
+													"id": 90,
+													"file": {
+														"{root}": {
+															"id": 271,
+															"children": {
+																"{class:Report}": {
+																	"id": 553,
+																	"children": {
+																		"{method:storeToFile}": {
+																			"id": 91
+																		},
+																		"{method:toJSON}": {
+																			"id": 100,
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 569
+																				}
+																			}
+																		},
+																		"{method:validate}": {
+																			"id": 211
+																		},
+																		"{method:removeFromIntern}": {
+																			"id": 245
+																		},
+																		"{method:fromJSON}": {
+																			"id": 452,
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 263
+																				}
+																			}
+																		},
+																		"{method:addSensorValuesToIntern}": {
+																			"id": 273
+																		},
+																		"{method:addSourceFileMapLink}": {
+																			"id": 332
+																		},
+																		"{constructor:constructor}": {
+																			"id": 348
+																		},
+																		"{method:merge}": {
+																			"id": 352
+																		},
+																		"{arrowFunction:(anonymous:0)}": {
+																			"id": 440
+																		},
+																		"{method:addSensorValuesToExtern}": {
+																			"id": 460
+																		},
+																		"{method:addSensorValuesToLangInternal}": {
+																			"id": 510
+																		},
+																		"{method:getMetaDataFromFile}": {
+																			"id": 546
+																		}
+																	}
+																},
+																"{function:cov_xv2i1o0fm}": {
+																	"id": 408
+																}
+															}
+														}
+													}
+												},
+												"SourceFileMetaData.ts": {
+													"id": 92,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:SourceFileMetaData}": {
+																	"id": 365,
+																	"children": {
+																		"{method:merge}": {
+																			"id": 93
+																		},
+																		"{method:removeFromIntern}": {
+																			"id": 189
+																		},
+																		"{method:validate}": {
+																			"id": 193
+																		},
+																		"{constructor:constructor}": {
+																			"id": 279
+																		},
+																		"{method:toJSON}": {
+																			"id": 292
+																		},
+																		"{method:maxSourceNodeMataData}": {
+																			"id": 371
+																		},
+																		"{method:fromJSON}": {
+																			"id": 378
+																		},
+																		"{method:createOrGetSourceNodeMetaData}": {
+																			"id": 395
+																		},
+																		"{method:totalSourceNodeMataData}": {
+																			"id": 425
+																		}
+																	}
+																},
+																"{class:AggregatedSourceNodeMetaData}": {
+																	"children": {
+																		"{constructor:constructor}": {
+																			"id": 146
+																		},
+																		"{method:toJSON}": {
+																			"id": 328
+																		},
+																		"{method:fromJSON}": {
+																			"id": 396
+																		}
+																	}
+																},
+																"{function:cov_1a4vhcpsxe}": {
+																	"id": 540
+																}
+															}
+														}
+													}
+												},
+												"ProjectReport.ts": {
+													"id": 96,
+													"file": {
+														"{root}": {
+															"id": 300,
+															"children": {
+																"{class:ProjectReport}": {
+																	"children": {
+																		"{method:loadFromFile}": {
+																			"id": 97
+																		},
+																		"{method:toJSON}": {
+																			"id": 181
+																		},
+																		"{method:insertCPUProfile}": {
+																			"id": 400,
+																			"children": {
+																				"{function:traverse}": {
+																					"id": 228
+																				}
+																			}
+																		},
+																		"{method:merge}": {
+																			"id": 309
+																		},
+																		"{method:fromJSON}": {
+																			"id": 331
+																		},
+																		"{constructor:constructor}": {
+																			"id": 564
+																		}
+																	}
+																},
+																"{function:cov_5vg567y8}": {
+																	"id": 299
+																},
+																"{function:step}": {
+																	"id": 485
+																}
+															}
+														}
+													}
+												},
+												"ProgramStructureTree.ts": {
+													"id": 133,
+													"file": {
+														"{root}": {
+															"id": 560,
+															"children": {
+																"{class:ProgramStructureTree}": {
+																	"children": {
+																		"{method:identifierBySourceLocation}": {
+																			"id": 134,
+																			"children": {
+																				"{arrowFunction:traverse}": {
+																					"id": 190
+																				}
+																			}
+																		},
+																		"{method:containsLocation}": {
+																			"id": 236
+																		},
+																		"{constructor:constructor}": {
+																			"id": 264
+																		},
+																		"{method:fromJSON}": {
+																			"id": 287
+																		},
+																		"{method:sourceLocationOfIdentifier}": {
+																			"id": 465,
+																			"children": {
+																				"{arrowFunction:traverse}": {
+																					"id": 488
+																				}
+																			}
+																		},
+																		"{method:toJSON}": {
+																			"id": 475
+																		}
+																	}
+																},
+																"{function:cov_1dqknijipt}": {
+																	"id": 250
+																}
+															}
+														}
+													}
+												},
+												"BaseModel.ts": {
+													"id": 162,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:BaseModel}": {
+																	"id": 449,
+																	"children": {
+																		"{method:recordToJSON}": {
+																			"id": 163,
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 453
+																				}
+																			}
+																		}
+																	}
+																},
+																"{function:cov_1z9x4rwpjz}": {
+																	"id": 216
+																}
+															}
+														}
+													}
+												},
+												"SensorValues.ts": {
+													"id": 166,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:SensorValues}": {
+																	"id": 555,
+																	"children": {
+																		"{method:sum}": {
+																			"id": 167
+																		},
+																		"{method:toJSON}": {
+																			"id": 171
+																		},
+																		"{constructor:constructor}": {
+																			"id": 341
+																		},
+																		"{method:fromJSON}": {
+																			"id": 377
+																		},
+																		"{method:max}": {
+																			"id": 405
+																		},
+																		"{method:equals}": {
+																			"id": 416
+																		},
+																		"{method:undefinedIfZero}": {
+																			"id": 447
+																		}
+																	}
+																},
+																"{function:cov_237sv5r1va}": {
+																	"id": 194
+																}
+															}
+														}
+													}
+												}
+											}
+										},
+										"helper": {
+											"children": {
+												"TypescriptParser.ts": {
+													"id": 20,
+													"file": {
+														"{root}": {
+															"id": 550,
+															"children": {
+																"{class:TypescriptParser}": {
+																	"children": {
+																		"{method:traverseSourceFile}": {
+																			"id": 219,
+																			"children": {
+																				"{function:traverseNode}": {
+																					"id": 21
+																				}
+																			}
+																		},
+																		"{method:transpileCode}": {
+																			"id": 57
+																		},
+																		"{method:parseSource}": {
+																			"id": 79,
+																			"children": {
+																				"{arrowFunction:leaveNode}": {
+																					"id": 153
+																				},
+																				"{arrowFunction:enterNode}": {
+																					"id": 433
+																				}
+																			}
+																		},
+																		"{method:readConfigFile}": {
+																			"id": 113
+																		},
+																		"{method:tsConfigFilePathFromFile}": {
+																			"id": 115
+																		},
+																		"{method:posToLoc}": {
+																			"id": 233
+																		},
+																		"{method:isProgramStructureType}": {
+																			"id": 239
+																		},
+																		"{method:parseFile}": {
+																			"id": 561
+																		}
+																	}
+																},
+																"{function:cov_2alepd6gd5}": {
+																	"id": 283
+																}
+															}
+														}
+													}
+												},
+												"CPUNode.ts": {
+													"id": 33,
+													"file": {
+														"{root}": {
+															"id": 34,
+															"children": {
+																"{class:CPUNode}": {
+																	"id": 406,
+																	"children": {
+																		"{constructor:constructor}": {
+																			"id": 195
+																		},
+																		"{method:children}": {
+																			"id": 237
+																		}
+																	}
+																},
+																"{function:cov_6xxa90jum}": {
+																	"id": 226
+																}
+															}
+														}
+													}
+												},
+												"NodeModuleUtils.ts": {
+													"id": 68,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:NodeModuleUtils}": {
+																	"children": {
+																		"{method:getParentModuleFromPath}": {
+																			"id": 69
+																		}
+																	}
+																},
+																"{function:cov_iu71516zi}": {
+																	"id": 187
+																}
+															}
+														}
+													}
+												},
+												"PathUtils.ts": {
+													"id": 155,
+													"file": {
+														"{root}": {
+															"id": 258,
+															"children": {
+																"{function:cov_11ysqi0m2b}": {
+																	"id": 156
+																},
+																"{class:PathUtils}": {
+																	"children": {
+																		"{method:sortFilePathArray}": {
+																			"id": 249
+																		},
+																		"{method:getPathRelativeTo}": {
+																			"id": 277
+																		},
+																		"{method:unifyPath}": {
+																			"id": 349
+																		},
+																		"{method:findUp}": {
+																			"id": 423
+																		},
+																		"{method:makeAbsolute}": {
+																			"id": 517
+																		},
+																		"{method:isAbsolute}": {
+																			"id": 549
+																		}
+																	}
+																}
+															}
+														}
+													}
+												},
+												"DataUrlUtils.ts": {
+													"id": 164,
+													"file": {
+														"{root}": {
+															"children": {
+																"{function:cov_1ujjm6wrsx}": {
+																	"id": 165
+																},
+																"{class:DataUrlUtils}": {
+																	"children": {
+																		"{method:parseDataUrl}": {
+																			"id": 489
+																		},
+																		"{method:isDataUrl}": {
+																			"id": 496
+																		}
+																	}
+																}
+															}
+														}
+													}
+												},
+												"memoize.ts": {
+													"id": 169,
+													"file": {
+														"{root}": {
+															"children": {
+																"{function:memoize}": {
+																	"id": 368,
+																	"children": {
+																		"{arrowFunction:(anonymous:0)}": {
+																			"id": 170
+																		}
+																	}
+																},
+																"{function:cov_1g7ops2ynx}": {
+																	"id": 417
+																}
+															}
+														}
+													}
+												},
+												"TimeHelper.ts": {
+													"id": 185,
+													"file": {
+														"{root}": {
+															"children": {
+																"{function:cov_15jiyyz81j}": {
+																	"id": 186
+																}
+															}
+														}
+													}
+												},
+												"CPUModel.ts": {
+													"id": 209,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:CPUModel}": {
+																	"id": 235,
+																	"children": {
+																		"{method:getNode}": {
+																			"id": 210
+																		},
+																		"{constructor:constructor}": {
+																			"id": 399
+																		}
+																	}
+																},
+																"{function:cov_1vx9ru7tx2}": {
+																	"id": 212
+																}
+															}
+														}
+													}
+												},
+												"GitHelper.ts": {
+													"id": 342,
+													"file": {
+														"{root}": {
+															"id": 380,
+															"children": {
+																"{function:cov_1wj9oddwxd}": {
+																	"id": 343
+																}
+															}
+														}
+													}
+												}
+											}
+										},
+										"adapters": {
+											"children": {
+												"transformer": {
+													"children": {
+														"BaseAdapter.ts": {
+															"id": 37,
+															"file": {
+																"{root}": {
+																	"id": 38,
+																	"children": {
+																		"{class:BaseAdapter}": {
+																			"children": {
+																				"{method:process}": {
+																					"id": 43
+																				}
+																			}
+																		},
+																		"{function:cov_1tjehicetd}": {
+																			"id": 454
+																		}
+																	}
+																}
+															}
+														},
+														"TypeScriptAdapter.ts": {
+															"id": 118,
+															"file": {
+																"{root}": {
+																	"id": 119,
+																	"children": {
+																		"{function:step}": {
+																			"id": 149
+																		},
+																		"{function:cov_1dmi1aypt2}": {
+																			"id": 172
+																		},
+																		"{class:TypeScriptAdapter}": {
+																			"id": 213,
+																			"children": {
+																				"{method:shouldProcess}": {
+																					"id": 256
+																				},
+																				"{method:process}": {
+																					"id": 502
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														},
+														"JestAdapter.ts": {
+															"id": 198,
+															"file": {
+																"{root}": {
+																	"id": 547,
+																	"children": {
+																		"{class:JestAdapter}": {
+																			"children": {
+																				"{method:shouldProcess}": {
+																					"id": 199
+																				},
+																				"{constructor:constructor}": {
+																					"id": 286
+																				},
+																				"{method:context}": {
+																					"id": 432
+																				},
+																				"{method:transformer}": {
+																					"id": 436
+																				},
+																				"{method:process}": {
+																					"id": 501
+																				},
+																				"{method:config}": {
+																					"id": 515
+																				}
+																			}
+																		},
+																		"{function:step}": {
+																			"id": 281
+																		},
+																		"{function:cov_2ceweaw713}": {
+																			"id": 403
+																		},
+																		"{function:adopt}": {
+																			"id": 420
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										},
+										"constants": {
+											"children": {
+												"app.ts": {
+													"id": 54,
+													"file": {
+														"{root}": {
+															"id": 183,
+															"children": {
+																"{function:cov_grrz7shzv}": {
+																	"id": 55
+																}
+															}
+														}
+													}
+												},
+												"config.ts": {
+													"id": 490,
+													"file": {
+														"{root}": {
+															"children": {
+																"{function:cov_1e2worl9o4}": {
+																	"id": 491
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								},
+								"tests": {
+									"children": {
+										"testEnv": {
+											"children": {
+												"env.ts": {
+													"id": 8,
+													"file": {
+														"{root}": {
+															"id": 9,
+															"children": {
+																"{function:cov_buw6i5fnj}": {
+																	"id": 362
+																}
+															}
+														}
+													}
+												}
+											}
+										},
+										"adapters": {
+											"children": {
+												"transformer": {
+													"children": {
+														"JestAdapter.test.ts": {
+															"id": 87,
+															"file": {
+																"{root}": {
+																	"id": 435,
+																	"children": {
+																		"{arrowFunction:(anonymous:0)}": {
+																			"children": {
+																				"{arrowFunction:(anonymous:6)}": {
+																					"id": 88
+																				},
+																				"{arrowFunction:(anonymous:2)}": {
+																					"id": 247
+																				},
+																				"{arrowFunction:(anonymous:3)}": {
+																					"id": 255
+																				},
+																				"{arrowFunction:(anonymous:9)}": {
+																					"id": 274
+																				},
+																				"{arrowFunction:(anonymous:5)}": {
+																					"id": 298
+																				},
+																				"{arrowFunction:(anonymous:7)}": {
+																					"id": 355
+																				},
+																				"{arrowFunction:(anonymous:4)}": {
+																					"id": 393
+																				},
+																				"{arrowFunction:(anonymous:8)}": {
+																					"id": 498
+																				}
+																			}
+																		},
+																		"{function:step}": {
+																			"id": 223
+																		}
+																	}
+																}
+															}
+														},
+														"BaseAdapter.test.ts": {
+															"id": 136,
+															"file": {
+																"{root}": {
+																	"id": 215,
+																	"children": {
+																		"{function:step}": {
+																			"id": 137
+																		},
+																		"{arrowFunction:(anonymous:0)}": {
+																			"children": {
+																				"{arrowFunction:(anonymous:2)}": {
+																					"id": 238
+																				},
+																				"{arrowFunction:(anonymous:3)}": {
+																					"children": {
+																						"{arrowFunction:t}": {
+																							"id": 367
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														},
+														"TypescriptAdapter.test.ts": {
+															"id": 253,
+															"file": {
+																"{root}": {
+																	"id": 458,
+																	"children": {
+																		"{function:step}": {
+																			"id": 254
+																		},
+																		"{arrowFunction:(anonymous:0)}": {
+																			"children": {
+																				"{arrowFunction:(anonymous:3)}": {
+																					"id": 275
+																				},
+																				"{arrowFunction:(anonymous:2)}": {
+																					"id": 381
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														},
+														"assets": {
+															"children": {
+																"inheritance.test.ts": {
+																	"id": 421,
+																	"file": {
+																		"{root}": {
+																			"children": {
+																				"{class:Child}": {
+																					"children": {
+																						"{constructor:constructor}": {
+																							"id": 422
+																						},
+																						"{method:toJSON}": {
+																							"id": 522
+																						}
+																					}
+																				},
+																				"{class:Parent}": {
+																					"children": {
+																						"{constructor:constructor}": {
+																							"id": 526
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										},
+										"model": {
+											"children": {
+												"SystemInformation.test.ts": {
+													"id": 116,
+													"file": {
+														"{root}": {
+															"id": 117,
+															"children": {
+																"{arrowFunction:(anonymous:0)}": {
+																	"children": {
+																		"{arrowFunction:(anonymous:2)}": {
+																			"id": 218
+																		}
+																	}
+																},
+																"{function:step}": {
+																	"id": 484
+																}
+															}
+														}
+													}
+												},
+												"ModelMap.test.ts": {
+													"id": 122,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:SubClass}": {
+																	"children": {
+																		"{constructor:constructor}": {
+																			"id": 123
+																		},
+																		"{method:toJSON}": {
+																			"id": 322
+																		}
+																	}
+																}
+															}
+														}
+													}
+												},
+												"ProgramStructureTree.test.ts": {
+													"id": 130,
+													"file": {
+														"{root}": {
+															"id": 131
+														}
+													}
+												},
+												"GlobalIndex.test.ts": {
+													"id": 177,
+													"file": {
+														"{root}": {
+															"id": 178,
+															"children": {
+																"{arrowFunction:(anonymous:1)}": {
+																	"id": 234
+																},
+																"{arrowFunction:(anonymous:3)}": {
+																	"children": {
+																		"{arrowFunction:(anonymous:0)}": {
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"children": {
+																						"{arrowFunction:(anonymous:0)}": {
+																							"id": 353
+																						}
+																					}
+																				},
+																				"{arrowFunction:(anonymous:3)}": {
+																					"children": {
+																						"{arrowFunction:(anonymous:0)}": {
+																							"id": 373
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																},
+																"{arrowFunction:(anonymous:0)}": {
+																	"id": 402
+																},
+																"{arrowFunction:(anonymous:2)}": {
+																	"id": 455
+																}
+															}
+														}
+													}
+												},
+												"ProjectReport.test.ts": {
+													"id": 231,
+													"file": {
+														"{root}": {
+															"id": 310,
+															"children": {
+																"{arrowFunction:(anonymous:0)}": {
+																	"children": {
+																		"{arrowFunction:(anonymous:3)}": {
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 232
+																				},
+																				"{arrowFunction:(anonymous:1)}": {
+																					"id": 272
+																				},
+																				"{arrowFunction:(anonymous:2)}": {
+																					"id": 434,
+																					"children": {
+																						"{arrowFunction:t}": {
+																							"id": 471
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																},
+																"{function:setProfilesContext}": {
+																	"id": 428
+																}
+															}
+														}
+													}
+												},
+												"BaseModel.test.ts": {
+													"id": 290,
+													"file": {
+														"{root}": {
+															"children": {
+																"{class:SubClass}": {
+																	"children": {
+																		"{constructor:constructor}": {
+																			"id": 291
+																		},
+																		"{method:toJSON}": {
+																			"id": 563
+																		}
+																	}
+																}
+															}
+														}
+													}
+												},
+												"ProfilerConfig.test.ts": {
+													"id": 356,
+													"file": {
+														"{root}": {
+															"id": 357
+														}
+													}
+												},
+												"SourceFileMetaDataTree.test.ts": {
+													"id": 473,
+													"file": {
+														"{root}": {
+															"id": 474
+														}
+													}
+												}
+											}
+										},
+										"helper": {
+											"children": {
+												"PathUtils.test.ts": {
+													"id": 326,
+													"file": {
+														"{root}": {
+															"id": 327
+														}
+													}
+												},
+												"CPUModel.test.ts": {
+													"id": 469,
+													"file": {
+														"{root}": {
+															"id": 470
+														}
+													}
+												},
+												"CPUNode.test.ts": {
+													"id": 499,
+													"file": {
+														"{root}": {
+															"id": 500
+														}
+													}
+												}
+											}
+										}
+									}
+								},
+								"lib": {
+									"children": {
+										"vscode-js-profile-core": {
+											"children": {
+												"src": {
+													"children": {
+														"path.ts": {
+															"id": 10,
+															"file": {
+																"{root}": {
+																	"id": 11,
+																	"children": {
+																		"{function:maybeFileUrlToPath}": {
+																			"id": 301
+																		},
+																		"{function:cov_23ob904286}": {
+																			"id": 539
+																		}
+																	}
+																}
+															}
+														},
+														"cpu": {
+															"children": {
+																"model.ts": {
+																	"id": 15,
+																	"file": {
+																		"{root}": {
+																			"children": {
+																				"{arrowFunction:ensureSourceLocations}": {
+																					"id": 16,
+																					"children": {
+																						"{arrowFunction:(anonymous:1)}": {
+																							"id": 56
+																						},
+																						"{arrowFunction:getLocationIdFor}": {
+																							"id": 89
+																						},
+																						"{arrowFunction:(anonymous:2)}": {
+																							"id": 418
+																						}
+																					}
+																				},
+																				"{arrowFunction:computeAggregateTime}": {
+																					"id": 17
+																				},
+																				"{arrowFunction:buildModel}": {
+																					"id": 558,
+																					"children": {
+																						"{arrowFunction:mapId}": {
+																							"id": 73
+																						},
+																						"{arrowFunction:(anonymous:0)}": {
+																							"id": 112
+																						}
+																					}
+																				},
+																				"{function:cov_1x3nxzeuob}": {
+																					"id": 448
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														},
+														"location-mapping.ts": {
+															"id": 76,
+															"file": {
+																"{root}": {
+																	"children": {
+																		"{function:cov_1hr4n3ktnv}": {
+																			"id": 77
+																		}
+																	}
+																}
+															}
+														},
+														"getBestLocation.ts": {
+															"id": 82,
+															"file": {
+																"{root}": {
+																	"children": {
+																		"{arrowFunction:getBestLocation}": {
+																			"id": 83
+																		},
+																		"{function:cov_13c1jo1cgi}": {
+																			"id": 361
+																		}
+																	}
+																}
+															}
+														},
+														"common": {
+															"children": {
+																"model.ts": {
+																	"id": 124,
+																	"file": {
+																		"{root}": {
+																			"children": {
+																				"{arrowFunction:categorize}": {
+																					"id": 125
+																				},
+																				"{function:cov_ntivb8xog}": {
+																					"id": 196
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								},
+								"dist": {
+									"children": {
+										"src": {
+											"children": {
+												"system": {
+													"children": {
+														"UnifiedPath.js": {
+															"id": 414,
+															"file": {
+																"{root}": {
+																	"children": {
+																		"{function:cov_1laxjiyzrh}": {
+																			"id": 415
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"profiler": {
+							"children": {
+								"dist": {
+									"children": {
+										"src": {
+											"children": {
+												"model": {
+													"children": {
+														"V8Profiler.js": {
+															"id": 46,
+															"file": {
+																"{root}": {
+																	"id": 47,
+																	"children": {
+																		"{class:V8Profiler}": {
+																			"children": {
+																				"{method:startProfiling}": {
+																					"id": 468
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												},
+												"Profiler.js": {
+													"id": 260,
+													"file": {
+														"{root}": {
+															"id": 321,
+															"children": {
+																"{class:Profiler}": {
+																	"id": 261,
+																	"children": {
+																		"{method:getCPUProfilerBeginTime}": {
+																			"id": 370
+																		},
+																		"{method:startCapturingProfilerTracingEvents}": {
+																			"children": {
+																				"{arrowFunction:(anonymous:0)}": {
+																					"id": 383
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"{node}": {
+			"id": 12,
+			"children": {
+				"node:path": {
+					"id": 13,
+					"file": {
+						"{isAbsolute}": {
+							"id": 14
+						},
+						"{(anonymous)}": {
+							"id": 48
+						},
+						"{toNamespacedPath}": {
+							"id": 105
+						},
+						"{dirname}": {
+							"id": 243
+						},
+						"{parse}": {
+							"id": 248
+						},
+						"{join}": {
+							"id": 314
+						},
+						"{relative}": {
+							"id": 508
+						},
+						"{normalize}": {
+							"id": 544
+						}
+					}
+				},
+				"": {
+					"id": 49,
+					"file": {
+						"RegExp: ^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$": {
+							"id": 50
+						},
+						"RegExp: (?:{constructor:constructor}|{class:[a-zA-Z0-9_$#]+}|{method:(?:[a-zA-Z0-9_$#]+|\\((?:literal|expression):[a-zA-Z0-9_$#]+\\))}|{function:(?:[a-zA-Z0-9_$#]+|\\((?:literal|expression):[a-zA-Z0-9_$#]+\\))}|{arrowFunction:(?:(?:[a-zA-Z0-9_$#]+|\\((?:literal|expression):[a-zA-Z0-9_$#]+\\))|\\(anonymous:[0-9]+\\))})": {
+							"id": 72
+						},
+						"{get prototype}": {
+							"id": 95
+						},
+						"RegExp: ^node:(?:[^\\/{}]*)(?:\\/[^\\/{}]*)*$": {
+							"id": 244
+						},
+						"RegExp: \\/\\/# sourceMappingURL=(.*)$": {
+							"id": 284
+						},
+						"RegExp: ^(?:[a-zA-Z]:)?\\\\?\\\\(?:[^\\\\/:*?\"<>|\\r\\n]+\\\\)*[^\\\\/:*?\"<>|\\r\\n]*$": {
+							"id": 295
+						},
+						"RegExp: ^\\/\\/#.*?$": {
+							"id": 325
+						},
+						"RegExp: ^((?:@[a-z0-9-~][a-z0-9-._~]*\\/)?[a-z0-9-~][a-z0-9-._~]*@(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-(?:(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+(?:[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?|){(\\.?\\.?(?:\\/[^{}]*)*|node:(?:[^\\/{}]*)(?:\\/[^\\/{}]*)*|)}((?:{root}(?:\\.(?:{constructor:constructor}|{class:[a-zA-Z0-9_$#]+}|{method:(?:[a-zA-Z0-9_$#]+|\\((?:literal|expression):[a-zA-Z0-9_$#]+\\))}|{function:(?:[a-zA-Z0-9_$#]+|\\((?:literal|expression):[a-zA-Z0-9_$#]+\\))}|{arrowFunction:(?:(?:[a-zA-Z0-9_$#]+|\\((?:literal|expression):[a-zA-Z0-9_$#]+\\))|\\(anonymous:[0-9]+\\))}))*|\\/(?:{(?:[^{}]+)}(?:\\.{|[^{}]+})*|RegExp: .*)\\/)|(?:{(?:[^{}]+)}(?:\\.{|[^{}]+})*|RegExp: .*))$": {
+							"id": 376
+						},
+						"RegExp: ^(data:)([\\w\\/\\+-]*)(;charset=[\\w-]+|;base64){0,1},(.*)": {
+							"id": 398
+						},
+						"{get length}": {
+							"id": 477
+						},
+						"RegExp: (?:{root}(?:\\.(?:{constructor:constructor}|{class:[a-zA-Z0-9_$#]+}|{method:(?:[a-zA-Z0-9_$#]+|\\((?:literal|expression):[a-zA-Z0-9_$#]+\\))}|{function:(?:[a-zA-Z0-9_$#]+|\\((?:literal|expression):[a-zA-Z0-9_$#]+\\))}|{arrowFunction:(?:(?:[a-zA-Z0-9_$#]+|\\((?:literal|expression):[a-zA-Z0-9_$#]+\\))|\\(anonymous:[0-9]+\\))}))*|\\/(?:{(?:[^{}]+)}(?:\\.{|[^{}]+})*|RegExp: .*)\\/)": {
+							"id": 511
+						},
+						"RegExp: \\r\\n|\\r|\\n": {
+							"id": 513
+						},
+						"RegExp: \\/+$": {
+							"id": 525
+						},
+						"{(anonymous)}": {
+							"id": 548
+						}
+					}
+				},
+				"node:internal": {
+					"children": {
+						"validators": {
+							"id": 106,
+							"file": {
+								"{parseFileMode}": {
+									"id": 107
+								}
+							}
+						},
+						"fs": {
+							"children": {
+								"utils": {
+									"id": 311,
+									"file": {
+										"{handleErrorFromBinding}": {
+											"id": 312
+										},
+										"{(anonymous)}": {
+											"id": 446
+										}
+									}
+								}
+							}
+						},
+						"process": {
+							"children": {
+								"promises": {
+									"id": 315,
+									"file": {
+										"{promiseRejectHandler}": {
+											"id": 316
+										}
+									}
+								},
+								"per_thread": {
+									"id": 486,
+									"file": {
+										"{hrtimeBigInt}": {
+											"id": 487
+										}
+									}
+								}
+							}
+						},
+						"util": {
+							"children": {
+								"inspect": {
+									"id": 317,
+									"file": {
+										"{format}": {
+											"id": 318
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"node:fs": {
+					"id": 108,
+					"file": {
+						"{mkdirSync}": {
+							"id": 109
+						},
+						"{readFileSync}": {
+							"id": 205
+						},
+						"{readdirSync}": {
+							"id": 206
+						},
+						"{statSync}": {
+							"id": 217
+						},
+						"{rmSync}": {
+							"id": 431
+						},
+						"{existsSync}": {
+							"id": 457
+						},
+						"{writeFileSync}": {
+							"id": 519
+						}
+					}
+				},
+				"node:buffer": {
+					"id": 140,
+					"file": {
+						"{from}": {
+							"id": 141
+						},
+						"{isEncoding}": {
+							"id": 278
+						},
+						"{(anonymous)}": {
+							"id": 404
+						},
+						"{toString}": {
+							"id": 466
+						}
+					}
+				}
+			}
+		},
+		"jest-runtime@29.5.0": {
+			"id": 27,
+			"children": {
+				"build": {
+					"children": {
+						"index.js": {
+							"id": 28,
+							"file": {
+								"{root}": {
+									"children": {
+										"{class:Runtime}": {
+											"children": {
+												"{method:_createJestObjectFor}": {
+													"children": {
+														"{arrowFunction:mock}": {
+															"id": 29
+														},
+														"{arrowFunction:(anonymous:13)}": {
+															"id": 129
+														},
+														"{arrowFunction:resetAllMocks}": {
+															"id": 330
+														}
+													}
+												},
+												"{method:requireModuleOrMock}": {
+													"id": 154
+												},
+												"{method:requireModule}": {
+													"id": 161
+												},
+												"{method:_shouldMockCjs}": {
+													"id": 401
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"jest-circus@29.5.0": {
+			"id": 60,
+			"children": {
+				"build": {
+					"children": {
+						"index.js": {
+							"id": 61,
+							"file": {
+								"{root}": {
+									"children": {
+										"{arrowFunction:(expression:1)}": {
+											"children": {
+												"{arrowFunction:_addTest}": {
+													"id": 62
+												},
+												"{arrowFunction:test}": {
+													"id": 556
+												}
+											}
+										},
+										"{arrowFunction:beforeEach}": {
+											"id": 268
+										},
+										"{arrowFunction:(expression:0)}": {
+											"children": {
+												"{arrowFunction:describe}": {
+													"id": 429
+												}
+											}
+										},
+										"{arrowFunction:afterEach}": {
+											"id": 479
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"expect@29.5.0": {
+			"id": 63,
+			"children": {
+				"build": {
+					"children": {
+						"index.js": {
+							"id": 64,
+							"file": {
+								"{root}": {
+									"children": {
+										"{arrowFunction:makeThrowingMatcher}": {
+											"id": 426,
+											"children": {
+												"{arrowFunction:processResult}": {
+													"id": 65
+												}
+											}
+										},
+										"{arrowFunction:expect}": {
+											"id": 494
+										},
+										"{arrowFunction:makeRejectMatcher}": {
+											"children": {
+												"{arrowFunction:(anonymous:0)}": {
+													"id": 554
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"jestMatchersObject.js": {
+							"id": 390,
+							"file": {
+								"{root}": {
+									"children": {
+										"{arrowFunction:getCustomEqualityTesters}": {
+											"id": 391
+										},
+										"{arrowFunction:getState}": {
+											"id": 472
+										},
+										"{arrowFunction:getMatchers}": {
+											"id": 551
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"typescript@5.1.3": {
+			"id": 84,
+			"children": {
+				"lib": {
+					"children": {
+						"typescript.js": {
+							"id": 85,
+							"file": {
+								"{root}": {
+									"children": {
+										"{arrowFunction:(expression:0)}": {
+											"children": {
+												"{function:forEachChild}": {
+													"id": 86
+												},
+												"{arrowFunction:(anonymous:1379)}": {
+													"id": 94
+												},
+												"{arrowFunction:(anonymous:1552)}": {
+													"id": 132
+												},
+												"{arrowFunction:(anonymous:1439)}": {
+													"id": 135
+												},
+												"{function:isClassDeclaration}": {
+													"id": 174
+												},
+												"{arrowFunction:(anonymous:373)}": {
+													"id": 179
+												},
+												"{function:createSourceFile}": {
+													"id": 180
+												},
+												"{function:transpileModule}": {
+													"id": 184
+												},
+												"{function:getTokenPosOfNode}": {
+													"id": 220
+												},
+												"{arrowFunction:(anonymous:1738)}": {
+													"id": 229
+												},
+												"{method:(literal:25)}": {
+													"id": 265
+												},
+												"{method:(literal:122)}": {
+													"id": 319
+												},
+												"{function:isArrowFunction}": {
+													"id": 338
+												},
+												"{function:parseJsonConfigFileContent}": {
+													"id": 344
+												},
+												"{function:parseConfigFileTextToJson}": {
+													"id": 382
+												},
+												"{function:forEachChildInBlock}": {
+													"id": 456
+												},
+												"{function:findConfigFile}": {
+													"id": 478
+												},
+												"{function:isConstructorDeclaration}": {
+													"id": 493
+												},
+												"{function:isFunctionDeclaration}": {
+													"id": 504
+												},
+												"{arrowFunction:(anonymous:1463)}": {
+													"id": 545
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"jest-util@29.5.0": {
+			"id": 101,
+			"children": {
+				"build": {
+					"children": {
+						"createProcessObject.js": {
+							"id": 102,
+							"file": {
+								"{root}": {
+									"children": {
+										"{function:createProcessEnv}": {
+											"children": {
+												"{function:getProperty}": {
+													"id": 103
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"isPromise.js": {
+							"id": 441,
+							"file": {
+								"{root}": {
+									"children": {
+										"{function:isPromise}": {
+											"id": 442
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"@jest/transform@29.5.0": {
+			"id": 126,
+			"children": {
+				"build": {
+					"children": {
+						"ScriptTransformer.js": {
+							"id": 127,
+							"file": {
+								"{root}": {
+									"children": {
+										"{class:ScriptTransformer}": {
+											"children": {
+												"{method:shouldTransform}": {
+													"id": 128
+												},
+												"{method:transformSource}": {
+													"id": 329
+												}
+											}
+										},
+										"{function:createScriptTransformer}": {
+											"id": 523
+										}
+									}
+								}
+							}
+						},
+						"shouldInstrument.js": {
+							"id": 358,
+							"file": {
+								"{root}": {
+									"children": {
+										"{function:shouldInstrument}": {
+											"id": 359
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"v8-profiler-next@1.9.0": {
+			"id": 143,
+			"children": {
+				"dispatch.js": {
+					"id": 144,
+					"file": {
+						"{root}": {
+							"id": 145
+						}
+					}
+				}
+			}
+		},
+		"graceful-fs@4.2.11": {
+			"id": 150,
+			"children": {
+				"graceful-fs.js": {
+					"id": 151,
+					"file": {
+						"{root}": {
+							"children": {
+								"{function:closeSync}": {
+									"id": 152
+								}
+							}
+						}
+					}
+				},
+				"polyfills.js": {
+					"id": 157,
+					"file": {
+						"{root}": {
+							"id": 158
+						}
+					}
+				}
+			}
+		},
+		"@jest/console@29.5.0": {
+			"id": 334,
+			"children": {
+				"build": {
+					"children": {
+						"BufferedConsole.js": {
+							"id": 335,
+							"file": {
+								"{root}": {
+									"children": {
+										"{class:BufferedConsole}": {
+											"children": {
+												"{method:log}": {
+													"id": 336
+												},
+												"{method:_log}": {
+													"id": 438
+												}
+											}
+										},
+										"{function:_util}": {
+											"id": 374
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"source-map@0.6.1": {
+			"id": 387,
+			"children": {
+				"lib": {
+					"children": {
+						"source-map-consumer.js": {
+							"id": 388,
+							"file": {
+								"{root}": {
+									"id": 389,
+									"children": {
+										"{function:SourceMapConsumer}": {
+											"id": 410
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"jest-environment-node@29.5.0": {
+			"id": 536,
+			"children": {
+				"build": {
+					"children": {
+						"index.js": {
+							"id": 537,
+							"file": {
+								"{root}": {
+									"children": {
+										"{class:NodeEnvironment}": {
+											"children": {
+												"{method:getVmContext}": {
+													"id": 538
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,6 @@
+dist
+node_modules
+/profiles
+/profiles_history
+coverage
+/scripts

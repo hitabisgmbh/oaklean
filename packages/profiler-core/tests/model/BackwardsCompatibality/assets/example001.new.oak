@@ -1,0 +1,699 @@
+{
+  "reportVersion": "0.0.10",
+  "relativeRootDir": "../../../../../profiler",
+  "executionDetails": {
+    "commitHash": "9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0",
+    "timestamp": 1687845481077,
+    "unstagedChanges": false
+  },
+  "internMapping": {
+    "./examples/example001.ts": "./dist/examples/example001.js"
+  },
+  "lang_internal": {
+    "": {
+      "path": "",
+      "functions": {
+        "{root}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 323625,
+            "selfCPUTime": 0
+          }
+        },
+        "{consoleCall}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 294579,
+            "selfCPUTime": 36982
+          }
+        },
+        "{WriteWrap}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 126,
+            "selfCPUTime": 126
+          }
+        },
+        "{writeUtf8String}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 5585,
+            "selfCPUTime": 5585
+          }
+        },
+        "{toggleTimerRef}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        },
+        "{scheduleTimer}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        },
+        "{(garbage collector)}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 16169,
+            "selfCPUTime": 16169
+          }
+        }
+      }
+    },
+    "node:internal/main/run_main_module": {
+      "path": "node:internal/main/run_main_module",
+      "functions": {
+        "{(anonymous)}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 307456,
+            "selfCPUTime": 0
+          }
+        }
+      }
+    },
+    "node:internal/modules/run_main": {
+      "path": "node:internal/modules/run_main",
+      "functions": {
+        "{executeUserEntryPoint}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 307456,
+            "selfCPUTime": 0
+          }
+        }
+      }
+    },
+    "node:internal/modules/cjs/loader": {
+      "path": "node:internal/modules/cjs/loader",
+      "functions": {
+        "{Module}.{_load}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 307456,
+            "selfCPUTime": 0
+          }
+        },
+        "{Module}.{load}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 307456,
+            "selfCPUTime": 0
+          }
+        },
+        "{Module}.{_extensions}.{}.{js}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 307456,
+            "selfCPUTime": 0
+          }
+        },
+        "{Module}.{_compile}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 307456,
+            "selfCPUTime": 0
+          }
+        }
+      }
+    },
+    "node:internal/console/constructor": {
+      "path": "node:internal/console/constructor",
+      "functions": {
+        "{log}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 257390,
+            "selfCPUTime": 6410
+          }
+        },
+        "{value}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 7,
+            "aggregatedCPUTime": 454460,
+            "selfCPUTime": 22790
+          }
+        },
+        "{get}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 957,
+            "selfCPUTime": 957
+          }
+        }
+      }
+    },
+    "node:internal/tty": {
+      "path": "node:internal/tty",
+      "functions": {
+        "{getColorDepth}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 3,
+            "aggregatedCPUTime": 194140,
+            "selfCPUTime": 194140
+          }
+        }
+      }
+    },
+    "node:internal/util/inspect": {
+      "path": "node:internal/util/inspect",
+      "functions": {
+        "{formatWithOptions}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 5256,
+            "selfCPUTime": 1586
+          }
+        },
+        "{formatWithOptionsInternal}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 461,
+            "selfCPUTime": 461
+          }
+        }
+      }
+    },
+    "node:internal/validators": {
+      "path": "node:internal/validators",
+      "functions": {
+        "{(anonymous)}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 3209,
+            "selfCPUTime": 834
+          }
+        },
+        "{getOwnPropertyValueOrDefault}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 2375,
+            "selfCPUTime": 2375
+          }
+        }
+      }
+    },
+    "node:internal/streams/writable": {
+      "path": "node:internal/streams/writable",
+      "functions": {
+        "{Writable}.{write}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 12631,
+            "selfCPUTime": 916
+          }
+        },
+        "{_write}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 11715,
+            "selfCPUTime": 752
+          }
+        },
+        "{writeOrBuffer}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 11086,
+            "selfCPUTime": 3253
+          }
+        },
+        "{onwrite}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 208,
+            "selfCPUTime": 208
+          }
+        }
+      }
+    },
+    "node:net": {
+      "path": "node:net",
+      "functions": {
+        "{Socket}.{_write}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 7833,
+            "selfCPUTime": 166
+          }
+        },
+        "{Socket}.{_writeGeneric}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 7667,
+            "selfCPUTime": 875
+          }
+        },
+        "{_unrefTimer}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 42,
+            "selfCPUTime": 42
+          }
+        },
+        "{get}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        }
+      }
+    },
+    "node:internal/stream_base_commons": {
+      "path": "node:internal/stream_base_commons",
+      "functions": {
+        "{writeGeneric}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 6750,
+            "selfCPUTime": 125
+          }
+        },
+        "{createWriteWrap}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 374,
+            "selfCPUTime": 248
+          }
+        },
+        "{handleWriteReq}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 5876,
+            "selfCPUTime": 291
+          }
+        },
+        "{afterWriteDispatched}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 375,
+            "selfCPUTime": 167
+          }
+        }
+      }
+    },
+    "node:events": {
+      "path": "node:events",
+      "functions": {
+        "{once}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 11377,
+            "selfCPUTime": 167
+          }
+        },
+        "{addListener}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 11084,
+            "selfCPUTime": 2210
+          }
+        },
+        "{_addListener}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 9040,
+            "selfCPUTime": 9040
+          }
+        },
+        "{checkListener}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 3,
+            "aggregatedCPUTime": 42,
+            "selfCPUTime": 42
+          }
+        },
+        "{_onceWrap}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 84,
+            "selfCPUTime": 84
+          }
+        },
+        "{removeListener}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "aggregatedCPUTime": 2208,
+            "selfCPUTime": 2166
+          }
+        },
+        "{listenerCount}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 124,
+            "selfCPUTime": 124
+          }
+        }
+      }
+    },
+    "node:internal/streams/readable": {
+      "path": "node:internal/streams/readable",
+      "functions": {
+        "{Readable}.{on}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 11126,
+            "selfCPUTime": 42
+          }
+        },
+        "{Readable}.{removeListener}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 3539,
+            "selfCPUTime": 1415
+          }
+        }
+      }
+    },
+    "node:timers": {
+      "path": "node:timers",
+      "functions": {
+        "{setTimeout}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 416,
+            "selfCPUTime": 167
+          }
+        }
+      }
+    },
+    "node:internal/timers": {
+      "path": "node:internal/timers",
+      "functions": {
+        "{Timeout}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 83,
+            "selfCPUTime": 83
+          }
+        },
+        "{incRefCount}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        },
+        "{initAsyncResource}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        },
+        "{insert}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 166,
+            "selfCPUTime": 124
+          }
+        },
+        "{TimersList}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        }
+      }
+    },
+    "node:internal/async_hooks": {
+      "path": "node:internal/async_hooks",
+      "functions": {
+        "{initHooksExist}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        },
+        "{hasHooks}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        }
+      }
+    },
+    "node:internal/util/debuglog": {
+      "path": "node:internal/util/debuglog",
+      "functions": {
+        "{logger}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        },
+        "{debug}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        },
+        "{debuglogImpl}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        },
+        "{noop}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        }
+      }
+    },
+    "node:internal/priority_queue": {
+      "path": "node:internal/priority_queue",
+      "functions": {
+        "{insert}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 42,
+            "selfCPUTime": 42
+          }
+        },
+        "{percolateUp}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        }
+      }
+    },
+    "node:internal/linkedlist": {
+      "path": "node:internal/linkedlist",
+      "functions": {
+        "{append}": {
+          "type": "LangInternalSourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "aggregatedCPUTime": 0,
+            "selfCPUTime": 0
+          }
+        }
+      }
+    }
+  },
+  "intern": {
+    "./dist/examples/example001.js": {
+      "path": "./dist/examples/example001.js",
+      "functions": {
+        "{root}": {
+          "type": "SourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "langInternalCPUTime": 416,
+            "internCPUTime": 305624,
+            "aggregatedCPUTime": 307206,
+            "selfCPUTime": 1166
+          },
+          "lang_internal": {
+            "{node:timers}{setTimeout}": {
+              "type": "LangInternalSourceNodeReference",
+              "sensorValues": {
+                "profilerHits": 1,
+                "aggregatedCPUTime": 416,
+                "selfCPUTime": 167
+              }
+            }
+          },
+          "intern": {
+            "{./dist/examples/example001.js}{root}.{function:main}": {
+              "type": "InternSourceNodeReference",
+              "sensorValues": {
+                "profilerHits": 1,
+                "aggregatedCPUTime": 305624,
+                "selfCPUTime": 4757
+              }
+            },
+            "{./dist/examples/example001.js}{root}.{function:logMessage}": {
+              "type": "InternSourceNodeReference",
+              "sensorValues": {
+                "profilerHits": 1,
+                "aggregatedCPUTime": 0,
+                "selfCPUTime": 0
+              }
+            }
+          }
+        },
+        "{root}.{function:main}": {
+          "type": "SourceNode",
+          "sensorValues": {
+            "profilerHits": 1,
+            "internCPUTime": 300867,
+            "aggregatedCPUTime": 305624,
+            "selfCPUTime": 4757
+          },
+          "intern": {
+            "{./dist/examples/example001.js}{root}.{function:logMessage}": {
+              "type": "InternSourceNodeReference",
+              "sensorValues": {
+                "profilerHits": 1,
+                "aggregatedCPUTime": 300867,
+                "selfCPUTime": 6288
+              }
+            }
+          }
+        },
+        "{root}.{function:logMessage}": {
+          "type": "SourceNode",
+          "sensorValues": {
+            "profilerHits": 2,
+            "langInternalCPUTime": 294579,
+            "aggregatedCPUTime": 300867,
+            "selfCPUTime": 6288
+          },
+          "lang_internal": {
+            "{}{consoleCall}": {
+              "type": "LangInternalSourceNodeReference",
+              "sensorValues": {
+                "profilerHits": 2,
+                "aggregatedCPUTime": 294579,
+                "selfCPUTime": 36982
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "extern": {
+    "v8-profiler-next@1.9.0": {
+      "reportVersion": "0.0.10",
+      "nodeModule": {
+        "name": "v8-profiler-next",
+        "version": "1.9.0"
+      },
+      "internMapping": {},
+      "lang_internal": {
+        "": {
+          "path": "",
+          "functions": {
+            "{stopSamplingHeapProfiling}": {
+              "type": "LangInternalSourceNode",
+              "sensorValues": {
+                "profilerHits": 2,
+                "aggregatedCPUTime": 167,
+                "selfCPUTime": 167
+              }
+            }
+          }
+        }
+      },
+      "intern": {
+        "./dispatch.js": {
+          "path": "./dispatch.js",
+          "functions": {
+            "{root}": {
+              "type": "SourceNode",
+              "sensorValues": {
+                "profilerHits": 2,
+                "langInternalCPUTime": 167,
+                "aggregatedCPUTime": 167,
+                "selfCPUTime": 0
+              },
+              "lang_internal": {
+                "{}{stopSamplingHeapProfiling}": {
+                  "type": "LangInternalSourceNodeReference",
+                  "sensorValues": {
+                    "profilerHits": 2,
+                    "aggregatedCPUTime": 167,
+                    "selfCPUTime": 167
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

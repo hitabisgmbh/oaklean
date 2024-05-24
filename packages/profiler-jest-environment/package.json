@@ -1,0 +1,48 @@
+{
+	"name": "@oaklean/profiler-jest-environment",
+	"version": "0.0.21",
+	"author": "Hitabis GmbH",
+	"license": "MIT",
+	"description": "A jest environment to collect energy measurements on source code level during test execution.",
+	"keywords": [
+		"greenit",
+		"optimization",
+		"energy",
+		"consumption",
+		"javascript",
+		"typescript",
+		"jest",
+		"eco"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hitabisgmbh/oaklean.git"
+	},
+	"homepage": "https://www.oaklean.io//",
+	"files": [
+		"LICENSE",
+		"README.md",
+		"env.js",
+		"env.d.ts",
+		"setup.js",
+		"setup.d.ts",
+		"teardown.js",
+		"teardown.d.ts"
+	],
+	"scripts": {
+		"build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc",
+		"lint": "npx eslint --fix .",
+		"publish-registry": "npm publish",
+		"test": "",
+		"test-measure": "",
+		"test-update": ""
+	},
+	"dependencies": {
+		"@oaklean/profiler": "^0.0.21",
+		"@jest/environment": "^29.4.3"
+	},
+	"devDependencies": {
+		"cross-env": "^7.0.3",
+		"rimraf": "^4.4.1"
+	}
+}

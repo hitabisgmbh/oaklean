@@ -1,0 +1,1372 @@
+{
+	"reportVersion": "0.0.9",
+	"relativeRootDir": "../../../../../profiler",
+	"executionDetails": {
+  	"commitHash": "9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0",
+    "timestamp": 1687845481077,
+    "unstagedChanges": false
+  },
+	"internMapping": {
+		"./examples/example002.ts": "./dist/examples/example002.js"
+	},
+	"node_internal": {
+		"": {
+			"path": "",
+			"functions": {
+				"{root}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 10333
+				},
+				"{(garbage collector)}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 41,
+					"aggregatedTime": 41
+				}
+			}
+		},
+		"node:internal/main/run_main_module": {
+			"path": "node:internal/main/run_main_module",
+			"functions": {
+				"{(anonymous)}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 10292
+				}
+			}
+		},
+		"node:internal/modules/run_main": {
+			"path": "node:internal/modules/run_main",
+			"functions": {
+				"{executeUserEntryPoint}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 10292
+				}
+			}
+		},
+		"node:internal/modules/cjs/loader": {
+			"path": "node:internal/modules/cjs/loader",
+			"functions": {
+				"{Module}.{_load}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 10292
+				},
+				"{Module}.{load}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 10292
+				},
+				"{Module}.{_extensions}.{}.{js}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 10292
+				},
+				"{Module}.{_compile}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 10292
+				}
+			}
+		}
+	},
+	"intern": {
+		"./dist/examples/example002.js": {
+			"path": "./dist/examples/example002.js",
+			"functions": {
+				"{root}": {
+					"type": "SourceNode",
+					"hits": 1,
+					"selfTime": 166,
+					"aggregatedTime": 10000,
+					"internTime": 0,
+					"externTime": 9834,
+					"extern": {
+						"html-minifier@4.0.0{./src/htmlminifier.js}{root}": {
+							"type": "ExternSourceNodeReference",
+							"hits": 1,
+							"selfTime": 125,
+							"aggregatedTime": 9834
+						}
+					}
+				}
+			}
+		}
+	},
+	"extern": {
+		"v8-profiler-next@1.9.0": {
+			"nodeModule": {
+				"name": "v8-profiler-next",
+				"version": "1.9.0"
+			},
+			"reportVersion": "0.0.9",
+			"internMapping": {},
+			"node_internal": {
+				"": {
+					"path": "",
+					"functions": {
+						"{stopSamplingHeapProfiling}": {
+							"type": "NodeInternalSourceNode",
+							"hits": 2,
+							"selfTime": 250,
+							"aggregatedTime": 250
+						}
+					}
+				}
+			},
+			"intern": {
+				"./dispatch.js": {
+					"path": "./dispatch.js",
+					"functions": {
+						"{root}": {
+							"type": "SourceNode",
+							"hits": 2,
+							"selfTime": 0,
+							"aggregatedTime": 250,
+							"nodeInternalTime": 250,
+							"node_internal": {
+								"{}{stopSamplingHeapProfiling}": {
+									"type": "NodeInternalSourceNodeReference",
+									"hits": 2,
+									"selfTime": 250,
+									"aggregatedTime": 250
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"html-minifier@4.0.0": {
+			"nodeModule": {
+				"name": "html-minifier",
+				"version": "4.0.0"
+			},
+			"reportVersion": "0.0.9",
+			"internMapping": {},
+			"node_internal": {
+				"": {
+					"path": "",
+					"functions": {
+						"RegExp: ^\\s*(\\/?)>": {
+							"type": "NodeInternalSourceNode",
+							"hits": 1,
+							"selfTime": 42,
+							"aggregatedTime": 42
+						},
+						"RegExp: ^<\\/((?:[A-Za-z\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u0131\\u0134-\\u013E\\u0141-\\u0148\\u014A-\\u017E\\u0180-\\u01C3\\u01CD-\\u01F0\\u01F4\\u01F5\\u01FA-\\u0217\\u0250-\\u02A8\\u02BB-\\u02C1\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03CE\\u03D0-\\u03D6\\u03DA\\u03DC\\u03DE\\u03E0\\u03E2-\\u03F3\\u0401-\\u040C\\u040E-\\u044F\\u0451-\\u045C\\u045E-\\u0481\\u0490-\\u04C4\\u04C7\\u04C8\\u04CB\\u04CC\\u04D0-\\u04EB\\u04EE-\\u04F5\\u04F8\\u04F9\\u0531-\\u0556\\u0559\\u0561-\\u0586\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0621-\\u063A\\u0641-\\u064A\\u0671-\\u06B7\\u06BA-\\u06BE\\u06C0-\\u06CE\\u06D0-\\u06D3\\u06D5\\u06E5\\u06E6\\u0905-\\u0939\\u093D\\u0958-\\u0961\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8B\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AE0\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B36-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B85-\\u0B8A\\u0B8E-\\u": {
+							"type": "NodeInternalSourceNode",
+							"hits": 1,
+							"selfTime": 0,
+							"aggregatedTime": 0
+						}
+					}
+				}
+			},
+			"intern": {
+				"./src/htmlminifier.js": {
+					"path": "./src/htmlminifier.js",
+					"functions": {
+						"{root}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 125,
+							"aggregatedTime": 9834,
+							"internTime": 9709,
+							"intern": {
+								"{./src/htmlminifier.js}{root}.{function:processOptions}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 125,
+									"aggregatedTime": 125
+								},
+								"{./src/htmlminifier.js}{root}.{function:minify}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 333,
+									"aggregatedTime": 9584
+								}
+							}
+						},
+						"{root}.{function:processOptions}": {
+							"type": "SourceNode",
+							"hits": 2,
+							"selfTime": 291,
+							"aggregatedTime": 7042,
+							"externTime": 6751,
+							"extern": {
+								"clean-css@4.2.4{./lib/clean.js}{root}": {
+									"type": "ExternSourceNodeReference",
+									"hits": 2,
+									"selfTime": 334,
+									"aggregatedTime": 6751
+								}
+							}
+						},
+						"{root}.{function:minify}": {
+							"type": "SourceNode",
+							"hits": 4,
+							"selfTime": 457,
+							"aggregatedTime": 16959,
+							"internTime": 16502,
+							"intern": {
+								"{./src/htmlparser.js}{root}.{function:HTMLParser}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 917,
+									"aggregatedTime": 9251
+								},
+								"{./src/htmlminifier.js}{root}.{function:normalizeAttr}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 84,
+									"aggregatedTime": 292
+								},
+								"{./src/htmlminifier.js}{root}.{function:buildAttr}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 42
+								},
+								"{./src/htmlminifier.js}{root}.{function:processOptions}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 166,
+									"aggregatedTime": 6917
+								}
+							}
+						},
+						"{root}.{function:normalizeAttr}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 84,
+							"aggregatedTime": 292,
+							"internTime": 208,
+							"intern": {
+								"{./src/htmlminifier.js}{root}.{function:cleanAttributeValue}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 208
+								}
+							}
+						},
+						"{root}.{function:cleanAttributeValue}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 42,
+							"aggregatedTime": 208,
+							"internTime": 166,
+							"intern": {
+								"{./src/htmlminifier.js}{root}.{function:isEventAttribute}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 41,
+									"aggregatedTime": 41
+								},
+								"{./src/htmlminifier.js}{root}.{function:isNumberTypeAttribute}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 83,
+									"aggregatedTime": 83
+								},
+								"{./src/htmlminifier.js}{root}.{function:isUriTypeAttribute}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 42
+								}
+							}
+						},
+						"{root}.{function:isEventAttribute}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 41,
+							"aggregatedTime": 41
+						},
+						"{root}.{function:isNumberTypeAttribute}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 83,
+							"aggregatedTime": 83
+						},
+						"{root}.{function:isUriTypeAttribute}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 42,
+							"aggregatedTime": 42
+						},
+						"{root}.{function:buildAttr}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 42,
+							"aggregatedTime": 42
+						}
+					}
+				},
+				"./src/htmlparser.js": {
+					"path": "./src/htmlparser.js",
+					"functions": {
+						"{root}.{function:HTMLParser}": {
+							"type": "SourceNode",
+							"hits": 2,
+							"selfTime": 1083,
+							"aggregatedTime": 16376,
+							"internTime": 15293,
+							"node_internal": {
+								"{}RegExp: ^<\\/((?:[A-Za-z\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u0131\\u0134-\\u013E\\u0141-\\u0148\\u014A-\\u017E\\u0180-\\u01C3\\u01CD-\\u01F0\\u01F4\\u01F5\\u01FA-\\u0217\\u0250-\\u02A8\\u02BB-\\u02C1\\u0386\\u0388-\\u038A\\u038C\\u038E-\\u03A1\\u03A3-\\u03CE\\u03D0-\\u03D6\\u03DA\\u03DC\\u03DE\\u03E0\\u03E2-\\u03F3\\u0401-\\u040C\\u040E-\\u044F\\u0451-\\u045C\\u045E-\\u0481\\u0490-\\u04C4\\u04C7\\u04C8\\u04CB\\u04CC\\u04D0-\\u04EB\\u04EE-\\u04F5\\u04F8\\u04F9\\u0531-\\u0556\\u0559\\u0561-\\u0586\\u05D0-\\u05EA\\u05F0-\\u05F2\\u0621-\\u063A\\u0641-\\u064A\\u0671-\\u06B7\\u06BA-\\u06BE\\u06C0-\\u06CE\\u06D0-\\u06D3\\u06D5\\u06E5\\u06E6\\u0905-\\u0939\\u093D\\u0958-\\u0961\\u0985-\\u098C\\u098F\\u0990\\u0993-\\u09A8\\u09AA-\\u09B0\\u09B2\\u09B6-\\u09B9\\u09DC\\u09DD\\u09DF-\\u09E1\\u09F0\\u09F1\\u0A05-\\u0A0A\\u0A0F\\u0A10\\u0A13-\\u0A28\\u0A2A-\\u0A30\\u0A32\\u0A33\\u0A35\\u0A36\\u0A38\\u0A39\\u0A59-\\u0A5C\\u0A5E\\u0A72-\\u0A74\\u0A85-\\u0A8B\\u0A8D\\u0A8F-\\u0A91\\u0A93-\\u0AA8\\u0AAA-\\u0AB0\\u0AB2\\u0AB3\\u0AB5-\\u0AB9\\u0ABD\\u0AE0\\u0B05-\\u0B0C\\u0B0F\\u0B10\\u0B13-\\u0B28\\u0B2A-\\u0B30\\u0B32\\u0B33\\u0B36-\\u0B39\\u0B3D\\u0B5C\\u0B5D\\u0B5F-\\u0B61\\u0B85-\\u0B8A\\u0B8E-\\u": {
+									"type": "NodeInternalSourceNodeReference",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								}
+							},
+							"intern": {
+								"{./src/htmlparser.js}{root}.{function:attrForHandler}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 83,
+									"aggregatedTime": 83
+								},
+								"{./src/htmlparser.js}{root}.{function:HTMLParser}.{function:parseStartTag}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 459,
+									"aggregatedTime": 501
+								},
+								"{./src/htmlparser.js}{root}.{function:HTMLParser}.{function:handleStartTag}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 84,
+									"aggregatedTime": 500
+								},
+								"{./src/htmlparser.js}{root}.{function:HTMLParser}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 166,
+									"aggregatedTime": 7125
+								},
+								"{./src/htmlminifier.js}{root}.{function:minify}": {
+									"type": "InternSourceNodeReference",
+									"hits": 2,
+									"selfTime": 42,
+									"aggregatedTime": 6959
+								},
+								"{./src/htmlparser.js}{root}.{function:HTMLParser}.{function:parseEndTag}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 125,
+									"aggregatedTime": 125
+								}
+							}
+						},
+						"{root}.{function:attrForHandler}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 83,
+							"aggregatedTime": 83
+						},
+						"{root}.{function:HTMLParser}.{function:parseStartTag}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 459,
+							"aggregatedTime": 501,
+							"nodeInternalTime": 42,
+							"node_internal": {
+								"{}RegExp: ^\\s*(\\/?)>": {
+									"type": "NodeInternalSourceNodeReference",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 42
+								}
+							}
+						},
+						"{root}.{function:HTMLParser}.{function:handleStartTag}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 84,
+							"aggregatedTime": 500,
+							"internTime": 416,
+							"intern": {
+								"{./src/htmlminifier.js}{root}.{function:minify}": {
+									"type": "InternSourceNodeReference",
+									"hits": 1,
+									"selfTime": 82,
+									"aggregatedTime": 416
+								}
+							}
+						},
+						"{root}.{function:HTMLParser}.{function:parseEndTag}": {
+							"type": "SourceNode",
+							"hits": 1,
+							"selfTime": 125,
+							"aggregatedTime": 125
+						}
+					}
+				}
+			},
+			"extern": {
+				"clean-css@4.2.4": {
+					"nodeModule": {
+						"name": "clean-css",
+						"version": "4.2.4"
+					},
+					"reportVersion": "0.0.9",
+					"internMapping": {},
+					"node_internal": {
+						"node:internal/bootstrap/node": {
+							"path": "node:internal/bootstrap/node",
+							"functions": {
+								"{get}": {
+									"type": "NodeInternalSourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								}
+							}
+						},
+						"node:path": {
+							"path": "node:path",
+							"functions": {
+								"{resolve}": {
+									"type": "NodeInternalSourceNode",
+									"hits": 1,
+									"selfTime": 41,
+									"aggregatedTime": 41
+								}
+							}
+						},
+						"": {
+							"path": "",
+							"functions": {
+								"RegExp: (?:^|\\s|\\()(-?\\d+)px": {
+									"type": "NodeInternalSourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								},
+								"RegExp: (^| |,|\\))(aliceblue|antiquewhite|aqua|aquamarine|black|blanchedalmond|blue|blueviolet|burlywood|cadetblue|chartreuse|chocolate|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|goldenrod|greenyellow|honeydew|hotpink|indianred|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|magenta|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|oldlace|olivedrab|orangered|palego": {
+									"type": "NodeInternalSourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								}
+							}
+						}
+					},
+					"intern": {
+						"./lib/clean.js": {
+							"path": "./lib/clean.js",
+							"functions": {
+								"{root}": {
+									"type": "SourceNode",
+									"hits": 2,
+									"selfTime": 334,
+									"aggregatedTime": 6751,
+									"internTime": 6417,
+									"intern": {
+										"{./lib/options/compatibility.js}{root}.{function:compatibilityFrom}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 41,
+											"aggregatedTime": 83
+										},
+										"{./lib/options/inline-request.js}{root}.{function:inlineRequestFrom}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 42
+										},
+										"{./lib/options/optimization-level.js}{root}.{function:optimizationLevelFrom}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 83
+										},
+										"{./lib/clean.js}{root}.{function:minify}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 166,
+											"aggregatedTime": 6209
+										}
+									}
+								},
+								"{root}.{function:minify}": {
+									"type": "SourceNode",
+									"hits": 3,
+									"selfTime": 290,
+									"aggregatedTime": 16335,
+									"internTime": 16045,
+									"intern": {
+										"{./lib/optimizer/validator.js}{root}.{function:validator}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 84,
+											"aggregatedTime": 84
+										},
+										"{./lib/clean.js}{root}.{function:runner}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 5959
+										},
+										"{./lib/reader/read-sources.js}{root}.{function:readSources}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 5959
+										},
+										"{./lib/clean.js}{root}.{function:optimize}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 83,
+											"aggregatedTime": 3709
+										},
+										"{./lib/writer/simple.js}{root}.{function:serializeStyles}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 334
+										}
+									}
+								},
+								"{root}.{function:runner}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 5959,
+									"internTime": 5959,
+									"intern": {
+										"{./lib/clean.js}{root}.{function:minify}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 5959
+										}
+									}
+								},
+								"{root}.{function:optimize}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 83,
+									"aggregatedTime": 3709,
+									"internTime": 3626,
+									"intern": {
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:level1Optimize}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 374,
+											"aggregatedTime": 3626
+										}
+									}
+								}
+							}
+						},
+						"./lib/options/compatibility.js": {
+							"path": "./lib/options/compatibility.js",
+							"functions": {
+								"{root}.{function:compatibilityFrom}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 41,
+									"aggregatedTime": 83,
+									"internTime": 42,
+									"intern": {
+										"{./lib/options/compatibility.js}{root}.{function:calculateSource}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										},
+										"{./lib/options/compatibility.js}{root}.{function:merge}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 42
+										}
+									}
+								},
+								"{root}.{function:calculateSource}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								},
+								"{root}.{function:merge}": {
+									"type": "SourceNode",
+									"hits": 2,
+									"selfTime": 42,
+									"aggregatedTime": 42,
+									"intern": {
+										"{./lib/options/compatibility.js}{root}.{function:merge}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								}
+							}
+						},
+						"./lib/options/inline-request.js": {
+							"path": "./lib/options/inline-request.js",
+							"functions": {
+								"{root}.{function:inlineRequestFrom}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 42,
+									"node_internal": {
+										"{node:internal/bootstrap/node}{get}": {
+											"type": "NodeInternalSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								}
+							}
+						},
+						"./lib/options/optimization-level.js": {
+							"path": "./lib/options/optimization-level.js",
+							"functions": {
+								"{root}.{function:optimizationLevelFrom}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 83,
+									"internTime": 83,
+									"intern": {
+										"{./lib/utils/override.js}{root}.{function:override}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 41,
+											"aggregatedTime": 83
+										}
+									}
+								}
+							}
+						},
+						"./lib/utils/override.js": {
+							"path": "./lib/utils/override.js",
+							"functions": {
+								"{root}.{function:override}": {
+									"type": "SourceNode",
+									"hits": 2,
+									"selfTime": 83,
+									"aggregatedTime": 125,
+									"internTime": 42,
+									"intern": {
+										"{./lib/utils/override.js}{root}.{function:override}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 42
+										}
+									}
+								}
+							}
+						},
+						"./lib/optimizer/validator.js": {
+							"path": "./lib/optimizer/validator.js",
+							"functions": {
+								"{root}.{function:validator}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 84,
+									"aggregatedTime": 84
+								},
+								"{root}.{function:isUrl}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 584,
+									"aggregatedTime": 584
+								}
+							}
+						},
+						"./lib/reader/read-sources.js": {
+							"path": "./lib/reader/read-sources.js",
+							"functions": {
+								"{root}.{function:readSources}": {
+									"type": "SourceNode",
+									"hits": 4,
+									"selfTime": 84,
+									"aggregatedTime": 18669,
+									"internTime": 18585,
+									"intern": {
+										"{./lib/reader/read-sources.js}{root}.{function:doReadSources}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 5917
+										},
+										"{./lib/reader/apply-source-maps.js}{root}.{function:applySourceMaps}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 83,
+											"aggregatedTime": 4292
+										},
+										"{./lib/reader/load-original-sources.js}{root}.{function:loadOriginalSources}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 4209
+										},
+										"{./lib/clean.js}{root}.{function:minify}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 124,
+											"aggregatedTime": 4167
+										}
+									}
+								},
+								"{root}.{function:doReadSources}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 5917,
+									"internTime": 5917,
+									"intern": {
+										"{./lib/reader/read-sources.js}{root}.{function:fromString}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 5917
+										}
+									}
+								},
+								"{root}.{function:fromString}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 5917,
+									"internTime": 5875,
+									"intern": {
+										"{./lib/reader/read-sources.js}{root}.{function:fromStyles}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 5875
+										}
+									}
+								},
+								"{root}.{function:fromStyles}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 5875,
+									"nodeInternalTime": 41,
+									"internTime": 5792,
+									"node_internal": {
+										"{node:path}{resolve}": {
+											"type": "NodeInternalSourceNodeReference",
+											"hits": 1,
+											"selfTime": 41,
+											"aggregatedTime": 41
+										}
+									},
+									"intern": {
+										"{./lib/tokenizer/tokenize.js}{root}.{function:tokenize}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 584,
+											"aggregatedTime": 792
+										},
+										"{./lib/reader/rebase.js}{root}.{function:rebase}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 41,
+											"aggregatedTime": 625
+										},
+										"{./lib/reader/read-sources.js}{root}.{function:inline}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 41,
+											"aggregatedTime": 4375
+										}
+									}
+								},
+								"{root}.{function:inline}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 41,
+									"aggregatedTime": 4375,
+									"internTime": 4334,
+									"intern": {
+										"{./lib/reader/read-sources.js}{root}.{function:doInlineImports}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 4334
+										}
+									}
+								},
+								"{root}.{function:doInlineImports}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 4334,
+									"internTime": 4334,
+									"intern": {
+										"{./lib/reader/read-sources.js}{root}.{function:readSources}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 4334
+										}
+									}
+								}
+							}
+						},
+						"./lib/tokenizer/tokenize.js": {
+							"path": "./lib/tokenizer/tokenize.js",
+							"functions": {
+								"{root}.{function:tokenize}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 584,
+									"aggregatedTime": 792,
+									"internTime": 208,
+									"intern": {
+										"{./lib/tokenizer/tokenize.js}{root}.{function:intoTokens}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 166,
+											"aggregatedTime": 208
+										}
+									}
+								},
+								"{root}.{function:intoTokens}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 166,
+									"aggregatedTime": 208,
+									"internTime": 42,
+									"intern": {
+										"{./lib/tokenizer/tokenize.js}{root}.{function:tokenTypeFrom}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 42
+										},
+										"{./lib/tokenizer/tokenize.js}{root}.{function:originalMetadata}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								},
+								"{root}.{function:tokenTypeFrom}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 42
+								},
+								"{root}.{function:originalMetadata}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								}
+							}
+						},
+						"./lib/reader/rebase.js": {
+							"path": "./lib/reader/rebase.js",
+							"functions": {
+								"{root}.{function:rebase}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 41,
+									"aggregatedTime": 625,
+									"internTime": 584,
+									"intern": {
+										"{./lib/reader/rebase.js}{root}.{function:rebaseEverything}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 584
+										}
+									}
+								},
+								"{root}.{function:rebaseEverything}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 584,
+									"internTime": 584,
+									"intern": {
+										"{./lib/reader/rebase.js}{root}.{function:rebaseProperties}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 584
+										}
+									}
+								},
+								"{root}.{function:rebaseProperties}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 584,
+									"internTime": 584,
+									"intern": {
+										"{./lib/optimizer/validator.js}{root}.{function:isUrl}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 584,
+											"aggregatedTime": 584
+										}
+									}
+								}
+							}
+						},
+						"./lib/reader/apply-source-maps.js": {
+							"path": "./lib/reader/apply-source-maps.js",
+							"functions": {
+								"{root}.{function:applySourceMaps}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 83,
+									"aggregatedTime": 4292,
+									"internTime": 4209,
+									"intern": {
+										"{./lib/reader/read-sources.js}{root}.{function:readSources}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 4209
+										}
+									}
+								}
+							}
+						},
+						"./lib/reader/load-original-sources.js": {
+							"path": "./lib/reader/load-original-sources.js",
+							"functions": {
+								"{root}.{function:loadOriginalSources}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 4209,
+									"internTime": 4167,
+									"intern": {
+										"{./lib/reader/read-sources.js}{root}.{function:readSources}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 4167
+										}
+									}
+								}
+							}
+						},
+						"./lib/optimizer/level-1/optimize.js": {
+							"path": "./lib/optimizer/level-1/optimize.js",
+							"functions": {
+								"{root}.{function:level1Optimize}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 374,
+									"aggregatedTime": 3626,
+									"internTime": 3252,
+									"intern": {
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:buildUnitRegexp}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										},
+										"{./lib/optimizer/level-1/tidy-rules.js}{root}.{function:tidyRules}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 209,
+											"aggregatedTime": 209
+										},
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:optimizeBody}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 418,
+											"aggregatedTime": 3043
+										}
+									}
+								},
+								"{root}.{function:buildUnitRegexp}": {
+									"type": "SourceNode",
+									"hits": 2,
+									"selfTime": 0,
+									"aggregatedTime": 0,
+									"intern": {
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:buildUnitRegexp}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								},
+								"{root}.{function:optimizeBody}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 418,
+									"aggregatedTime": 3043,
+									"internTime": 2625,
+									"intern": {
+										"{./lib/optimizer/wrap-for-optimizing.js}{root}.{function:wrapAll}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 125
+										},
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:isUrl}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										},
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:isQuoted}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 42
+										},
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:isLocal}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										},
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:optimizePixelLengths}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 209,
+											"aggregatedTime": 209
+										},
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:optimizeTimeUnits}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 41,
+											"aggregatedTime": 41
+										},
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:optimizeUnits}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 208,
+											"aggregatedTime": 208
+										},
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:optimizeColors}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 41,
+											"aggregatedTime": 1917
+										},
+										"{./lib/optimizer/level-1/optimize.js}{root}.{function:transformValue}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 83,
+											"aggregatedTime": 83
+										}
+									}
+								},
+								"{root}.{function:isUrl}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								},
+								"{root}.{function:isQuoted}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 42
+								},
+								"{root}.{function:isLocal}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								},
+								"{root}.{function:optimizePixelLengths}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 209,
+									"aggregatedTime": 209,
+									"node_internal": {
+										"{}RegExp: (?:^|\\s|\\()(-?\\d+)px": {
+											"type": "NodeInternalSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								},
+								"{root}.{function:optimizeTimeUnits}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 41,
+									"aggregatedTime": 41
+								},
+								"{root}.{function:optimizeUnits}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 208,
+									"aggregatedTime": 208
+								},
+								"{root}.{function:optimizeColors}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 41,
+									"aggregatedTime": 1917,
+									"internTime": 1876,
+									"intern": {
+										"{./lib/optimizer/level-1/shorten-hex.js}{root}.{function:shortenHex}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 1876,
+											"aggregatedTime": 1876
+										}
+									}
+								},
+								"{root}.{function:transformValue}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 83,
+									"aggregatedTime": 83
+								}
+							}
+						},
+						"./lib/optimizer/level-1/tidy-rules.js": {
+							"path": "./lib/optimizer/level-1/tidy-rules.js",
+							"functions": {
+								"{root}.{function:tidyRules}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 209,
+									"aggregatedTime": 209,
+									"intern": {
+										"{./lib/optimizer/level-1/tidy-rules.js}{root}.{function:removeQuotes}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								},
+								"{root}.{function:removeQuotes}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								}
+							}
+						},
+						"./lib/optimizer/wrap-for-optimizing.js": {
+							"path": "./lib/optimizer/wrap-for-optimizing.js",
+							"functions": {
+								"{root}.{function:wrapAll}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 125,
+									"internTime": 125,
+									"intern": {
+										"{./lib/optimizer/wrap-for-optimizing.js}{root}.{function:wrapSingle}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 83,
+											"aggregatedTime": 125
+										}
+									}
+								},
+								"{root}.{function:wrapSingle}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 83,
+									"aggregatedTime": 125,
+									"internTime": 42,
+									"intern": {
+										"{./lib/optimizer/wrap-for-optimizing.js}{root}.{function:isImportant}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 42
+										}
+									}
+								},
+								"{root}.{function:isImportant}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 42
+								}
+							}
+						},
+						"./lib/optimizer/level-1/shorten-hex.js": {
+							"path": "./lib/optimizer/level-1/shorten-hex.js",
+							"functions": {
+								"{root}.{function:shortenHex}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 1876,
+									"aggregatedTime": 1876,
+									"node_internal": {
+										"{}RegExp: (^| |,|\\))(aliceblue|antiquewhite|aqua|aquamarine|black|blanchedalmond|blue|blueviolet|burlywood|cadetblue|chartreuse|chocolate|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|goldenrod|greenyellow|honeydew|hotpink|indianred|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|magenta|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|oldlace|olivedrab|orangered|palego": {
+											"type": "NodeInternalSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								}
+							}
+						},
+						"./lib/writer/simple.js": {
+							"path": "./lib/writer/simple.js",
+							"functions": {
+								"{root}.{function:serializeStyles}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 334,
+									"internTime": 292,
+									"intern": {
+										"{./lib/writer/helpers.js}{root}.{function:all}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 125,
+											"aggregatedTime": 292
+										}
+									}
+								},
+								"{root}.{function:store}": {
+									"type": "SourceNode",
+									"hits": 4,
+									"selfTime": 0,
+									"aggregatedTime": 0,
+									"intern": {
+										"{./lib/writer/simple.js}{root}.{function:track}": {
+											"type": "InternSourceNodeReference",
+											"hits": 3,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								},
+								"{root}.{function:track}": {
+									"type": "SourceNode",
+									"hits": 3,
+									"selfTime": 0,
+									"aggregatedTime": 0
+								}
+							}
+						},
+						"./lib/writer/helpers.js": {
+							"path": "./lib/writer/helpers.js",
+							"functions": {
+								"{root}.{function:all}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 125,
+									"aggregatedTime": 292,
+									"internTime": 167,
+									"intern": {
+										"{./lib/writer/helpers.js}{root}.{function:rules}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 42
+										},
+										"{./lib/writer/simple.js}{root}.{function:store}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										},
+										"{./lib/writer/helpers.js}{root}.{function:body}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 42,
+											"aggregatedTime": 125
+										}
+									}
+								},
+								"{root}.{function:rules}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 42,
+									"intern": {
+										"{./lib/writer/simple.js}{root}.{function:store}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								},
+								"{root}.{function:body}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 42,
+									"aggregatedTime": 125,
+									"internTime": 83,
+									"intern": {
+										"{./lib/writer/helpers.js}{root}.{function:property}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 83,
+											"aggregatedTime": 83
+										}
+									}
+								},
+								"{root}.{function:property}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 83,
+									"aggregatedTime": 83,
+									"intern": {
+										"{./lib/writer/simple.js}{root}.{function:store}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										},
+										"{./lib/writer/helpers.js}{root}.{function:value}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								},
+								"{root}.{function:value}": {
+									"type": "SourceNode",
+									"hits": 1,
+									"selfTime": 0,
+									"aggregatedTime": 0,
+									"intern": {
+										"{./lib/writer/simple.js}{root}.{function:store}": {
+											"type": "InternSourceNodeReference",
+											"hits": 1,
+											"selfTime": 0,
+											"aggregatedTime": 0
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

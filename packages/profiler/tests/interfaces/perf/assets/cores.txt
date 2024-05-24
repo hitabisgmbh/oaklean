@@ -1,0 +1,22 @@
+# started on Tue May 21 15:24:54 2024
+ 
+     0.100140582|0,21|Joules|power/energy-cores/|100175602|100,00||
+     0.200475521|0,11|Joules|power/energy-cores/|100371661|100,00||
+     0.300888887|0,01|Joules|power/energy-cores/|100420232|100,00||
+     0.401300132|0,01|Joules|power/energy-cores/|100421735|100,00||
+     0.501701576|0,01|Joules|power/energy-cores/|100410238|100,00||
+     0.602111219|0,01|Joules|power/energy-cores/|100419996|100,00||
+     0.702510573|0,22|Joules|power/energy-cores/|100407638|100,00||
+     0.802895045|0,01|Joules|power/energy-cores/|100393986|100,00||
+     0.903293916|0,01|Joules|power/energy-cores/|100408815|100,00||
+     1.003616652|0,15|Joules|power/energy-cores/|100306898|100,00||
+     1.103931774|0,02|Joules|power/energy-cores/|100348543|100,00||
+     1.204214520|0,92|Joules|power/energy-cores/|100273417|100,00||
+     1.304542941|0,22|Joules|power/energy-cores/|100355707|100,00||
+     1.404947644|0,01|Joules|power/energy-cores/|100414123|100,00||
+     1.505269680|0,01|Joules|power/energy-cores/|100329597|100,00||
+     1.605670621|0,01|Joules|power/energy-cores/|100412409|100,00||
+     1.706055402|0,01|Joules|power/energy-cores/|100383284|100,00||
+     1.806406357|0,01|Joules|power/energy-cores/|100370203|100,00||
+     1.906775327|0,01|Joules|power/energy-cores/|100366059|100,00||
+     2.001175957|0,01|Joules|power/energy-cores/|94428992|100,00||

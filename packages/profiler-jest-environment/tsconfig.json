@@ -1,0 +1,4 @@
+{
+	"extends": "../../tsconfig.json",
+	"include": ["env.ts", "setup.ts", "teardown.ts"	]
+}

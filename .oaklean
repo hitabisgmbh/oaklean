@@ -1,0 +1,17 @@
+{
+	"exportOptions": {
+		"outDir": "profiles",
+		"rootDir": "./",
+		"exportV8Profile": true,
+		"exportReport": true,
+		"exportSensorInterfaceData": true
+	},
+	"projectOptions": {
+		"identifier": "9662d888-085d-4b08-ad37-3526517a3240"
+	},
+	"runtimeOptions": {
+		"seeds": {
+			"Math.random": "0"
+		}
+	}
+}

@@ -1,0 +1,46 @@
+{
+	"name": "@oaklean/cli",
+	"version": "0.0.21",
+	"author": "Hitabis GmbH",
+	"license": "MIT",
+	"description": "A command-line interface that provides utilities for parsing, inspecting, and converting the .oak file format, as well as interfaces used in the @oaklean suite.",
+	"keywords": [
+		"oaklean",
+		"greenit",
+		"cli"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hitabisgmbh/oaklean.git"
+	},
+	"homepage": "https://www.oaklean.io/",
+	"bin": {
+		"oak": "dist/index.js"
+	},
+	"directories": {
+		"dist": "dist"
+	},
+	"files": [
+		"LICENSE",
+		"README.md",
+		"dist/**/*"
+	],
+	"scripts": {
+		"exec": "cd $INIT_CWD && npx ts-node -r tsconfig-paths/register src/index.ts",
+		"build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc",
+		"lint": "npx eslint --fix .",
+		"publish-registry": "npm publish",
+		"test": "",
+		"test-measure": "",
+		"test-update": "",
+		"setup": "npm run build && npm uninstall -g @oaklean/cli; npm link"
+	},
+	"dependencies": {
+		"commander": "^12.0.0",
+		"@oaklean/profiler-core": "^0.0.21"
+	},
+	"devDependencies": {
+		"cross-env": "^7.0.3",
+		"rimraf": "^4.4.1"
+	}
+}

@@ -1,0 +1,111 @@
+name: oaklean/nodejs/profiler
+
+on:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20.11.1
+      options: --user 1001
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 20
+    - uses: actions/cache@v4
+      with:
+        path: node_modules/
+        key: default
+    - run: npm ci
+    - run: npm run build
+    - uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: build
+        retention-days: 7
+        path: |-
+          ./packages/
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20.11.1
+      options: --user 1001
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 20
+    - uses: actions/cache@v4
+      with:
+        path: node_modules/
+        key: default
+    - run: npm ci
+    - run: npm run lint
+  test:
+    needs:
+    - build
+    - lint
+    runs-on: ubuntu-latest
+    container:
+      image: node:20.11.1
+      options: --user 1001
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: 'recursive'
+    - uses: actions/cache@v4
+      with:
+        path: node_modules/
+        key: default
+    # - name: Trust own repos
+    #   run: git config --global --add safe.directory '*'
+    - uses: actions/download-artifact@v4
+      with:
+        name: build
+        path: |-
+          ./packages/
+    - run: npm ci
+    - run: npm run test
+    # - run: mv ./profiles/jest/accumulated-*.oak ./
+    #   if: always()
+    # - uses: actions/upload-artifact@v4
+    #   if: success()
+    #   with:
+    #     name: "${{ github.job }}"
+    #     retention-days: 7
+    #     path: "./accumulated-*.oak"
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    container:
+      image: node:18.16.0
+    if: github.event_name == 'workflow_dispatch' 
+    timeout-minutes: 60
+    env:
+      NODE_ENV: production
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 20
+    - uses: actions/cache@v4
+      with:
+        path: node_modules/
+        key: default
+    - uses: actions/download-artifact@v4
+      with:
+        name: build
+        path: |-
+          ./packages/
+    - run: npm ci
+    - env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}">.npmrc
+    - run: npm run publish-registry

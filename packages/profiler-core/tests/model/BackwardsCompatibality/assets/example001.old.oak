@@ -1,0 +1,563 @@
+{
+	"reportVersion": "0.0.9",
+	"relativeRootDir": "../../../../../profiler",
+	"executionDetails": {
+  	"commitHash": "9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0",
+    "timestamp": 1687845481077,
+    "unstagedChanges": false
+  },
+	"internMapping": {
+		"./examples/example001.ts": "./dist/examples/example001.js"
+	},
+	"node_internal": {
+		"": {
+			"path": "",
+			"functions": {
+				"{root}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 323625
+				},
+				"{consoleCall}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 36982,
+					"aggregatedTime": 294579
+				},
+				"{WriteWrap}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 126,
+					"aggregatedTime": 126
+				},
+				"{writeUtf8String}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 5585,
+					"aggregatedTime": 5585
+				},
+				"{toggleTimerRef}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				},
+				"{scheduleTimer}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				},
+				"{(garbage collector)}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 16169,
+					"aggregatedTime": 16169
+				}
+			}
+		},
+		"node:internal/main/run_main_module": {
+			"path": "node:internal/main/run_main_module",
+			"functions": {
+				"{(anonymous)}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 307456
+				}
+			}
+		},
+		"node:internal/modules/run_main": {
+			"path": "node:internal/modules/run_main",
+			"functions": {
+				"{executeUserEntryPoint}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 307456
+				}
+			}
+		},
+		"node:internal/modules/cjs/loader": {
+			"path": "node:internal/modules/cjs/loader",
+			"functions": {
+				"{Module}.{_load}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 307456
+				},
+				"{Module}.{load}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 307456
+				},
+				"{Module}.{_extensions}.{}.{js}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 307456
+				},
+				"{Module}.{_compile}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 307456
+				}
+			}
+		},
+		"node:internal/console/constructor": {
+			"path": "node:internal/console/constructor",
+			"functions": {
+				"{log}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 6410,
+					"aggregatedTime": 257390
+				},
+				"{value}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 7,
+					"selfTime": 22790,
+					"aggregatedTime": 454460
+				},
+				"{get}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 957,
+					"aggregatedTime": 957
+				}
+			}
+		},
+		"node:internal/tty": {
+			"path": "node:internal/tty",
+			"functions": {
+				"{getColorDepth}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 3,
+					"selfTime": 194140,
+					"aggregatedTime": 194140
+				}
+			}
+		},
+		"node:internal/util/inspect": {
+			"path": "node:internal/util/inspect",
+			"functions": {
+				"{formatWithOptions}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 1586,
+					"aggregatedTime": 5256
+				},
+				"{formatWithOptionsInternal}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 461,
+					"aggregatedTime": 461
+				}
+			}
+		},
+		"node:internal/validators": {
+			"path": "node:internal/validators",
+			"functions": {
+				"{(anonymous)}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 834,
+					"aggregatedTime": 3209
+				},
+				"{getOwnPropertyValueOrDefault}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 2375,
+					"aggregatedTime": 2375
+				}
+			}
+		},
+		"node:internal/streams/writable": {
+			"path": "node:internal/streams/writable",
+			"functions": {
+				"{Writable}.{write}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 916,
+					"aggregatedTime": 12631
+				},
+				"{_write}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 752,
+					"aggregatedTime": 11715
+				},
+				"{writeOrBuffer}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 3253,
+					"aggregatedTime": 11086
+				},
+				"{onwrite}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 208,
+					"aggregatedTime": 208
+				}
+			}
+		},
+		"node:net": {
+			"path": "node:net",
+			"functions": {
+				"{Socket}.{_write}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 166,
+					"aggregatedTime": 7833
+				},
+				"{Socket}.{_writeGeneric}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 875,
+					"aggregatedTime": 7667
+				},
+				"{_unrefTimer}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 42,
+					"aggregatedTime": 42
+				},
+				"{get}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				}
+			}
+		},
+		"node:internal/stream_base_commons": {
+			"path": "node:internal/stream_base_commons",
+			"functions": {
+				"{writeGeneric}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 125,
+					"aggregatedTime": 6750
+				},
+				"{createWriteWrap}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 248,
+					"aggregatedTime": 374
+				},
+				"{handleWriteReq}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 291,
+					"aggregatedTime": 5876
+				},
+				"{afterWriteDispatched}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 167,
+					"aggregatedTime": 375
+				}
+			}
+		},
+		"node:events": {
+			"path": "node:events",
+			"functions": {
+				"{once}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 167,
+					"aggregatedTime": 11377
+				},
+				"{addListener}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 2210,
+					"aggregatedTime": 11084
+				},
+				"{_addListener}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 9040,
+					"aggregatedTime": 9040
+				},
+				"{checkListener}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 3,
+					"selfTime": 42,
+					"aggregatedTime": 42
+				},
+				"{_onceWrap}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 84,
+					"aggregatedTime": 84
+				},
+				"{removeListener}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 2,
+					"selfTime": 2166,
+					"aggregatedTime": 2208
+				},
+				"{listenerCount}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 124,
+					"aggregatedTime": 124
+				}
+			}
+		},
+		"node:internal/streams/readable": {
+			"path": "node:internal/streams/readable",
+			"functions": {
+				"{Readable}.{on}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 42,
+					"aggregatedTime": 11126
+				},
+				"{Readable}.{removeListener}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 1415,
+					"aggregatedTime": 3539
+				}
+			}
+		},
+		"node:timers": {
+			"path": "node:timers",
+			"functions": {
+				"{setTimeout}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 167,
+					"aggregatedTime": 416
+				}
+			}
+		},
+		"node:internal/timers": {
+			"path": "node:internal/timers",
+			"functions": {
+				"{Timeout}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 83,
+					"aggregatedTime": 83
+				},
+				"{incRefCount}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				},
+				"{initAsyncResource}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				},
+				"{insert}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 124,
+					"aggregatedTime": 166
+				},
+				"{TimersList}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				}
+			}
+		},
+		"node:internal/async_hooks": {
+			"path": "node:internal/async_hooks",
+			"functions": {
+				"{initHooksExist}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				},
+				"{hasHooks}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				}
+			}
+		},
+		"node:internal/util/debuglog": {
+			"path": "node:internal/util/debuglog",
+			"functions": {
+				"{logger}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				},
+				"{debug}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				},
+				"{debuglogImpl}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				},
+				"{noop}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				}
+			}
+		},
+		"node:internal/priority_queue": {
+			"path": "node:internal/priority_queue",
+			"functions": {
+				"{insert}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 42,
+					"aggregatedTime": 42
+				},
+				"{percolateUp}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				}
+			}
+		},
+		"node:internal/linkedlist": {
+			"path": "node:internal/linkedlist",
+			"functions": {
+				"{append}": {
+					"type": "NodeInternalSourceNode",
+					"hits": 1,
+					"selfTime": 0,
+					"aggregatedTime": 0
+				}
+			}
+		}
+	},
+	"intern": {
+		"./dist/examples/example001.js": {
+			"path": "./dist/examples/example001.js",
+			"functions": {
+				"{root}": {
+					"type": "SourceNode",
+					"hits": 1,
+					"selfTime": 1166,
+					"aggregatedTime": 307206,
+					"nodeInternalTime": 416,
+					"internTime": 305624,
+					"node_internal": {
+						"{node:timers}{setTimeout}": {
+							"type": "NodeInternalSourceNodeReference",
+							"hits": 1,
+							"selfTime": 167,
+							"aggregatedTime": 416
+						}
+					},
+					"intern": {
+						"{./dist/examples/example001.js}{root}.{function:main}": {
+							"type": "InternSourceNodeReference",
+							"hits": 1,
+							"selfTime": 4757,
+							"aggregatedTime": 305624
+						},
+						"{./dist/examples/example001.js}{root}.{function:logMessage}": {
+							"type": "InternSourceNodeReference",
+							"hits": 1,
+							"selfTime": 0,
+							"aggregatedTime": 0
+						}
+					}
+				},
+				"{root}.{function:main}": {
+					"type": "SourceNode",
+					"hits": 1,
+					"selfTime": 4757,
+					"aggregatedTime": 305624,
+					"internTime": 300867,
+					"intern": {
+						"{./dist/examples/example001.js}{root}.{function:logMessage}": {
+							"type": "InternSourceNodeReference",
+							"hits": 1,
+							"selfTime": 6288,
+							"aggregatedTime": 300867
+						}
+					}
+				},
+				"{root}.{function:logMessage}": {
+					"type": "SourceNode",
+					"hits": 2,
+					"selfTime": 6288,
+					"aggregatedTime": 300867,
+					"nodeInternalTime": 294579,
+					"node_internal": {
+						"{}{consoleCall}": {
+							"type": "NodeInternalSourceNodeReference",
+							"hits": 2,
+							"selfTime": 36982,
+							"aggregatedTime": 294579
+						}
+					}
+				}
+			}
+		}
+	},
+	"extern": {
+		"v8-profiler-next@1.9.0": {
+			"nodeModule": {
+				"name": "v8-profiler-next",
+				"version": "1.9.0"
+			},
+			"reportVersion": "0.0.9",
+			"internMapping": {},
+			"node_internal": {
+				"": {
+					"path": "",
+					"functions": {
+						"{stopSamplingHeapProfiling}": {
+							"type": "NodeInternalSourceNode",
+							"hits": 2,
+							"selfTime": 167,
+							"aggregatedTime": 167
+						}
+					}
+				}
+			},
+			"intern": {
+				"./dispatch.js": {
+					"path": "./dispatch.js",
+					"functions": {
+						"{root}": {
+							"type": "SourceNode",
+							"hits": 2,
+							"selfTime": 0,
+							"aggregatedTime": 167,
+							"nodeInternalTime": 167,
+							"node_internal": {
+								"{}{stopSamplingHeapProfiling}": {
+									"type": "NodeInternalSourceNodeReference",
+									"hits": 2,
+									"selfTime": 167,
+									"aggregatedTime": 167
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

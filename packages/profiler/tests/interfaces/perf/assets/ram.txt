@@ -1,0 +1,22 @@
+# started on Tue May 21 15:25:05 2024
+ 
+     0.100189018|0,15|Joules|power/energy-ram/|100268960|100,00||
+     0.200606527|0,14|Joules|power/energy-ram/|100430195|100,00||
+     0.301023782|0,11|Joules|power/energy-ram/|100426621|100,00||
+     0.401405687|0,11|Joules|power/energy-ram/|100383434|100,00||
+     0.501791953|0,11|Joules|power/energy-ram/|100402353|100,00||
+     0.602087654|0,12|Joules|power/energy-ram/|100290878|100,00||
+     0.702426878|0,14|Joules|power/energy-ram/|100363510|100,00||
+     0.802846828|0,11|Joules|power/energy-ram/|100426982|100,00||
+     0.903256487|0,11|Joules|power/energy-ram/|100418814|100,00||
+     1.003566353|0,13|Joules|power/energy-ram/|100299102|100,00||
+     1.103838007|0,11|Joules|power/energy-ram/|100346897|100,00||
+     1.204255402|0,12|Joules|power/energy-ram/|100381938|100,00||
+     1.304659372|0,11|Joules|power/energy-ram/|100412313|100,00||
+     1.405059390|0,11|Joules|power/energy-ram/|100410003|100,00||
+     1.505457761|0,11|Joules|power/energy-ram/|100402520|100,00||
+     1.605842302|0,11|Joules|power/energy-ram/|100398347|100,00||
+     1.706242497|0,11|Joules|power/energy-ram/|100409797|100,00||
+     1.806587551|0,11|Joules|power/energy-ram/|100409206|100,00||
+     1.907051709|0,11|Joules|power/energy-ram/|100415286|100,00||
+     2.001952071|0,11|Joules|power/energy-ram/|94910212|100,00||

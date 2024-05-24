@@ -1,0 +1,113 @@
+{
+	"system": {
+		"manufacturer": "Apple Inc.",
+		"model": "Mac14,5",
+		"version": "",
+		"sku": "",
+		"virtual": false
+	},
+	"baseBoard": {
+		"manufacturer": "Apple Inc.",
+		"model": "Mac14,5",
+		"version": "",
+		"assetTag": "",
+		"memMax": 68719476736,
+		"memSlots": 0
+	},
+	"chassis": {
+		"manufacturer": "Apple Inc.",
+		"model": "Mac14,5",
+		"type": "",
+		"version": "",
+		"assetTag": "",
+		"sku": ""
+	},
+	"cpu": {
+		"manufacturer": "Apple",
+		"brand": "M2 Max",
+		"vendor": "Apple",
+		"family": "-634136515",
+		"model": "",
+		"stepping": "5",
+		"revision": "",
+		"voltage": "",
+		"speed": 2.4,
+		"speedMin": 2.4,
+		"speedMax": 2.4,
+		"governor": "",
+		"cores": 12,
+		"physicalCores": 12,
+		"efficiencyCores": 4,
+		"performanceCores": 8,
+		"processors": 1,
+		"socket": "SOC",
+		"flags": "",
+		"virtualization": true,
+		"cache": {
+			"l1d": 131072,
+			"l1i": 65536,
+			"l2": 4194304,
+			"l3": 0
+		}
+	},
+	"memory": {
+		"total": 68719476736,
+		"free": 22707240960,
+		"used": 46012219392,
+		"active": 22927867904,
+		"available": 45791592448,
+		"buffcache": 23084351488,
+		"buffers": 0,
+		"cached": 0,
+		"slab": 0,
+		"swaptotal": 0,
+		"swapused": 0,
+		"swapfree": 0,
+		"writeback": null,
+		"dirty": null
+	},
+	"memoryLayout": [
+		{
+			"size": 68719476736,
+			"bank": "0",
+			"type": "LPDDR5",
+			"ecc": false,
+			"clockSpeed": 0,
+			"formFactor": "",
+			"manufacturer": "Apple",
+			"partNum": "",
+			"voltageConfigured": null,
+			"voltageMin": null,
+			"voltageMax": null
+		}
+	],
+	"battery": {
+		"hasBattery": true,
+		"cycleCount": 215,
+		"isCharging": true,
+		"voltage": 12.517,
+		"designedCapacity": 76041,
+		"maxCapacity": 63449,
+		"currentCapacity": 46688,
+		"capacityUnit": "mWh",
+		"percent": 75,
+		"timeRemaining": 0,
+		"acConnected": true,
+		"type": "Li-ion",
+		"model": "",
+		"manufacturer": "Apple"
+	},
+	"os": {
+		"platform": "darwin",
+		"distro": "macOS",
+		"release": "14.1.2",
+		"codename": "macOS Sonoma",
+		"kernel": "23.1.0",
+		"arch": "arm64",
+		"codepage": "UTF-8",
+		"logofile": "darwin",
+		"build": "23B92",
+		"servicepack": "",
+		"uefi": true
+	}
+}

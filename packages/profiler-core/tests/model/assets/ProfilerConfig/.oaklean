@@ -1,0 +1,33 @@
+{
+	"exportOptions": {
+		"outDir": "profile-path",
+		"outHistoryDir": "profiles-history-path",
+		"rootDir": "../../../../",
+		"exportV8Profile": false,
+		"exportReport": false,
+		"exportSensorInterfaceData": true
+	},
+	"projectOptions": {
+		"identifier": "42c89abd-3877-4039-99e8-c36d6dd74ddd"
+	},
+	"runtimeOptions": {
+		"seeds": {
+			"Math.random": "<seed>"
+		},
+		"sensorInterface": {
+			"type": "powermetrics",
+			"options": {
+				"outputFilePath": "./sensorData/powermetrics",
+				"sampleInterval": 1000
+			}
+		},
+		"v8": {
+			"cpu": {
+				"sampleInterval": 10
+			}
+		}
+	},
+	"registryOptions": {
+		"url": "domain/project-report"
+	}
+}

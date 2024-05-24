@@ -1,0 +1,170 @@
+{
+	"pid": 0,
+	"type": "PerfTotalSystem",
+	"items": [
+		{
+			"data": {
+				"elapsed_ns": "100231868",
+				"cpu_energy": 80,
+				"ram_energy": 150,
+				"timestamp": "100231868"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100335218",
+				"cpu_energy": 10,
+				"ram_energy": 110,
+				"timestamp": "200567086"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100338764",
+				"cpu_energy": 60,
+				"ram_energy": 140,
+				"timestamp": "300905850"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100306607",
+				"cpu_energy": 10,
+				"ram_energy": 110,
+				"timestamp": "401212457"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100325975",
+				"cpu_energy": 10,
+				"ram_energy": 110,
+				"timestamp": "501538433"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100283159",
+				"cpu_energy": 130,
+				"ram_energy": 130,
+				"timestamp": "601821591"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100311356",
+				"cpu_energy": 100,
+				"ram_energy": 150,
+				"timestamp": "702132947"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100383391",
+				"cpu_energy": 10,
+				"ram_energy": 110,
+				"timestamp": "802516338"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100402756",
+				"cpu_energy": 10,
+				"ram_energy": 110,
+				"timestamp": "902919094"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100310537",
+				"cpu_energy": 140,
+				"ram_energy": 130,
+				"timestamp": "1003229631"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100253244",
+				"cpu_energy": 50,
+				"ram_energy": 130,
+				"timestamp": "1103482875"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100246643",
+				"cpu_energy": 740,
+				"ram_energy": 220,
+				"timestamp": "1203729518"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100273757",
+				"cpu_energy": 790,
+				"ram_energy": 190,
+				"timestamp": "1304003275"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100307514",
+				"cpu_energy": 10,
+				"ram_energy": 110,
+				"timestamp": "1404310789"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100307677",
+				"cpu_energy": 10,
+				"ram_energy": 110,
+				"timestamp": "1504618466"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100222858",
+				"cpu_energy": 260,
+				"ram_energy": 180,
+				"timestamp": "1604841324"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100226428",
+				"cpu_energy": 280,
+				"ram_energy": 250,
+				"timestamp": "1705067752"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100260518",
+				"cpu_energy": 170,
+				"ram_energy": 200,
+				"timestamp": "1805328270"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "100210735",
+				"cpu_energy": 210,
+				"ram_energy": 220,
+				"timestamp": "1905539005"
+			}
+		},
+		{
+			"data": {
+				"elapsed_ns": "95503637",
+				"cpu_energy": 90,
+				"ram_energy": 150,
+				"timestamp": "2001042642"
+			}
+		}
+	],
+	"timeInfo": {
+		"startTime": "0",
+		"stopTime": "0"
+	}
+}

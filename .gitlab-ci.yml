@@ -1,0 +1,61 @@
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      when: never  # Prevent pipeline run for push event
+    - when: always # Run pipeline for all other cases
+
+cache:
+  paths:
+    - node_modules/
+  
+default: 
+  image: node:20.11.1
+  before_script:
+    - npm ci
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - ./packages/profiler/dist
+      - ./packages/profiler-core/dist
+      - ./packages/profiler-jest-environment/*.js
+      - ./packages/cli/dist
+  script:
+    - npm run build
+
+lint:
+  stage: build
+  script:
+    - npm run lint
+
+test:
+  stage: test
+  script:
+    - npm run test
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  after_script:
+    - mv ./profiles/jest/accumulated-*.oak ./
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - ./accumulated-*.oak
+
+deploy:
+  stage: deploy
+  dependencies: 
+    - build
+  variables:
+    NODE_ENV: production
+  only: 
+    - /^release.*$/
+  script:
+    - echo -e "${PRIVATE_REGISTRY}${CI_JOB_TOKEN}">.npmrc
+    - npm run publish-registry

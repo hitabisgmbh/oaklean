@@ -1,0 +1,9 @@
+{
+	"extends": "../../.eslintrc.json",
+	"ignorePatterns": [
+		"dist",
+		"**/*.d.ts",
+		"**/assets/**/*.js",
+		"lib/vscode-js-profile-core"
+	]
+}

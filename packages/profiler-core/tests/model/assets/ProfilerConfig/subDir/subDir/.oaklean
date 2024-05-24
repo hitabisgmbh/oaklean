@@ -1,0 +1,21 @@
+{
+	"extends": "../../.oaklean",
+	"exportOptions": {
+		"exportV8Profile": false,
+		"exportReport": true,
+		"exportSensorInterfaceData": false
+	},
+	"projectOptions": {
+		"identifier": "59cbfe64-d3e0-4610-adda-8a63244b237c"
+	},
+	"registryOptions": {
+		"url": "example.com/project-report"
+	},
+	"runtimeOptions": {
+		"v8": {
+			"cpu": {
+				"sampleInterval": 11
+			}
+		}
+	}
+}
