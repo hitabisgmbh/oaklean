@@ -7,6 +7,7 @@ export type GitHash_string = string & { [GitHashSymbol]: never }
 
 export class GitHelper {
 	static currentCommitHash(): GitHash_string | undefined {
+		const command = 'git rev-parse HEAD'
 		const options: ExecSyncOptions = {
 			stdio: 'pipe'
 		}
@@ -14,16 +15,32 @@ export class GitHelper {
 			options.shell = 'powershell.exe'
 		}
 		try {
-			return ChildProcess.execSync('git rev-parse HEAD', options).toString().trim() as GitHash_string	
+			return ChildProcess.execSync(command, options).toString().trim() as GitHash_string	
 		} catch (error) {
 			return undefined
 		}
 	}
 
-	static uncommittedFiles(): string[] | undefined{
+	static currentCommitTimestamp(): number | undefined {
+		const command = 'git show -s --format=%ct'
 		try {
-			const command = 'git diff HEAD --name-only -z'
+			const options: ExecSyncOptions = {
+				stdio: 'pipe'
+			}
+			if (process.platform === 'win32') {
+				options.shell = 'powershell.exe'
+			}
 
+			const result = ChildProcess.execSync(command, options).toString().trim()
+			return parseInt(result)
+		} catch (error) {
+			return undefined
+		}
+	}
+
+	static uncommittedFiles(): string[] | undefined {
+		const command = 'git diff HEAD --name-only -z'
+		try {
 			const options: ExecSyncOptions = {
 				stdio: 'pipe'
 			}
