@@ -54,7 +54,7 @@ export class PathUtils {
 
 		while (tmpDir !== root) {
 			const list = fs.readdirSync(tmpDir)
-			if (list.includes(filename)) {
+			if (list.includes(filename) && fs.statSync(path.join(tmpDir, filename)).isFile()) {
 				// found
 				return path.join(tmpDir, filename)
 			} else {
