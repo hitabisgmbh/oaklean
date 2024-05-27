@@ -2,7 +2,7 @@
 import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 import { TestEnvironment as NodeEnvironment } from 'jest-environment-node'
 import { Profiler } from '@oaklean/profiler'
-import { UnifiedPath, GitHelper, TimeHelper, SystemInformation, NodeModule, NanoSeconds_BigInt, ProfilerConfig, ProjectReportOrigin } from '@oaklean/profiler-core'
+import { UnifiedPath, GitHelper, TimeHelper, SystemInformation, NodeModule, NanoSeconds_BigInt, ProfilerConfig, ProjectReportOrigin, ProjectReport } from '@oaklean/profiler-core'
 
 declare global {
 	interface globalThis {
@@ -39,26 +39,13 @@ class CustomEnvironment extends NodeEnvironment {
 		await super.setup()
 		if (process.env.ENABLE_MEASUREMENTS && this.profiler) {
 			try {
-				const commitHash = GitHelper.currentCommitHash()
-				const uncommittedChanges = GitHelper.uncommittedChanges()
 				const config = ProfilerConfig.autoResolve()
-
-				const engineModule = NodeModule.currentEngineModule()
+				const executionDetails = await ProjectReport.resolveExecutionDetails(config)
+				executionDetails.origin = ProjectReportOrigin.jestEnv
 
 				await this.profiler.start(
 					this.testPath.toString(),
-					{
-						origin: ProjectReportOrigin.jestEnv,
-						commitHash: commitHash,
-						timestamp: TimeHelper.getCurrentTimeStamp(),
-						uncommittedChanges: uncommittedChanges,
-						systemInformation: await SystemInformation.collect(),
-						languageInformation: {
-							name: engineModule.name,
-							version: engineModule.version
-						},
-						runTimeOptions: config.getAnonymizedRuntimeOptions()
-					}
+					executionDetails
 				)
 			} catch (e) {
 				console.error('CustomEnvironment.setup():', e)

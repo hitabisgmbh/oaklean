@@ -22,7 +22,7 @@ export class GitHelper {
 	}
 
 	static currentCommitTimestamp(): number | undefined {
-		const command = 'git show -s --format=%ct'
+		const command = 'git show -s --format=%ct HEAD'
 		try {
 			const options: ExecSyncOptions = {
 				stdio: 'pipe'

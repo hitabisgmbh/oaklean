@@ -39,6 +39,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 	executionDetails: {
 		origin: ProjectReportOrigin.pure,
 		commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+		commitTimestamp: 1687845481077,
 		timestamp: 1687845481077,
 		uncommittedChanges: false,
 		systemInformation: EXAMPLE_SYSTEM_INFORMATION,
@@ -724,6 +725,7 @@ describe('ProjectReport', () => {
 		const instance = new ProjectReport({
 			origin: ProjectReportOrigin.pure,
 			commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+			commitTimestamp: 1687845481077,
 			timestamp: 1687845481077,
 			uncommittedChanges: false,
 			systemInformation: EXAMPLE_SYSTEM_INFORMATION,
@@ -968,6 +970,7 @@ describe('ProjectReport', () => {
 			const projectReport = new ProjectReport({
 				origin: ProjectReportOrigin.pure,
 				commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
+				commitTimestamp: 1706554909143,
 				timestamp: 1706554909143,
 				uncommittedChanges: true,
 				highResolutionBeginTime: '887518894424000',
@@ -1043,6 +1046,7 @@ describe('ProjectReport', () => {
 			const projectReport = new ProjectReport({
 				origin: ProjectReportOrigin.pure,
 				commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
+				commitTimestamp: 1706556938476,
 				timestamp: 1706556938476,
 				uncommittedChanges: true,
 				highResolutionBeginTime: '889548167236000',
@@ -1116,6 +1120,7 @@ describe('ProjectReport', () => {
 			const projectReport = new ProjectReport({
 				origin: ProjectReportOrigin.pure,
 				commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+				commitTimestamp: 1687845481077,
 				timestamp: 1687845481077,
 				uncommittedChanges: false,
 				highResolutionBeginTime: '2345442642551333',

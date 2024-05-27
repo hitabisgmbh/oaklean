@@ -40,6 +40,7 @@ export enum ProjectReportOrigin {
 export type IProjectReportExecutionDetails = {
 	origin: ProjectReportOrigin,
 	commitHash: GitHash_string | undefined
+	commitTimestamp: number | undefined,
 	uncommittedChanges: boolean | undefined
 	timestamp: number
 	highResolutionBeginTime?: string // value is stored in nano seconds(NanoSeconds_BigInt), but for serialization purposes it is a string
@@ -102,10 +103,11 @@ export class ProjectReport extends Report {
 
 	static async resolveExecutionDetails(config?: ProfilerConfig): Promise<IProjectReportExecutionDetails> {
 		const commitHash = GitHelper.currentCommitHash()
-		const timestamp = TimeHelper.getCurrentTimeStamp()
+		const commitTimestamp = GitHelper.currentCommitTimestamp()
+		const timestamp = TimeHelper.getCurrentTimestamp()
 		const uncommittedChanges = GitHelper.uncommittedChanges()
 
-		if (commitHash === undefined || timestamp === undefined || uncommittedChanges === undefined) {
+		if (timestamp === undefined) {
 			throw new Error('ProjectReport.resolveExecutionDetails: Could not resolve execution details.' + JSON.stringify({
 				commitHash: commitHash,
 				timestamp: timestamp,
@@ -119,6 +121,7 @@ export class ProjectReport extends Report {
 		return {
 			origin: ProjectReportOrigin.pure,
 			commitHash: commitHash,
+			commitTimestamp: commitTimestamp,
 			timestamp: timestamp,
 			uncommittedChanges: uncommittedChanges,
 			systemInformation: await SystemInformation.collect(),
@@ -415,7 +418,6 @@ export class ProjectReport extends Report {
 					'Content-Type': 'multipart/form-data'
 				}
 			})
-			console.log(result.data)
 			return result	
 		} catch {}
 	}

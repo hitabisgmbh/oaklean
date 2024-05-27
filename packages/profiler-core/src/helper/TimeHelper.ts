@@ -1,17 +1,17 @@
-const NanoSecondsSymbol: unique symbol = Symbol('NanoSecondsSymbol')
-export type NanoSeconds_BigInt = bigint & { [NanoSecondsSymbol]: never }
-
 const MilliSecondsSymbol: unique symbol = Symbol('MilliSecondsSymbol')
 export type MilliSeconds_number = number & { [MilliSecondsSymbol]: never }
 
 const MicroSecondsSymbol: unique symbol = Symbol('MicroSecondsSymbol')
 export type MicroSeconds_number = number & { [MicroSecondsSymbol]: never }
 
+const NanoSecondsSymbol: unique symbol = Symbol('NanoSecondsSymbol')
+export type NanoSeconds_BigInt = bigint & { [NanoSecondsSymbol]: never }
+
 const loadNs = process.hrtime.bigint()
 const loadMs = Date.now()
 const loadNanoDiff = BigInt(loadMs) * BigInt(1e6) - loadNs
 export class TimeHelper {
-	static getCurrentTimeStamp(): number {
+	static getCurrentTimestamp(): number {
 		return new Date().getTime()
 	}
 
