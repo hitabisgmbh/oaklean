@@ -20,6 +20,7 @@ import { Crypto, UUID_string } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
 import { AuthenticationHelper } from '../helper/AuthenticationHelper'
 import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper'
+import { BIN_FILE_MAGIC } from '../constants/app'
 
 const ProjectIdentifierSymbol: unique symbol = Symbol('ProjectIdentifierSymbol')
 export type ProjectIdentifier_string = UUID_string & { [ProjectIdentifierSymbol]: never }
@@ -272,6 +273,8 @@ export class ProjectReport extends Report {
 
 	toBuffer(): Buffer {
 		const buffers = [
+			BIN_FILE_MAGIC,
+			BufferHelper.String2LToBuffer(this.reportVersion),
 			BufferHelper.String2LToBuffer(JSON.stringify(this.executionDetails)),
 			BufferHelper.String2LToBuffer(JSON.stringify(this.projectMetaData)),
 			BufferHelper.String4LToBuffer(JSON.stringify(this.globalIndex)),
@@ -292,23 +295,19 @@ export class ProjectReport extends Report {
 		buffer: Buffer
 	) {
 		let remainingBuffer = buffer
-		const {
-			remainingBuffer: newRemainingBuffer1
-		} = BufferHelper.String2LFromBuffer(remainingBuffer)
-		remainingBuffer = newRemainingBuffer1
-
-		const {
-			remainingBuffer: newRemainingBuffer2
-		} = BufferHelper.String2LFromBuffer(remainingBuffer)
-		remainingBuffer = newRemainingBuffer2
-
-		const {
-			remainingBuffer: newRemainingBuffer3
-		} = BufferHelper.String4LFromBuffer(remainingBuffer)
-		remainingBuffer = newRemainingBuffer3
+		if (buffer.byteLength < 2) {
+			throw new Error('ProjectReport.consumeFromBuffer: not enough bytes remaining')
+		}
+		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
+		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
+			throw new Error('ProjectReport.consumeFromBuffer: not a binary .oak format')
+		}
+		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const {
 			instance: reportVersion,
+			remainingBuffer: newRemainingBuffer0
 		} = BufferHelper.String2LFromBuffer(remainingBuffer)
+		remainingBuffer = newRemainingBuffer0
 
 		return reportVersion
 	}
@@ -318,6 +317,20 @@ export class ProjectReport extends Report {
 		config?: ProfilerConfig
 	) {
 		let remainingBuffer = buffer
+		if (buffer.byteLength < 2) {
+			throw new Error('ProjectReport.consumeFromBuffer: not enough bytes remaining')
+		}
+		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
+		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
+			throw new Error('ProjectReport.consumeFromBuffer: not a binary .oak format')
+		}
+		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
+		const {
+			instance: reportVersion,
+			remainingBuffer: newRemainingBuffer0
+		} = BufferHelper.String2LFromBuffer(remainingBuffer)
+		remainingBuffer = newRemainingBuffer0
+
 		const {
 			instance: executionDetails_JSON_string,
 			remainingBuffer: newRemainingBuffer1

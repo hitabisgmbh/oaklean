@@ -1,6 +1,13 @@
 
 # Change Log
 
+## 0.1.1
+### Fixes
+- Config resolution (especially for windows)
+
+### Breaking Changes
+- .oak files now contain a magic number and their version at the begin of the file, this makes all .oak files from version 0.1.0 deprecated
+
 ## 0.1.0 - 2024-05-24
 - 🎉 **First Public Release!** 🚀
 - We are thrilled to announce that this version marks the official public debut of our project. After countless hours of development and refinement, it's finally ready for the world. Thank you for your support and we can't wait to see what you'll do with it!
