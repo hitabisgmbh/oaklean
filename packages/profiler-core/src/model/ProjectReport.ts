@@ -63,7 +63,8 @@ export class ProjectReport extends Report {
 		executionDetails: IProjectReportExecutionDetails,
 		kind: ReportKind,
 		projectMetaData?: IProjectMetaData,
-		globalIndex?: GlobalIndex
+		globalIndex?: GlobalIndex,
+		config?: ProfilerConfig
 	) {
 		let index = globalIndex
 		if (index === undefined) {
@@ -75,7 +76,7 @@ export class ProjectReport extends Report {
 		super(index.getModuleIndex('upsert'), kind)
 		this.globalIndex = index
 	
-		const config = ProfilerConfig.autoResolve()
+		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
 
 		this.executionDetails = executionDetails
 
@@ -83,7 +84,7 @@ export class ProjectReport extends Report {
 			this.projectMetaData = projectMetaData
 		} else {
 			this.projectMetaData = {
-				projectID: config.getProjectIdentifier()
+				projectID: usedConfig.getProjectIdentifier()
 			}
 		}
 	}
@@ -98,7 +99,7 @@ export class ProjectReport extends Report {
 		return this.globalIndex.engineModule
 	}
 
-	static async resolveExecutionDetails(): Promise<IProjectReportExecutionDetails> {
+	static async resolveExecutionDetails(config?: ProfilerConfig): Promise<IProjectReportExecutionDetails> {
 		const commitHash = GitHelper.currentCommitHash()
 		const timestamp = TimeHelper.getCurrentTimeStamp()
 		const uncommittedChanges = GitHelper.uncommittedChanges()
@@ -110,7 +111,7 @@ export class ProjectReport extends Report {
 				uncommittedChanges: uncommittedChanges
 			}, undefined, 2))
 		}
-		const config = ProfilerConfig.autoResolve()
+		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
 
 		const engineModule = NodeModule.currentEngineModule()
 
@@ -124,7 +125,7 @@ export class ProjectReport extends Report {
 				name: engineModule.name,
 				version: engineModule.version
 			},
-			runTimeOptions: config.getAnonymizedRuntimeOptions()
+			runTimeOptions: usedConfig.getAnonymizedRuntimeOptions()
 		}
 	}
 
@@ -189,7 +190,10 @@ export class ProjectReport extends Report {
 		return Object.assign(result, reportJSON)
 	}
 
-	static fromJSON(json: string | IProjectReport): ProjectReport {
+	static fromJSON(
+		json: string | IProjectReport,
+		config?: ProfilerConfig
+	): ProjectReport {
 		let data: IProjectReport
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -204,12 +208,13 @@ export class ProjectReport extends Report {
 			GlobalIndex.fromJSON(data.globalIndex, new NodeModule(
 				data.executionDetails.languageInformation.name,
 				data.executionDetails.languageInformation.version
-			))
+			)),
+			config
 		)
 
 		const result = Object.assign(
 			projectReport,
-			Report.fromJSON(data, projectReport.moduleIndex)
+			Report.fromJSONReport(data, projectReport.moduleIndex)
 		)
 
 		return result
@@ -217,16 +222,23 @@ export class ProjectReport extends Report {
 
 	static loadFromFile(
 		filePath: UnifiedPath,
-		kind: 'json' | 'bin'
+		kind: 'json' | 'bin',
+		config?: ProfilerConfig
 	): ProjectReport | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
 		switch (kind) {
 			case 'json':
-				return ProjectReport.fromJSON(fs.readFileSync(filePath.toPlatformString()).toString())		
+				return ProjectReport.fromJSON(
+					fs.readFileSync(filePath.toPlatformString()).toString(),
+					config
+				)
 			case 'bin': {
-				const { instance } = ProjectReport.consumeFromBuffer(fs.readFileSync(filePath.toPlatformString()))
+				const { instance } = ProjectReport.consumeFromBuffer(
+					fs.readFileSync(filePath.toPlatformString()),
+					config
+				)
 				return instance
 			}
 			default:
@@ -252,9 +264,10 @@ export class ProjectReport extends Report {
 
 	storeToFile(
 		filePath: UnifiedPath,
-		kind: 'pretty-json' | 'json' | 'bin'
+		kind: 'pretty-json' | 'json' | 'bin',
+		config?: ProfilerConfig
 	) {
-		super.storeToFile(filePath, kind, ReportType.ProjectReport)
+		super.storeToFileReport(filePath, kind, ReportType.ProjectReport, config)
 	}
 
 	toBuffer(): Buffer {
@@ -301,7 +314,8 @@ export class ProjectReport extends Report {
 	}
 
 	static consumeFromBuffer(
-		buffer: Buffer
+		buffer: Buffer,
+		config?: ProfilerConfig
 	) {
 		let remainingBuffer = buffer
 		const {
@@ -335,7 +349,7 @@ export class ProjectReport extends Report {
 			instance: report,
 			type: reportType,
 			remainingBuffer: newRemainingBuffer4
-		} = Report.consumeFromBuffer(remainingBuffer, globalIndex.getModuleIndex('get'))
+		} = Report.consumeFromBufferReport(remainingBuffer, globalIndex.getModuleIndex('get'))
 		remainingBuffer = newRemainingBuffer4
 
 		const result = Object.assign(
@@ -343,7 +357,8 @@ export class ProjectReport extends Report {
 				executionDetails,
 				report.kind,
 				projectMetaData,
-				globalIndex
+				globalIndex,
+				config
 			),
 			report
 		)
@@ -368,10 +383,10 @@ export class ProjectReport extends Report {
 		return Crypto.hash(fs.readFileSync(filePath.toPlatformString()))
 	}
 
-	async uploadToRegistry() {
-		const config = ProfilerConfig.autoResolve()
+	async uploadToRegistry(config?: ProfilerConfig) {
+		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
 
-		if (!config.uploadEnabled()) {
+		if (!usedConfig.uploadEnabled()) {
 			return
 		}
 
@@ -382,7 +397,7 @@ export class ProjectReport extends Report {
 		formData.append('auth', AuthenticationHelper.getAuthentication())
 
 		try {
-			const result = await axios.post(config.getRegistryUploadUrl(), formData, {
+			const result = await axios.post(usedConfig.getRegistryUploadUrl(), formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data'
 				}

@@ -274,7 +274,7 @@ export class Profiler {
 		)
 
 		if (this.config.shouldExportReport()) {
-			report.storeToFile(outFileReport, 'bin')
+			report.storeToFile(outFileReport, 'bin', this.config)
 		}
 
 		process.removeListener('SIGTERM', this.cleanExit)

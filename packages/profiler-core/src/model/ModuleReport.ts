@@ -70,7 +70,7 @@ export class ModuleReport extends Report {
 				NodeModule.fromJSON(data.nodeModule),
 				data.kind
 			),
-			Report.fromJSON(data, moduleIndex)
+			Report.fromJSONReport(data, moduleIndex)
 		)
 
 		return result
@@ -103,7 +103,7 @@ export class ModuleReport extends Report {
 		const {
 			instance: report,
 			remainingBuffer: newRemainingBuffer
-		} = Report.consumeFromBuffer(remainingBuffer, moduleIndex)
+		} = Report.consumeFromBufferReport(remainingBuffer, moduleIndex)
 
 		const result = Object.assign(
 			new ModuleReport(

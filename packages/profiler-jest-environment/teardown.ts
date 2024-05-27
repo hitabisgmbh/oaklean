@@ -30,13 +30,13 @@ export default async function () {
 			'jest',
 			`accumulated-${accumulatedProjectReport.executionDetails.timestamp}.oak`
 		)
-		accumulatedProjectReport.storeToFile(accumulatedProjectReportPath, 'bin')
+		accumulatedProjectReport.storeToFile(accumulatedProjectReportPath, 'bin', profilerConfig)
 		const commitHash = accumulatedProjectReport.executionDetails.commitHash
 		const accumulatedProjectReportHistoryPath = profilerConfig.getOutHistoryDir().join(
 			`${accumulatedProjectReport.projectMetaData.projectID}`,
 			accumulatedProjectReport.executionDetails.timestamp + (commitHash ? '-' + commitHash : '') + '.oak'
 		)
-		accumulatedProjectReport.storeToFile(accumulatedProjectReportHistoryPath, 'bin')
+		accumulatedProjectReport.storeToFile(accumulatedProjectReportHistoryPath, 'bin', profilerConfig)
 		await accumulatedProjectReport.uploadToRegistry()
 	}
 }

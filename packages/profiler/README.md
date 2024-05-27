@@ -89,15 +89,11 @@ To make sense of the generated `.oak` files during the jest test measurements we
 
 It provides code highlighting to point out which source code locations consume the most energy:
 <br>
-<object data="https://github.com/hitabisgmbh/oaklean/blob/main/images/vscode-code-highlighting.png?raw=true" type="image/png" width="800px">
-	<img src="../../images/vscode-code-highlighting.png" width="800px">
-</object>
+![vscode-code-highlighting-img](https://github.com/hitabisgmbh/oaklean/blob/main/images/vscode-code-highlighting.png?raw=true){width="800px"}
 <br>
 It also provides multiple features to determine the components that consume the most energy, including node modules:
 <br>
-<object data="https://github.com/hitabisgmbh/oaklean/blob/main/images/vscode-explorer.png?raw=true" type="image/png" width="300px">
-	<img src="../../images/vscode-explorer.png" width="300px">
-</object>
+![vscode-explorer-img](https://github.com/hitabisgmbh/oaklean/blob/main/images/vscode-explorer.png?raw=true){width="300px"}
 <br>
 - <a href="https://github.com/hitabisgmbh/oaklean-vscode" target="_blank">Github</a>
 - <a href="https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean" target="_blank">VS Code Extension</a>

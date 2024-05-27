@@ -515,7 +515,7 @@ export class Report extends BaseModel {
 		}
 	}
 
-	static fromJSON(
+	static fromJSONReport(
 		json: string | IReport,
 		moduleIndex: ModuleIndex
 	): Report {
@@ -543,7 +543,7 @@ export class Report extends BaseModel {
 				const pathIndex = result.getPathIndexByID(keyNumber)
 				if (pathIndex === undefined) {
 					throw new Error(
-						`Report.fromJSON: (lang_internal) could not resolve path index from id: ${keyNumber}`
+						`Report.fromJSONReport: (lang_internal) could not resolve path index from id: ${keyNumber}`
 					)
 				}
 
@@ -562,7 +562,9 @@ export class Report extends BaseModel {
 				const keyNumber = parseInt(key) as PathID_number
 				const pathIndex = result.getPathIndexByID(keyNumber)
 				if (pathIndex === undefined) {
-					throw new Error(`Report.fromJSON: (intern) could not resolve path index from id: ${keyNumber}`)
+					throw new Error(
+						`Report.fromJSONReport: (intern) could not resolve path index from id: ${keyNumber}`
+					)
 				}
 
 				result.intern.set(
@@ -602,17 +604,18 @@ export class Report extends BaseModel {
 		return result
 	}
 
-	storeToFile(
+	storeToFileReport(
 		filePath: UnifiedPath,
 		kind: 'pretty-json' | 'json' | 'bin',
-		type: ReportType
+		type: ReportType,
+		config?: ProfilerConfig
 	) {
 		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
 			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName().toPlatformString())
 		}
 		if (!this.relativeRootDir) {
-			const config = ProfilerConfig.autoResolve()
-			this.relativeRootDir = filePath.dirName().pathTo(config.getRootDir())
+			const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
+			this.relativeRootDir = filePath.dirName().pathTo(usedConfig.getRootDir())
 		}
 
 		switch (kind) {
@@ -797,7 +800,7 @@ export class Report extends BaseModel {
 		return Buffer.concat(buffers)
 	}
 
-	static consumeFromBuffer(
+	static consumeFromBufferReport(
 		buffer: Buffer,
 		moduleIndex: ModuleIndex
 	): { instance: Report, type: ReportType, remainingBuffer: Buffer } {
