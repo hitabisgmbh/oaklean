@@ -71,6 +71,7 @@ import {
 	ProjectReportOrigin,
 	ProjectIdentifier_string,
 	IProjectMetaData,
+	ILanguageInformation,
 	IProjectReportExecutionDetails
 } from './model/ProjectReport'
 import {
@@ -181,6 +182,7 @@ export {
 	ProjectReportOrigin,
 	ProjectIdentifier_string,
 	IProjectMetaData,
+	ILanguageInformation,
 	IProjectReportExecutionDetails,
 	SourceFileMetaDataTree,
 	ISourceFileMetaDataTree,
