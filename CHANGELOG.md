@@ -1,6 +1,10 @@
 
 # Change Log
 
+## 0.1.2
+### Added
+- Git commit timestamp is stored in .oak file format keep the order of measurements
+
 ## 0.1.1
 ### Fixes
 - Config resolution (especially for windows)
