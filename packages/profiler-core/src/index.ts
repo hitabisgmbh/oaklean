@@ -25,7 +25,9 @@ import {
 	IProfilerConfig,
 	ExportOptions,
 	ProjectOptions,
-	SensorInterfaceType
+	SensorInterfaceType,
+	RuntimeOptions,
+	SensorInterfaceOptions
 } from './model/ProfilerConfig'
 import {
 	ProgramStructureTree,
@@ -166,6 +168,8 @@ export {
 	ExportOptions,
 	ProjectOptions,
 	SensorInterfaceType,
+	RuntimeOptions,
+	SensorInterfaceOptions,
 	ProgramStructureTree,
 	IProgramStructureTree,
 	IdentifierType,
