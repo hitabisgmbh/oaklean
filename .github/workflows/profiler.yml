@@ -86,7 +86,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     container:
-      image: node:18.16.0
+      image: node:20.11.1
     if: github.event_name == 'workflow_dispatch' 
     timeout-minutes: 60
     env:
