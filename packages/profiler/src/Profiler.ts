@@ -277,6 +277,10 @@ export class Profiler {
 			report.storeToFile(outFileReport, 'bin', this.config)
 		}
 
+		if (await report.shouldBeStoredInRegistry()) {
+			await report.uploadToRegistry(this.config)
+		}
+
 		process.removeListener('SIGTERM', this.cleanExit)
 		process.removeListener('SIGINT', this.cleanExit)
 		return report

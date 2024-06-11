@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 
-import { UnifiedPath } from '@oaklean/profiler-core'
+import { ProfilerConfig, ProjectReport, UnifiedPath } from '@oaklean/profiler-core'
 
 import { Profiler } from '../src/index'
 import { buildModel } from '../../profiler-core/lib/vscode-js-profile-core/src/cpu/model'
@@ -22,6 +22,8 @@ const fibonacci = (n: number): number => {
 
 describe('testing index file', () => {
 	test('profile should be created', async () => {
+		const uploadMethod = jest.spyOn(ProjectReport.prototype, 'uploadToRegistry').mockResolvedValue(undefined)
+		
 		const profile = new Profiler('test-profile', {
 			transformerAdapter: 'ts-jest',
 			jestAdapter: {
@@ -32,6 +34,8 @@ describe('testing index file', () => {
 		await profile.start('latest')
 		fibonacci(20)
 		await profile.finish('latest')
+		expect(uploadMethod).toHaveBeenCalledTimes(1)
+
 		const expectedPath = CURRENT_DIR.join('..', '..', '..', 'profiles', 'test-profile', 'latest.oak')
 		expect(fs.existsSync(expectedPath.toPlatformString())).toBeTruthy()
 
@@ -45,5 +49,7 @@ describe('testing index file', () => {
 		}
 		expect(t).not.toThrow()
 		fs.rmSync(CURRENT_DIR.join('..', '..', '..', 'profiles', 'test-profile').toPlatformString(), { recursive: true })
+
+		uploadMethod.mockReset()
 	}, 20000)
 })

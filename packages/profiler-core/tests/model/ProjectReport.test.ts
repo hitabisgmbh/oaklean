@@ -2,7 +2,7 @@ import * as fs from 'fs'
 
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { UnifiedPath_string } from '../../src/types/UnifiedPath.types'
-import { ProjectReport, IProjectReport, ProjectIdentifier_string, ProjectReportOrigin } from '../../src/model/ProjectReport'
+import { ProjectReport, IProjectReport, ProjectIdentifier_string, ProjectReportOrigin, IProjectReportExecutionDetails } from '../../src/model/ProjectReport'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { ISourceNodeMetaData, SourceNodeMetaDataType } from '../../src/model/SourceNodeMetaData'
 import { SourceNodeIdentifier_string } from '../../src/types/SourceNodeIdentifiers.types'
@@ -29,6 +29,36 @@ const EXAMPLE_SYSTEM_INFORMATION: ISystemInformation = JSON.parse(
 	fs.readFileSync(CURRENT_DIR.join('assets', 'SystemInformation', 'example.json').toString()).toString()
 ) as ISystemInformation
 
+const EXAMPLE_EXECUTION_DETAILS = {
+	origin: ProjectReportOrigin.pure,
+	commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+	commitTimestamp: 1687845481077,
+	timestamp: 1687845481077,
+	uncommittedChanges: false,
+	systemInformation: EXAMPLE_SYSTEM_INFORMATION,
+	languageInformation: {
+		name: 'node',
+		version: '20.11.1'
+	},
+	runTimeOptions: {
+		seeds: {
+			'Math.random': '0'
+		},
+		v8: {
+			cpu: {
+				sampleInterval: 1 as MicroSeconds_number
+			}
+		},
+		sensorInterface: {
+			type: SensorInterfaceType.powermetrics,
+			options: {
+				sampleInterval: 1000 as MicroSeconds_number,
+				outputFilePath: '<anonymized>'
+			}
+		}
+	}
+} satisfies IProjectReportExecutionDetails
+
 const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 	reportVersion: VERSION,
 	kind: ReportKind.measurement,
@@ -36,35 +66,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 	projectMetaData: {
 		projectID: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
 	},
-	executionDetails: {
-		origin: ProjectReportOrigin.pure,
-		commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
-		commitTimestamp: 1687845481077,
-		timestamp: 1687845481077,
-		uncommittedChanges: false,
-		systemInformation: EXAMPLE_SYSTEM_INFORMATION,
-		languageInformation: {
-			name: 'node',
-			version: '20.11.1'
-		},
-		runTimeOptions: {
-			seeds: {
-				'Math.random': '0'
-			},
-			v8: {
-				cpu: {
-					sampleInterval: 1 as MicroSeconds_number
-				}
-			},
-			sensorInterface: {
-				type: SensorInterfaceType.powermetrics,
-				options: {
-					sampleInterval: 1000 as MicroSeconds_number,
-					outputFilePath: '<anonymized>'
-				}
-			}
-		}
-	},
+	executionDetails: EXAMPLE_EXECUTION_DETAILS,
 	globalIndex: {
 		currentId: 12,
 		moduleMap: {
@@ -1292,6 +1294,40 @@ describe('ProjectReport', () => {
 
 			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different cpus')
 			consoleError.mockReset()
+		})
+	})
+
+	describe('shouldBeStoredInRegistry', () => {
+		test('test with pure measurement', async () => {
+			const projectReport = new ProjectReport({
+				...EXAMPLE_EXECUTION_DETAILS,
+				origin: ProjectReportOrigin.pure
+			}, ReportKind.measurement)
+			expect(await projectReport.shouldBeStoredInRegistry()).toBe(true)
+		})
+
+		test('test jest accumulated measurement', async () => {
+			const projectReport = new ProjectReport({
+				...EXAMPLE_EXECUTION_DETAILS,
+				origin: ProjectReportOrigin.pure
+			}, ReportKind.accumulated)
+			expect(await projectReport.shouldBeStoredInRegistry()).toBe(true)
+		})
+
+		test('test non accumulated jest measurement', async () => {
+			const projectReport = new ProjectReport({
+				...EXAMPLE_EXECUTION_DETAILS,
+				origin: ProjectReportOrigin.jestEnv
+			}, ReportKind.measurement)
+			expect(await projectReport.shouldBeStoredInRegistry()).toBe(false)
+		})
+
+		test('test accumulated jest measurement', async () => {
+			const projectReport = new ProjectReport({
+				...EXAMPLE_EXECUTION_DETAILS,
+				origin: ProjectReportOrigin.jestEnv
+			}, ReportKind.accumulated)
+			expect(await projectReport.shouldBeStoredInRegistry()).toBe(true)
 		})
 	})
 })

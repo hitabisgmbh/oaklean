@@ -287,6 +287,12 @@ export class ProjectReport extends Report {
 		return Buffer.concat(buffers)
 	}
 
+	async shouldBeStoredInRegistry() {
+		// every accumulated report should be stored in the registry
+		// and every report that was not created in the jest environment should be stored in the registry
+		return this.executionDetails.origin !== ProjectReportOrigin.jestEnv || this.kind === ReportKind.accumulated
+	}
+
 	static versionFromBinFile(filePath: UnifiedPath) {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
