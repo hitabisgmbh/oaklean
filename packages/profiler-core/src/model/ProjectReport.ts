@@ -251,6 +251,23 @@ export class ProjectReport extends Report {
 		
 	}
 
+	async trackUncommittedFiles(rootDir: UnifiedPath) {
+		const uncommittedFiles = GitHelper.uncommittedFiles()
+
+		if (uncommittedFiles === undefined) {
+			return
+		}
+		for (const uncommittedFile of uncommittedFiles) {
+			const pureRelativeOriginalSourcePath = rootDir.pathTo(new UnifiedPath(uncommittedFile))
+
+			const pathIndex = this.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', pureRelativeOriginalSourcePath.toString())
+			if (pathIndex === undefined) {
+				continue
+			}
+			pathIndex.containsUncommittedChanges = true
+		}
+	}
+
 	async insertCPUProfile(
 		rootDir: UnifiedPath,
 		profile: ICpuProfileRaw,

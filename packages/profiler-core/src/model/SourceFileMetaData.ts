@@ -98,6 +98,19 @@ export class SourceFileMetaData extends BaseModel {
 		this.pathIndex = pathIndex
 	}
 
+	public get containsUncommittedChanges(): boolean {
+		if (this.pathIndex === undefined) {
+			return false
+		}
+		return this.pathIndex.containsUncommittedChanges
+	}
+
+	public set containsUncommittedChanges(v: boolean) {
+		if (this.pathIndex !== undefined) {
+			this.pathIndex.containsUncommittedChanges = v
+		}
+	}
+
 	normalize(newGlobalIndex: GlobalIndex) {
 		const newPathIndex = this.pathIndex.insertToOtherIndex(newGlobalIndex)
 		const newFunctions = new ModelMap<
@@ -121,6 +134,9 @@ export class SourceFileMetaData extends BaseModel {
 		}
 
 		const path = args[0].path
+		const containsUncommittedChanges = args.map((x) => x.containsUncommittedChanges).reduce(
+			(prevValue: boolean, currValue: boolean) => prevValue || currValue
+		)
 
 		const valuesToMerge: {
 			functions: Record<SourceNodeIdentifier_string, SourceNodeMetaData<
@@ -162,6 +178,7 @@ export class SourceFileMetaData extends BaseModel {
 				)
 			)
 		}
+		result.containsUncommittedChanges = containsUncommittedChanges
 		return result
 	}
 

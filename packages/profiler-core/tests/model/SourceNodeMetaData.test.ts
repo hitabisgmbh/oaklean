@@ -169,6 +169,13 @@ function runInstanceTests(
 		test('toBuffer', () => {
 			expect(instance.toBuffer().toString('hex')).toEqual(EXAMPLE_SOURCE_NODE_META_DATA_BUFFER)
 		})
+
+		test('presentInOriginalSourceCode', () => {
+			// presentInOriginalSourceCode is directly derived from the sourceNodeIndex
+			expect(instance.presentInOriginalSourceCode).toBe(true)
+			instance.sourceNodeIndex.presentInOriginalSourceCode = false
+			expect(instance.presentInOriginalSourceCode).toBe(false)
+		})
 	})
 }
 
@@ -1028,8 +1035,9 @@ describe('SourceNodeMetaData', () => {
 				)
 			)
 
-			expect(
-				SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex, ...instancesToMerge).toJSON()).toEqual({
+			const mergeResult = SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex, ...instancesToMerge)
+
+			expect(mergeResult.toJSON()).toEqual({
 				id: sourceNodeIndex.id,
 				type: SourceNodeMetaDataType.SourceNode,
 				sensorValues: {
@@ -1322,6 +1330,46 @@ describe('SourceNodeMetaData', () => {
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
 				}
 			} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>)
+		})
+
+		describe('merges presentInOriginalSourceCode correctly', () => {
+			test('one is false', () => {
+				instancesToMerge[0].presentInOriginalSourceCode = true
+				instancesToMerge[1].presentInOriginalSourceCode = false
+				instancesToMerge[2].presentInOriginalSourceCode = true
+
+				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+				const moduleIndex = globalIndex.getModuleIndex('upsert')
+				const sourceNodeIndex = globalIndex.getSourceNodeIndex(
+					'upsert',
+					GlobalIdentifier.fromIdentifier(
+						'{./dist/index.js}{root}' as GlobalSourceNodeIdentifier_string
+					)
+				)
+
+				const mergeResult = SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex, ...instancesToMerge)
+
+				expect(mergeResult.presentInOriginalSourceCode).toBe(false)
+			})
+
+			test('all true', () => {
+				instancesToMerge[0].presentInOriginalSourceCode = true
+				instancesToMerge[1].presentInOriginalSourceCode = true
+				instancesToMerge[2].presentInOriginalSourceCode = true
+
+				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+				const moduleIndex = globalIndex.getModuleIndex('upsert')
+				const sourceNodeIndex = globalIndex.getSourceNodeIndex(
+					'upsert',
+					GlobalIdentifier.fromIdentifier(
+						'{./dist/index.js}{root}' as GlobalSourceNodeIdentifier_string
+					)
+				)
+
+				const mergeResult = SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex, ...instancesToMerge)
+
+				expect(mergeResult.presentInOriginalSourceCode).toBe(true)
+			})
 		})
 	})
 })

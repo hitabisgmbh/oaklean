@@ -273,6 +273,8 @@ export class Profiler {
 			metricsDataCollection
 		)
 
+		await report.trackUncommittedFiles(rootDir)
+
 		if (this.config.shouldExportReport()) {
 			report.storeToFile(outFileReport, 'bin', this.config)
 		}
