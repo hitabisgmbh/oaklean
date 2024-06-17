@@ -948,11 +948,11 @@ describe('ProjectReport', () => {
 
 	describe('loading from File', () => {
 		test('loadFromFile: existing path', () => {
-			const filePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
+			const filePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
 			const projectReportJson = ProjectReport.loadFromFile(filePathJson, 'json')
 			expect(projectReportJson).toBeDefined()
 
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.bin.oak')
+			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
 			const projectReportBin = ProjectReport.loadFromFile(filePathBin, 'bin')
 			expect(projectReportBin).toBeDefined()
 
@@ -972,7 +972,7 @@ describe('ProjectReport', () => {
 
 	describe('versionFromBinFile', () => {
 		test('version is correct without fully loading the report', () => {
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.bin.oak')
+			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
 			const projectReportBin = ProjectReport.loadFromFile(filePathBin, 'bin')
 
 			expect(ProjectReport.versionFromBinFile(filePathBin)).toEqual(projectReportBin?.reportVersion)
@@ -986,7 +986,7 @@ describe('ProjectReport', () => {
 
 	describe('hashFromBinFile', () => {
 		test('hash is correct without loading the report', () => {
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.bin.oak')
+			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
 			const projectReportBin = ProjectReport.loadFromFile(filePathBin, 'bin')
 
 			expect(ProjectReport.hashFromBinFile(filePathBin)).toEqual(projectReportBin?.hash())
@@ -1043,8 +1043,8 @@ describe('ProjectReport', () => {
 			projectReport.normalize()
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
 
-			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
-			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.bin.oak')
+			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
+			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
 			if (UPDATE_TEST_REPORTS) {
 				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
@@ -1118,8 +1118,8 @@ describe('ProjectReport', () => {
 				new UnifiedPath('./packages/profiler/src/model/V8Profiler.ts').toString()
 			])
 			projectReport.normalize()
-			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak')
-			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.bin.oak')
+			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
+			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak')
 			if (UPDATE_TEST_REPORTS) {
 				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
@@ -1195,9 +1195,9 @@ describe('ProjectReport', () => {
 		let instancesToMerge: ProjectReport[] = []
 
 		beforeEach(() => {
-			const first = ProjectReport.loadFromFile(CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak'), 'json')
+			const first = ProjectReport.loadFromFile(CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json'), 'json')
 
-			const second = ProjectReport.loadFromFile(CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak'), 'json')
+			const second = ProjectReport.loadFromFile(CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json'), 'json')
 
 			if (first === undefined || second === undefined) {
 				throw new Error('ProjectReport.test.merging: not all instances are defined')
