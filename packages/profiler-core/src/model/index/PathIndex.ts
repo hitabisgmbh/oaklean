@@ -20,7 +20,7 @@ export interface IPathIndex {
 	id?: PathID_number
 	children?: Record<string, IPathIndex>
 	file?: Record<string, ISourceNodeIndex<SourceNodeIndexType>>
-	cusc?: boolean // contains unstaged changes
+	cucc?: boolean // contains uncommitted changes
 }
 
 export class PathIndex extends BaseModel {
@@ -104,7 +104,7 @@ export class PathIndex extends BaseModel {
 	}
 
 	toJSON() {
-		const containsUncommittedChanges = this.containsUncommittedChanges ? { cusc: true } : {}
+		const containsUncommittedChanges = this.containsUncommittedChanges ? { cucc: true } : {}
 
 		return {
 			id: this._id,
@@ -134,7 +134,7 @@ export class PathIndex extends BaseModel {
 
 		const result = new PathIndex(identifier, moduleIndex)
 		result._id = data.id
-		result.containsUncommittedChanges = data.cusc === undefined ? false : true
+		result.containsUncommittedChanges = data.cucc === undefined ? false : true
 
 		if (data.children) {
 			result.children = new ModelMap<string, PathIndex>('string')

@@ -95,12 +95,12 @@ function runInstanceTests(title: string, preDefinedInstance: () => PathIndex) {
 			expect(instance.containsUncommittedChanges).toBe(false)
 			expect(instance.toJSON()).toEqual({
 				...EXAMPLE_PATH_INDEX,
-				cusc: undefined
+				cucc: undefined
 			})
 			instance.containsUncommittedChanges = true
 			expect(instance.toJSON()).toEqual({
 				...EXAMPLE_PATH_INDEX,
-				cusc: true
+				cucc: true
 			})
 			instance.containsUncommittedChanges = false
 		})
