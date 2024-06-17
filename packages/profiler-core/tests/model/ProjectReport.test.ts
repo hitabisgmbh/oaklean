@@ -10,7 +10,7 @@ import { NodeModule, NodeModuleIdentifier_string } from '../../src/model/NodeMod
 import { ISystemInformation } from '../../src/model/SystemInformation'
 import { VERSION } from '../../src/constants/app'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
-import { GitHash_string } from '../../src/helper/GitHelper'
+import { GitHash_string, GitHelper } from '../../src/helper/GitHelper'
 import { ProfilerConfig, SensorInterfaceType } from '../../src/model/ProfilerConfig'
 import { ISensorValues } from '../../src/model/SensorValues'
 import { MilliJoule_number } from '../../src/model/interfaces/BaseMetricsData'
@@ -21,7 +21,7 @@ import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { MicroSeconds_number } from '../../src/helper/TimeHelper'
 import { ReportKind } from '../../src/model/Report'
-import { PermissionHelper } from '../../dist/src'
+import { PermissionHelper } from '../../src/helper/PermissionHelper'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
@@ -714,6 +714,40 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			)
 			expect(fs.existsSync(projectReportFilePath.toString())).toBeTruthy()
 		})
+
+		describe('trackUncommittedFiles', () => {
+			test('no git repository', () => {
+				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(undefined)
+				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				expect(instance.executionDetails.uncommittedChanges).toBe(undefined)
+
+				uncommittedFiles_mock.mockReset()
+			})
+
+			test('no uncommitted changes exist', () => {
+				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([])
+				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				expect(instance.executionDetails.uncommittedChanges).toBe(false)
+
+				uncommittedFiles_mock.mockReset()
+			})
+
+			test('uncommitted changes exist', () => {
+				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./dist/test.js'])
+				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				expect(instance.executionDetails.uncommittedChanges).toBe(true)
+
+				uncommittedFiles_mock.mockReset()
+			})
+
+			test('uncommitted changes exist in node modules has no effect', () => {
+				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./node_modules/@oaklean/profiler-core/test.js'])
+				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				expect(instance.executionDetails.uncommittedChanges).toBe(false)
+
+				uncommittedFiles_mock.mockReset()
+			})
+		})
 	})
 }
 
@@ -1294,6 +1328,42 @@ describe('ProjectReport', () => {
 
 			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different cpus')
 			consoleError.mockReset()
+		})
+
+		describe('merges uncommitted changes correctly', () => {
+			test('default has no uncommitted changes', () => {
+				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+				const moduleIndex = globalIndex.getModuleIndex('upsert')
+				instancesToMerge[0].executionDetails.uncommittedChanges = false
+				instancesToMerge[1].executionDetails.uncommittedChanges = false
+
+				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
+
+				expect(mergedProjectReport.executionDetails.uncommittedChanges).toEqual(false)
+			})
+
+			test('first report has uncommitted changes', () => {
+				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+				const moduleIndex = globalIndex.getModuleIndex('upsert')
+				instancesToMerge[0].executionDetails.uncommittedChanges = true
+
+				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
+
+				expect(mergedProjectReport.executionDetails.uncommittedChanges).toEqual(true)
+			})
+
+			test('second report has uncommitted changes', () => {
+				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+				const moduleIndex = globalIndex.getModuleIndex('upsert')
+				instancesToMerge[1].executionDetails.uncommittedChanges = true
+
+				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
+
+				expect(mergedProjectReport.executionDetails.uncommittedChanges).toEqual(true)
+			})
 		})
 	})
 
