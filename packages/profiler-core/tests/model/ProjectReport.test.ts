@@ -1258,8 +1258,8 @@ describe('ProjectReport', () => {
 		test('merges correctly', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
-			const expectedPathJson = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak')
-			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.bin.oak')
+			const expectedPathJson = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
+			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak')
 			const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
 			mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
@@ -1284,7 +1284,7 @@ describe('ProjectReport', () => {
 			test('first report is different', () => {
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 				const moduleIndex = globalIndex.getModuleIndex('upsert')
-				const expectedPath = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak')
+				const expectedPath = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
 				const expectedProjectReport = ProjectReport.loadFromFile(expectedPath, 'json')
 				instancesToMerge[0].executionDetails.systemInformation.memory.free = 0
 
@@ -1302,7 +1302,7 @@ describe('ProjectReport', () => {
 			test('seconds report is different', () => {
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 				const moduleIndex = globalIndex.getModuleIndex('upsert')
-				const expectedPath = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak')
+				const expectedPath = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
 				const expectedProjectReport = ProjectReport.loadFromFile(expectedPath, 'json')
 				instancesToMerge[1].executionDetails.systemInformation.memory.free = 0
 
