@@ -100,7 +100,9 @@ If you want to how to setup the Sensor Interfaces and how to make them work with
 
 #### 4. Interpret the measurements and determine the source code locations with the most energy consumption
 
-To make sense of the generated `.oak` files during the jest test measurements we highly recommend the VSCode extension named "Oaklean", you can find it here:
+The `Oaklean` VSCode Extension lets you to interpret the measurements. It integrates the energy measurements directly into your IDE.
+
+**You can find it here:**
 - <a href="https://github.com/hitabisgmbh/oaklean-vscode" target="_blank">Github</a>
 - <a href="https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean" target="_blank">VS Code Extension</a>
 
