@@ -85,9 +85,12 @@ export default class InitCommands {
 			'darwin': SensorInterfaceType.powermetrics
 		}
 
-		const recommendedSensorInterface = `recommended for your platform: ${sensorInterfacePerPlatform[os.platform()]}` || 'No recommended sensor interface for this platform.'
+		const recommendedSensorInterface = sensorInterfacePerPlatform[os.platform()]
+		const recommendedSensorInterfaceMessage = recommendedSensorInterface !== undefined ?
+			`recommended for your platform: ${recommendedSensorInterface}` :
+			'No recommended sensor interface for this platform.'
 		return await select<SensorInterfaceType | undefined>({
-			message: `Select a sensor interface (${recommendedSensorInterface})`,
+			message: `Select a sensor interface (${recommendedSensorInterfaceMessage})`,
 			choices: [
 				{
 					name: 'None (pure cpu time measurements)',
