@@ -90,17 +90,17 @@ export default class InitCommands {
 			message: `Select a sensor interface (${recommendedSensorInterface})`,
 			choices: [
 				{
-					name: 'None',
+					name: 'None (pure cpu time measurements)',
 					value: undefined,
 					description: 'pure cpu time measurements without energy measurements',
 				},
 				{
-					name: 'powermetrics',
+					name: 'powermetrics (macOS only)',
 					value: SensorInterfaceType.powermetrics,
 					description: 'energy measurements on macOS',
 				},
 				{
-					name: 'perf',
+					name: 'perf (Linux only)',
 					value: SensorInterfaceType.perf,
 					description: 'energy measurements on Linux (Intel & AMD CPUs only)',
 				}
