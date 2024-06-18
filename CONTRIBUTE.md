@@ -7,6 +7,7 @@
 2. Build: `npm run build`
 3. Run tests: `npm run test`
 4. Lint: `npm run lint`
+5. Generate docs: `npm run generate-docs`
 
 # Tests
 The profiler measures itself while its tests are executed.
@@ -49,3 +50,6 @@ packages/profiler-core/src/model/BackwardsCompatibility
 ```
 
 Since measurements are stored in a self developed format (ProjectReport) it is necessary to provide backwards compatibility for this format. Therefore each release (that changes the format) of the profiler-core should provide the new version format (including the changed types) and a transformer class which contains a static method `transform_projectReport` to transform the format of the last release to the new format.
+
+## Generate Docs
+All README files are built via the `npm run generate-docs` command, which uses `markdown-include` to build the README files. To make changes to the README files, update the Markdown files in the `md-configs` directory and re-generate the docs with `npm run generate-docs`.
