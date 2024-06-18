@@ -55,6 +55,7 @@ export interface ISourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> {
 	aggregatedExternSourceMetaData?: IAggregatedSourceNodeMetaData
 	type: T
 	filePath: UnifiedPath_stringOnlyForPathNode<T>
+	compiledSourceFilePath?: UnifiedPath_string,
 	originalSourceFilePath?: UnifiedPath_string,
 	langInternalChildren?: Record<
 	LangInternalPath_string,
@@ -74,6 +75,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 	private _aggregatedExternSourceMetaData?: AggregatedSourceNodeMetaData
 	type: T
 	filePath: UnifiedPathOnlyForPathNode<T>
+	compiledSourceFilePath?: UnifiedPath_string
 	originalSourceFilePath?: UnifiedPath_string
 	private _langInternalChildren?: ModelMap<
 	LangInternalPath_string,
@@ -91,12 +93,14 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		type: T,
 		filePath: UnifiedPathOnlyForPathNode<T>,
 		index: IndexPerType<T>,
+		compiledSourceFilePath?: UnifiedPath_string,
 		originalSourceFilePath?: UnifiedPath_string,
 	) {
 		super()
 		this.type = type
 		this.filePath = filePath
 		this.index = index
+		this.compiledSourceFilePath = compiledSourceFilePath
 		this.originalSourceFilePath = originalSourceFilePath
 	}
 
@@ -345,6 +349,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			aggregatedExternSourceMetaData: this._aggregatedExternSourceMetaData?.toJSON(),
 			type: this.type,
 			filePath: this.filePath?.toJSON() as UnifiedPath_stringOnlyForPathNode<T>,
+			compiledSourceFilePath: this.compiledSourceFilePath,
 			originalSourceFilePath: this.originalSourceFilePath,
 			langInternalChildren: this.langInternalChildren.toJSON<
 			ISourceFileMetaDataTree<SourceFileMetaDataTreeType.File>>(),
@@ -411,6 +416,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		}
 
 		result.originalSourceFilePath = data.originalSourceFilePath
+		result.compiledSourceFilePath = data.compiledSourceFilePath
 		if (data.sourceFileMetaData) {
 			if (index === undefined) {
 				throw new Error('SourceFileMetaDataTree.fromJSON: pathIndex is missing')
@@ -540,13 +546,13 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		)
 	}
 
-	static fromProjectReport(projectReport: ProjectReport) {
+	static fromProjectReport(projectReport: ProjectReport, mode: 'compiled' | 'original' = 'original') {
 		const tree = new SourceFileMetaDataTree(
 			SourceFileMetaDataTreeType.Root,
 			undefined,
 			projectReport.globalIndex
 		)
-		tree.addProjectReport(projectReport)
+		tree.addProjectReport(projectReport, mode)
 		return tree
 	}
 
@@ -569,8 +575,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			child = new SourceFileMetaDataTree(
 				SourceFileMetaDataTreeType.File,
 				new UnifiedPath(langInternalPath),
-				pathIndex,
-				undefined
+				pathIndex
 			)
 			child.sourceFileMetaData = sourceFileMetaData
 			child.addToAggregatedInternSourceNodeMetaDataOfTree(aggregatedSourceNodeMetaData)
@@ -583,6 +588,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 
 	insertPath(
 		filePathParts: UnifiedPathPart_string[],
+		compiledSourceFilePath: UnifiedPath_string | undefined,
 		originalSourceFilePath: UnifiedPath_string | undefined,
 		aggregatedSourceNodeMetaData: AggregatedSourceNodeMetaData,
 		sourceFileMetaData: SourceFileMetaData,
@@ -602,6 +608,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 					SourceFileMetaDataTreeType.File,
 					filePath.join(filePathParts[0]),
 					pathIndex,
+					compiledSourceFilePath,
 					originalSourceFilePath
 				)
 				child.sourceFileMetaData = sourceFileMetaData
@@ -626,32 +633,33 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		}
 		return child.insertPath(
 			filePathParts.slice(1),
+			compiledSourceFilePath,
 			originalSourceFilePath,
 			aggregatedSourceNodeMetaData,
 			sourceFileMetaData,
 		)
 	}
 
-	addExternReport(moduleReport: ModuleReport, index: ModuleIndex) {
+	addExternReport(moduleReport: ModuleReport, index: ModuleIndex, mode: 'compiled' | 'original') {
 		const child = new SourceFileMetaDataTree(
 			SourceFileMetaDataTreeType.Module,
 			undefined,
 			index
 		)
-		child.addInternReport(moduleReport)
+		child.addInternReport(moduleReport, mode)
 		for (const [moduleID, externModuleReport] of moduleReport.extern.entries()) {
 			const childIndex = index.globalIndex.getModuleIndexByID(moduleID)
 			if (childIndex === undefined) {
 				throw new Error('SourceFileMetaDataTree.addExternReport: could not resolve module index')
 			}
-			child.addExternReport(externModuleReport, childIndex)
+			child.addExternReport(externModuleReport, childIndex, mode)
 		}
 		this.addToAggregatedExternSourceNodeMetaDataOfTree(child.totalAggregatedSourceMetaData)
 
 		this.externChildren.set(moduleReport.nodeModule.identifier, child)
 	}
 
-	addInternReport(projectReport: Report) {
+	addInternReport(projectReport: Report, mode: 'compiled' | 'original') {
 		const reversedInternMapping = projectReport.reversedInternMapping
 
 		for (const [filePathID, sourceFileMetaData] of projectReport.lang_internal.entries()) {
@@ -690,7 +698,9 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			const reversedFilePath = reversedFilePathIndex !== undefined ?
 				reversedFilePathIndex.identifier as UnifiedPath_string : undefined
 
-			const filePathParts = new UnifiedPath(filePathIndex.identifier).split()
+			const filePathParts = (mode === 'compiled' || reversedFilePath === undefined) ?
+				new UnifiedPath(filePathIndex.identifier).split() :
+				new UnifiedPath(reversedFilePath).split()
 
 			const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
 				sourceFileMetaData.totalSourceNodeMataData(),
@@ -699,6 +709,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 
 			const fileNode = this.insertPath(
 				filePathParts,
+				filePathIndex.identifier as UnifiedPath_string,
 				reversedFilePath,
 				aggregatedSourceNodeMetaData,
 				sourceFileMetaData,
@@ -707,19 +718,19 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		}
 	}
 
-	addProjectReport(projectReport: ProjectReport) {
+	addProjectReport(projectReport: ProjectReport, mode: 'compiled' | 'original') {
 		if (!this.isRoot()) {
 			throw new Error('SourceFileMetaDataTree.addProjectReport: can only be executed on root nodes')
 		}
 
-		this.addInternReport(projectReport)
+		this.addInternReport(projectReport, mode)
 
 		for (const [moduleID, externModuleReport] of projectReport.extern.entries()) {
 			const childIndex = this.index.getModuleIndexByID(moduleID)
 			if (childIndex === undefined) {
 				throw new Error('SourceFileMetaDataTree.addExternReport: could not resolve module index')
 			}
-			this.addExternReport(externModuleReport, childIndex)
+			this.addExternReport(externModuleReport, childIndex, mode)
 		}
 	}
 }

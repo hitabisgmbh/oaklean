@@ -5,6 +5,7 @@
 ### Added
 - The .oak file format now stores which source files contain uncommitted changes
 - The `@oaklean/cli` contains a new `init` command to easily setup a new `.oaklean` config file
+- The SourceFileMetaDataTree now stores both the compiled and original source file paths. This enables the VS Code extension to switch between a compiled- and a original source file mode to display and open files.
 
 ### Improvements
 - The README files in this repository are now generated via `markdown-include` to reduce redundant documentation
