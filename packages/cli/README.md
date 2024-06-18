@@ -15,7 +15,9 @@ Options:
   -h, --help      display help for command
 
 Commands:
+  init            Create a .oaklean config file
   format          commands to convert or inspect the profiler's format
+     - toHash Calculates the hash of given a profiler format
      - toJSON Converts a profiler format that is given in binary format to a json version
      - toSourceFileTree Converts a profiler format that is given in binary format to a SourceFileMetaDataTree
   

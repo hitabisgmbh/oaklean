@@ -12,11 +12,11 @@ program
 	.version(VERSION)
 	.description('An CLI to interact with the @oaklean suite')
 
+InitCommands.init()
 FormatCommands.init()
 CPUProfileCommands.init()
 CodeParsingCommands.init()
 BackendCommands.init()
-InitCommands.init()
 
 program.configureHelp({
 	subcommandDescription: (cmd) => {
