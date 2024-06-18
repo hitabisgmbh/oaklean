@@ -38,6 +38,8 @@ includes new features
 - **major release**:
 includes significant changes (like breaking changes or fundamental changes)
 
+> :warning: **Failing tests after version upgrade**<br> After a version upgrade, the tests will fail because all test assets contain the previous version number. To fix this, run `npm run test-update`. This command will update all test assets to contain the new version number. The tests may not pass during the execution of the `npm run test-update` script, but running `npm run test` again should display the tests as passed.
+
 ## Backwards Compatibility
 
 ```

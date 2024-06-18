@@ -1,6 +1,6 @@
 {
   "name": "profiler-tools",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "Hitabis GmbH",
   "license": "MIT",
   "description": "Software suite to measure the energy consumption of your javascript and typescript applications.",
