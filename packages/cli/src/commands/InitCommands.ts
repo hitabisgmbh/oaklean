@@ -1,14 +1,19 @@
-import * as fs from 'fs'
 import os from 'os'
 
-import { UnifiedPath, ProjectReport, ProfilerConfig, Crypto, ProjectIdentifier_string, SensorInterfaceType, MicroSeconds_number } from '@oaklean/profiler-core'
+import {
+	ProfilerConfig,
+	Crypto,
+	ProjectIdentifier_string,
+	SensorInterfaceType,
+	MicroSeconds_number,
+	RegistryOptions
+} from '@oaklean/profiler-core'
 import { program } from 'commander'
 import { confirm, select } from '@inquirer/prompts'
-import { RegistryOptions } from '@oaklean/profiler-core/dist/src/model/ProfilerConfig'
 
 export default class InitCommands {
 	constructor() {
-		const parseCommand = program
+		program
 			.command('init')
 			.description('Create a .oaklean config file')
 			.action(this.initCommand.bind(this))
@@ -19,6 +24,19 @@ export default class InitCommands {
 	}
 
 	async initCommand() {
+		const config = await this.configureConfig()
+		console.log(JSON.stringify(config, null, 2))
+
+		if (await this.confirmConfigFileContent() === false) {
+			return
+		}
+		if (config.getSensorInterfaceType() === SensorInterfaceType.perf) {
+			console.log('perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
+		}
+		config.storeToFile(config.filePath)
+	}
+
+	async configureConfig(): Promise<ProfilerConfig> {
 		const config = ProfilerConfig.getDefaultConfig()
 
 		// select sensor interface
@@ -51,20 +69,14 @@ export default class InitCommands {
 
 		config.projectOptions.identifier = Crypto.uniqueID() as ProjectIdentifier_string
 		config.registryOptions = undefined as unknown as RegistryOptions
-		if (fs.existsSync(config.filePath.toPlatformString())) {
-			console.log(JSON.stringify(config, null, 2))
-			const answer = await confirm({
-				message: 'Is this OK? (yes)',
-				default: true
-			})
-			if (answer === false) {
-				return
-			}
-			if (config.getSensorInterfaceType() === SensorInterfaceType.perf) {
-				console.log('perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
-			}
-		}
-		config.storeToFile(config.filePath)
+		return config
+	}
+
+	async confirmConfigFileContent() {
+		return await confirm({
+			message: 'Is this OK? (yes)',
+			default: true
+		})
 	}
 
 	async selectSensorInterface(): Promise<SensorInterfaceType | undefined> {

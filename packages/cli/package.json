@@ -30,7 +30,7 @@
 		"build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc",
 		"lint": "npx eslint --fix .",
 		"publish-registry": "npm publish",
-		"test": "",
+		"test": "npx jest --coverage",
 		"test-measure": "",
 		"test-update": "",
 		"setup": "npm run build && npm uninstall -g @oaklean/cli; npm link"

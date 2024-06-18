@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 
-import { ProfilerConfig, ProjectReport, UnifiedPath } from '@oaklean/profiler-core'
+import { ProjectReport, UnifiedPath } from '@oaklean/profiler-core'
 
 import { Profiler } from '../src/index'
 import { buildModel } from '../../profiler-core/lib/vscode-js-profile-core/src/cpu/model'
