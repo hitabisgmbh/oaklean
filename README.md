@@ -7,7 +7,6 @@
 		</li>
 		<li>
 			<a href="#docs">Docs</a>
-			
 		</li>
 		<li>
 			<a href="#getting-started">Getting Started</a>
