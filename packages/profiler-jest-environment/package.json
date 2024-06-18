@@ -35,7 +35,8 @@
 		"publish-registry": "npm publish",
 		"test": "",
 		"test-measure": "",
-		"test-update": ""
+		"test-update": "",
+		"generate-docs": "markdown-include md-configs/README.json"
 	},
 	"dependencies": {
 		"@oaklean/profiler": "^0.1.2",

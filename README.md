@@ -14,6 +14,13 @@
 ## Why Oaklean?
 Oaklean is a groundbreaking software solution that helps developers visualize and optimize the energy consumption of NodeJS applications. Through an innovative VSCode extension and an integration into test frameworks, the system identifies energy-intensive code sections and suggests eco-friendly alternatives. The goal is to raise awareness of responsible resource management in software development, aiming to achieve both ecological and economic benefits.
 
+## Docs
+- [Fast Config Setup](./docs/FastConfigSetup.md)
+- [Config](./docs/Config.md)
+- [SensorInterfaces](./docs/SensorInterfaces.md)
+- [Oaklean Profiler](./packages/profiler/README.md)
+- [Integration into jest](./packages/profiler-jest-environment/README.md)
+
 ## Getting Started
 The `@oaklean` suite consists mainly of three components that help you to measure your javascript/typescript applications.
 

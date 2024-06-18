@@ -36,7 +36,7 @@
     "test-update": "npx cross-env UPDATE_TEST_REPORTS=1 npx jest --coverage",
     "test-measure": "npx cross-env ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand",
     "publish-registry": "npm publish",
-    "generate-docs": "npx typedoc"
+    "generate-docs": ""
   },
   "dependencies": {
     "@jest/environment": "^29.4.3",

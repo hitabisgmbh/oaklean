@@ -37,7 +37,8 @@
     "test-update": "npm run test-update -ws",
     "test-measure": "npm run test-measure -ws",
     "test-gen": "npx jest-test-gen",
-    "publish-registry": "npm run publish-registry -ws"
+    "publish-registry": "npm run publish-registry -ws",
+    "generate-docs": "npm run generate-docs -ws"
   },
   "files": [],
   "devDependencies": {
