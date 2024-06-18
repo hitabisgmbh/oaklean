@@ -6,6 +6,7 @@ import BackendCommands from './commands/BackendCommands'
 import FormatCommands from './commands/FormatCommands'
 import CPUProfileCommands from './commands/CPUProfileCommands'
 import CodeParsingCommands from './commands/CodeParsingCommands'
+import InitCommands from './commands/InitCommands'
 
 program
 	.version(VERSION)
@@ -15,6 +16,7 @@ FormatCommands.init()
 CPUProfileCommands.init()
 CodeParsingCommands.init()
 BackendCommands.init()
+InitCommands.init()
 
 program.configureHelp({
 	subcommandDescription: (cmd) => {
