@@ -37,6 +37,8 @@ export default async function () {
 			accumulatedProjectReport.executionDetails.timestamp + (commitHash ? '-' + commitHash : '') + '.oak'
 		)
 		accumulatedProjectReport.storeToFile(accumulatedProjectReportHistoryPath, 'bin', profilerConfig)
-		await accumulatedProjectReport.uploadToRegistry()
+		if (await accumulatedProjectReport.shouldBeStoredInRegistry()) {
+			await accumulatedProjectReport.uploadToRegistry()
+		}
 	}
 }

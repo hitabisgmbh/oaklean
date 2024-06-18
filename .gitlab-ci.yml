@@ -17,6 +17,7 @@ default:
 stages:
   - build
   - test
+  - generate-docs
   - deploy
 
 build:
@@ -47,6 +48,11 @@ test:
     expire_in: 1 week
     paths:
       - ./accumulated-*.oak
+
+generate-docs:
+  stage: generate-docs
+  script:
+    - npm run generate-docs && [[ -z "$(git status -s)" ]]
 
 deploy:
   stage: deploy

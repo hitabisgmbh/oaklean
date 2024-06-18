@@ -6,11 +6,13 @@ import BackendCommands from './commands/BackendCommands'
 import FormatCommands from './commands/FormatCommands'
 import CPUProfileCommands from './commands/CPUProfileCommands'
 import CodeParsingCommands from './commands/CodeParsingCommands'
+import InitCommands from './commands/InitCommands'
 
 program
 	.version(VERSION)
 	.description('An CLI to interact with the @oaklean suite')
 
+InitCommands.init()
 FormatCommands.init()
 CPUProfileCommands.init()
 CodeParsingCommands.init()

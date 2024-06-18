@@ -7,7 +7,7 @@ import { ReportKind } from '../../src/model/Report'
 import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { PermissionHelper } from '../../dist/src'
+import { PermissionHelper } from '../../src/helper/PermissionHelper'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 

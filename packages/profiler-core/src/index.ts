@@ -20,7 +20,9 @@ import {
 import {
 	AuthenticationHelper
 } from './helper/AuthenticationHelper'
+import { DEFAULT_PROFILER_CONFIG }from './constants/config'
 import {
+	RegistryOptions,
 	ProfilerConfig,
 	IProfilerConfig,
 	ExportOptions,
@@ -163,6 +165,8 @@ export {
 	MilliSeconds_number,
 	MicroSeconds_number,
 	NanoSeconds_BigInt,
+	DEFAULT_PROFILER_CONFIG,
+	RegistryOptions,
 	ProfilerConfig,
 	IProfilerConfig,
 	ExportOptions,

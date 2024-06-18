@@ -775,11 +775,11 @@ describe('SourceFileMetaDataTree', () => {
 
 	describe('loadFromFile', () => {
 		test('test case example001', () => {
-			const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
+			const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
 			const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
 
 			if (projectReport === undefined) {
-				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example001.oak')
+				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example001.oak.json')
 			}
 			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport)
 			
@@ -796,11 +796,11 @@ describe('SourceFileMetaDataTree', () => {
 		test('test case example002', () => {
 			const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example002.sfmdt.json')
 
-			const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak')
+			const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
 			const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
 
 			if (projectReport === undefined) {
-				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example002.oak')
+				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example002.oak.json')
 			}
 
 			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport)

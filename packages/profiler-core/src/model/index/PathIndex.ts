@@ -20,6 +20,7 @@ export interface IPathIndex {
 	id?: PathID_number
 	children?: Record<string, IPathIndex>
 	file?: Record<string, ISourceNodeIndex<SourceNodeIndexType>>
+	cucc?: boolean // contains uncommitted changes
 }
 
 export class PathIndex extends BaseModel {
@@ -53,6 +54,15 @@ export class PathIndex extends BaseModel {
 		this.reverseSourceNodeMap = new ModelMap<
 		SourceNodeID_number,
 		SourceNodeIndex<SourceNodeIndexType.SourceNode>>('number')
+	}
+
+	private _containsUncommittedChanges?: boolean
+	public get containsUncommittedChanges(): boolean {
+		return this._containsUncommittedChanges === undefined ? false : true
+	}
+
+	public set containsUncommittedChanges(v: boolean) {
+		this._containsUncommittedChanges = v === true ? true : undefined
 	}
 
 	insertToOtherIndex(globalIndex: GlobalIndex): PathIndex {
@@ -94,10 +104,13 @@ export class PathIndex extends BaseModel {
 	}
 
 	toJSON() {
+		const containsUncommittedChanges = this.containsUncommittedChanges ? { cucc: true } : {}
+
 		return {
 			id: this._id,
 			children: this.children?.toJSON(),
-			file: this.file?.toJSON()
+			file: this.file?.toJSON(),
+			...containsUncommittedChanges
 		}
 	}
 
@@ -121,6 +134,7 @@ export class PathIndex extends BaseModel {
 
 		const result = new PathIndex(identifier, moduleIndex)
 		result._id = data.id
+		result.containsUncommittedChanges = data.cucc === undefined ? false : true
 
 		if (data.children) {
 			result.children = new ModelMap<string, PathIndex>('string')

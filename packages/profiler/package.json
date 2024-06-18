@@ -38,7 +38,8 @@
     "test": "npx jest --coverage",
     "test-measure": "npx cross-env ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand",
     "test-update": "",
-    "publish-registry": "npm publish"
+    "publish-registry": "npm publish",
+    "generate-docs": "markdown-include md-configs/README.json"
   },
   "dependencies": {
     "@oaklean/profiler-core": "^0.1.2",

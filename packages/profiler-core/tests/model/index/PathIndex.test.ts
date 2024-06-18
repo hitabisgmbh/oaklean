@@ -91,6 +91,20 @@ function runInstanceTests(title: string, preDefinedInstance: () => PathIndex) {
 			expect(instance.toJSON()).toEqual(EXAMPLE_PATH_INDEX)
 		})
 
+		test('containsUncommittedChanges', () => {
+			expect(instance.containsUncommittedChanges).toBe(false)
+			expect(instance.toJSON()).toEqual({
+				...EXAMPLE_PATH_INDEX,
+				cucc: undefined
+			})
+			instance.containsUncommittedChanges = true
+			expect(instance.toJSON()).toEqual({
+				...EXAMPLE_PATH_INDEX,
+				cucc: true
+			})
+			instance.containsUncommittedChanges = false
+		})
+
 		test('sourceNodeMap', () => {
 			expect(instance.sourceNodeMap.toJSON()).toEqual({
 				'{root}.{class:GlobalIndex}.{constructor:constructor}': { id: 2 },

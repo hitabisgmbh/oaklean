@@ -30,14 +30,16 @@
 		"build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc",
 		"lint": "npx eslint --fix .",
 		"publish-registry": "npm publish",
-		"test": "",
+		"test": "npx jest --coverage",
 		"test-measure": "",
 		"test-update": "",
-		"setup": "npm run build && npm uninstall -g @oaklean/cli; npm link"
+		"setup": "npm run build && npm uninstall -g @oaklean/cli; npm link",
+		"generate-docs": "markdown-include md-configs/README.json"
 	},
 	"dependencies": {
-		"commander": "^12.0.0",
-		"@oaklean/profiler-core": "^0.1.2"
+		"@inquirer/prompts": "^5.0.5",
+		"@oaklean/profiler-core": "^0.1.2",
+		"commander": "^12.0.0"
 	},
 	"devDependencies": {
 		"cross-env": "^7.0.3",

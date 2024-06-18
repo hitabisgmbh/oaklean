@@ -105,13 +105,11 @@ export class ProjectReport extends Report {
 		const commitHash = GitHelper.currentCommitHash()
 		const commitTimestamp = GitHelper.currentCommitTimestamp()
 		const timestamp = TimeHelper.getCurrentTimestamp()
-		const uncommittedChanges = GitHelper.uncommittedChanges()
 
 		if (timestamp === undefined) {
 			throw new Error('ProjectReport.resolveExecutionDetails: Could not resolve execution details.' + JSON.stringify({
 				commitHash: commitHash,
-				timestamp: timestamp,
-				uncommittedChanges: uncommittedChanges
+				timestamp: timestamp
 			}, undefined, 2))
 		}
 		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
@@ -123,7 +121,7 @@ export class ProjectReport extends Report {
 			commitHash: commitHash,
 			commitTimestamp: commitTimestamp,
 			timestamp: timestamp,
-			uncommittedChanges: uncommittedChanges,
+			uncommittedChanges: undefined,
 			systemInformation: await SystemInformation.collect(),
 			languageInformation: {
 				name: engineModule.name,
@@ -154,13 +152,15 @@ export class ProjectReport extends Report {
 
 		for (const currentProjectReport of args) {
 			if (
-				currentProjectReport.executionDetails.commitHash !== executionDetails.commitHash ||
-				currentProjectReport.executionDetails.uncommittedChanges !== executionDetails.uncommittedChanges
+				currentProjectReport.executionDetails.commitHash !== executionDetails.commitHash
 			) {
 				throw new Error('ProjectReport.merge: Project reports commit hashs are not the same')
 			}
 			if (currentProjectReport.executionDetails.origin !== executionDetails.origin) {
 				throw new Error('ProjectReport.merge: Project reports have different origins')
+			}
+			if (executionDetails.uncommittedChanges || currentProjectReport.executionDetails.uncommittedChanges) {
+				executionDetails.uncommittedChanges = true
 			}
 			if (currentProjectReport.executionDetails.timestamp < executionDetails.timestamp) {
 				// set execution timestamp to the earliest
@@ -251,6 +251,29 @@ export class ProjectReport extends Report {
 		
 	}
 
+	async trackUncommittedFiles(rootDir: UnifiedPath) {
+		// if git is not available, set default value of uncommitted changes to undefined
+		this.executionDetails.uncommittedChanges = undefined
+		const uncommittedFiles = GitHelper.uncommittedFiles()
+
+		if (uncommittedFiles === undefined) {
+			return
+		}
+		// git is available, set default value of uncommitted changes to false
+		this.executionDetails.uncommittedChanges = false
+		for (const uncommittedFile of uncommittedFiles) {
+			const pureRelativeOriginalSourcePath = rootDir.pathTo(new UnifiedPath(uncommittedFile))
+
+			const pathIndex = this.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', pureRelativeOriginalSourcePath.toString())
+			if (pathIndex === undefined) {
+				continue
+			}
+			pathIndex.containsUncommittedChanges = true
+			// if one file has uncommitted changes, the whole project has uncommitted changes
+			this.executionDetails.uncommittedChanges = true
+		}
+	}
+
 	async insertCPUProfile(
 		rootDir: UnifiedPath,
 		profile: ICpuProfileRaw,
@@ -285,6 +308,12 @@ export class ProjectReport extends Report {
 		]
 
 		return Buffer.concat(buffers)
+	}
+
+	async shouldBeStoredInRegistry() {
+		// every accumulated report should be stored in the registry
+		// and every report that was not created in the jest environment should be stored in the registry
+		return this.executionDetails.origin !== ProjectReportOrigin.jestEnv || this.kind === ReportKind.accumulated
 	}
 
 	static versionFromBinFile(filePath: UnifiedPath) {

@@ -285,6 +285,13 @@ function runInstanceTests(
 		test('toBuffer', () => {
 			expect(instance.toBuffer().toString('hex')).toEqual(EXAMPLE_SOURCE_FILE_META_DATA_BUFFER)
 		})
+
+		test('containsUncommittedChanges', () => {
+			// containsUncommittedChanges is directly derived from the pathIndex
+			expect(instance.containsUncommittedChanges).toBe(false)
+			instance.pathIndex.containsUncommittedChanges = true
+			expect(instance.containsUncommittedChanges).toBe(true)
+		})
 	})
 }
 
@@ -842,7 +849,9 @@ describe('SourceFileMetaData', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
 
-			expect(SourceFileMetaData.merge(pathIndex, ...instancesToMerge).toJSON()).toEqual({
+			const mergeResult = SourceFileMetaData.merge(pathIndex, ...instancesToMerge)
+
+			expect(mergeResult.toJSON()).toEqual({
 				path: './file.js',
 				functions: {
 					[pathIndex.getSourceNodeIndex('get', '{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
@@ -1032,6 +1041,36 @@ describe('SourceFileMetaData', () => {
 						}
 					}
 				}
+			})
+		})
+
+		describe('merges containsUncommittedChanges correctly', () => {
+			test('all false', () => {
+				const filePath = new UnifiedPath('./file.js').toString()
+				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+				const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+
+				instancesToMerge[0].containsUncommittedChanges = false
+				instancesToMerge[1].containsUncommittedChanges = false
+				instancesToMerge[2].containsUncommittedChanges = false
+
+				const mergeResult = SourceFileMetaData.merge(pathIndex, ...instancesToMerge)
+
+				expect(mergeResult.containsUncommittedChanges).toBe(false)
+			})
+
+			test('one is true', () => {
+				const filePath = new UnifiedPath('./file.js').toString()
+				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+				const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+
+				instancesToMerge[0].containsUncommittedChanges = false
+				instancesToMerge[1].containsUncommittedChanges = true
+				instancesToMerge[2].containsUncommittedChanges = false
+
+				const mergeResult = SourceFileMetaData.merge(pathIndex, ...instancesToMerge)
+
+				expect(mergeResult.containsUncommittedChanges).toBe(true)
 			})
 		})
 	})

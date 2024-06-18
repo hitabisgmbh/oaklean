@@ -285,7 +285,7 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 		}
 		PermissionHelper.writeFileWithUserPermission(
 			filePath.toPlatformString(),
-			JSON.stringify(this)
+			JSON.stringify(this, null, 2)
 		)
 	}
 
