@@ -62,6 +62,7 @@ describe('SourceFileMetaDataTree', () => {
 			instance.insertPath(
 				new UnifiedPath('./directory/file').split(),
 				undefined,
+				undefined,
 				aggregatedSourceNodeMetaData,
 				sourceFileMetaData
 			)
@@ -295,6 +296,7 @@ describe('SourceFileMetaDataTree', () => {
 
 					instance.insertPath(
 						new UnifiedPath('./directory/file').split(),
+						undefined,
 						undefined,
 						aggregatedSourceNodeMetaData,
 						sourceFileMetaData
@@ -774,42 +776,84 @@ describe('SourceFileMetaDataTree', () => {
 	})
 
 	describe('loadFromFile', () => {
-		test('test case example001', () => {
-			const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
-			const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
+		describe('test case example001', () => {
+			test('with compiled', () => {
+				const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
+				const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
 
-			if (projectReport === undefined) {
-				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example001.oak.json')
-			}
-			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport)
-			
-			const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example001.sfmdt.json')
-			if (UPDATE_TEST_REPORTS) {
-				tree.storeToFile(expectedSourceFileMetaDataTreePath)
-			}
+				if (projectReport === undefined) {
+					throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example001.oak.json')
+				}
+				const tree = SourceFileMetaDataTree.fromProjectReport(projectReport, 'compiled')
 
-			const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
+				const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example001.compiled.json')
+				if (UPDATE_TEST_REPORTS) {
+					tree.storeToFile(expectedSourceFileMetaDataTreePath)
+				}
 
-			expect(tree.toJSON()).toEqual(expected?.toJSON())
+				const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
+
+				expect(tree.toJSON()).toEqual(expected?.toJSON())
+			})
+
+			test('with original', () => {
+				const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
+				const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
+
+				if (projectReport === undefined) {
+					throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example001.oak.json')
+				}
+				const tree = SourceFileMetaDataTree.fromProjectReport(projectReport, 'original')
+
+				const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example001.original.json')
+				if (UPDATE_TEST_REPORTS) {
+					tree.storeToFile(expectedSourceFileMetaDataTreePath)
+				}
+
+				const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
+
+				expect(tree.toJSON()).toEqual(expected?.toJSON())
+			})
 		})
 
-		test('test case example002', () => {
-			const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example002.sfmdt.json')
+		describe('test case example002', () => {
+			test('with compiled', () => {
+				const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example002.compiled.json')
 
-			const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
-			const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
+				const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
+				const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
 
-			if (projectReport === undefined) {
-				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example002.oak.json')
-			}
+				if (projectReport === undefined) {
+					throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example002.oak.json')
+				}
 
-			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport)
-			if (UPDATE_TEST_REPORTS) {
-				tree.storeToFile(expectedSourceFileMetaDataTreePath)
-			}
-			const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
+				const tree = SourceFileMetaDataTree.fromProjectReport(projectReport, 'compiled')
+				if (UPDATE_TEST_REPORTS) {
+					tree.storeToFile(expectedSourceFileMetaDataTreePath)
+				}
+				const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
 
-			expect(tree.toJSON()).toEqual(expected?.toJSON())
+				expect(tree.toJSON()).toEqual(expected?.toJSON())
+			})
+
+			test('with original', () => {
+				const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example002.original.json')
+
+				const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
+				const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
+
+				if (projectReport === undefined) {
+					throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example002.oak.json')
+				}
+
+				const tree = SourceFileMetaDataTree.fromProjectReport(projectReport, 'original')
+				if (UPDATE_TEST_REPORTS) {
+					tree.storeToFile(expectedSourceFileMetaDataTreePath)
+				}
+				const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
+
+				expect(tree.toJSON()).toEqual(expected?.toJSON())
+			})
 		})
 
 		test('non existing file', () => {
