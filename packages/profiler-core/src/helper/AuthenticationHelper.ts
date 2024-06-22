@@ -10,8 +10,11 @@ export const STATIC_GLOBAL_CONFIG_DIR = '.oaklean'
 
 export class AuthenticationHelper {
 	static getAuthentication(): UUID_string {
-		if (process.env.GDKIT_AUTH !== undefined) {
-			return process.env.GDKIT_AUTH as UUID_string
+		if (process.env.OAKLEAN_AUTH_KEY !== undefined) {
+			if (!Crypto.validateUniqueID(process.env.OAKLEAN_AUTH_KEY as UUID_string)) {
+				throw new Error('AuthenticationHelper.getAuthentication: Env Variable OAKLEAN_AUTH_KEY is no uuid4')
+			}
+			return process.env.OAKLEAN_AUTH_KEY as UUID_string
 		}
 
 		const configDir = new UnifiedPath(os.homedir()).join(STATIC_GLOBAL_CONFIG_DIR)
