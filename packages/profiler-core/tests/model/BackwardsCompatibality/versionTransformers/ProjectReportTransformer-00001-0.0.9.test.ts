@@ -7,16 +7,16 @@ const CURRENT_DIR = new UnifiedPath(__dirname)
 
 const testFiles = [
 	{
-		origin: CURRENT_DIR.join('..', 'assets', 'example001.old.oak'),
-		target: CURRENT_DIR.join('..', 'assets', 'example001.new.oak')
+		origin: CURRENT_DIR.join('..', 'assets', 'example001.old.oak.json'),
+		target: CURRENT_DIR.join('..', 'assets', 'example001.new.oak.json')
 	},
 	{
-		origin: CURRENT_DIR.join('..', 'assets', 'example002.old.oak'),
-		target: CURRENT_DIR.join('..', 'assets', 'example002.new.oak')
+		origin: CURRENT_DIR.join('..', 'assets', 'example002.old.oak.json'),
+		target: CURRENT_DIR.join('..', 'assets', 'example002.new.oak.json')
 	},
 	{
-		origin: CURRENT_DIR.join('..', 'assets', '001&002.merged.old.oak'),
-		target: CURRENT_DIR.join('..', 'assets', '001&002.merged.new.oak')
+		origin: CURRENT_DIR.join('..', 'assets', '001&002.merged.old.oak.json'),
+		target: CURRENT_DIR.join('..', 'assets', '001&002.merged.new.oak.json')
 	}
 ]
 

@@ -952,7 +952,7 @@ describe('ProjectReport', () => {
 			const projectReportJson = ProjectReport.loadFromFile(filePathJson, 'json')
 			expect(projectReportJson).toBeDefined()
 
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
+			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
 			const projectReportBin = ProjectReport.loadFromFile(filePathBin, 'bin')
 			expect(projectReportBin).toBeDefined()
 
@@ -972,7 +972,7 @@ describe('ProjectReport', () => {
 
 	describe('versionFromBinFile', () => {
 		test('version is correct without fully loading the report', () => {
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
+			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
 			const projectReportBin = ProjectReport.loadFromFile(filePathBin, 'bin')
 
 			expect(ProjectReport.versionFromBinFile(filePathBin)).toEqual(projectReportBin?.reportVersion)
@@ -986,7 +986,7 @@ describe('ProjectReport', () => {
 
 	describe('hashFromBinFile', () => {
 		test('hash is correct without loading the report', () => {
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
+			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
 			const projectReportBin = ProjectReport.loadFromFile(filePathBin, 'bin')
 
 			expect(ProjectReport.hashFromBinFile(filePathBin)).toEqual(projectReportBin?.hash())
@@ -1044,7 +1044,7 @@ describe('ProjectReport', () => {
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
 
 			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
-			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak')
+			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
 			if (UPDATE_TEST_REPORTS) {
 				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
@@ -1119,7 +1119,7 @@ describe('ProjectReport', () => {
 			])
 			projectReport.normalize()
 			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
-			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak')
+			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.bin')
 			if (UPDATE_TEST_REPORTS) {
 				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
@@ -1259,7 +1259,7 @@ describe('ProjectReport', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
 			const expectedPathJson = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
-			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak')
+			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.bin')
 			const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
 			mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
@@ -1284,7 +1284,7 @@ describe('ProjectReport', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
 			const expectedPathJson = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
-			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak')
+			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.bin')
 			
 			// add cucc changes
 			const sourceFileIndex_001 = instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example001.js').toString())
