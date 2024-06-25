@@ -10,6 +10,9 @@
 ### Improvements
 - The README files in this repository are now generated via `markdown-include` to reduce redundant documentation
 
+### Fixes
+- The profiler now correctly detects whether a function is present in the original source code when running JavaScript files that were compiled with source maps
+
 ## 0.1.2
 ### Added
 - Git commit timestamp is stored in .oak file format keep the order of measurements

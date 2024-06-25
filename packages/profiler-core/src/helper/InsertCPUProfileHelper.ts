@@ -510,24 +510,34 @@ export class InsertCPUProfileHelper {
 		getSourceMapOfFile: (filePath: UnifiedPath) => SourceMap | undefined,
 		getSourceMapFromSourceCode: (filePath: UnifiedPath, sourceCode: string) => SourceMap | undefined,
 	) {
+		/**
+		 * Resolve procedure:
+		 * 
+		 * if file "dir/dir/file.ext" is transformable
+		 * 	- store transformed source code at programStructureTreePerFile["dir/dir/file.ext"]
+		 * 	- store original source code at
+		 * 		programStructureTreePerOriginalFile["_ORIGINAL_dir/dir/file.ext"]
+		 * else: (file is already transformed)
+		 * 	- store transformed source code at
+		 * 		programStructureTreePerFile["dir/dir/file.ext"]
+		 *  - get source map of transformed file
+		 * 	- store original source code at
+		 * 		programStructureTreePerOriginalFile[path.resolve("dir/dir/" + sourcemap.source)]
+		 */
+
 		let sourceMap = undefined
 		let programStructureTree = undefined
 		let programStructureTreeOriginal = undefined
 		programStructureTree = programStructureTreePerFile.get(cpuNode.relativeUrl.toString())
-		programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
-			cpuNode.relativeUrl.toString()
-		)
+		const shouldBeTransformed = await transformerAdapterToUse.shouldProcess(cpuNode.url)
+		const { lineNumber, columnNumber } = cpuNode.sourceLocation
 
-		if (programStructureTreeOriginal === undefined) {
-			programStructureTreeOriginal = TypescriptParser.parseFile(cpuNode.url)
-			programStructureTreePerOriginalFile.set(
-				cpuNode.relativeUrl.toString(),
-				programStructureTreeOriginal
+		if (shouldBeTransformed) {
+			const originalFilePath = '_ORIGINAL_' + cpuNode.relativeUrl.toString() as UnifiedPath_string
+			programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
+				originalFilePath
 			)
-		}
-
-		if (programStructureTree === undefined) {
-			if (await transformerAdapterToUse.shouldProcess(cpuNode.url)) {
+			if (programStructureTree === undefined) {
 				const transformedSourceCode = await transformerAdapterToUse.process(cpuNode.url)
 				if (!transformedSourceCode) {
 					throw new Error('InsertCPUProfileHelper.resolveFunctionIdentifier Could not transform source code from: ' + cpuNode.url.toString())
@@ -539,13 +549,44 @@ export class InsertCPUProfileHelper {
 				)
 				programStructureTreePerFile.set(cpuNode.relativeUrl.toString(), programStructureTree)
 				sourceMap = getSourceMapFromSourceCode(cpuNode.javascriptUrl, transformedSourceCode)
-			} else {
-				programStructureTree = programStructureTreeOriginal
+			}
+			if (programStructureTreeOriginal === undefined) {
+				programStructureTreeOriginal = TypescriptParser.parseFile(cpuNode.url)
+				programStructureTreePerOriginalFile.set(
+					originalFilePath,
+					programStructureTreeOriginal
+				)
+			}
+		} else {
+			if (programStructureTree === undefined) {
+				programStructureTree = TypescriptParser.parseFile(cpuNode.url)
 				programStructureTreePerFile.set(cpuNode.relativeUrl.toString(), programStructureTree)
 			}
-		}
 
-		const { lineNumber, columnNumber } = cpuNode.sourceLocation
+			sourceMap = getSourceMapOfFile(cpuNode.url)
+
+			const originalPosition = sourceMap?.getOriginalSourceLocation(lineNumber, columnNumber)
+			if (originalPosition && originalPosition.source) {
+				const absoluteOriginalSourcePath = new UnifiedPath(
+					path.resolve(path.join(path.dirname(cpuNode.url.toString()), originalPosition.source))
+				)
+				const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
+				programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
+					pureRelativeOriginalSourcePath.toString()
+				)
+				if (programStructureTreeOriginal === undefined) {
+					programStructureTreeOriginal = TypescriptParser.parseFile(absoluteOriginalSourcePath)
+					programStructureTreePerOriginalFile.set(
+						pureRelativeOriginalSourcePath.toString(),
+						programStructureTreeOriginal
+					)
+				}
+
+			}
+			if (programStructureTreeOriginal === undefined) {
+				programStructureTreeOriginal = programStructureTree
+			}
+		}
 
 		const functionIdentifier = programStructureTree.identifierBySourceLocation(
 			{ line: lineNumber, column: columnNumber }
