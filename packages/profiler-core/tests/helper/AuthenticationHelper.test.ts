@@ -15,13 +15,13 @@ describe('AuthenticationHelper', () => {
 			const authFile = configDir.join('auth');
 			
 			(fs.existsSync as jest.Mock).mockImplementation((path: fs.PathLike) => {
-				if (path === configDir.toString() || path === authFile.toString()) {
+				if (path === configDir.toPlatformString() || path === authFile.toPlatformString()) {
 					return true
 				}
 				return fs.existsSync(path)
 			});
 			(fs.readFileSync as jest.Mock).mockImplementation((path: fs.PathOrFileDescriptor) => {
-				if (path === authFile.toString()) {
+				if (path === authFile.toPlatformString()) {
 					return EXAMPLE_AUTH_KEY
 				}
 				return fs.readFileSync(path)
