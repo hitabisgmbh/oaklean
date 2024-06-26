@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 
-import { ProjectReport, SourceFileMetaDataTree, UnifiedPath } from '@oaklean/profiler-core'
+import { NodeModule, ProjectReport, SourceFileMetaDataTree, UnifiedPath } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
 export default class FormatCommands {
@@ -28,6 +28,12 @@ export default class FormatCommands {
 			.argument('<input>', 'input file path')
 			.argument('<output>', 'output file path')
 			.action(this.convertToSourceFileMetaDataTreeTree.bind(this))
+
+		baseCommand
+			.command('check')
+			.description('Checks wether all files in the profiler format are present')
+			.argument('<input>', 'input file path')
+			.action(this.check.bind(this))
 	}
 
 	static init() {
@@ -97,5 +103,44 @@ export default class FormatCommands {
 
 		const tree = SourceFileMetaDataTree.fromProjectReport(report)
 		tree.storeToFile(outputPath, 'pretty-json')
+	}
+
+	async check(input: string) {
+		let inputPath = new UnifiedPath(input)
+		if (inputPath.isRelative()) {
+			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
+		}
+
+		const report = ProjectReport.loadFromFile(inputPath, 'bin')
+		if (report === undefined) {
+			console.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			return
+		}
+		const reversePathMap = report.globalIndex.getModuleIndex('get')?.reversePathMap
+
+		if (reversePathMap === undefined) {
+			console.error('Could not find reversePathMap')
+			return
+		}
+
+		for (const pathIndex of reversePathMap.values()) {
+			if (!fs.existsSync(new UnifiedPath(pathIndex.identifier).toPlatformString())) {
+				console.error(`Could not find file ${pathIndex.identifier}`)
+			}
+		}
+
+		const nodeModulePath = new UnifiedPath(process.cwd()).join('node_modules')
+		for (const [nodeModuleIdentifier, moduleIndex] of report.globalIndex.moduleMap.entries()) {
+			if (nodeModuleIdentifier === '{self}' || nodeModuleIdentifier === '{node}') {
+				continue
+			}
+			const nodeModule = NodeModule.fromIdentifier(nodeModuleIdentifier)
+			for (const pathIndex of moduleIndex.reversePathMap.values()) {
+				const filePath = nodeModulePath.join(nodeModule.name, pathIndex.identifier).toPlatformString()
+				if (!fs.existsSync(filePath)) {
+					console.error(`Could not find file ${filePath}`)
+				}
+			}
+		}
 	}
 }
