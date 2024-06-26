@@ -531,8 +531,11 @@ export class InsertCPUProfileHelper {
 		programStructureTree = programStructureTreePerFile.get(cpuNode.relativeUrl.toString())
 		const shouldBeTransformed = await transformerAdapterToUse.shouldProcess(cpuNode.url)
 		const { lineNumber, columnNumber } = cpuNode.sourceLocation
+		let relativeOriginalSourcePath = undefined
+
 
 		if (shouldBeTransformed) {
+			relativeOriginalSourcePath = cpuNode.relativeUrl
 			const originalFilePath = '_ORIGINAL_' + cpuNode.relativeUrl.toString() as UnifiedPath_string
 			programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
 				originalFilePath
@@ -571,6 +574,9 @@ export class InsertCPUProfileHelper {
 					path.resolve(path.join(path.dirname(cpuNode.url.toString()), originalPosition.source))
 				)
 				const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
+				relativeOriginalSourcePath = (cpuNode.nodeModulePath && cpuNode.nodeModule)
+					? cpuNode.nodeModulePath.pathTo(pureRelativeOriginalSourcePath) : pureRelativeOriginalSourcePath
+
 				programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
 					pureRelativeOriginalSourcePath.toString()
 				)
@@ -602,21 +608,6 @@ export class InsertCPUProfileHelper {
 				columnNumber
 			})
 			throw new Error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty')
-		}
-
-		sourceMap = sourceMap ? sourceMap : getSourceMapOfFile(cpuNode.url)
-		const originalPosition = sourceMap?.getOriginalSourceLocation(lineNumber, columnNumber)
-		let relativeOriginalSourcePath = undefined
-
-		if (originalPosition && originalPosition.source) {
-			// add the profiler information for the original source file as well
-			const absoluteOriginalSourcePath = new UnifiedPath(
-				path.resolve(path.join(path.dirname(cpuNode.url.toString()), originalPosition.source))
-			)
-
-			const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
-			relativeOriginalSourcePath = (cpuNode.nodeModulePath && cpuNode.nodeModule)
-				? cpuNode.nodeModulePath.pathTo(pureRelativeOriginalSourcePath) : pureRelativeOriginalSourcePath
 		}
 
 		return {
