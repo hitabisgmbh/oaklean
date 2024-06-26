@@ -20,6 +20,7 @@ Commands:
      - toHash Calculates the hash of given a profiler format
      - toJSON Converts a profiler format that is given in binary format to a json version
      - toSourceFileTree Converts a profiler format that is given in binary format to a SourceFileMetaDataTree
+     - check Checks wether all files in the profiler format are present
   
   profile         commands to convert or inspect the cpu profile's format
      - toCPUModel Converts a cpu profile format that is given to a cpu model format
