@@ -1,7 +1,13 @@
 {
-  "files.eol": "\n",
-  "files.associations": {
-    "*.json": "jsonc"
-  },
-  "typescript.tsdk": "node_modules/typescript/lib"
+	"files.eol": "\n",
+	"files.associations": {
+		"*.json": "jsonc"
+	},
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"editor.tabSize": 2,
+	"editor.insertSpaces": false,
+	"editor.formatOnSave": false,
+	"editor.detectIndentation": false,
+	"javascript.preferences.quoteStyle": "single",
+	"typescript.preferences.quoteStyle": "single"
 }
