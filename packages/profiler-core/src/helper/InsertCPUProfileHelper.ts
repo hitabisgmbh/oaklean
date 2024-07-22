@@ -573,21 +573,22 @@ export class InsertCPUProfileHelper {
 				const absoluteOriginalSourcePath = new UnifiedPath(
 					path.resolve(path.join(path.dirname(cpuNode.url.toString()), originalPosition.source))
 				)
-				const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
-				relativeOriginalSourcePath = (cpuNode.nodeModulePath && cpuNode.nodeModule)
-					? cpuNode.nodeModulePath.pathTo(pureRelativeOriginalSourcePath) : pureRelativeOriginalSourcePath
+				if (fs.existsSync(absoluteOriginalSourcePath.toPlatformString())) {
+					const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
+					relativeOriginalSourcePath = (cpuNode.nodeModulePath && cpuNode.nodeModule)
+						? cpuNode.nodeModulePath.pathTo(pureRelativeOriginalSourcePath) : pureRelativeOriginalSourcePath
 
-				programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
-					pureRelativeOriginalSourcePath.toString()
-				)
-				if (programStructureTreeOriginal === undefined) {
-					programStructureTreeOriginal = TypescriptParser.parseFile(absoluteOriginalSourcePath)
-					programStructureTreePerOriginalFile.set(
-						pureRelativeOriginalSourcePath.toString(),
-						programStructureTreeOriginal
+					programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
+						pureRelativeOriginalSourcePath.toString()
 					)
+					if (programStructureTreeOriginal === undefined) {
+						programStructureTreeOriginal = TypescriptParser.parseFile(absoluteOriginalSourcePath)
+						programStructureTreePerOriginalFile.set(
+							pureRelativeOriginalSourcePath.toString(),
+							programStructureTreeOriginal
+						)
+					}
 				}
-
 			}
 			if (programStructureTreeOriginal === undefined) {
 				programStructureTreeOriginal = programStructureTree
