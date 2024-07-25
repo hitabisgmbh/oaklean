@@ -14,6 +14,7 @@
 - The profiler now correctly detects whether a function is present in the original source code when running JavaScript files that were compiled with source maps
 - Fixed a bug in the perf sensor interface that was preventing measurements
 - The profiler now handles paths with spaces correctly
+- Measurements are now correctly exported using the profilers inject capability
 
 ## 0.1.2
 ### Added

@@ -64,10 +64,6 @@ export class Profiler {
 		this.loadSensorInterface()
 	}
 
-	cleanExit() {
-		process.exit()
-	}
-
 	static getSensorInterface(config: ProfilerConfig) {
 		const sensorInterfaceType = config.getSensorInterfaceType()
 		switch (sensorInterfaceType) {
@@ -94,28 +90,42 @@ export class Profiler {
 		this._sensorInterface = Profiler.getSensorInterface(this.config)
 	}
 
-	static inject(profileName: string, subOutputDir?: string): Profiler {
+	static async inject(profileName: string, subOutputDir?: string): Promise<Profiler> {
 		const profiler = new Profiler(subOutputDir)
 
 		const title = new Date().getTime().toString()
 
-		const exitHandler = {
-			origin: '',
-			resolve() {
-				profiler.finish(title)
+		const exitResolve = () => resolve('exit')
+		const sigIntResolve = () => resolve('SIGINT')
+		const sigUsr1Resolve = () => resolve('SIGUSR1')
+		const sigUsr2Resolve = () => resolve('SIGUSR2')
+
+
+		let stopped = false
+		async function resolve(origin: string) {
+			if (!stopped) {
+				await profiler.finish(title)
+				stopped = true
+			}
+			process.removeListener('exit', exitResolve)
+			process.removeListener('SIGINT', sigIntResolve)
+			process.removeListener('SIGUSR1', sigUsr1Resolve)
+			process.removeListener('SIGUSR2', sigUsr2Resolve)
+			if (origin !== 'exit') {
+				process.exit()
 			}
 		}
 
-		profiler.start(title)
+		await profiler.start(title)
 
-		process.on('exit', exitHandler.resolve.bind({ origin: 'exit' }))
+		process.on('exit', exitResolve)
 
-		//catches ctrl+c event
-		process.on('SIGINT', exitHandler.resolve.bind({ origin: 'SIGINT' }))
+		// //catches ctrl+c event
+		process.on('SIGINT', sigIntResolve)
 
-		// catches "kill pid" (for example: nodemon restart)
-		process.on('SIGUSR1', exitHandler.resolve.bind({ origin: 'SIGUSR1' }))
-		process.on('SIGUSR2', exitHandler.resolve.bind({ origin: 'SIGUSR2' }))
+		// // catches "kill pid" (for example: nodemon restart)
+		process.on('SIGUSR1', sigUsr1Resolve)
+		process.on('SIGUSR2', sigUsr2Resolve)
 
 		return profiler
 	}
@@ -163,9 +173,6 @@ export class Profiler {
 	}
 
 	async start(title: string, executionDetails?: IProjectReportExecutionDetails) {
-		process.on('SIGTERM', this.cleanExit)
-		process.on('SIGINT', this.cleanExit)
-
 		const mathRandomSeed = this.config.getSeedForMathRandom()
 		if (mathRandomSeed) {
 			seedrandom(mathRandomSeed, { global: true })
@@ -282,9 +289,6 @@ export class Profiler {
 		if (await report.shouldBeStoredInRegistry()) {
 			await report.uploadToRegistry(this.config)
 		}
-
-		process.removeListener('SIGTERM', this.cleanExit)
-		process.removeListener('SIGINT', this.cleanExit)
 		return report
 	}
 }
