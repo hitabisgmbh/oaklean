@@ -55,7 +55,7 @@ export class PermissionHelper {
 				options.shell = 'powershell.exe'
 			}
 			try {
-				ChildProcess.execSync(`chown ${sudoUser} ${path}`, options)
+				ChildProcess.execSync(`chown ${sudoUser} "${path}"`, options)
 			} catch {}
 		}
 	}
@@ -70,7 +70,7 @@ export class PermissionHelper {
 		// 	options.shell = 'powershell.exe'
 		// }
 		try {
-			ChildProcess.execSync(`chmod ${permissions} ${path}`, options)
+			ChildProcess.execSync(`chmod ${permissions} "${path}"`, options)
 		} catch { }
 	}
 
