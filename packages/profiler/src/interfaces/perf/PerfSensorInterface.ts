@@ -96,7 +96,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		return new Promise((resolve) => {
 			try {
 				const childProcess = spawn(
-					this._executable + ' stat -e ' + eventName + ' -- sleep 0.001; echo $?',
+					this._executable + ' stat -e ' + eventName + ' -- sleep 0.001',
 					{
 						detached: false,
 						stdio: 'pipe',
