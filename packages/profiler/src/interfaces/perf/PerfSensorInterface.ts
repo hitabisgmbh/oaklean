@@ -102,28 +102,12 @@ export class PerfSensorInterface extends BaseSensorInterface {
 						stdio: 'pipe',
 						shell: true
 					})
-				let isExecutable = false
-	
-				childProcess.on('error', () => {
-					resolve(false)
-				})
-	
-				childProcess.stderr.on('data', () => {
-					childProcess.kill('SIGTERM')
-					isExecutable = false
-				})
-	
-				childProcess.stdout.on('data', (chunk) => {
-					childProcess.kill('SIGTERM')
-					if (chunk.toString().trim() === '0') {
-						isExecutable = true
+				childProcess.on('close', (code: number) => {
+					if (code === 0) {
+						resolve(true)
 					} else {
-						isExecutable = false
+						resolve(false)
 					}
-				})
-	
-				childProcess.on('exit', () => {
-					resolve(isExecutable)
 				})
 			} catch {
 				resolve(false)
