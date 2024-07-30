@@ -3,6 +3,7 @@ import { Session } from 'inspector'
 
 import seedrandom from 'seedrandom'
 import {
+	APP_NAME,
 	UnifiedPath,
 	ProfilerConfig,
 	ProjectReport,
@@ -105,7 +106,7 @@ export class Profiler {
 		async function resolve(origin: string) {
 			if (!stopped) {
 				stopped = true
-				console.log('Finish Measurement, please wait...')
+				console.log(`(${APP_NAME} Profiler) Finish Measurement, please wait...`)
 				await profiler.finish(title)
 				process.removeListener('exit', exitResolve)
 				process.removeListener('SIGINT', sigIntResolve)
@@ -117,6 +118,7 @@ export class Profiler {
 			}
 		}
 
+		console.log(`(${APP_NAME} Profiler) Measurement started`)
 		await profiler.start(title)
 
 		process.on('exit', exitResolve)
@@ -140,7 +142,7 @@ export class Profiler {
 		session.connect()
 		session.on('NodeTracing.dataCollected', (chunk) => {
 			for (const event of (chunk.params.value as TraceEventParams[])) {
-				if (event.pid === process.pid && event.cat === 'v8' ) {
+				if (event.pid === process.pid && event.cat === 'v8') {
 					if (event.name === 'CpuProfiler::StartProfiling') { // captured start event of cpu profiler
 						this._profilerStartTime = event.ts as MicroSeconds_number // store high resolution begin time
 					}
@@ -183,7 +185,7 @@ export class Profiler {
 		if (mathRandomSeed) {
 			seedrandom(mathRandomSeed, { global: true })
 		}
-		
+
 		if (executionDetails) {
 			this.executionDetails = executionDetails
 		} else {

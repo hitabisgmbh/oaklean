@@ -8,10 +8,10 @@ export default async function () {
 	if (!process.env.ENABLE_MEASUREMENTS) {
 		return
 	}
-	console.log('\n(Oaklean Profiler) Clean up Measurements')
+	console.log(`\n(${APP_NAME} Profiler) Clean up Measurements`)
 	const profilerConfig = ProfilerConfig.autoResolve()
 	const outDir = profilerConfig.getOutDir().join('jest')
-	
+
 	console.log(`(${APP_NAME} Profiler) V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
 	const sensorInterfaceOptions = profilerConfig.getSensorInterfaceOptions()
 	if (sensorInterfaceOptions !== undefined) {
@@ -31,7 +31,7 @@ export default async function () {
 					const availableMeasurementTypes = await (
 						sensorInterface as PerfSensorInterface).availableMeasurementTypes()
 					console.log(
-						`(${APP_NAME} Profiler) Measure CPU Energy: ` + 
+						`(${APP_NAME} Profiler) Measure CPU Energy: ` +
 						`${availableMeasurementTypes[PerfEvent.ENERGY_CORES]}`
 					)
 					console.log(
@@ -46,7 +46,7 @@ export default async function () {
 
 	} else {
 		console.log(
-			`(${APP_NAME} Profiler) no SensorInterface configured ` + 
+			`(${APP_NAME} Profiler) no SensorInterface configured ` +
 			'(no energy measurements will be collected, only cpu time)'
 		)
 	}

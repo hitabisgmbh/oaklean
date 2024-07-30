@@ -82,7 +82,9 @@ If you want to how to setup the Sensor Interfaces and how to make them work with
 
 	// profiler stops and exports profile when applications stops or gets killed
 	// If the resp. exports are enabled the profiler will automatically
-	// export the measurements into the output directory (defined via the `.oaklean` config) `<rootDir>/<outDir>/<report-name>/`
+	// export the measurements into the output directory (defined via the `.oaklean` config) `<rootDir>/<report-name>/<timestamp>/`
+
+	// IMPORTANT FOR WINDOWS: There is a known issue regarding the usage of windows, measurements are currently not reliably exported when the process receives a ctrl+c (SIGINT) signal. https://github.com/hitabisgmbh/oaklean/issues/3
 	```
 
 - Option 2 (Code wrapping):
