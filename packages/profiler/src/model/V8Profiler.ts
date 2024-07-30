@@ -35,6 +35,9 @@ export class V8Profiler {
 	static unifyProfile(profile: Cdp.Profiler.Profile) {
 		for (const node of profile.nodes) {
 			if (node.callFrame.url !== '' && !node.callFrame.url.startsWith('node:')) {
+				if (node.callFrame.url.startsWith('file://')) {
+					node.callFrame.url = node.callFrame.url.slice(7)
+				}
 				node.callFrame.url = new UnifiedPath(node.callFrame.url).toString()
 			}
 		}

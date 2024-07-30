@@ -131,6 +131,9 @@ export class CPUModel {
 				}
 				offset = offset - currentMetricsData.duration as NanoSeconds_BigInt
 				currentMetricsData = metricsDataCollection.items[++currentItemNumber]
+				if (currentMetricsData === undefined) {
+					break
+				}
 				energyOfMeasuredProcess = undefined
 				i-- // move one step back to begin at the same timeDelta again but with the next metricsData profile
 				continue

@@ -110,9 +110,9 @@ export class Profiler {
 				process.removeListener('SIGINT', sigIntResolve)
 				process.removeListener('SIGUSR1', sigUsr1Resolve)
 				process.removeListener('SIGUSR2', sigUsr2Resolve)
-			}
-			if (origin !== 'exit') {
-				process.exit()
+				if (origin !== 'exit') {
+					process.exit()
+				}
 			}
 		}
 
@@ -173,6 +173,11 @@ export class Profiler {
 	}
 
 	async start(title: string, executionDetails?: IProjectReportExecutionDetails) {
+		const outFileReport = this.outputReportPath(title)
+		const outDir = outFileReport.dirName()
+		if (!fs.existsSync(outDir.toPlatformString())) {
+			PermissionHelper.mkdirRecursivelyWithUserPermission(outDir)
+		}
 		const mathRandomSeed = this.config.getSeedForMathRandom()
 		if (mathRandomSeed) {
 			seedrandom(mathRandomSeed, { global: true })
@@ -253,10 +258,6 @@ export class Profiler {
 		const outFileCPUProfile = this.outputProfilePath(title)
 		const outFileReport = this.outputReportPath(title)
 		const outFileMetricCollection = this.outputMetricCollectionPath(title)
-		const outDir = outFileReport.dirName()
-		if (!fs.existsSync(outDir.toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(outDir)
-		}
 		if (this.config.shouldExportV8Profile()) {
 			PermissionHelper.writeFileWithUserPermission(
 				outFileCPUProfile.toPlatformString(),

@@ -16,8 +16,11 @@ A library to measure the energy consumption of your javascript/typescript code
 - Option 1 (Code Injection):
 	```typescript
 	import { Profiler } from '@oaklean/profiler'
-	Profiler.inject("<report-name>")
-	// run the code to measure
+	async function main() {
+		await Profiler.inject("<report-name>") // IMPORTANT: need the await
+		// run the code to measure
+	}
+	main()
 
 	// profiler stops and exports profile when applications stops or gets killed
 	// If the resp. exports are enabled the profiler will automatically
