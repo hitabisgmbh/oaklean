@@ -104,13 +104,13 @@ export class Profiler {
 		let stopped = false
 		async function resolve(origin: string) {
 			if (!stopped) {
-				await profiler.finish(title)
 				stopped = true
+				await profiler.finish(title)
+				process.removeListener('exit', exitResolve)
+				process.removeListener('SIGINT', sigIntResolve)
+				process.removeListener('SIGUSR1', sigUsr1Resolve)
+				process.removeListener('SIGUSR2', sigUsr2Resolve)
 			}
-			process.removeListener('exit', exitResolve)
-			process.removeListener('SIGINT', sigIntResolve)
-			process.removeListener('SIGUSR1', sigUsr1Resolve)
-			process.removeListener('SIGUSR2', sigUsr2Resolve)
 			if (origin !== 'exit') {
 				process.exit()
 			}
