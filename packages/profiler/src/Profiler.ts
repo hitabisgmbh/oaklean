@@ -90,7 +90,7 @@ export class Profiler {
 		this._sensorInterface = Profiler.getSensorInterface(this.config)
 	}
 
-	static async inject(profileName: string, subOutputDir?: string): Promise<Profiler> {
+	static async inject(subOutputDir?: string): Promise<Profiler> {
 		const profiler = new Profiler(subOutputDir)
 
 		const title = new Date().getTime().toString()
