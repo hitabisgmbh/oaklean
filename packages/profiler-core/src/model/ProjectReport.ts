@@ -443,6 +443,7 @@ export class ProjectReport extends Report {
 
 		try {
 			const result = await axios.post(usedConfig.getRegistryUploadUrl(), formData, {
+				timeout: 5000, // Set a timeout of 5 seconds
 				headers: {
 					'Content-Type': 'multipart/form-data'
 				}
