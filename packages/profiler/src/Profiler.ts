@@ -105,6 +105,7 @@ export class Profiler {
 		async function resolve(origin: string) {
 			if (!stopped) {
 				stopped = true
+				console.log('Finish Measurement, please wait...')
 				await profiler.finish(title)
 				process.removeListener('exit', exitResolve)
 				process.removeListener('SIGINT', sigIntResolve)
