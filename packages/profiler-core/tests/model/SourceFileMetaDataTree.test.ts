@@ -55,8 +55,8 @@ describe('SourceFileMetaDataTree', () => {
 			)
 
 			const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
-				sourceFileMetaData.totalSourceNodeMataData(),
-				sourceFileMetaData.maxSourceNodeMataData()
+				sourceFileMetaData.totalSourceNodeMetaData(),
+				sourceFileMetaData.maxSourceNodeMetaData()
 			)
 
 			instance.insertPath(
@@ -290,8 +290,8 @@ describe('SourceFileMetaDataTree', () => {
 					}, pathIndex)
 
 					const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
-						sourceFileMetaData.totalSourceNodeMataData(),
-						sourceFileMetaData.maxSourceNodeMataData()
+						sourceFileMetaData.totalSourceNodeMetaData(),
+						sourceFileMetaData.maxSourceNodeMetaData()
 					)
 
 					instance.insertPath(

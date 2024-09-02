@@ -672,8 +672,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			}
 
 			const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
-				sourceFileMetaData.totalSourceNodeMataData(),
-				sourceFileMetaData.maxSourceNodeMataData()
+				sourceFileMetaData.totalSourceNodeMetaData(),
+				sourceFileMetaData.maxSourceNodeMetaData()
 			)
 			const fileNode = this.insertLangInternalPath(
 				filePathIndex.identifier as LangInternalPath_string,
@@ -703,8 +703,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				new UnifiedPath(reversedFilePath).split()
 
 			const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
-				sourceFileMetaData.totalSourceNodeMataData(),
-				sourceFileMetaData.maxSourceNodeMataData()
+				sourceFileMetaData.totalSourceNodeMetaData(),
+				sourceFileMetaData.maxSourceNodeMetaData()
 			)
 
 			const fileNode = this.insertPath(

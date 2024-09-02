@@ -196,12 +196,12 @@ function runInstanceTests(
 			expect(instance.createOrGetSourceNodeMetaData).toBeTruthy()
 		})
 
-		it('should have a method totalSourceNodeMataData()', () => {
-			expect(instance.totalSourceNodeMataData).toBeTruthy()
+		it('should have a method totalSourceNodeMetaData()', () => {
+			expect(instance.totalSourceNodeMetaData).toBeTruthy()
 		})
 
-		it('should have a method maxSourceNodeMataData()', () => {
-			expect(instance.maxSourceNodeMataData).toBeTruthy()
+		it('should have a method maxSourceNodeMetaData()', () => {
+			expect(instance.maxSourceNodeMetaData).toBeTruthy()
 		})
 
 		test('createOrAddToNode', () => {
@@ -241,8 +241,8 @@ function runInstanceTests(
 			})
 		})
 
-		test('totalSourceNodeMataData', () => {
-			expect(instance.totalSourceNodeMataData().toJSON()).toEqual({
+		test('totalSourceNodeMetaData', () => {
+			expect(instance.totalSourceNodeMetaData().toJSON()).toEqual({
 				type: SourceNodeMetaDataType.Aggregate,
 				lang_internal: undefined,
 				sensorValues: {
@@ -260,8 +260,8 @@ function runInstanceTests(
 			})
 		})
 
-		test('maxSourceNodeMataData', () => {
-			expect(instance.maxSourceNodeMataData().toJSON()).toEqual({
+		test('maxSourceNodeMetaData', () => {
+			expect(instance.maxSourceNodeMetaData().toJSON()).toEqual({
 				type: SourceNodeMetaDataType.Aggregate,
 				sensorValues: {
 					profilerHits: 2,

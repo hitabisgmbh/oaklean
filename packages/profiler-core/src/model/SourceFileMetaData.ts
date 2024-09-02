@@ -331,7 +331,7 @@ export class SourceFileMetaData extends BaseModel {
 	 * 
 	 * @returns number
 	 */
-	totalSourceNodeMataData() {
+	totalSourceNodeMetaData() {
 		const list: SourceNodeMetaData<
 		SourceNodeMetaDataType.SourceNode| SourceNodeMetaDataType.LangInternalSourceNode>[] = []
 
@@ -342,7 +342,7 @@ export class SourceFileMetaData extends BaseModel {
 				const sourceNodeIndex = this.pathIndex.moduleIndex.globalIndex.getSourceNodeIndexByID(sourceNodeID)
 
 				if (sourceNodeIndex?.pathIndex.moduleIndex.identifier === '{node}') {
-					throw new Error('totalSourceNodeMataData: sourceNodeMetaData.intern should not contain node module source nodes')
+					throw new Error('totalSourceNodeMetaData: sourceNodeMetaData.intern should not contain node module source nodes')
 				}
 				if (sourceNodeIndex?.pathIndex.identifier === this.path) {
 					compensateAggregatedTime += internSourceNodeMetaData.sensorValues.aggregatedCPUTime
@@ -355,7 +355,7 @@ export class SourceFileMetaData extends BaseModel {
 		return result
 	}
 
-	maxSourceNodeMataData() {
+	maxSourceNodeMetaData() {
 		return SourceNodeMetaData.max(...this.functions.values())
 	}
 
