@@ -31,11 +31,15 @@ export enum SourceFileMetaDataTreeType {
 }
 
 type UnifiedPathOnlyForPathNode<T> =
-	T extends SourceFileMetaDataTreeType.File | SourceFileMetaDataTreeType.Directory ? UnifiedPath : undefined
+	T extends SourceFileMetaDataTreeType.File |
+	SourceFileMetaDataTreeType.Directory |
+	SourceFileMetaDataTreeType.Module ? UnifiedPath : undefined
 
 
 type UnifiedPath_stringOnlyForPathNode<T> =
-	T extends SourceFileMetaDataTreeType.File | SourceFileMetaDataTreeType.Directory ? UnifiedPath_string : undefined
+	T extends SourceFileMetaDataTreeType.File |
+	SourceFileMetaDataTreeType.Directory |
+	SourceFileMetaDataTreeType.Module ? UnifiedPath_string : undefined
 
 type IGlobalIndexOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? IGlobalIndex : undefined
 type IEngineModuleOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? INodeModule : undefined
@@ -643,7 +647,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 	addExternReport(moduleReport: ModuleReport, index: ModuleIndex, mode: 'compiled' | 'original') {
 		const child = new SourceFileMetaDataTree(
 			SourceFileMetaDataTreeType.Module,
-			undefined,
+			new UnifiedPath('node_modules/' + moduleReport.nodeModule.identifier),
 			index
 		)
 		child.addInternReport(moduleReport, mode)
