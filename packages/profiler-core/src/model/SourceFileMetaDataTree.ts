@@ -1,5 +1,7 @@
 import * as fs from 'fs'
 
+import globToRegExp from 'glob-to-regexp'
+
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 import {
@@ -22,6 +24,7 @@ import { UnifiedPath } from '../system/UnifiedPath'
 import { UnifiedPath_string, UnifiedPathPart_string } from '../types/UnifiedPath.types'
 import { LangInternalPath_string } from '../types/SourceNodeIdentifiers.types'
 import { PermissionHelper } from '../helper/PermissionHelper'
+
 
 export enum SourceFileMetaDataTreeType {
 	Root = 'Root',
@@ -599,7 +602,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 	): SourceFileMetaDataTree<SourceFileMetaDataTreeType.File | SourceFileMetaDataTreeType.Directory> {
 		this.addToAggregatedInternSourceNodeMetaDataOfTree(aggregatedSourceNodeMetaData)
 		let child = this.internChildren.get(filePathParts[0])
-		const filePath = this.filePath === undefined ? new UnifiedPath('./') : this.filePath
+		const filePath = this.type === SourceFileMetaDataTreeType.Module ? new UnifiedPath('./') :
+			(this.filePath === undefined ? new UnifiedPath('./') : this.filePath)
 
 		if (filePathParts.length === 1) {
 			if (!child) {
@@ -736,5 +740,103 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			}
 			this.addExternReport(externModuleReport, childIndex, mode)
 		}
+	}
+
+	checkGlob(filterPath: string): boolean {
+		if (this.filePath === undefined) {
+			throw new Error('SourceFileMetaDataTree.checkGlob: filePath is undefined')
+		}
+		const normalizedDirectory = this.filePath.toString().startsWith('./') ?
+			this.filePath.toString().substring(2) : this.filePath.toString()
+		const normalizedFilterPath = filterPath.startsWith('./') ? filterPath.substring(2) : filterPath
+		const includeRe = globToRegExp(normalizedFilterPath, { extended: true })
+		return includeRe.test(normalizedDirectory) || includeRe.test(normalizedDirectory + '/')
+	}
+
+	filter(
+		includedFilterPath: string | undefined,
+		excludedFilterPath: string | undefined,
+	): SourceFileMetaDataTree<T> | null {
+		if (this.type === SourceFileMetaDataTreeType.File) {
+			if (includedFilterPath && !(includedFilterPath.endsWith('/*') || includedFilterPath.endsWith('/'))) {
+				includedFilterPath = includedFilterPath + '/*'
+			} else if (includedFilterPath && includedFilterPath.endsWith('/')) {
+				includedFilterPath = includedFilterPath + '*'
+			}
+
+			const isIncludedNode = includedFilterPath ? this.checkGlob(includedFilterPath) : true
+			const isExcludedNode = excludedFilterPath ? this.checkGlob(excludedFilterPath) : false
+
+			if (!isIncludedNode || isExcludedNode) {
+				return null
+			}
+		}
+		const node = new SourceFileMetaDataTree(
+			this.type,
+			this.filePath,
+			this.index,
+			this.compiledSourceFilePath,
+			this.originalSourceFilePath
+		)
+		node.sourceFileMetaData = this.sourceFileMetaData
+
+		if (SourceFileMetaDataTree.isFileNode(this)) {
+			if (this.sourceFileMetaData === undefined) {
+				throw new Error('SourceFileMetaDataTree.filter: sourceFileMetaData is undefined')
+			}
+			const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
+				this.sourceFileMetaData.totalSourceNodeMetaData(),
+				this.sourceFileMetaData.maxSourceNodeMetaData()
+			)
+			node.addToAggregatedInternSourceNodeMetaDataOfTree(
+				aggregatedSourceNodeMetaData
+			)
+		}
+
+		for (const [langInternalPath, child] of this.langInternalChildren.entries()) {
+			const filteredChild = child.filter(
+				includedFilterPath,
+				excludedFilterPath
+			)
+			if (filteredChild) {
+				node.langInternalChildren.set(langInternalPath, filteredChild)
+				node.addToAggregatedLangInternalSourceNodeMetaDataOfTree(
+					filteredChild.aggregatedInternSourceMetaData
+				)
+			}
+		}
+		for (const [internPath, child] of this.internChildren.entries()) {
+			const filteredChild = child.filter(
+				includedFilterPath,
+				excludedFilterPath
+			)
+			if (filteredChild) {
+				node.internChildren.set(internPath, filteredChild)
+				node.addToAggregatedInternSourceNodeMetaDataOfTree(
+					filteredChild.aggregatedInternSourceMetaData
+				)
+			}
+		}
+		for (const [moduleID, child] of this.externChildren.entries()) {
+			const filteredChild = child.filter(
+				includedFilterPath,
+				excludedFilterPath
+			)
+			if (filteredChild) {
+				node.externChildren.set(moduleID, filteredChild)
+				node.addToAggregatedExternSourceNodeMetaDataOfTree(
+					filteredChild.totalAggregatedSourceMetaData
+				)
+			}
+		}
+		if (node.type !== SourceFileMetaDataTreeType.File &&
+			node.internChildren.size === 0 &&
+			node.langInternalChildren.size === 0 &&
+			node.externChildren.size === 0
+		) {
+			return null
+		}
+
+		return node
 	}
 }
