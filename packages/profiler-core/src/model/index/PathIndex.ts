@@ -1,28 +1,23 @@
-import { ISourceNodeIndex, SourceNodeID_number, SourceNodeIndex, SourceNodeIndexType } from './SourceNodeIndex'
-import { GlobalIndex, IndexRequestType } from './GlobalIndex'
+import { SourceNodeIndex } from './SourceNodeIndex'
+import { GlobalIndex } from './GlobalIndex'
 import { ModuleIndex } from './ModuleIndex'
 
 import { BaseModel } from '../BaseModel'
 import { ModelMap } from '../ModelMap'
-import { SourceNodeIdentifier_string } from '../../types/SourceNodeIdentifiers.types'
+import { SourceNodeIdentifier_string } from '../../types/SourceNodeIdentifiers'
 import { UnifiedPath } from '../../system/UnifiedPath'
-import { UnifiedPath_string } from '../../types/UnifiedPath.types'
 import { LangInternalPathRegex } from '../../constants/SourceNodeRegex'
+// Types
 import {
+	PathID_number,
+	IPathIndex,
+	UnifiedPath_string,
+	IndexRequestType,
+	SourceNodeID_number,
+	SourceNodeIndexType,
 	LangInternalPath_string,
 	LangInternalSourceNodeIdentifier_string
-} from '../../types/SourceNodeIdentifiers.types'
-
-const PathIDSymbol: unique symbol = Symbol('PathIDSymbol')
-export type PathID_number = number & { [PathIDSymbol]: never }
-
-export interface IPathIndex {
-	id?: PathID_number
-	children?: Record<string, IPathIndex>
-	file?: Record<string, ISourceNodeIndex<SourceNodeIndexType>>
-	cucc?: boolean // contains uncommitted changes
-}
-
+} from '../../types'
 export class PathIndex extends BaseModel {
 	moduleIndex: ModuleIndex
 	identifier: UnifiedPath_string | LangInternalPath_string

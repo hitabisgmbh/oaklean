@@ -1,44 +1,16 @@
 import { BaseModel } from './BaseModel'
-import { MilliJoule_number } from './interfaces/BaseMetricsData'
 
-import { BufferHelper, PrimitiveBufferTypes } from '../helper/BufferHelper'
-import { UnifiedPath_string } from '../types/UnifiedPath.types'
-import { LangInternalPath_string, SourceNodeIdentifier_string } from '../types/SourceNodeIdentifiers.types'
-
-export interface IPureCPUEnergyConsumption {
-	selfCPUEnergyConsumption?: MilliJoule_number,
-	aggregatedCPUEnergyConsumption?: MilliJoule_number
-}
-
-export interface IPureRAMEnergyConsumption {
-	selfRAMEnergyConsumption?: MilliJoule_number,
-	aggregatedRAMEnergyConsumption?: MilliJoule_number
-}
-
-export interface IPureCPUTime {
-	selfCPUTime?: number,
-	aggregatedCPUTime?: number
-}
-
-export interface ISensorValues extends IPureCPUTime, IPureCPUEnergyConsumption, IPureRAMEnergyConsumption {
-	profilerHits?: number
-
-	internCPUTime?: number
-	externCPUTime?: number
-	langInternalCPUTime?: number
-
-	internCPUEnergyConsumption?: MilliJoule_number
-	externCPUEnergyConsumption?: MilliJoule_number
-	langInternalCPUEnergyConsumption?: MilliJoule_number
-
-	internRAMEnergyConsumption?: MilliJoule_number
-	externRAMEnergyConsumption?: MilliJoule_number
-	langInternalRAMEnergyConsumption?: MilliJoule_number
-}
-
-type SensorValueToDataTypeMap = {
-	[key in keyof ISensorValues]: PrimitiveBufferTypes
-};
+import { BufferHelper } from '../helper/BufferHelper'
+// Types
+import {
+	UnifiedPath_string,
+	LangInternalPath_string,
+	SourceNodeIdentifier_string,
+	MilliJoule_number,
+	PrimitiveBufferTypes,
+	SensorValueToDataTypeMap,
+	ISensorValues
+} from '../types'
 
 export const SENSOR_VALUES_BYTE_SIZE_MAP: SensorValueToDataTypeMap = {
 	profilerHits: PrimitiveBufferTypes.UInt,

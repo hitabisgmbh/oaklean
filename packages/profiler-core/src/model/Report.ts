@@ -2,53 +2,43 @@ import * as fs from 'fs'
 
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
-import { NodeModule, NodeModuleIdentifier_string } from './NodeModule'
+import { NodeModule } from './NodeModule'
 import {
-	ISourceFileMetaData,
 	SourceFileMetaData,
 	AggregatedSourceNodeMetaData
 } from './SourceFileMetaData'
 import {
-	SourceNodeMetaData,
-	SourceNodeMetaDataType
+	SourceNodeMetaData
 } from './SourceNodeMetaData'
 import { ProfilerConfig } from './ProfilerConfig'
-import { IPureCPUTime, IPureCPUEnergyConsumption, IPureRAMEnergyConsumption } from './SensorValues'
-import { ModuleID_number, ModuleIndex } from './index/ModuleIndex'
-import { GlobalIndex, IndexRequestType } from './index/GlobalIndex'
-import { PathIndex, PathID_number } from './index/PathIndex'
+import { ModuleIndex } from './index/ModuleIndex'
+import { GlobalIndex } from './index/GlobalIndex'
+import { PathIndex } from './index/PathIndex'
 
 import { PermissionHelper } from '../helper/PermissionHelper'
 import { VERSION } from '../constants/app'
+import { UnifiedPath } from '../system/UnifiedPath'
+import { BufferHelper } from '../helper/BufferHelper'
+// Types
 import {
 	LangInternalPath_string,
 	LangInternalSourceNodeIdentifier_string,
-	SourceNodeIdentifier_string
-} from '../types/SourceNodeIdentifiers.types'
-import { UnifiedPath } from '../system/UnifiedPath'
-import { UnifiedPath_string } from '../types/UnifiedPath.types'
-import { BufferHelper } from '../helper/BufferHelper'
+	SourceNodeIdentifier_string,
+	UnifiedPath_string,
+	SourceNodeMetaDataType,
+	ReportKind,
+	NodeModuleIdentifier_string,
+	IPureCPUTime,
+	IPureCPUEnergyConsumption,
+	IPureRAMEnergyConsumption,
+	ModuleID_number,
+	IndexRequestType,
+	PathID_number,
+	IReport,
+	ReportType,
+	ISourceFileMetaData
+} from '../types'
 
-export enum ReportKind {
-	measurement = 0,
-	accumulated = 1
-}
-
-export interface IReport {
-	reportVersion: string,
-	kind: ReportKind,
-	relativeRootDir?: UnifiedPath_string
-	internMapping?: Record<PathID_number, PathID_number>
-	lang_internal?: Record<PathID_number, ISourceFileMetaData>
-	intern?: Record<PathID_number, ISourceFileMetaData>
-	extern?: Record<ModuleID_number, IModuleReport>
-}
-
-export enum ReportType {
-	Report = 0,
-	ProjectReport = 1,
-	ModuleReport = 2
-}
 
 // global variable to assign an intern id to every report
 // the intern id is only used to uniquely identify a report within a project report,
@@ -903,4 +893,8 @@ export class Report extends BaseModel {
 	}
 }
 // eslint-disable-next-line import/order
-import { IModuleReport, ModuleReport } from './ModuleReport'
+import { ModuleReport } from './ModuleReport'
+// eslint-disable-next-line import/order
+import {
+	IModuleReport
+} from '../types'

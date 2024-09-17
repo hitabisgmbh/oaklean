@@ -4,11 +4,15 @@ import {
 	STATIC_CONFIG_FILENAME,
 	DEFAULT_PROFILER_CONFIG
 } from '../../src/constants/config'
-import { IProfilerConfig, ProfilerConfig, SensorInterfaceType } from '../../src/model/ProfilerConfig'
+import { ProfilerConfig } from '../../src/model/ProfilerConfig'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { PathUtils } from '../../src/helper/PathUtils'
-import { ProjectIdentifier_string } from '../../src/model/ProjectReport'
-import { MicroSeconds_number } from '../../src/helper/TimeHelper'
+import {
+	IProfilerConfig,
+	SensorInterfaceType,
+	ProjectIdentifier_string,
+	MicroSeconds_number
+} from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 

@@ -1,9 +1,7 @@
 import * as fs from 'fs'
 
 import { BaseModel } from './BaseModel'
-import { ProjectIdentifier_string } from './ProjectReport'
 
-import { IPowerMetricsSensorInterfaceOptions } from '../types/interfaces/powermetrics/types'
 import {
 	STATIC_CONFIG_FILENAME,
 	DEFAULT_PROFILER_CONFIG
@@ -11,59 +9,20 @@ import {
 import { PathUtils } from '../helper/PathUtils'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
-import { MicroSeconds_number } from '../helper/TimeHelper'
-import { IPerfSensorInterfaceOptions } from '../types/interfaces/perf/types'
 import { PermissionHelper } from '../helper/PermissionHelper'
-
-export enum SensorInterfaceType {
-	powermetrics = 'powermetrics',
-	perf = 'perf'
-}
-
-export type SensorInterfaceOptions = {
-	type: SensorInterfaceType.powermetrics,
-	options: IPowerMetricsSensorInterfaceOptions
-} | {
-	type: SensorInterfaceType.perf,
-	options: IPerfSensorInterfaceOptions
-}
-
-export type ProjectOptions = {
-	identifier: ProjectIdentifier_string
-}
-
-export type RegistryOptions = {
-	url: string
-}
-
-export type ExportOptions = {
-	outDir: string
-	outHistoryDir: string,
-	rootDir: string
-	exportV8Profile: boolean,
-	exportReport: boolean,
-	exportSensorInterfaceData: boolean
-}
-
-export type RuntimeOptions = {
-	seeds: {
-		'Math.random'?: string
-	},
-	sensorInterface?: SensorInterfaceOptions,
-	v8: {
-		cpu: {
-			sampleInterval: MicroSeconds_number
-		}
-	}
-}
-
-export interface IProfilerConfig {
-	extends?: string
-	exportOptions: ExportOptions
-	registryOptions: RegistryOptions
-	projectOptions: ProjectOptions
-	runtimeOptions: RuntimeOptions
-}
+// Types
+import {
+	IPowerMetricsSensorInterfaceOptions,
+	IPerfSensorInterfaceOptions,
+	ProjectIdentifier_string,
+	MicroSeconds_number,
+	IProfilerConfig,
+	RegistryOptions,
+	ExportOptions,
+	ProjectOptions,
+	RuntimeOptions,
+	SensorInterfaceType
+} from '../types'
 
 export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 	filePath: UnifiedPath

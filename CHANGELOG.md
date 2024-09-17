@@ -1,6 +1,10 @@
 
 # Change Log
 
+## 0.1.4
+### Improvement
+- Types are now outsourced into separate files, enabling their usage in browser environments
+
 ## 0.1.3
 ### Added
 - The .oak file format now stores which source files contain uncommitted changes

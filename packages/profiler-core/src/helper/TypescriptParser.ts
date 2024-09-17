@@ -5,9 +5,15 @@ import * as ts from 'typescript'
 
 import { TypeScriptHelper } from './TypescriptHelper'
 
-import { ProgramStructureTree, ProgramStructureTreeType, NodeLocation, IdentifierType } from '../model/ProgramStructureTree'
+import { ProgramStructureTree } from '../model/ProgramStructureTree'
 import { UnifiedPath } from '../system/UnifiedPath'
-import { SourceNodeIdentifier_string } from '../types/SourceNodeIdentifiers.types'
+// Types
+import {
+	SourceNodeIdentifier_string,
+	ProgramStructureTreeType,
+	NodeLocation,
+	IdentifierType
+} from '../types'
 
 type TraverseNodeInfo = {
 	tree: ProgramStructureTree,

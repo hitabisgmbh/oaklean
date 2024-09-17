@@ -4,57 +4,32 @@ import axios from 'axios'
 import FormData from 'form-data'
 
 import { NodeModule } from './NodeModule'
-import { ProfilerConfig, RuntimeOptions } from './ProfilerConfig'
-import { IReport, Report, ReportKind, ReportType } from './Report'
-import { SystemInformation, ISystemInformation } from './SystemInformation'
+import { ProfilerConfig } from './ProfilerConfig'
+import { Report } from './Report'
+import { SystemInformation } from './SystemInformation'
 import { MetricsDataCollection } from './interfaces/MetricsDataCollection'
-import { GlobalIndex, IGlobalIndex } from './index/GlobalIndex'
+import { GlobalIndex } from './index/GlobalIndex'
 import { ModuleIndex } from './index/ModuleIndex'
 
 import { BaseAdapter } from '../adapters/transformer/BaseAdapter'
-import { GitHelper, GitHash_string } from '../helper/GitHelper'
+import { GitHelper } from '../helper/GitHelper'
 import { TimeHelper } from '../helper/TimeHelper'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { UnifiedPath } from '../system/UnifiedPath'
-import { Crypto, UUID_string } from '../system/Crypto'
+import { Crypto } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
 import { AuthenticationHelper } from '../helper/AuthenticationHelper'
 import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper'
 import { BIN_FILE_MAGIC } from '../constants/app'
-
-const ProjectIdentifierSymbol: unique symbol = Symbol('ProjectIdentifierSymbol')
-export type ProjectIdentifier_string = UUID_string & { [ProjectIdentifierSymbol]: never }
-
-export type IProjectMetaData = {
-	projectID: ProjectIdentifier_string
-}
-
-export type ILanguageInformation = {
-	name: string,
-	version: string
-}
-export enum ProjectReportOrigin {
-	pure = 'pure', // if measurements were made via the pure profiler, without the profiler-jest-environment
-	jestEnv = 'profiler-jest-environment' // if measurements were made via the profiler-jest-environment
-}
-export type IProjectReportExecutionDetails = {
-	origin: ProjectReportOrigin,
-	commitHash: GitHash_string | undefined
-	commitTimestamp: number | undefined,
-	uncommittedChanges: boolean | undefined
-	timestamp: number
-	highResolutionBeginTime?: string // value is stored in nano seconds(NanoSeconds_BigInt), but for serialization purposes it is a string
-	highResolutionStopTime?: string // value is stored in nano seconds(NanoSeconds_BigInt), but for serialization purposes it is a string
-	systemInformation: ISystemInformation,
-	languageInformation: ILanguageInformation
-	runTimeOptions: RuntimeOptions
-}
-
-export interface IProjectReport extends IReport {
-	projectMetaData: IProjectMetaData
-	executionDetails: IProjectReportExecutionDetails,
-	globalIndex: IGlobalIndex
-}
+// Types
+import {
+	ReportKind,
+	ReportType,
+	IProjectReportExecutionDetails,
+	IProjectMetaData,
+	ProjectReportOrigin,
+	IProjectReport
+} from '../types'
 
 export class ProjectReport extends Report {
 	executionDetails: IProjectReportExecutionDetails

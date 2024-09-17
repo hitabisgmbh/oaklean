@@ -1,29 +1,19 @@
 import Zlib from 'zlib'
 
-export enum PrimitiveBufferTypes {
-	UInt,
-	Double,
-	String2L,
-	String4L,
-	Boolean,
-	UInt8 // unsigned tiny int
-}
-
-type PrimitiveBufferTypes_ByteSize_Map = {
-	[key in PrimitiveBufferTypes]: number
-};
+// Types
+import {
+	BufferValueMapTypeMap,
+	PrimitiveBufferTypes,
+	PrimitiveBufferTypes_ByteSize_Map
+} from '../types'
 
 export const PRIMITIVE_BUFFER_TYPES_BYTE_SIZES: PrimitiveBufferTypes_ByteSize_Map = {
 	[PrimitiveBufferTypes.UInt]: 4,
 	[PrimitiveBufferTypes.Double]: 8,
-	[PrimitiveBufferTypes.String2L]: 2**16 - 1,
+	[PrimitiveBufferTypes.String2L]: 2 ** 16 - 1,
 	[PrimitiveBufferTypes.String4L]: 2 ** 32 - 1,
 	[PrimitiveBufferTypes.Boolean]: 1,
 	[PrimitiveBufferTypes.UInt8]: 1,
-}
-
-type BufferValueMapTypeMap<T> = {
-	[key in keyof T]: PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double
 }
 
 const VALUE_MAP_HEADER_SIZE = 2 // in bytes

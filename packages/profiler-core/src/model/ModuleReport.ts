@@ -1,10 +1,15 @@
-import { INodeModule, NodeModule } from './NodeModule'
-import { Report, IReport, ReportType, ReportKind } from './Report'
+import { NodeModule } from './NodeModule'
+import { Report } from './Report'
 import { GlobalIndex } from './index/GlobalIndex'
 import { ModuleIndex } from './index/ModuleIndex'
-export interface IModuleReport extends IReport {
-	nodeModule: INodeModule
-}
+
+// Types
+import {
+	IModuleReport,
+	ReportType,
+	ReportKind
+} from '../types'
+
 
 export class ModuleReport extends Report {
 	nodeModule: NodeModule

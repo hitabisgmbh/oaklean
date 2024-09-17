@@ -1,8 +1,14 @@
-import { NodeModule, NodeModuleIdentifier_string } from '../../../src/model/NodeModule'
-import { GlobalIndex, IndexRequestType } from '../../../src/model/index/GlobalIndex'
-import { IModuleIndex, ModuleID_number, ModuleIndex } from '../../../src/model/index/ModuleIndex'
-import { PathID_number } from '../../../src/model/index/PathIndex'
-import { UnifiedPath_string } from '../../../src/types/UnifiedPath.types'
+import { NodeModule } from '../../../src/model/NodeModule'
+import { GlobalIndex } from '../../../src/model/index/GlobalIndex'
+import { ModuleIndex } from '../../../src/model/index/ModuleIndex'
+import {
+	NodeModuleIdentifier_string,
+	UnifiedPath_string,
+	IndexRequestType,
+	IModuleIndex,
+	ModuleID_number,
+	PathID_number
+} from '../../../src/types'
 
 const EXAMPLE_MODULE_INDEX: IModuleIndex = {
 	id: 0 as ModuleID_number,

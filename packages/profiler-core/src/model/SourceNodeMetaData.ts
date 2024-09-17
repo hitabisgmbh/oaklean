@@ -1,40 +1,33 @@
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
-import { IPureCPUTime, IPureCPUEnergyConsumption, ISensorValues, SensorValues, IPureRAMEnergyConsumption } from './SensorValues'
-import { MilliJoule_number } from './interfaces/BaseMetricsData'
-import { SourceNodeID_number, SourceNodeIndex, SourceNodeIndexType } from './index/SourceNodeIndex'
-import { GlobalIndex, IndexRequestType } from './index/GlobalIndex'
-import { PathID_number, PathIndex } from './index/PathIndex'
+import { SensorValues } from './SensorValues'
+import { SourceNodeIndex } from './index/SourceNodeIndex'
+import { GlobalIndex } from './index/GlobalIndex'
+import { PathIndex } from './index/PathIndex'
 
-import { LangInternalPath_string, SourceNodeIdentifier_string } from '../types/SourceNodeIdentifiers.types'
-import { UnifiedPath_string } from '../types/UnifiedPath.types'
 import { GlobalIdentifier } from '../system/GlobalIdentifier'
-import { GlobalSourceNodeIdentifier_string } from '../types/SourceNodeIdentifiers.types'
 import { BufferHelper } from '../helper/BufferHelper'
 import { RootRegex, SourceNodeIdentifierPartRegex } from '../constants/SourceNodeRegex'
-
+// Types
+import {
+	SourceNodeID_number,
+	SourceNodeIndexType,
+	IndexRequestType,
+	SourceNodeMetaDataType,
+	ISourceNodeMetaData,
+	PathID_number,
+	IPureCPUTime,
+	IPureCPUEnergyConsumption,
+	IPureRAMEnergyConsumption,
+	MilliJoule_number,
+	LangInternalPath_string,
+	SourceNodeIdentifier_string,
+	UnifiedPath_string,
+	GlobalSourceNodeIdentifier_string
+} from '../types'
 
 export function validateSourceNodeIdentifier(identifier: SourceNodeIdentifier_string) {
 	return (RootRegex.test(identifier) || SourceNodeIdentifierPartRegex.test(identifier))
-}
-
-export enum SourceNodeMetaDataType {
-	SourceNode = 0,
-	LangInternalSourceNode = 1,
-	LangInternalSourceNodeReference = 2,
-	InternSourceNodeReference = 3,
-	ExternSourceNodeReference = 4,
-	Aggregate = 5,
-}
-
-export interface ISourceNodeMetaData<T extends SourceNodeMetaDataType> {
-	id: T extends SourceNodeMetaDataType.Aggregate ? undefined : SourceNodeID_number
-	type: T
-	sensorValues: ISensorValues
-	lang_internal?: Record<SourceNodeID_number,
-	ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>
-	intern?: Record<SourceNodeID_number, ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>
-	extern?: Record<SourceNodeID_number, ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
 }
 
 function areNumbersClose(a: number, b: number, epsilon = 1e-10) {

@@ -1,15 +1,22 @@
-import { SourceFileMetaData, AggregatedSourceNodeMetaData, ISourceFileMetaData } from '../../src/model/SourceFileMetaData'
-import { SourceNodeMetaData, SourceNodeMetaDataType, ISourceNodeMetaData } from '../../src/model/SourceNodeMetaData'
+import { SourceFileMetaData, AggregatedSourceNodeMetaData } from '../../src/model/SourceFileMetaData'
+import { SourceNodeMetaData } from '../../src/model/SourceNodeMetaData'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { UnifiedPath_string } from '../../src/types/UnifiedPath.types'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
-import { SourceNodeIdentifier_string, GlobalSourceNodeIdentifier_string } from '../../src/types/SourceNodeIdentifiers.types'
-import { SensorValues, ISensorValues } from '../../src/model/SensorValues'
-import { MilliJoule_number } from '../../src/model/interfaces/BaseMetricsData'
+import { SensorValues } from '../../src/model/SensorValues'
 import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { PathIndex } from '../../src/model/index/PathIndex'
-import { SourceNodeID_number } from '../../src/model/index/SourceNodeIndex'
 import { NodeModule } from '../../src/model/NodeModule'
+import {
+	ISourceFileMetaData,
+	SourceNodeMetaDataType,
+	ISourceNodeMetaData,
+	UnifiedPath_string,
+	ISensorValues,
+	MilliJoule_number,
+	SourceNodeID_number,
+	SourceNodeIdentifier_string,
+	GlobalSourceNodeIdentifier_string
+} from '../../src/types'
 
 const EXAMPLE_SOURCE_FILE_META_DATA: ISourceFileMetaData = {
 	path: './file.js' as UnifiedPath_string,

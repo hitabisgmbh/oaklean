@@ -1,10 +1,10 @@
-import { IPowerMetricsData } from './PowerMetricsData'
-import { IPerfMetricsData } from './PerfMetricsData'
-
-import { NanoSeconds_BigInt } from '../../helper/TimeHelper'
-
-const MilliJouleSymbol: unique symbol = Symbol('MilliJouleSymbol')
-export type MilliJoule_number = number & { [MilliJouleSymbol]: never }
+// Types
+import {
+	MilliJoule_number,
+	NanoSeconds_BigInt,
+	IPowerMetricsData,
+	IPerfMetricsData
+} from '../../types'
 
 export class BaseMetricsData {
 	processIsPresent(pid: number): boolean {

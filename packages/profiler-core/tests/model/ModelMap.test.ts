@@ -1,8 +1,8 @@
 import { BaseModel } from '../../src/model/BaseModel'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { UnifiedPath_string } from '../../src/types/UnifiedPath.types'
 import { ModelMap, ModelMapKeyType } from '../../src/model/ModelMap'
 import { BufferHelper } from '../../src/helper/BufferHelper'
+import { UnifiedPath_string } from '../../src/types'
 
 type ISubClass = {
 	name: string
