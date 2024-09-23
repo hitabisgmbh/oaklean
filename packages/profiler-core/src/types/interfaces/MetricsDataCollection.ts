@@ -4,6 +4,9 @@ import {
 import {
 	IPerfMetricsData
 } from './PerfMetricsData'
+import {
+	ILibreHardwareMonitorMetricsData
+} from './LibreHardwareMonitorMetricsData'
 
 import {
 	NanoSeconds_BigInt
@@ -27,6 +30,6 @@ export type ITimeInfo = {
 export interface IMetricsDataCollection {
 	type: MetricsDataCollectionType,
 	pid: number,
-	items: (IPowerMetricsData | IPerfMetricsData)[]
+	items: (IPowerMetricsData | IPerfMetricsData | ILibreHardwareMonitorMetricsData)[]
 	timeInfo: ITimeInfo
 }
