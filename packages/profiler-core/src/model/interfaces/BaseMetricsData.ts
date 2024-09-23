@@ -3,7 +3,8 @@ import {
 	MilliJoule_number,
 	NanoSeconds_BigInt,
 	IPowerMetricsData,
-	IPerfMetricsData
+	IPerfMetricsData,
+	ILibreHardwareMonitorMetricsData
 } from '../../types'
 
 export class BaseMetricsData {
@@ -39,7 +40,7 @@ export class BaseMetricsData {
 		throw new Error('BaseMetricsData.ramEnergy must be implemented')
 	}
 
-	toJSON(): IPowerMetricsData | IPerfMetricsData {
+	toJSON(): IPowerMetricsData | IPerfMetricsData | ILibreHardwareMonitorMetricsData {
 		throw new Error('BaseMetricsData.toJSON must be implemented')
 	}
 
