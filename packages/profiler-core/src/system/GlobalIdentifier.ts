@@ -1,12 +1,5 @@
 import {
-	LangInternalPath_string,
-	SourceNodeIdentifier_string,
-	GlobalSourceNodeIdentifier_string
-} from '../types/SourceNodeIdentifiers.types'
-import {
 	NodeModule,
-	INodeModule,
-	NodeModuleIdentifier_string,
 	NodeModuleIdentifierRegexString
 } from '../model/NodeModule'
 import {
@@ -16,15 +9,16 @@ import {
 	LangInternalPathRegexString
 } from '../constants/SourceNodeRegex'
 import { UnifiedPath } from '../system/UnifiedPath'
-import { UnifiedPath_string } from '../types/UnifiedPath.types'
 import { UnifiedPathRegexString } from '../constants/UnifiedPathRegex'
-
-
-export interface IGlobalIdentifier {
-	nodeModule?: INodeModule
-	path: UnifiedPath_string | LangInternalPath_string
-	sourceNodeIdentifier: SourceNodeIdentifier_string
-}
+// Types
+import {
+	LangInternalPath_string,
+	SourceNodeIdentifier_string,
+	GlobalSourceNodeIdentifier_string,
+	NodeModuleIdentifier_string,
+	UnifiedPath_string,
+	IGlobalIdentifier
+} from '../types'
 
 export class GlobalIdentifier {
 	nodeModule?: NodeModule

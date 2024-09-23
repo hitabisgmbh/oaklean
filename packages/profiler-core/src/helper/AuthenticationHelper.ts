@@ -1,10 +1,15 @@
 import os from 'os'
 import fs from 'fs'
 
-import { PermissionHelper, PermissionTypes } from './PermissionHelper'
+import { PermissionHelper } from './PermissionHelper'
 
 import { UnifiedPath } from '../system/UnifiedPath'
-import { Crypto, UUID_string } from '../system/Crypto'
+import { Crypto } from '../system/Crypto'
+// Types
+import {
+	UUID_string,
+	PermissionTypes
+} from '../types'
 
 export const STATIC_GLOBAL_CONFIG_DIR = '.oaklean'
 

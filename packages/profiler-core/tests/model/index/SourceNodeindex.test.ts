@@ -1,8 +1,15 @@
-import { LangInternalPath_string, GlobalSourceNodeIdentifier_string } from '../../../src/types/SourceNodeIdentifiers.types'
 import { NodeModule } from '../../../src/model/NodeModule'
 import { GlobalIndex } from '../../../src/model/index/GlobalIndex'
-import { ISourceNodeIndex, SourceNodeID_number, SourceNodeIndex, SourceNodeIndexType } from '../../../src/model/index/SourceNodeIndex'
+import { SourceNodeIndex } from '../../../src/model/index/SourceNodeIndex'
 import { GlobalIdentifier } from '../../../src/system/GlobalIdentifier'
+import {
+	LangInternalPath_string,
+	GlobalSourceNodeIdentifier_string,
+	ISourceNodeIndex,
+	SourceNodeID_number,
+	SourceNodeIndexType
+} from '../../../src/types'
+
 
 const EXPECTED_INDEX: ISourceNodeIndex<SourceNodeIndexType.SourceNode> = {
 	children: undefined,

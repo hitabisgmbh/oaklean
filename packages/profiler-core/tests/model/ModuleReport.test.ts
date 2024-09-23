@@ -1,13 +1,17 @@
 import * as fs from 'fs'
 
 import { VERSION } from '../../src/constants/app'
-import { ModuleReport, IModuleReport } from '../../src/model/ModuleReport'
-import { NodeModule, NodeModuleIdentifier_string } from '../../src/model/NodeModule'
-import { ReportKind } from '../../src/model/Report'
+import { ModuleReport } from '../../src/model/ModuleReport'
+import { NodeModule } from '../../src/model/NodeModule'
 import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { PermissionHelper } from '../../src/helper/PermissionHelper'
+import {
+	IModuleReport,
+	NodeModuleIdentifier_string,
+	ReportKind
+} from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 

@@ -4,6 +4,11 @@ import { BaseModel } from './BaseModel'
 
 import { UnifiedPath } from '../system/UnifiedPath'
 import { BufferHelper } from '../helper/BufferHelper'
+// Types
+import {
+	NodeModuleIdentifier_string,
+	INodeModule
+} from '../types'
 
 export const NodeModuleNameRegexString = '(?:@[a-z0-9-~][a-z0-9-._~]*\\/)?[a-z0-9-~][a-z0-9-._~]*'
 // semver regular expression
@@ -15,15 +20,6 @@ export const NodeModuleVersionRegexString =
 
 export const NodeModuleIdentifierRegexString = `${NodeModuleNameRegexString}@${NodeModuleVersionRegexString}`
 export const NodeModuleIdentifierRegex = new RegExp(NodeModuleIdentifierRegexString)
-
-const NodeModuleIdentifierSymbol: unique symbol = Symbol('NodeModuleIdentifierSymbol')
-
-export type NodeModuleIdentifier_string = string & { [NodeModuleIdentifierSymbol]: never }
-
-export interface INodeModule {
-	name: string
-	version: string
-}
 
 export class NodeModule extends BaseModel {
 	name: string

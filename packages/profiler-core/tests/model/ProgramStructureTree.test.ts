@@ -1,9 +1,11 @@
 import * as fs from 'fs'
 
-import { SourceNodeIdentifier_string } from '../../src/types/SourceNodeIdentifiers.types'
 import { ProgramStructureTree } from '../../src/model/ProgramStructureTree'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { TypescriptParser } from '../../src/helper/TypescriptParser'
+import {
+	SourceNodeIdentifier_string
+} from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 

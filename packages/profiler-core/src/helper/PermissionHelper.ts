@@ -3,10 +3,10 @@ import * as fs from 'fs'
 import path from 'path'
 
 import { UnifiedPath } from '../system/UnifiedPath'
-
-export enum PermissionTypes {
-	ReadWriteOnlyOwner = '600'
-}
+// Types
+import {
+	PermissionTypes
+} from '../types'
 
 /**
 	 * Get a flat list of all directories that were created recursively

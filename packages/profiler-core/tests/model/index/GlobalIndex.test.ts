@@ -1,14 +1,18 @@
 import * as fs from 'fs'
 
 import { UnifiedPath } from '../../../src/system/UnifiedPath' 
-import { UnifiedPath_string } from '../../../src/types/UnifiedPath.types'
 import { GlobalIndex } from '../../../src/model/index/GlobalIndex'
 import { GlobalIdentifier} from '../../../src/system/GlobalIdentifier'
-import { NodeModule, NodeModuleIdentifier_string } from '../../../src/model/NodeModule'
-import { SourceNodeIdentifier_string, GlobalSourceNodeIdentifier_string } from '../../../src/types/SourceNodeIdentifiers.types'
-import { ModuleID_number } from '../../../src/model/index/ModuleIndex'
-import { PathID_number } from '../../../src/model/index/PathIndex'
-import { SourceNodeID_number } from '../../../src/model/index/SourceNodeIndex'
+import { NodeModule } from '../../../src/model/NodeModule'
+import {
+	UnifiedPath_string,
+	NodeModuleIdentifier_string,
+	ModuleID_number,
+	PathID_number,
+	SourceNodeID_number,
+	SourceNodeIdentifier_string,
+	GlobalSourceNodeIdentifier_string
+} from '../../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 

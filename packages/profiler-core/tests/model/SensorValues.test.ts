@@ -1,5 +1,8 @@
 import { MilliJoule_number } from '../../src'
-import { ISensorValues, SensorValues } from '../../src/model/SensorValues'
+import { SensorValues } from '../../src/model/SensorValues'
+import {
+	ISensorValues
+} from '../../src/types'
 
 const EXAMPLE_SENSOR_VALUES: ISensorValues = {
 	profilerHits: 1,

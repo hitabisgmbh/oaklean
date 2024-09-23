@@ -1,9 +1,10 @@
 import ChildProcess, { ExecSyncOptions } from 'child_process'
 
 import { STATIC_CONFIG_FILENAME } from '../constants/config'
-
-const GitHashSymbol: unique symbol = Symbol('GitHashSymbol')
-export type GitHash_string = string & { [GitHashSymbol]: never }
+// Types
+import {
+	GitHash_string
+} from '../types'
 
 export class GitHelper {
 	static currentCommitHash(): GitHash_string | undefined {

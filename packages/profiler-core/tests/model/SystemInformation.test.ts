@@ -3,7 +3,10 @@ import * as fs from 'fs'
 import si from 'systeminformation'
 
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { SystemInformation, ISystemInformation } from '../../src/model/SystemInformation'
+import { SystemInformation } from '../../src/model/SystemInformation'
+import {
+	ISystemInformation
+} from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 

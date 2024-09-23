@@ -1,11 +1,16 @@
-import { GlobalIndex, IndexRequestType } from '../../../src/model/index/GlobalIndex'
-import { IPathIndex, PathID_number, PathIndex } from '../../../src/model/index/PathIndex'
+import { GlobalIndex } from '../../../src/model/index/GlobalIndex'
+import { PathIndex } from '../../../src/model/index/PathIndex'
 import { ModuleIndex } from '../../../src/model/index/ModuleIndex'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'
-import { UnifiedPath_string } from '../../../src/types/UnifiedPath.types'
-import { SourceNodeIdentifier_string } from '../../../src/types/SourceNodeIdentifiers.types'
-import { SourceNodeID_number } from '../../../src/model/index/SourceNodeIndex'
 import { NodeModule } from '../../../src/model/NodeModule'
+import {
+	IndexRequestType,
+	IPathIndex,
+	PathID_number,
+	UnifiedPath_string,
+	SourceNodeIdentifier_string,
+	SourceNodeID_number
+} from '../../../src/types'
 
 const EXAMPLE_PATH_INDEX: IPathIndex = {
 	id: 1 as PathID_number,

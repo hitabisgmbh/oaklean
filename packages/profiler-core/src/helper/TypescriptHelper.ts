@@ -1,6 +1,9 @@
 import * as ts from 'typescript'
 
-import { SourceNodeIdentifier_string } from '../types/SourceNodeIdentifiers.types'
+// Types
+import {
+	SourceNodeIdentifier_string
+} from '../types'
 
 export enum EmitHelperNames {
 	// TypeScript Helpers

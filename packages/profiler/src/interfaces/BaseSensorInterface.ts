@@ -1,4 +1,8 @@
-import { MetricsDataCollection, NanoSeconds_BigInt, SensorInterfaceType } from '@oaklean/profiler-core'
+import {
+	MetricsDataCollection,
+	NanoSeconds_BigInt,
+	SensorInterfaceType
+} from '@oaklean/profiler-core'
 
 export class BaseSensorInterface {
 	type(): SensorInterfaceType{
