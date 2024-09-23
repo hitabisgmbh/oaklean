@@ -373,7 +373,7 @@ describe('ProfilerConfig', () => {
 			const profilerConfigPath = CURRENT_DIR.join('assets', 'ProfilerConfig', 'subDir', 'subDir', '.oaklean')
 			const config = ProfilerConfig.resolveFromFile(profilerConfigPath)
 
-			
+
 			expect(config.toJSON()).toEqual({
 				exportOptions: {
 					exportReport: true,
@@ -498,6 +498,127 @@ describe('ProfilerConfig', () => {
 					}
 				})
 			expect(config.getOutDir().toString()).toBe('/absolute/path/to/profiles')
+		})
+		describe('get worker path from librehardwaremonitor runtime options', () => {
+			test('worker path is defined and relative', () => {
+				const config = new ProfilerConfig(
+					new UnifiedPath('./relative/path/config.json'),
+					{
+						exportOptions: {
+							outDir: '/absolute/path/to/profiles',
+							outHistoryDir: './profiles_history',
+							rootDir: './',
+							exportV8Profile: true,
+							exportReport: false,
+							exportSensorInterfaceData: true
+						},
+						projectOptions: {
+							identifier: '9662d888-085d-4b08-ad37-3526517a3240' as ProjectIdentifier_string
+						},
+						runtimeOptions: {
+							seeds: {
+								'Math.random': '<seed>'
+							},
+							v8: {
+								cpu: {
+									sampleInterval: 10 as MicroSeconds_number
+								}
+							},
+							sensorInterface: {
+								type: SensorInterfaceType.librehardwaremonitor,
+								options: {
+									workerPath: 'path/to/worker',
+									sampleInterval: 100 as MicroSeconds_number,
+									outputFilePath: '/path/to/output'
+								}
+							}
+						},
+						registryOptions: {
+							url: 'localhost:4000/project-report'
+						}
+					}
+				)
+				expect(config.getWorkerPath()?.toString()).toBe('./relative/path/path/to/worker')
+			})
+			test('worker path is defined and absolute', () => {
+				const config = new ProfilerConfig(
+					new UnifiedPath('./config.json'),
+					{
+						exportOptions: {
+							outDir: '/absolute/path/to/profiles',
+							outHistoryDir: './profiles_history',
+							rootDir: './',
+							exportV8Profile: true,
+							exportReport: false,
+							exportSensorInterfaceData: true
+						},
+						projectOptions: {
+							identifier: '9662d888-085d-4b08-ad37-3526517a3240' as ProjectIdentifier_string
+						},
+						runtimeOptions: {
+							seeds: {
+								'Math.random': '<seed>'
+							},
+							v8: {
+								cpu: {
+									sampleInterval: 10 as MicroSeconds_number
+								}
+							},
+							sensorInterface: {
+								type: SensorInterfaceType.librehardwaremonitor,
+								options: {
+									workerPath: '/path/to/worker',
+									sampleInterval: 100 as MicroSeconds_number,
+									outputFilePath: '/path/to/output'
+								}
+							}
+						},
+						registryOptions: {
+							url: 'localhost:4000/project-report'
+						}
+					}
+				)
+				expect(config.getWorkerPath()?.toString()).toBe('/path/to/worker')
+			})
+			test('worker path is undefined', () => {
+				const config = new ProfilerConfig(
+					new UnifiedPath('./config.json'),
+					{
+						exportOptions: {
+							outDir: '/absolute/path/to/profiles',
+							outHistoryDir: './profiles_history',
+							rootDir: './',
+							exportV8Profile: true,
+							exportReport: false,
+							exportSensorInterfaceData: true
+						},
+						projectOptions: {
+							identifier: '9662d888-085d-4b08-ad37-3526517a3240' as ProjectIdentifier_string
+						},
+						runtimeOptions: {
+							seeds: {
+								'Math.random': '<seed>'
+							},
+							v8: {
+								cpu: {
+									sampleInterval: 10 as MicroSeconds_number
+								}
+							},
+							sensorInterface: {
+								type: SensorInterfaceType.librehardwaremonitor,
+								options: {
+									sampleInterval: 100 as MicroSeconds_number,
+									outputFilePath: '/path/to/output'
+								}
+							}
+						},
+						registryOptions: {
+							url: 'localhost:4000/project-report'
+						}
+					}
+				)
+				expect(config.getWorkerPath()).toBeUndefined()
+			})
 		})
 	})
 })

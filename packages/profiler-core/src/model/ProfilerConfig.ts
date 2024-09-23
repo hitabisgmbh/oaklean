@@ -3,7 +3,6 @@ import * as fs from 'fs'
 import { BaseModel } from './BaseModel'
 import { ProjectIdentifier_string } from './ProjectReport'
 
-import { IPowerMetricsSensorInterfaceOptions } from '../types/interfaces/powermetrics/types'
 import {
 	STATIC_CONFIG_FILENAME,
 	DEFAULT_PROFILER_CONFIG
@@ -12,12 +11,15 @@ import { PathUtils } from '../helper/PathUtils'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { MicroSeconds_number } from '../helper/TimeHelper'
-import { IPerfSensorInterfaceOptions } from '../types/interfaces/perf/types'
 import { PermissionHelper } from '../helper/PermissionHelper'
+import { IPowerMetricsSensorInterfaceOptions } from '../types/interfaces/powermetrics/types'
+import { ILibreHardwareMonitorInterfaceOptions } from '../types/interfaces/librehardwaremonitor/types'
+import { IPerfSensorInterfaceOptions } from '../types/interfaces/perf/types'
 
 export enum SensorInterfaceType {
 	powermetrics = 'powermetrics',
-	perf = 'perf'
+	perf = 'perf',
+	librehardwaremonitor = 'librehardwaremonitor'
 }
 
 export type SensorInterfaceOptions = {
@@ -26,6 +28,9 @@ export type SensorInterfaceOptions = {
 } | {
 	type: SensorInterfaceType.perf,
 	options: IPerfSensorInterfaceOptions
+} | {
+	type: SensorInterfaceType.librehardwaremonitor,
+	options: ILibreHardwareMonitorInterfaceOptions
 }
 
 export type ProjectOptions = {
@@ -91,18 +96,41 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 	}
 
 	getAnonymizedRuntimeOptions(): RuntimeOptions {
-		if (this.runtimeOptions.sensorInterface &&
-			this.runtimeOptions.sensorInterface.type === SensorInterfaceType.powermetrics
-		) {
-			return {
-				...this.runtimeOptions,
-				sensorInterface: {
-					type: SensorInterfaceType.powermetrics,
-					options: {
-						sampleInterval: this.runtimeOptions.sensorInterface.options.sampleInterval,
-						outputFilePath: '<anonymized>'
+		if (this.runtimeOptions.sensorInterface) {
+			switch (this.runtimeOptions.sensorInterface.type) {
+				case SensorInterfaceType.librehardwaremonitor:
+					return {
+						...this.runtimeOptions,
+						sensorInterface: {
+							type: SensorInterfaceType.librehardwaremonitor,
+							options: {
+								sampleInterval: this.runtimeOptions.sensorInterface.options.sampleInterval,
+								outputFilePath: '<anonymized>'
+							}
+						}
 					}
-				}
+				case SensorInterfaceType.perf:
+					return {
+						...this.runtimeOptions,
+						sensorInterface: {
+							type: SensorInterfaceType.perf,
+							options: {
+								sampleInterval: this.runtimeOptions.sensorInterface.options.sampleInterval,
+								outputFilePath: '<anonymized>'
+							}
+						}
+					}
+				case SensorInterfaceType.powermetrics:
+					return {
+						...this.runtimeOptions,
+						sensorInterface: {
+							type: SensorInterfaceType.powermetrics,
+							options: {
+								sampleInterval: this.runtimeOptions.sensorInterface.options.sampleInterval,
+								outputFilePath: '<anonymized>'
+							}
+						}
+					}
 			}
 		}
 		return this.runtimeOptions
@@ -139,6 +167,20 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 			return new UnifiedPath(this.exportOptions.outDir)
 		}
 		return this.filePath.dirName().join(this.exportOptions.outDir)
+	}
+
+	getWorkerPath(): UnifiedPath | undefined {
+		if (this.runtimeOptions.sensorInterface) {
+			if (this.runtimeOptions.sensorInterface.type === SensorInterfaceType.librehardwaremonitor) {
+				if (this.runtimeOptions.sensorInterface.options.workerPath) {
+					if (PathUtils.isAbsolute(this.runtimeOptions.sensorInterface.options.workerPath)) {
+						return new UnifiedPath(this.runtimeOptions.sensorInterface.options.workerPath)
+					}
+					return this.filePath.dirName().join(this.runtimeOptions.sensorInterface.options.workerPath)
+				}
+			}
+		}
+		return undefined
 	}
 
 	getOutHistoryDir(): UnifiedPath {
