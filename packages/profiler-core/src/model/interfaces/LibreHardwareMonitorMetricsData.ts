@@ -8,7 +8,7 @@ import {
 	ILibreHardwareMonitorMetricsData
 } from '../../types'
 
-export class PerfMetricsData extends BaseMetricsData {
+export class LibreHardwareMonitorMetricsData extends BaseMetricsData {
 	private _data: ILibreHardwareMonitorMetricsDataOutputFormat
 
 	constructor(data: ILibreHardwareMonitorMetricsDataOutputFormat) {
@@ -27,7 +27,7 @@ export class PerfMetricsData extends BaseMetricsData {
 		}
 	}
 
-	static fromJSON(json: string | ILibreHardwareMonitorMetricsData, ...args: any[]): PerfMetricsData {
+	static fromJSON(json: string | ILibreHardwareMonitorMetricsData, ...args: any[]): LibreHardwareMonitorMetricsData {
 		let data: ILibreHardwareMonitorMetricsData
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -35,7 +35,7 @@ export class PerfMetricsData extends BaseMetricsData {
 			data = json
 		}
 
-		const result = new PerfMetricsData({
+		const result = new LibreHardwareMonitorMetricsData({
 			elapsed_ns: BigInt(data.data.elapsed_ns) as NanoSeconds_BigInt,
 			cpu_energy: data.data.cpu_energy,
 			ram_energy: data.data.ram_energy,
