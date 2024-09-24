@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import { BaseMetricsData } from './BaseMetricsData'
 import { PowerMetricsData } from './PowerMetricsData'
 import { PerfMetricsData } from './PerfMetricsData'
+import { LibreHardwareMonitorMetricsData } from './LibreHardwareMonitorMetricsData'
 
 import { UnifiedPath } from '../../system/UnifiedPath'
 import { BaseModel } from '../BaseModel'
@@ -14,7 +15,8 @@ import {
 	IMetricsDataCollection,
 	NanoSeconds_BigInt,
 	IPowerMetricsData,
-	IPerfMetricsData
+	IPerfMetricsData,
+	ILibreHardwareMonitorMetricsData
 } from '../../types'
 
 export class MetricsDataCollection extends BaseModel {
@@ -94,6 +96,8 @@ export class MetricsDataCollection extends BaseModel {
 						return PowerMetricsData.fromJSON(x as IPowerMetricsData)
 					case MetricsDataCollectionType.PerfTotalSystem:
 						return PerfMetricsData.fromJSON(x as IPerfMetricsData)
+					case MetricsDataCollectionType.LibreHardwareMonitorTotalSystem:
+						return LibreHardwareMonitorMetricsData.fromJSON(x as ILibreHardwareMonitorMetricsData)
 				}
 			}),
 			{

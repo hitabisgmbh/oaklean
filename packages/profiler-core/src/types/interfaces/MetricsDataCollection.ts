@@ -14,7 +14,8 @@ import {
 
 export enum MetricsDataCollectionType {
 	PowerMetricsPerProcess = 'PowerMetricsPerProcess',
-	PerfTotalSystem = 'PerfTotalSystem'
+	PerfTotalSystem = 'PerfTotalSystem',
+	LibreHardwareMonitorTotalSystem = 'LibreHardwareMonitorTotalSystem'
 }
 
 export type TimeInfo = {
