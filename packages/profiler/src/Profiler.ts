@@ -22,6 +22,7 @@ import { TraceEventHelper } from './helper/TraceEventHelper'
 import { BaseSensorInterface } from './interfaces/BaseSensorInterface'
 import { PowerMetricsSensorInterface } from './interfaces/powermetrics/PowerMetricsSensorInterface'
 import { PerfSensorInterface } from './interfaces/perf/PerfSensorInterface'
+import { LibreHardwareMonitorSensorInterface } from './interfaces/librehardwaremonitor/LibreHardwareMonitorSensorInterface'
 
 export type TransformerAdapter = 'ts-jest'
 
@@ -83,6 +84,14 @@ export class Profiler {
 				}
 				options.outputFilePath = config.getOutDir().join(options.outputFilePath).toPlatformString()
 				return new PerfSensorInterface(options)
+			}
+			case 'librehardwaremonitor': {
+				const options = config.getSensorInterfaceOptions()
+				if (options === undefined) {
+					throw new Error('Profiler.getSensorInterface: sensorInterfaceOptions are not defined')
+				}
+				options.outputFilePath = config.getOutDir().join(options.outputFilePath).toPlatformString()
+				return new LibreHardwareMonitorSensorInterface(options)
 			}
 		}
 	}

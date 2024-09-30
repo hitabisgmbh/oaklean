@@ -8,8 +8,9 @@ import {
 export interface ILibreHardwareMonitorMetricsDataOutputFormat {
 	elapsed_ns: NanoSeconds_BigInt,
 	timestamp: NanoSeconds_BigInt, // marks the start time of the sample
-	cpu_energy: MilliJoule_number
-	ram_energy: MilliJoule_number
+	cpu_energy: MilliJoule_number,
+	ram_energy: MilliJoule_number,
+	gpu_energy: MilliJoule_number
 }
 
 export interface ILibreHardwareMonitorMetricsData {
@@ -17,6 +18,7 @@ export interface ILibreHardwareMonitorMetricsData {
 		elapsed_ns: string,
 		timestamp: string, // marks the start time of the sample
 		cpu_energy: MilliJoule_number,
-		ram_energy: MilliJoule_number
+		ram_energy: MilliJoule_number,
+		gpu_energy: MilliJoule_number
 	}
 }

@@ -22,6 +22,7 @@ export class LibreHardwareMonitorMetricsData extends BaseMetricsData {
 				elapsed_ns: this._data.elapsed_ns.toString(),
 				cpu_energy: this._data.cpu_energy,
 				ram_energy: this._data.ram_energy,
+				gpu_energy: this._data.gpu_energy,
 				timestamp: this._data.timestamp.toString()
 			}
 		}
@@ -39,6 +40,7 @@ export class LibreHardwareMonitorMetricsData extends BaseMetricsData {
 			elapsed_ns: BigInt(data.data.elapsed_ns) as NanoSeconds_BigInt,
 			cpu_energy: data.data.cpu_energy,
 			ram_energy: data.data.ram_energy,
+			gpu_energy: data.data.gpu_energy,
 			timestamp: BigInt(data.data.timestamp) as NanoSeconds_BigInt
 		})
 		return result
@@ -70,5 +72,9 @@ export class LibreHardwareMonitorMetricsData extends BaseMetricsData {
 
 	ramEnergy(): MilliJoule_number {
 		return this._data.ram_energy
+	}
+
+	gpuEnergy(): MilliJoule_number {
+		return this._data.gpu_energy
 	}
 }

@@ -1,4 +1,4 @@
-import { BaseMetricsData, PowerMetricsData, PerfMetricsData } from '@oaklean/profiler-core'
+import { BaseMetricsData, PowerMetricsData, PerfMetricsData, LibreHardwareMonitorMetricsData } from '@oaklean/profiler-core'
 
 import { Profiler } from './Profiler'
 import { TraceEventHelper } from './helper/TraceEventHelper'
@@ -10,6 +10,9 @@ import {
 import {
 	PerfSensorInterface
 } from './interfaces/perf/PerfSensorInterface'
+import {
+	LibreHardwareMonitorSensorInterface
+} from './interfaces/librehardwaremonitor/LibreHardwareMonitorSensorInterface'
 
 export {
 	Profiler,
@@ -20,5 +23,7 @@ export {
 	PowerMetricsSensorInterface,
 	PowerMetricsData,
 	PerfSensorInterface,
-	PerfMetricsData
+	PerfMetricsData,
+	LibreHardwareMonitorSensorInterface,
+	LibreHardwareMonitorMetricsData
 }

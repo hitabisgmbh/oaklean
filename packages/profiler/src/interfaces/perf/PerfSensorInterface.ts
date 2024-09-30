@@ -245,7 +245,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 			fs.unlinkSync(this._options.outputFilePath) // remove output file to ensure clean measurements
 		}
 		if (PerfSensorInterface.runningInstances().length > 0) {
-			throw new Error('PerfSensorInterface.startProfiling: PowerMetrics instance already running, close it before taking any measurements')
+			throw new Error('PerfSensorInterface.startProfiling: Perf instance already running, close it before taking any measurements')
 		}
 
 		this._startTime = TimeHelper.getCurrentHighResolutionTime()
@@ -259,7 +259,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 			}
 		}
 
-		process.on('exit', this.cleanExit) // add event listener to close powermetrics if the parent process exits
+		process.on('exit', this.cleanExit) // add event listener to close perf if the parent process exits
 
 		// detach from current node.js process
 		this._childProcess.unref()
@@ -277,7 +277,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		let seconds = 0
 		while (this.isRunning()) {
 			if (seconds > 10) {
-				throw new Error('Waited 10 seconds for powermetrics to shut down, it is still running')
+				throw new Error('Waited 10 seconds for perf to shut down, it is still running')
 			}
 			await TimeHelper.sleep(1000)
 			seconds++
