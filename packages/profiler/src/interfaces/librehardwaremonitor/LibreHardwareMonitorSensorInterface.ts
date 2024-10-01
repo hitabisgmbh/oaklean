@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-import { ChildProcess, spawn, execSync } from 'child_process'
+import { ChildProcess, spawn } from 'child_process'
 
 import {
 	MetricsDataCollection,
@@ -30,7 +30,8 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 	private _options: ILibreHardwareMonitorInterfaceOptions
 
 	private _childProcess: ChildProcess | undefined
-	// duration of the first measurement that is used to determine the start time (this duration is not included in the measurements)
+	// duration of the first measurement that is used to determine the start time
+	// (this duration is not included in the measurements)
 	private _offsetTime: number | undefined // seconds
 	private _startTime: NanoSeconds_BigInt | undefined
 	private _stopTime: NanoSeconds_BigInt | undefined
@@ -39,7 +40,8 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 
 	constructor(options: ILibreHardwareMonitorInterfaceOptions, debugOptions?: {
 		startTime: NanoSeconds_BigInt,
-		stopTime: NanoSeconds_BigInt
+		stopTime: NanoSeconds_BigInt,
+		offsetTime: number
 	}) {
 		super()
 		if (options.workerPath === undefined){
@@ -51,6 +53,7 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 		if (debugOptions !== undefined) {
 			this._startTime = debugOptions.startTime,
 			this._stopTime = debugOptions.stopTime
+			this._offsetTime = debugOptions.offsetTime
 		}
 	}
 
@@ -154,8 +157,10 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 
 			data.push(new LibreHardwareMonitorMetricsData({
 				elapsed_ns: BigInt(Math.round(delta * 1e9)) as NanoSeconds_BigInt, // convert into nano seconds
-				timestamp: (this.startTime + BigInt(Math.ceil(duration * 1e9 - this._offsetTime * 1e9))) as NanoSeconds_BigInt,
-				cpu_energy: captured[LibreHardwareMonitorEvent.ENERGY_CPU_PACKAGE] ? cpu_energy : 0 as MilliJoule_number,
+				timestamp: 
+				(this.startTime + BigInt(Math.ceil(duration * 1e9 - this._offsetTime * 1e9))) as NanoSeconds_BigInt,
+				cpu_energy:
+				captured[LibreHardwareMonitorEvent.ENERGY_CPU_PACKAGE] ? cpu_energy : 0 as MilliJoule_number,
 				ram_energy: 0 as MilliJoule_number,
 				gpu_energy: captured[LibreHardwareMonitorEvent.ENERGY_GPU] ? gpu_energy : 0 as MilliJoule_number,
 			}))

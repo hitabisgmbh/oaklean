@@ -91,19 +91,19 @@ export class PermissionHelper {
 
 
 	static checkWindowsAdminRights(): Promise<boolean> {
-			return new Promise(resolve => {
-				const platform = os.platform()
-				if (platform !== "win32") {
-					resolve(false);
+		return new Promise(resolve => {
+			const platform = os.platform()
+			if (platform !== 'win32') {
+				resolve(false)
+			}
+			ChildProcess.exec('fsutil dirty query ' + process.env.systemdrive, function (err, stdout, stderr) {
+				if (err) {
+					resolve(false)
+				} else {
+					resolve(true)
 				}
-				ChildProcess.exec('fsutil dirty query ' + process.env.systemdrive, function (err, stdout, stderr) {
-					if (err) {
-						resolve(false);
-					} else {
-						resolve(true);
-					}
-				});
-		});
+			})
+		})
 	}
 
 }

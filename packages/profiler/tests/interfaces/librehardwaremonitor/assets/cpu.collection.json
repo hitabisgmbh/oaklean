@@ -1,0 +1,145 @@
+{
+  "pid": 0,
+  "type": "LibreHardwareMonitorTotalSystem",
+  "items": [
+    {
+      "data": {
+        "elapsed_ns": "996031800",
+        "cpu_energy": 6498.36624813444,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "996031800"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "156578700",
+        "cpu_energy": 1017.5657796513897,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "1152610500"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "130941400",
+        "cpu_energy": 822.4554383036999,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "1283551900"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "154411200",
+        "cpu_energy": 964.5481982318399,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "1437963100"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "187333700",
+        "cpu_energy": 1207.449340997051,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "1625296800"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "138516500",
+        "cpu_energy": 872.9520375079996,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "1763813300"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "145441800",
+        "cpu_energy": 964.8490186049397,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "1909255100"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "153623500",
+        "cpu_energy": 976.0690290339995,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "2062878600"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "154296300",
+        "cpu_energy": 871.2594551209797,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "2217174900"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "137076100",
+        "cpu_energy": 752.1487193500715,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "2354251000"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "137193700",
+        "cpu_energy": 756.3257784002903,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "2491444700"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "141847100",
+        "cpu_energy": 814.3221722453682,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "2633291800"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "139771200",
+        "cpu_energy": 803.1695388076813,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "2773063000"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "138061900",
+        "cpu_energy": 759.1681487487991,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "2911124900"
+      }
+    },
+    {
+      "data": {
+        "elapsed_ns": "138519000",
+        "cpu_energy": 770.4025074900003,
+        "ram_energy": 0,
+        "gpu_energy": 0,
+        "timestamp": "3049643900"
+      }
+    }
+  ],
+  "timeInfo": {
+    "startTime": "0",
+    "stopTime": "0"
+  }
+}
