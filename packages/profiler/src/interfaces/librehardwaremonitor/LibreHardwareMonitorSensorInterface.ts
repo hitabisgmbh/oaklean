@@ -12,6 +12,10 @@ import {
 	SensorInterfaceType,
 	PermissionHelper
 } from '@oaklean/profiler-core'
+import {
+	getPlatformSpecificBinaryPath,
+	SupportedPlatforms
+} from '@oaklean/windows-measurements-lhm'
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
 
@@ -41,13 +45,15 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 	constructor(options: ILibreHardwareMonitorInterfaceOptions, debugOptions?: {
 		startTime: NanoSeconds_BigInt,
 		stopTime: NanoSeconds_BigInt,
-		offsetTime: number
+		offsetTime: number,
+		platform?: SupportedPlatforms
 	}) {
 		super()
-		if (options.workerPath === undefined){
-			throw new Error('LibreHardwareMonitorSensorInterface: workerPath is not defined')
+		const platform = debugOptions?.platform ?? process.platform
+		if (platform !== 'win32') {
+			throw new Error('LibreHardwareMonitorSensorInterface: This sensor interface can only be used on Windows')
 		}
-		this._executable = options.workerPath
+		this._executable = getPlatformSpecificBinaryPath(platform).toPlatformString()
 		this._options = options
 		
 		if (debugOptions !== undefined) {
@@ -59,6 +65,10 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 
 	type(): SensorInterfaceType {
 		return SensorInterfaceType.librehardwaremonitor
+	}
+
+	executable(): string {
+		return this._executable
 	}
 
 	async canBeExecuted(): Promise<boolean> {

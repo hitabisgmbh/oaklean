@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 
 import { MicroSeconds_number, NanoSeconds_BigInt, UnifiedPath } from '@oaklean/profiler-core'
+import { getPlatformSpecificBinaryPath } from '@oaklean/windows-measurements-lhm'
 
 import { LibreHardwareMonitorSensorInterface } from '../../../src/interfaces/librehardwaremonitor/LibreHardwareMonitorSensorInterface'
 
@@ -17,15 +18,31 @@ const COLLECTION_CPU_PACKAGE = JSON.parse(fs.readFileSync(CURRENT_DIR.join('asse
 const COLLECTION_GPU = JSON.parse(fs.readFileSync(CURRENT_DIR.join('assets', 'gpu.collection.json').toPlatformString()).toString())
 
 describe('commandLineArgs', () => {
-	test('perf events energy-cores and energy-ram available', async () => {
+	test('uses correct executable', async () => {
 		const instance = new LibreHardwareMonitorSensorInterface({
 			outputFilePath: 'out.txt',
-			sampleInterval: 100 as MicroSeconds_number,
-			workerPath: 'worker.exe'
+			sampleInterval: 100 as MicroSeconds_number
 		}, {
 			startTime: BigInt(0) as NanoSeconds_BigInt,
 			stopTime: BigInt(0) as NanoSeconds_BigInt,
-			offsetTime: 0
+			offsetTime: 0,
+			platform: 'win32'
+		})
+
+		expect(instance.executable()).toEqual(
+			getPlatformSpecificBinaryPath('win32').toPlatformString()
+		)
+	})
+
+	test('perf events energy-cores and energy-ram available', async () => {
+		const instance = new LibreHardwareMonitorSensorInterface({
+			outputFilePath: 'out.txt',
+			sampleInterval: 100 as MicroSeconds_number
+		}, {
+			startTime: BigInt(0) as NanoSeconds_BigInt,
+			stopTime: BigInt(0) as NanoSeconds_BigInt,
+			offsetTime: 0,
+			platform: 'win32'
 		})
 
 		expect(await instance.commandLineArgs()).toEqual([
@@ -37,12 +54,12 @@ describe('commandLineArgs', () => {
 	test('getOutputContent', async () => {
 		const instance = new LibreHardwareMonitorSensorInterface({
 			outputFilePath: CONTENT_CPU_PACKAGE_GPU_PATH,
-			sampleInterval: 100 as MicroSeconds_number,
-			workerPath: 'worker.exe'
+			sampleInterval: 100 as MicroSeconds_number
 		}, {
 			startTime: BigInt(0) as NanoSeconds_BigInt,
 			stopTime: BigInt(0) as NanoSeconds_BigInt,
-			offsetTime: 0
+			offsetTime: 0,
+			platform: 'win32'
 		})
 
 		expect(instance.getOutputContent()).toEqual(OUTPUT_CONTENT_CPU_PACKAGE_GPU)
@@ -52,12 +69,12 @@ describe('commandLineArgs', () => {
 		test('cpu+gpu', async () => {
 			const instance = new LibreHardwareMonitorSensorInterface({
 				outputFilePath: CONTENT_CPU_PACKAGE_GPU_PATH,
-				sampleInterval: 100 as MicroSeconds_number,
-				workerPath: 'worker.exe'
+				sampleInterval: 100 as MicroSeconds_number
 			}, {
 				startTime: BigInt(0) as NanoSeconds_BigInt,
 				stopTime: BigInt(0) as NanoSeconds_BigInt,
-				offsetTime: 0
+				offsetTime: 0,
+				platform: 'win32'
 			})
 
 			const result = await instance.readSensorValues(0)
@@ -67,12 +84,12 @@ describe('commandLineArgs', () => {
 		test('cpu', async () => {
 			const instance = new LibreHardwareMonitorSensorInterface({
 				outputFilePath: CONTENT_CPU_PACKAGE_PATH,
-				sampleInterval: 100 as MicroSeconds_number,
-				workerPath: 'worker.exe'
+				sampleInterval: 100 as MicroSeconds_number
 			}, {
 				startTime: BigInt(0) as NanoSeconds_BigInt,
 				stopTime: BigInt(0) as NanoSeconds_BigInt,
-				offsetTime: 0
+				offsetTime: 0,
+				platform: 'win32'
 			})
 
 			const result = await instance.readSensorValues(0)
@@ -82,12 +99,12 @@ describe('commandLineArgs', () => {
 		test('gpu', async () => {
 			const instance = new LibreHardwareMonitorSensorInterface({
 				outputFilePath: CONTENT_GPU_PATH,
-				sampleInterval: 100 as MicroSeconds_number,
-				workerPath: 'worker.exe'
+				sampleInterval: 100 as MicroSeconds_number
 			}, {
 				startTime: BigInt(0) as NanoSeconds_BigInt,
 				stopTime: BigInt(0) as NanoSeconds_BigInt,
-				offsetTime: 0
+				offsetTime: 0,
+				platform: 'win32'
 			})
 
 			const result = await instance.readSensorValues(0)

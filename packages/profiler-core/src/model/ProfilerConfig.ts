@@ -124,20 +124,6 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 		return this.filePath.dirName().join(this.exportOptions.outDir)
 	}
 
-	getWorkerPath(): UnifiedPath | undefined {
-		if (this.runtimeOptions.sensorInterface) {
-			if (this.runtimeOptions.sensorInterface.type === SensorInterfaceType.librehardwaremonitor) {
-				if (this.runtimeOptions.sensorInterface.options.workerPath) {
-					if (PathUtils.isAbsolute(this.runtimeOptions.sensorInterface.options.workerPath)) {
-						return new UnifiedPath(this.runtimeOptions.sensorInterface.options.workerPath)
-					}
-					return this.filePath.dirName().join(this.runtimeOptions.sensorInterface.options.workerPath)
-				}
-			}
-		}
-		return undefined
-	}
-
 	getOutHistoryDir(): UnifiedPath {
 		if (PathUtils.isAbsolute(this.exportOptions.outHistoryDir)) {
 			return new UnifiedPath(this.exportOptions.outHistoryDir)
