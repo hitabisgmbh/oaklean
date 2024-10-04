@@ -1,0 +1,15 @@
+{
+	"name": "@oaklean/windows-measurements-lhm",
+	"version": "0.1.3",
+	"dependencies": {
+		"@oaklean/profiler-core": "^0.1.3",
+		"adm-zip": "^0.5.16"
+	},
+	"scripts": {
+		"postinstall": "node ./dist/install.js",
+		"build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc"
+	},
+	"devDependencies": {
+		"@types/adm-zip": "^0.5.5"
+	}
+}
