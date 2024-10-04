@@ -1,15 +1,19 @@
 {
 	"name": "@oaklean/windows-measurements-lhm",
 	"version": "0.1.3",
+	"bin": {
+		"oak-lhm": "dist/install.js"
+	},
 	"dependencies": {
 		"@oaklean/profiler-core": "^0.1.3",
 		"adm-zip": "^0.5.16"
 	},
 	"scripts": {
-		"postinstall": "node ./dist/install.js",
+		"postinstall": "node -e \"if (!require('fs').existsSync('dist/install.js')) { require('child_process').execSync('npm run build', { stdio: 'inherit' }); }\" && node dist/install.js",
 		"build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc"
 	},
 	"devDependencies": {
-		"@types/adm-zip": "^0.5.5"
+		"@types/adm-zip": "^0.5.5",
+		"rimraf": "^6.0.1"
 	}
 }
