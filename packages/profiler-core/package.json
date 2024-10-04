@@ -30,6 +30,7 @@
     "dist/**/*"
   ],
   "scripts": {
+    "install": "node -e \"if (!require('fs').existsSync('dist/src/index.js')) { require('child_process').execSync('npm run build', { stdio: 'inherit' }); }\"",
     "build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc",
     "lint": "npx eslint --fix .",
     "test": "npx jest --coverage",
