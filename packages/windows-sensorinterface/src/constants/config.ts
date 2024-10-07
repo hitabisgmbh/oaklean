@@ -3,7 +3,7 @@ import { UnifiedPath } from '@oaklean/profiler-core'
 import { VERSION } from './app'
 
 const BINARY_DISTRIBUTION_PACKAGES = {
-	'win32': 'windows-measurements-lhm/win32'
+	'win32': 'windows-sensorinterface/win32'
 }
 
 export type SupportedPlatforms = keyof typeof BINARY_DISTRIBUTION_PACKAGES

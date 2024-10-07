@@ -15,7 +15,7 @@ import {
 import {
 	getPlatformSpecificBinaryPath,
 	SupportedPlatforms
-} from '@oaklean/windows-measurements-lhm'
+} from '@oaklean/windows-sensorinterface'
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
 

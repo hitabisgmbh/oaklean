@@ -25,7 +25,7 @@
     "packages/profiler",
     "packages/profiler-jest-environment",
     "packages/cli",
-		"packages/windows-measurements-lhm"
+		"packages/windows-sensorinterface"
   ],
   "engines": {
     "node": "20.11.1"

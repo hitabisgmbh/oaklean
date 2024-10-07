@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 
 import { MicroSeconds_number, NanoSeconds_BigInt, UnifiedPath } from '@oaklean/profiler-core'
-import { getPlatformSpecificBinaryPath } from '@oaklean/windows-measurements-lhm'
+import { getPlatformSpecificBinaryPath } from '@oaklean/windows-sensorinterface'
 
 import { LibreHardwareMonitorSensorInterface } from '../../../src/interfaces/librehardwaremonitor/LibreHardwareMonitorSensorInterface'
 
