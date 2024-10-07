@@ -85,7 +85,7 @@ import {
 import { BaseMetricsData } from './model/interfaces/BaseMetricsData'
 import { PowerMetricsData } from './model/interfaces/PowerMetricsData'
 import { PerfMetricsData} from './model/interfaces/PerfMetricsData'
-import { LibreHardwareMonitorMetricsData } from './model/interfaces/LibreHardwareMonitorMetricsData'
+import { WindowsSensorInterfaceMetricsData } from './model/interfaces/WindowsSensorInterfaceMetricsData'
 export * from './types'
 
 
@@ -128,7 +128,7 @@ export {
 	MetricsDataCollection,
 	BaseMetricsData,
 	PerfMetricsData,
-	LibreHardwareMonitorMetricsData,
+	WindowsSensorInterfaceMetricsData,
 	PowerMetricsData,
 	SystemInformation,
 	GlobalIndex,

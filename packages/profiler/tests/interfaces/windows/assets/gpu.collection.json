@@ -1,11 +1,11 @@
 {
   "pid": 0,
-  "type": "LibreHardwareMonitorTotalSystem",
+  "type": "WindowsSensorInterfaceTotalSystem",
   "items": [
     {
       "data": {
         "elapsed_ns": "996031800",
-        "cpu_energy": 6498.36624813444,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "996031800"
@@ -14,7 +14,7 @@
     {
       "data": {
         "elapsed_ns": "156578700",
-        "cpu_energy": 1017.5657796513897,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "1152610500"
@@ -23,7 +23,7 @@
     {
       "data": {
         "elapsed_ns": "130941400",
-        "cpu_energy": 822.4554383036999,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0.43104608631898,
         "timestamp": "1283551900"
@@ -32,7 +32,7 @@
     {
       "data": {
         "elapsed_ns": "154411200",
-        "cpu_energy": 964.5481982318399,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "1437963100"
@@ -41,7 +41,7 @@
     {
       "data": {
         "elapsed_ns": "187333700",
-        "cpu_energy": 1207.449340997051,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "1625296800"
@@ -50,7 +50,7 @@
     {
       "data": {
         "elapsed_ns": "138516500",
-        "cpu_energy": 872.9520375079996,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0.8865791522614996,
         "timestamp": "1763813300"
@@ -59,7 +59,7 @@
     {
       "data": {
         "elapsed_ns": "145441800",
-        "cpu_energy": 964.8490186049397,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "1909255100"
@@ -68,7 +68,7 @@
     {
       "data": {
         "elapsed_ns": "153623500",
-        "cpu_energy": 976.0690290339995,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "2062878600"
@@ -77,7 +77,7 @@
     {
       "data": {
         "elapsed_ns": "154296300",
-        "cpu_energy": 871.2594551209797,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "2217174900"
@@ -86,7 +86,7 @@
     {
       "data": {
         "elapsed_ns": "137076100",
-        "cpu_energy": 752.1487193500715,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0.4680694818956809,
         "timestamp": "2354251000"
@@ -95,7 +95,7 @@
     {
       "data": {
         "elapsed_ns": "137193700",
-        "cpu_energy": 756.3257784002903,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "2491444700"
@@ -104,7 +104,7 @@
     {
       "data": {
         "elapsed_ns": "141847100",
-        "cpu_energy": 814.3221722453682,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "2633291800"
@@ -113,7 +113,7 @@
     {
       "data": {
         "elapsed_ns": "139771200",
-        "cpu_energy": 803.1695388076813,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "2773063000"
@@ -122,7 +122,7 @@
     {
       "data": {
         "elapsed_ns": "138061900",
-        "cpu_energy": 759.1681487487991,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0.47284574380817945,
         "timestamp": "2911124900"
@@ -131,7 +131,7 @@
     {
       "data": {
         "elapsed_ns": "138519000",
-        "cpu_energy": 770.4025074900003,
+        "cpu_energy": 0,
         "ram_energy": 0,
         "gpu_energy": 0,
         "timestamp": "3049643900"

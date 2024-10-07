@@ -5,8 +5,8 @@ import {
 	IPerfSensorInterfaceOptions,
 } from '../interfaces/perf/types'
 import {
-	ILibreHardwareMonitorInterfaceOptions
-} from '../interfaces/librehardwaremonitor/types'
+	IWindowsSensorInterfaceOptions
+} from '../interfaces/windows/types'
 import {
 	ProjectIdentifier_string
 } from '../model/ProjectReport'
@@ -17,7 +17,7 @@ import {
 export enum SensorInterfaceType {
 	powermetrics = 'powermetrics',
 	perf = 'perf',
-	librehardwaremonitor = 'librehardwaremonitor'
+	windows = 'windows'
 }
 
 export type SensorInterfaceOptions = {
@@ -27,8 +27,8 @@ export type SensorInterfaceOptions = {
 	type: SensorInterfaceType.perf,
 	options: IPerfSensorInterfaceOptions
 } | {
-	type: SensorInterfaceType.librehardwaremonitor,
-	options: ILibreHardwareMonitorInterfaceOptions
+	type: SensorInterfaceType.windows,
+	options: IWindowsSensorInterfaceOptions
 }
 
 export type ProjectOptions = {

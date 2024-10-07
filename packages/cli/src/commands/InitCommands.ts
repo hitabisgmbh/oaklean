@@ -82,7 +82,8 @@ export default class InitCommands {
 	async selectSensorInterface(): Promise<SensorInterfaceType | undefined> {
 		const sensorInterfacePerPlatform: Partial<Record<NodeJS.Platform, SensorInterfaceType>> = {
 			'linux': SensorInterfaceType.perf,
-			'darwin': SensorInterfaceType.powermetrics
+			'darwin': SensorInterfaceType.powermetrics,
+			'win32': SensorInterfaceType.windows
 		}
 
 		const recommendedSensorInterface = sensorInterfacePerPlatform[os.platform()]

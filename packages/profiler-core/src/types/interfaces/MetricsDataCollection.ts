@@ -5,8 +5,8 @@ import {
 	IPerfMetricsData
 } from './PerfMetricsData'
 import {
-	ILibreHardwareMonitorMetricsData
-} from './LibreHardwareMonitorMetricsData'
+	IWindowsSensorInterfaceMetricsData
+} from './WindowsSensorInterfaceMetricsData'
 
 import {
 	NanoSeconds_BigInt
@@ -15,7 +15,7 @@ import {
 export enum MetricsDataCollectionType {
 	PowerMetricsPerProcess = 'PowerMetricsPerProcess',
 	PerfTotalSystem = 'PerfTotalSystem',
-	LibreHardwareMonitorTotalSystem = 'LibreHardwareMonitorTotalSystem'
+	WindowsSensorInterfaceTotalSystem = 'WindowsSensorInterfaceTotalSystem'
 }
 
 export type TimeInfo = {
@@ -31,6 +31,6 @@ export type ITimeInfo = {
 export interface IMetricsDataCollection {
 	type: MetricsDataCollectionType,
 	pid: number,
-	items: (IPowerMetricsData | IPerfMetricsData | ILibreHardwareMonitorMetricsData)[]
+	items: (IPowerMetricsData | IPerfMetricsData | IWindowsSensorInterfaceMetricsData)[]
 	timeInfo: ITimeInfo
 }

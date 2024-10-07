@@ -3,8 +3,8 @@ import { ChildProcess, spawn } from 'child_process'
 
 import {
 	MetricsDataCollection,
-	LibreHardwareMonitorMetricsData,
-	ILibreHardwareMonitorInterfaceOptions,
+	WindowsSensorInterfaceMetricsData,
+	IWindowsSensorInterfaceOptions,
 	TimeHelper,
 	NanoSeconds_BigInt,
 	MetricsDataCollectionType,
@@ -24,14 +24,14 @@ import { BaseSensorInterface } from '../BaseSensorInterface'
  * This Provider can only be used on Windows
  */
 
-export enum LibreHardwareMonitorEvent {
+export enum WindowsSensorInterfaceEvent {
 	ENERGY_CPU_PACKAGE = 'CPU Package',
 	ENERGY_GPU = 'GPU Power'
 }
 
-export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
+export class WindowsSensorInterface extends BaseSensorInterface {
 	private _executable: string
-	private _options: ILibreHardwareMonitorInterfaceOptions
+	private _options: IWindowsSensorInterfaceOptions
 
 	private _childProcess: ChildProcess | undefined
 	// duration of the first measurement that is used to determine the start time
@@ -42,7 +42,7 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 
 	private cleanExit: ((...args: any[]) => void) | undefined
 
-	constructor(options: ILibreHardwareMonitorInterfaceOptions, debugOptions?: {
+	constructor(options: IWindowsSensorInterfaceOptions, debugOptions?: {
 		startTime: NanoSeconds_BigInt,
 		stopTime: NanoSeconds_BigInt,
 		offsetTime: number,
@@ -51,7 +51,7 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 		super()
 		const platform = debugOptions?.platform ?? process.platform
 		if (platform !== 'win32') {
-			throw new Error('LibreHardwareMonitorSensorInterface: This sensor interface can only be used on Windows')
+			throw new Error('WindowsSensorInterface: This sensor interface can only be used on Windows')
 		}
 		this._executable = getPlatformSpecificBinaryPath(platform).toPlatformString()
 		this._options = options
@@ -64,7 +64,7 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 	}
 
 	type(): SensorInterfaceType {
-		return SensorInterfaceType.librehardwaremonitor
+		return SensorInterfaceType.windows
 	}
 
 	executable(): string {
@@ -103,17 +103,17 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 		}
 
 		if (this.startTime === undefined || this.stopTime === undefined) {
-			throw new Error('LibreHardwareMonitorSensorInterface.readSensorValues: start or stop time could not be determined')
+			throw new Error('WindowsSensorInterface.readSensorValues: start or stop time could not be determined')
 		}
 		if (this._offsetTime === undefined) {
-			throw new Error('LibreHardwareMonitorSensorInterface.readSensorValues: offset time could not be determined')
+			throw new Error('WindowsSensorInterface.readSensorValues: offset time could not be determined')
 		}
 
 		const content = this.getOutputContent()
 		if (content === undefined){
 			return new MetricsDataCollection(
 				pid,
-				MetricsDataCollectionType.LibreHardwareMonitorTotalSystem,
+				MetricsDataCollectionType.WindowsSensorInterfaceTotalSystem,
 				[],
 				{
 					startTime: this.startTime,
@@ -125,13 +125,13 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 		const lines = content.split('\n')
 
 		
-		const data: LibreHardwareMonitorMetricsData[] = []
+		const data: WindowsSensorInterfaceMetricsData[] = []
 	
 		let cpu_energy: MilliJoule_number = 0 as MilliJoule_number
 		let gpu_energy: MilliJoule_number = 0 as MilliJoule_number
 		const captured = {
-			[LibreHardwareMonitorEvent.ENERGY_CPU_PACKAGE]: false,
-			[LibreHardwareMonitorEvent.ENERGY_GPU]: false
+			[WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE]: false,
+			[WindowsSensorInterfaceEvent.ENERGY_GPU]: false
 		}
 		let lastDuration = this._offsetTime // seconds
 	
@@ -148,40 +148,40 @@ export class LibreHardwareMonitorSensorInterface extends BaseSensorInterface {
 			for (let col = 1; col < values.length; col++) {
 				const valueType = values[col]
 				switch (valueType) {
-					case LibreHardwareMonitorEvent.ENERGY_CPU_PACKAGE: {
+					case WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE: {
 						if (col + 1 < values.length && values[col + 1] !== undefined) {
 							cpu_energy = parseFloat(values[++col].replace(/,/g, '.')) * delta * 1e3 as MilliJoule_number
 						}
-						captured[LibreHardwareMonitorEvent.ENERGY_CPU_PACKAGE] = true
+						captured[WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE] = true
 					} break
-					case LibreHardwareMonitorEvent.ENERGY_GPU: {
+					case WindowsSensorInterfaceEvent.ENERGY_GPU: {
 						if (col + 1 < values.length && values[col + 1] !== undefined) {
 							gpu_energy = parseFloat(values[++col].replace(/,/g, '.')) * delta * 1e3 as MilliJoule_number
 						}
-						captured[LibreHardwareMonitorEvent.ENERGY_GPU] = true
+						captured[WindowsSensorInterfaceEvent.ENERGY_GPU] = true
 					} break
 					default:
 						break
 				}
 			}
 
-			data.push(new LibreHardwareMonitorMetricsData({
+			data.push(new WindowsSensorInterfaceMetricsData({
 				elapsed_ns: BigInt(Math.round(delta * 1e9)) as NanoSeconds_BigInt, // convert into nano seconds
 				timestamp: 
 				(this.startTime + BigInt(Math.ceil(duration * 1e9 - this._offsetTime * 1e9))) as NanoSeconds_BigInt,
 				cpu_energy:
-				captured[LibreHardwareMonitorEvent.ENERGY_CPU_PACKAGE] ? cpu_energy : 0 as MilliJoule_number,
+					captured[WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE] ? cpu_energy : 0 as MilliJoule_number,
 				ram_energy: 0 as MilliJoule_number,
-				gpu_energy: captured[LibreHardwareMonitorEvent.ENERGY_GPU] ? gpu_energy : 0 as MilliJoule_number,
+				gpu_energy: captured[WindowsSensorInterfaceEvent.ENERGY_GPU] ? gpu_energy : 0 as MilliJoule_number,
 			}))
-			captured[LibreHardwareMonitorEvent.ENERGY_CPU_PACKAGE] = false
-			captured[LibreHardwareMonitorEvent.ENERGY_GPU] = false
+			captured[WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE] = false
+			captured[WindowsSensorInterfaceEvent.ENERGY_GPU] = false
 			lastDuration = duration
 		}
 
 		return new MetricsDataCollection(
 			pid,
-			MetricsDataCollectionType.LibreHardwareMonitorTotalSystem,
+			MetricsDataCollectionType.WindowsSensorInterfaceTotalSystem,
 			data,
 			{
 				startTime: this.startTime,

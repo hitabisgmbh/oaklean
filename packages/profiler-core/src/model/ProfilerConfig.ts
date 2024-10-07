@@ -14,7 +14,7 @@ import { PermissionHelper } from '../helper/PermissionHelper'
 import {
 	IPowerMetricsSensorInterfaceOptions,
 	IPerfSensorInterfaceOptions,
-	ILibreHardwareMonitorInterfaceOptions,
+	IWindowsSensorInterfaceOptions,
 	ProjectIdentifier_string,
 	MicroSeconds_number,
 	IProfilerConfig,
@@ -53,11 +53,11 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 	getAnonymizedRuntimeOptions(): RuntimeOptions {
 		if (this.runtimeOptions.sensorInterface) {
 			switch (this.runtimeOptions.sensorInterface.type) {
-				case SensorInterfaceType.librehardwaremonitor:
+				case SensorInterfaceType.windows:
 					return {
 						...this.runtimeOptions,
 						sensorInterface: {
-							type: SensorInterfaceType.librehardwaremonitor,
+							type: SensorInterfaceType.windows,
 							options: {
 								sampleInterval: this.runtimeOptions.sensorInterface.options.sampleInterval,
 								outputFilePath: '<anonymized>'
@@ -138,7 +138,7 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 	getSensorInterfaceOptions():
 	IPowerMetricsSensorInterfaceOptions |
 	IPerfSensorInterfaceOptions |
-	ILibreHardwareMonitorInterfaceOptions |
+	IWindowsSensorInterfaceOptions |
 	undefined {
 		return this.runtimeOptions.sensorInterface?.options
 	}

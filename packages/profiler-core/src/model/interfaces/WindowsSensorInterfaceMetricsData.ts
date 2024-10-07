@@ -4,19 +4,19 @@ import { BaseMetricsData } from './BaseMetricsData'
 import {
 	MilliJoule_number,
 	NanoSeconds_BigInt,
-	ILibreHardwareMonitorMetricsDataOutputFormat,
-	ILibreHardwareMonitorMetricsData
+	IWindowsSensorInterfaceMetricsDataOutputFormat,
+	IWindowsSensorInterfaceMetricsData
 } from '../../types'
 
-export class LibreHardwareMonitorMetricsData extends BaseMetricsData {
-	private _data: ILibreHardwareMonitorMetricsDataOutputFormat
+export class WindowsSensorInterfaceMetricsData extends BaseMetricsData {
+	private _data: IWindowsSensorInterfaceMetricsDataOutputFormat
 
-	constructor(data: ILibreHardwareMonitorMetricsDataOutputFormat) {
+	constructor(data: IWindowsSensorInterfaceMetricsDataOutputFormat) {
 		super()
 		this._data = data
 	}
 
-	toJSON(): ILibreHardwareMonitorMetricsData {
+	toJSON(): IWindowsSensorInterfaceMetricsData {
 		return {
 			data: {
 				elapsed_ns: this._data.elapsed_ns.toString(),
@@ -28,15 +28,18 @@ export class LibreHardwareMonitorMetricsData extends BaseMetricsData {
 		}
 	}
 
-	static fromJSON(json: string | ILibreHardwareMonitorMetricsData, ...args: any[]): LibreHardwareMonitorMetricsData {
-		let data: ILibreHardwareMonitorMetricsData
+	static fromJSON(
+		json: string | IWindowsSensorInterfaceMetricsData,
+		...args: any[]
+	): WindowsSensorInterfaceMetricsData {
+		let data: IWindowsSensorInterfaceMetricsData
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
 		} else {
 			data = json
 		}
 
-		const result = new LibreHardwareMonitorMetricsData({
+		const result = new WindowsSensorInterfaceMetricsData({
 			elapsed_ns: BigInt(data.data.elapsed_ns) as NanoSeconds_BigInt,
 			cpu_energy: data.data.cpu_energy,
 			ram_energy: data.data.ram_energy,

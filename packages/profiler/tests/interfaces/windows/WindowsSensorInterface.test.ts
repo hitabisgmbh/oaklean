@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import { MicroSeconds_number, NanoSeconds_BigInt, UnifiedPath } from '@oaklean/profiler-core'
 import { getPlatformSpecificBinaryPath } from '@oaklean/windows-sensorinterface'
 
-import { LibreHardwareMonitorSensorInterface } from '../../../src/interfaces/librehardwaremonitor/LibreHardwareMonitorSensorInterface'
+import { WindowsSensorInterface } from '../../../src/interfaces/windows/WindowsSensorInterface'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
@@ -19,7 +19,7 @@ const COLLECTION_GPU = JSON.parse(fs.readFileSync(CURRENT_DIR.join('assets', 'gp
 
 describe('commandLineArgs', () => {
 	test('uses correct executable', async () => {
-		const instance = new LibreHardwareMonitorSensorInterface({
+		const instance = new WindowsSensorInterface({
 			outputFilePath: 'out.txt',
 			sampleInterval: 100 as MicroSeconds_number
 		}, {
@@ -35,7 +35,7 @@ describe('commandLineArgs', () => {
 	})
 
 	test('perf events energy-cores and energy-ram available', async () => {
-		const instance = new LibreHardwareMonitorSensorInterface({
+		const instance = new WindowsSensorInterface({
 			outputFilePath: 'out.txt',
 			sampleInterval: 100 as MicroSeconds_number
 		}, {
@@ -52,7 +52,7 @@ describe('commandLineArgs', () => {
 	})
 
 	test('getOutputContent', async () => {
-		const instance = new LibreHardwareMonitorSensorInterface({
+		const instance = new WindowsSensorInterface({
 			outputFilePath: CONTENT_CPU_PACKAGE_GPU_PATH,
 			sampleInterval: 100 as MicroSeconds_number
 		}, {
@@ -67,7 +67,7 @@ describe('commandLineArgs', () => {
 	
 	describe('readSensorValues', () => {
 		test('cpu+gpu', async () => {
-			const instance = new LibreHardwareMonitorSensorInterface({
+			const instance = new WindowsSensorInterface({
 				outputFilePath: CONTENT_CPU_PACKAGE_GPU_PATH,
 				sampleInterval: 100 as MicroSeconds_number
 			}, {
@@ -82,7 +82,7 @@ describe('commandLineArgs', () => {
 		})
 
 		test('cpu', async () => {
-			const instance = new LibreHardwareMonitorSensorInterface({
+			const instance = new WindowsSensorInterface({
 				outputFilePath: CONTENT_CPU_PACKAGE_PATH,
 				sampleInterval: 100 as MicroSeconds_number
 			}, {
@@ -97,7 +97,7 @@ describe('commandLineArgs', () => {
 		})
 
 		test('gpu', async () => {
-			const instance = new LibreHardwareMonitorSensorInterface({
+			const instance = new WindowsSensorInterface({
 				outputFilePath: CONTENT_GPU_PATH,
 				sampleInterval: 100 as MicroSeconds_number
 			}, {

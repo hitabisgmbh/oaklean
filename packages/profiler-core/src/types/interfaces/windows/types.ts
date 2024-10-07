@@ -1,6 +1,6 @@
 import { MicroSeconds_number } from '../../helper/TimeHelper'
 
-export interface ILibreHardwareMonitorInterfaceOptions {
+export interface IWindowsSensorInterfaceOptions {
 	outputFilePath: string
 	sampleInterval: MicroSeconds_number
 }
