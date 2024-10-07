@@ -12,6 +12,7 @@ import {
 	getPlatformSpecificBinaryPath,
 	getPlatformSpecificBinaryDirectoryPath
 } from '../constants/config'
+import { VERSION } from '../constants/app'
 
 
 export class InstallHelper {
@@ -53,7 +54,7 @@ export class InstallHelper {
 
 		ZipHelper.extractSpecificDirectory(
 			tarballDownloadBuffer,
-			new UnifiedPath('publish'),
+			new UnifiedPath(VERSION),
 			getPlatformSpecificBinaryDirectoryPath(platform)
 		)
 	}

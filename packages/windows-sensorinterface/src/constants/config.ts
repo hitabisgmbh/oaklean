@@ -24,5 +24,5 @@ export function getPlatformSpecificPackageName(platform: SupportedPlatforms) {
 export function getPlatformSpecificDownloadLink(platform: SupportedPlatforms) {
 	const platformSpecificPackageName = getPlatformSpecificPackageName(platform)
 
-	return ''
+	return `https://github.com/KMakowsky/Windows-SensorInterface/releases/download/${VERSION}/${VERSION}.zip`
 }
