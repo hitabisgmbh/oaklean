@@ -39,6 +39,7 @@
 		"build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc",
 		"postinstall": "node -e \"if (!require('fs').existsSync('dist/install.js')) { require('child_process').execSync('npm run build', { stdio: 'inherit' }); }\" && node dist/install.js",
 		"publish-registry": "npm publish",
+		"lint": "npx eslint --fix .",
 		"test": "",
 		"test-measure": "",
 		"test-update": "",
