@@ -5,6 +5,9 @@
 ### Improvement
 - Types are now outsourced into separate files, enabling their usage in browser environments
 
+### Added
+- A SensorInterface for Windows to measure the energy consumption
+
 ## 0.1.3
 ### Added
 - The .oak file format now stores which source files contain uncommitted changes

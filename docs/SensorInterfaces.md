@@ -6,8 +6,9 @@ Sensor interfaces are interfaces that help the Oaklean Profiler to obtain energy
 Currently, there are two sensor interfaces:
 | SensorInterface | Operating System | Requires Root Privileges |
 | --------------- | ---------------- | -------------------------|
-| powermetrics    | macOS            | yes											|
-| perf            | linux            | yes<br><a href="#running-without-root-privileges">(read below to see<br> how it works<br> without root privileges)</a> |
+| [powermetrics](#power-metrics-sensor-interface)    | macOS            | yes											|
+| [perf](#perf-sensor-interface)            | linux            | yes<br><a href="#running-without-root-privileges">(read below to see<br> how it works<br> without root privileges)</a> |
+| [windows](#windows-sensor-interface)			    | windows          | yes											|
 
 ## Power Metrics Sensor Interface
 `powermetrics` is a tool for macOS that provides detailed information about power consumption and energy use of the system, it comes **pre-installed** on macOS and can handle **Apple Silicon** and **Intel** machines.
@@ -42,7 +43,7 @@ In order to use the `powermetrics` Sensor Interface simple add this to the `.oak
 We are currently working on a solution to make the powermetrics interface available within a docker container.
 
 
-## Perf Metrics Sensor Interface
+## Perf Sensor Interface
 `perf` is a performance analysis tool for Linux that collects and analyzes performance and trace data. It helps in monitoring and profiling the performance of the entire system, including CPU, memory, and I/O activities. It is usually **not pre-installed** on Linux systems
 
 #### How to install perf?
@@ -91,6 +92,33 @@ Consider tweaking /proc/sys/kernel/perf_event_paranoid:
 So in order to allow perf to collect energy measurements without root privileges simple run:
 `sudo sysctl -w kernel.perf_event_paranoid=-1`
 
+## Windows Sensor Interface
+The Windows Sensor Interface is a .NET binary developed for Oaklean. It uses the [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) library to access hardware sensors on Windows machines. This binary is included with the [`@oaklean/windows-sensorinterface`](/packages/windows-sensorinterface/README.md) package, which is automatically installed on Windows when you install the [`@oaklean/profiler`](/packages/profiler/README.md).
+
+> :warning: **requires admin priviliges**<br>
+> Unfortunately the `Windows Sensor Interface` needs admin priviliges and we haven't discovered a work around yet.
+> To ensure correct permissions during measurement, we highly recommend opening a shell (e.g., PowerShell) with administrator privileges and running the measurement from there.
+
+### How to use it?
+In order to use the Windows Sensor Interface simple add this to the `.oaklean` config file in your project:
+```json
+// .oaklean
+{
+	...
+	"runtimeOptions": {
+		...
+		"sensorInterface": {
+			"type": "windows",
+			"options": {
+				"sampleInterval": 100, // sample interval in microseconds
+				"outputFilePath": "energy-measurements.csv"
+			}
+		}
+		...
+	},
+	...
+}
+```
 
 #### Docker support
 In order to use `perf` with docker you need to install perf on your host system and mount the kernel modules into your docker container:

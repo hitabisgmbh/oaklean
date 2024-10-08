@@ -63,6 +63,15 @@ export default class InitCommands {
 					}
 				}
 				break
+			case SensorInterfaceType.windows:
+				config.runtimeOptions.sensorInterface = {
+					type: SensorInterfaceType.windows,
+					options: {
+						outputFilePath: 'energy-measurements.csv',
+						sampleInterval: 100 as MicroSeconds_number,
+					}
+				}
+				break
 			default:
 				break
 		}
@@ -107,6 +116,11 @@ export default class InitCommands {
 					name: 'perf (Linux only)',
 					value: SensorInterfaceType.perf,
 					description: 'energy measurements on Linux (Intel & AMD CPUs only)',
+				},
+				{
+					name: 'windows (Windows only)',
+					value: SensorInterfaceType.windows,
+					description: 'energy measurements on Windows (Intel & AMD CPUs only)',
 				}
 			],
 		})
