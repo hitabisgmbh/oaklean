@@ -23,9 +23,6 @@
 	"homepage": "https://www.oaklean.io/",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"bin": {
-		"oak-lhm": "dist/install.js"
-	},
 	"directories": {
 		"dist": "dist"
 	},
