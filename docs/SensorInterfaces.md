@@ -93,7 +93,7 @@ So in order to allow perf to collect energy measurements without root privileges
 `sudo sysctl -w kernel.perf_event_paranoid=-1`
 
 ## Windows Sensor Interface
-The Windows Sensor Interface is a .NET binary developed for Oaklean. It uses the [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) library to access hardware sensors on Windows machines. This binary is included with the [`@oaklean/windows-sensorinterface`](/packages/windows-sensorinterface/README.md) package, which is automatically installed on Windows when you install the [`@oaklean/profiler`](/packages/profiler/README.md).
+The Windows Sensor Interface is a .NET binary developed for Oaklean. It uses the [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) library to access hardware sensors on Windows machines. This binary is included with the [@oaklean/windows-sensorinterface](/packages/windows-sensorinterface/README.md) package, which is automatically installed on Windows when you install the [@oaklean/profiler](/packages/profiler/README.md).
 
 > :warning: **requires admin priviliges**<br>
 > Unfortunately the `Windows Sensor Interface` needs admin priviliges and we haven't discovered a work around yet.
