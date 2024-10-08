@@ -92,6 +92,22 @@ Consider tweaking /proc/sys/kernel/perf_event_paranoid:
 So in order to allow perf to collect energy measurements without root privileges simple run:
 `sudo sysctl -w kernel.perf_event_paranoid=-1`
 
+#### Docker support
+In order to use `perf` with docker you need to install perf on your host system and mount the kernel modules into your docker container:
+
+Be aware that the service needs the **privileged** flag
+
+```yml
+# docker-compose.yml
+version: '3'
+services:
+	service-name:
+		image: # docker image here (needs to be the same kernel as the host system)
+		volumes:
+			- /lib/modules:/lib/modules
+		privileged: true
+```
+
 ## Windows Sensor Interface
 The Windows Sensor Interface is a .NET binary developed for Oaklean. It uses the [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) library to access hardware sensors on Windows machines. This binary is included with the [@oaklean/windows-sensorinterface](/packages/windows-sensorinterface/README.md) package, which is automatically installed on Windows when you install the [@oaklean/profiler](/packages/profiler/README.md).
 
@@ -118,20 +134,4 @@ In order to use the Windows Sensor Interface simple add this to the `.oaklean` c
 	},
 	...
 }
-```
-
-#### Docker support
-In order to use `perf` with docker you need to install perf on your host system and mount the kernel modules into your docker container:
-
-Be aware that the service needs the **privileged** flag
-
-```yml
-# docker-compose.yml
-version: '3'
-services:
-	service-name:
-		image: # docker image here (needs to be the same kernel as the host system)
-		volumes:
-			- /lib/modules:/lib/modules
-		privileged: true
 ```
