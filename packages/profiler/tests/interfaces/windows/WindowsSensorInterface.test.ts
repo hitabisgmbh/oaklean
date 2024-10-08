@@ -78,7 +78,10 @@ describe('commandLineArgs', () => {
 			})
 
 			const result = await instance.readSensorValues(0)
-			expect(result.toJSON()).toEqual(COLLECTION_CPU_PACKAGE_GPU)
+			expect(result).toBeDefined()
+			if (result !== undefined) {
+				expect(result.toJSON()).toEqual(COLLECTION_CPU_PACKAGE_GPU)
+			}
 		})
 
 		test('cpu', async () => {
@@ -93,7 +96,10 @@ describe('commandLineArgs', () => {
 			})
 
 			const result = await instance.readSensorValues(0)
-			expect(result.toJSON()).toEqual(COLLECTION_CPU_PACKAGE)
+			expect(result).toBeDefined()
+			if (result !== undefined) {
+				expect(result.toJSON()).toEqual(COLLECTION_CPU_PACKAGE)
+			}
 		})
 
 		test('gpu', async () => {
@@ -108,7 +114,10 @@ describe('commandLineArgs', () => {
 			})
 
 			const result = await instance.readSensorValues(0)
-			expect(result.toJSON()).toEqual(COLLECTION_GPU)
+			expect(result).toBeDefined()
+			if (result !== undefined) {
+				expect(result.toJSON()).toEqual(COLLECTION_GPU)
+			}
 		})
 	})
 })

@@ -206,7 +206,7 @@ export class Profiler {
 		if (this._sensorInterface !== undefined && !await this._sensorInterface.couldBeExecuted()) {
 			// remove sensor interface from execution details since it cannot be executed
 			this.executionDetails.runTimeOptions.sensorInterface = undefined
-			console.warn('Warning (Profiler): Sensor Interface can not be executed, no energy measurements will be collected')
+			console.warn('(${APP_NAME} Profiler) Warning: Sensor Interface can not be executed, no energy measurements will be collected')
 		}
 		await this._sensorInterface?.startProfiling()
 

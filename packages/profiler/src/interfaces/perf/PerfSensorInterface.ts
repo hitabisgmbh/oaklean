@@ -55,6 +55,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		if (debugOptions !== undefined) {
 			this._startTime = debugOptions.startTime,
 			this._stopTime = debugOptions.stopTime
+			this._couldBeExecuted = true
 		}
 	}
 

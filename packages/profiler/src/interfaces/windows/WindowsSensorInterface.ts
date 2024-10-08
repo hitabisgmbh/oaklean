@@ -60,6 +60,7 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 			this._startTime = debugOptions.startTime,
 			this._stopTime = debugOptions.stopTime
 			this._offsetTime = debugOptions.offsetTime
+			this._couldBeExecuted = true
 		}
 	}
 

@@ -5,7 +5,7 @@ import {
 } from '@oaklean/profiler-core'
 
 export class BaseSensorInterface {
-	private _couldBeExecuted: boolean | undefined
+	protected _couldBeExecuted: boolean | undefined
 
 	type(): SensorInterfaceType{
 		throw new Error('BaseSensorInterface.type must be implemented')

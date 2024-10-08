@@ -52,8 +52,9 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 			this._options.outputFilePath
 		]
 		if (debugOptions !== undefined) {
-			this._startTime = debugOptions.startTime,
+			this._startTime = debugOptions.startTime
 			this._stopTime = debugOptions.stopTime
+			this._couldBeExecuted = true
 		}
 	}
 
