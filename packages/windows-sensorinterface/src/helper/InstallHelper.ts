@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import https from 'https'
 
-import { UnifiedPath } from '@oaklean/profiler-core'
+import { LoggerHelper, UnifiedPath } from '@oaklean/profiler-core'
 
 import { ZipHelper } from './ZipHelper'
 
@@ -72,7 +72,7 @@ export class InstallHelper {
 
 		// Skip downloading the binary if it was already installed via optionalDependencies
 		if (!InstallHelper.isPlatformSpecificPackageInstalled(platform)) {
-			console.log('Platform specific package not found. Will manually download binary.')
+			LoggerHelper.log('Platform specific package not found. Will manually download binary.')
 			InstallHelper.downloadPlatformSpecificBinary(platform)
 		}
 	}

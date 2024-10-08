@@ -1,4 +1,4 @@
-import { UnifiedPath, ProjectReport } from '@oaklean/profiler-core'
+import { UnifiedPath, ProjectReport, LoggerHelper } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
 export default class BackendCommands {
@@ -25,7 +25,7 @@ export default class BackendCommands {
 		}
 		const projectReport = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (projectReport === undefined) {
-			console.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
 			return
 		}
 		await projectReport.uploadToRegistry()

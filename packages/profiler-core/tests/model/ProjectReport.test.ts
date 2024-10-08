@@ -11,6 +11,7 @@ import { ProfilerConfig } from '../../src/model/ProfilerConfig'
 import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { PermissionHelper } from '../../src/helper/PermissionHelper'
+import { LoggerHelper } from '../../src'
 import {
 	UnifiedPath_string,
 	IProjectReport,
@@ -1394,7 +1395,7 @@ describe('ProjectReport', () => {
 		test('does not merge with different systems', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
-			const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+			const consoleError = jest.spyOn(LoggerHelper, 'error').mockImplementation(() => undefined)
 			instancesToMerge[0].executionDetails.systemInformation.cpu.manufacturer = 'abc'
 
 			const t = () => {

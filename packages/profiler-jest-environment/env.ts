@@ -2,7 +2,14 @@
 import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 import { TestEnvironment as NodeEnvironment } from 'jest-environment-node'
 import { Profiler } from '@oaklean/profiler'
-import { UnifiedPath, NanoSeconds_BigInt, ProfilerConfig, ProjectReportOrigin, ProjectReport } from '@oaklean/profiler-core'
+import {
+	UnifiedPath,
+	NanoSeconds_BigInt,
+	ProfilerConfig,
+	ProjectReportOrigin,
+	ProjectReport,
+	LoggerHelper
+} from '@oaklean/profiler-core'
 
 declare global {
 	interface globalThis {
@@ -48,7 +55,7 @@ class CustomEnvironment extends NodeEnvironment {
 					executionDetails
 				)
 			} catch (e) {
-				console.error('CustomEnvironment.setup():', e)
+				LoggerHelper.error('CustomEnvironment.setup():', e)
 				this.ranSuccessfully = false
 			}
 		}
@@ -60,7 +67,7 @@ class CustomEnvironment extends NodeEnvironment {
 				const stopTime = process.hrtime.bigint() as NanoSeconds_BigInt
 				await this.profiler.finish(this.testPath.toString(), stopTime)
 			} catch (e) {
-				console.error('CustomEnvironment.teardown(): ', e)
+				LoggerHelper.error('CustomEnvironment.teardown(): ', e)
 			}
 		}
 		await super.teardown()

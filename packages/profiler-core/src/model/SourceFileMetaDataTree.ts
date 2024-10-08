@@ -33,6 +33,7 @@ import {
 	UnifiedPath_string,
 	UnifiedPathPart_string
 } from '../types'
+import { LoggerHelper } from '../helper/LoggerHelper'
 
 type UnifiedPathOnlyForPathNode<T> =
 	T extends SourceFileMetaDataTreeType.File | SourceFileMetaDataTreeType.Directory ? UnifiedPath : undefined
@@ -306,12 +307,12 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		const max = SourceNodeMetaData.max(...maxs)
 
 		if (!SourceNodeMetaData.equals(this.aggregatedInternSourceMetaData.total, total)) {
-			console.error(total, this.aggregatedInternSourceMetaData.total, this.filePath?.toString())
+			LoggerHelper.error(total, this.aggregatedInternSourceMetaData.total, this.filePath?.toString())
 			throw new Error('SourceFileMetaDataTree.validate: Assertion error total is not correct' + this.filePath?.toString())
 		}
 
 		if (!SourceNodeMetaData.equals(this.aggregatedInternSourceMetaData.max, max)) {
-			console.error(max, this.aggregatedInternSourceMetaData.max, this.filePath?.toString())
+			LoggerHelper.error(max, this.aggregatedInternSourceMetaData.max, this.filePath?.toString())
 			throw new Error('SourceFileMetaDataTree.validate: Assertion error max is not correct' + this.filePath?.toString())
 		}
 	}
@@ -406,7 +407,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 					(index as IndexPerType<SourceFileMetaDataTreeType.Root>).getLangInternalIndex('get')?.getFilePathIndex('get', subTree.filePath)
 					: (index as ModuleIndex)?.globalIndex?.getLangInternalIndex('get')?.getFilePathIndex('get', subTree.filePath)
 				if (indexToPass === undefined) {
-					console.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
+					LoggerHelper.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
 					throw new Error('SourceFileMetaDataTree.fromJSON: (langInternal children) could not resolve index for subTree')
 				}
 				result.langInternalChildren.set(
@@ -439,7 +440,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 						throw new Error('SourceFileMetaDataTree.fromJSON: unexpected subTree type')
 				}
 				if (indexToPass === undefined) {
-					console.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
+					LoggerHelper.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
 					throw new Error('SourceFileMetaDataTree.fromJSON: (intern children) could not resolve index for subTree')
 				}
 				result.internChildren.set(

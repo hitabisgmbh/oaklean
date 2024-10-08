@@ -10,7 +10,8 @@ import {
 	TimeHelper,
 	NanoSeconds_BigInt,
 	MetricsDataCollectionType,
-	SensorInterfaceType
+	SensorInterfaceType,
+	LoggerHelper
 } from '@oaklean/profiler-core'
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
@@ -113,7 +114,8 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		}
 		let tries = 0
 		while (this.isRunning() && tries < 10) {
-			console.error(`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
+			LoggerHelper.error(
+				`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
 			tries += 1
 			await TimeHelper.sleep(1000)
 		}

@@ -1,3 +1,4 @@
+import { LoggerHelper } from './helper/LoggerHelper'
 import { PathUtils } from './helper/PathUtils'
 import { UnifiedPath } from './system/UnifiedPath'
 import { TypescriptParser } from './helper/TypescriptParser'
@@ -98,6 +99,7 @@ export {
 	BaseAdapter,
 	JestAdapter,
 	TypeScriptAdapter,
+	LoggerHelper,
 	PathUtils,
 	UnifiedPath,
 	TypescriptParser,

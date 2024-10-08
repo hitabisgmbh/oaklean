@@ -10,7 +10,8 @@ import {
 	MetricsDataCollectionType,
 	MilliJoule_number,
 	SensorInterfaceType,
-	PermissionHelper
+	PermissionHelper,
+	LoggerHelper
 } from '@oaklean/profiler-core'
 import {
 	getPlatformSpecificBinaryPath,
@@ -101,7 +102,8 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 		}
 		let tries = 0
 		while (this.isRunning() && tries < 10) {
-			console.error(`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
+			LoggerHelper.error(
+				`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
 			tries += 1
 			await TimeHelper.sleep(1000)
 		}

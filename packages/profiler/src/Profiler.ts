@@ -13,7 +13,8 @@ import {
 	NanoSeconds_BigInt,
 	MicroSeconds_number,
 	ReportKind,
-	PermissionHelper
+	PermissionHelper,
+	LoggerHelper
 } from '@oaklean/profiler-core'
 import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 
@@ -115,7 +116,7 @@ export class Profiler {
 		async function resolve(origin: string) {
 			if (!stopped) {
 				stopped = true
-				console.log(`(${APP_NAME} Profiler) Finish Measurement, please wait...`)
+				LoggerHelper.log(`(${APP_NAME} Profiler) Finish Measurement, please wait...`)
 				await profiler.finish(title)
 				process.removeListener('exit', exitResolve)
 				process.removeListener('SIGINT', sigIntResolve)
@@ -127,7 +128,7 @@ export class Profiler {
 			}
 		}
 
-		console.log(`(${APP_NAME} Profiler) Measurement started`)
+		LoggerHelper.log(`(${APP_NAME} Profiler) Measurement started`)
 		await profiler.start(title)
 
 		process.on('exit', exitResolve)
@@ -174,7 +175,7 @@ export class Profiler {
 	async getCPUProfilerBeginTime(): Promise<MicroSeconds_number> {
 		let tries = 0
 		while (this._profilerStartTime === undefined && tries < 10) {
-			console.error(`Cannot capture profiler start time on try: ${tries + 1}, try again after 1 second`)
+			LoggerHelper.error(`Cannot capture profiler start time on try: ${tries + 1}, try again after 1 second`)
 			tries += 1
 			await TimeHelper.sleep(1000)
 		}
@@ -206,7 +207,8 @@ export class Profiler {
 		if (this._sensorInterface !== undefined && !await this._sensorInterface.couldBeExecuted()) {
 			// remove sensor interface from execution details since it cannot be executed
 			this.executionDetails.runTimeOptions.sensorInterface = undefined
-			console.warn('(${APP_NAME} Profiler) Warning: Sensor Interface can not be executed, no energy measurements will be collected')
+			LoggerHelper.warn(`(${APP_NAME} Profiler) Warning: ` + 
+				'Sensor Interface can not be executed, no energy measurements will be collected')
 		}
 		await this._sensorInterface?.startProfiling()
 

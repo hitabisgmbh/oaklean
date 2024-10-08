@@ -14,6 +14,7 @@ import {
 	ISystemInformation_Os,
 	ISystemInformation
 } from '../types'
+import { LoggerHelper } from '../helper/LoggerHelper'
 
 export class SystemInformation extends BaseModel {
 	system: ISystemInformation_System
@@ -71,7 +72,7 @@ export class SystemInformation extends BaseModel {
 				firstSystem.virtual === currentSystem.virtual
 
 			if (!systemIsTheSame) {
-				console.error('SystemInformation.isSame: detected different systems')
+				LoggerHelper.error('SystemInformation.isSame: detected different systems')
 				return false
 			}
 
@@ -84,7 +85,7 @@ export class SystemInformation extends BaseModel {
 				firstBaseBoard.memMax === currentBaseBoard.memMax &&
 				firstBaseBoard.memSlots === currentBaseBoard.memSlots
 			if (!baseBoardIsTheSame) {
-				console.error('SystemInformation.isSame: detected different baseboards')
+				LoggerHelper.error('SystemInformation.isSame: detected different baseboards')
 				return false
 			}
 
@@ -98,7 +99,7 @@ export class SystemInformation extends BaseModel {
 				firstChassi.assetTag === currentChassis.assetTag &&
 				firstChassi.sku === currentChassis.sku
 			if (!chassisIsTheSame) {
-				console.error('SystemInformation.isSame: detected different chassis')
+				LoggerHelper.error('SystemInformation.isSame: detected different chassis')
 				return false
 			}
 
@@ -125,7 +126,7 @@ export class SystemInformation extends BaseModel {
 				firstCpu.cache.l2 === currentCpu.cache.l2 &&
 				firstCpu.cache.l3 === currentCpu.cache.l3
 			if (!cpuIsTheSame) {
-				console.error('SystemInformation.isSame: detected different cpus')
+				LoggerHelper.error('SystemInformation.isSame: detected different cpus')
 				return false
 			}
 
@@ -134,14 +135,14 @@ export class SystemInformation extends BaseModel {
 			const memoryIsTheSame =
 				firstMemory.total === currentMemory.total
 			if (!memoryIsTheSame) {
-				console.error('SystemInformation.isSame: detected different memory')
+				LoggerHelper.error('SystemInformation.isSame: detected different memory')
 				return false
 			}
 
 			const currentMemoryLayout = currentSystemInformation.memoryLayout
 
 			if (firstMemoryLayout.length !== currentMemoryLayout.length) {
-				console.error('SystemInformation.isSame: detected different memoryLayout')
+				LoggerHelper.error('SystemInformation.isSame: detected different memoryLayout')
 				return false
 			}
 
@@ -154,7 +155,7 @@ export class SystemInformation extends BaseModel {
 					firstMemoryLayout[i].voltageMax === currentMemoryLayout[i].voltageMax
 
 				if (!memoryLayoutIsTheSame) {
-					console.error('SystemInformation.isSame: detected different memoryLayout')
+					LoggerHelper.error('SystemInformation.isSame: detected different memoryLayout')
 					return false
 				}
 			}
@@ -166,7 +167,7 @@ export class SystemInformation extends BaseModel {
 				firstBattery.model === currentBattery.model &&
 				firstBattery.manufacturer === currentBattery.manufacturer
 			if (!batteryIsTheSame) {
-				console.error('SystemInformation.isSame: detected different battery')
+				LoggerHelper.error('SystemInformation.isSame: detected different battery')
 				return false
 			}
 
@@ -186,7 +187,7 @@ export class SystemInformation extends BaseModel {
 				firstOs.uefi === currentOs.uefi
 
 			if (!osIsTheSame) {
-				console.error('SystemInformation.isSame: detected different os')
+				LoggerHelper.error('SystemInformation.isSame: detected different os')
 				return false
 			}
 		}

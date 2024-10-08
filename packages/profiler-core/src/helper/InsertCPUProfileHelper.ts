@@ -6,6 +6,7 @@ import { CPUNode } from './CPUNode'
 import { memoize } from './memoize'
 import { TypescriptParser } from './TypescriptParser'
 import { TypeScriptHelper } from './TypescriptHelper'
+import { LoggerHelper } from './LoggerHelper'
 
 import { Report } from '../model/Report'
 import { ProjectReport } from '../model/ProjectReport'
@@ -606,7 +607,7 @@ export class InsertCPUProfileHelper {
 			true : (programStructureTreeOriginal.sourceLocationOfIdentifier(functionIdentifier) !== undefined)
 
 		if (functionIdentifier === '') {
-			console.error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
+			LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
 				url: cpuNode.url.toString(),
 				lineNumber,
 				columnNumber

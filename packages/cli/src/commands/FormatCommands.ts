@@ -1,6 +1,12 @@
 import * as fs from 'fs'
 
-import { NodeModule, ProjectReport, SourceFileMetaDataTree, UnifiedPath } from '@oaklean/profiler-core'
+import {
+	LoggerHelper,
+	NodeModule,
+	ProjectReport,
+	SourceFileMetaDataTree,
+	UnifiedPath
+} from '@oaklean/profiler-core'
 import { program } from 'commander'
 
 export default class FormatCommands {
@@ -47,11 +53,9 @@ export default class FormatCommands {
 		}
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
-			console.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
 			return
 		}
-
-		console.log(report.hash())
 	}
 
 	async convertToJSON(input: string, output: string) {
@@ -68,7 +72,7 @@ export default class FormatCommands {
 
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
-			console.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
 			return
 		}
 
@@ -93,7 +97,7 @@ export default class FormatCommands {
 
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
-			console.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
 			return
 		}
 
@@ -113,19 +117,19 @@ export default class FormatCommands {
 
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
-			console.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
 			return
 		}
 		const reversePathMap = report.globalIndex.getModuleIndex('get')?.reversePathMap
 
 		if (reversePathMap === undefined) {
-			console.error('Could not find reversePathMap')
+			LoggerHelper.error('Could not find reversePathMap')
 			return
 		}
 
 		for (const pathIndex of reversePathMap.values()) {
 			if (!fs.existsSync(new UnifiedPath(pathIndex.identifier).toPlatformString())) {
-				console.error(`Could not find file ${pathIndex.identifier}`)
+				LoggerHelper.error(`Could not find file ${pathIndex.identifier}`)
 			}
 		}
 
@@ -138,7 +142,7 @@ export default class FormatCommands {
 			for (const pathIndex of moduleIndex.reversePathMap.values()) {
 				const filePath = nodeModulePath.join(nodeModule.name, pathIndex.identifier).toPlatformString()
 				if (!fs.existsSync(filePath)) {
-					console.error(`Could not find file ${filePath}`)
+					LoggerHelper.error(`Could not find file ${filePath}`)
 				}
 			}
 		}
