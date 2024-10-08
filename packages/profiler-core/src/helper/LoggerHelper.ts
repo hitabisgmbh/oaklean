@@ -1,16 +1,18 @@
+import util from 'util'
+
 import cli from 'cli-color'
 
 export class LoggerHelper {
 	static logString(message?: any, ...optionalParams: any[]) {
-		return cli.white(message, optionalParams)
+		return cli.white(util.format.apply(this, [message, ...optionalParams]))
 	}
 
 	static warnString(message?: any, ...optionalParams: any[]) {
-		return cli.yellow(message, optionalParams)
+		return cli.yellow(util.format.apply(this, [message, ...optionalParams]))
 	}
 
 	static errorString(message?: any, ...optionalParams: any[]) {
-		return cli.red(message, optionalParams)
+		return cli.red(util.format.apply(this, [message, ...optionalParams]))
 	}
 
 	static log(message?: any, ...optionalParams: any[]) {
