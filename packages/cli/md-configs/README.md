@@ -4,7 +4,7 @@ A command-line interface that provides utilities for parsing, inspecting, and co
 
 ## Usage
 
-`$ oak -h`
+`$ npx oak -h`
 ```
 Usage: oak [options] [command]
 
