@@ -2,7 +2,7 @@
 import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 import { TestEnvironment as NodeEnvironment } from 'jest-environment-node'
 import { Profiler } from '@oaklean/profiler'
-import { UnifiedPath, GitHelper, TimeHelper, SystemInformation, NodeModule, NanoSeconds_BigInt, ProfilerConfig, ProjectReportOrigin, ProjectReport } from '@oaklean/profiler-core'
+import { UnifiedPath, NanoSeconds_BigInt, ProfilerConfig, ProjectReportOrigin, ProjectReport } from '@oaklean/profiler-core'
 
 declare global {
 	interface globalThis {

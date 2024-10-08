@@ -203,6 +203,11 @@ export class Profiler {
 		V8Profiler.setGenerateType(1) // must be set to generate new cpuprofile format
 		V8Profiler.setSamplingInterval(this.config.getV8CPUSamplingInterval()) // sets the sampling interval in microseconds
 		await this.startCapturingProfilerTracingEvents()
+		if (this._sensorInterface !== undefined && !await this._sensorInterface.couldBeExecuted()) {
+			// remove sensor interface from execution details since it cannot be executed
+			this.executionDetails.runTimeOptions.sensorInterface = undefined
+			console.warn('Warning (Profiler): Sensor Interface can not be executed, no energy measurements will be collected')
+		}
 		await this._sensorInterface?.startProfiling()
 
 		// title - handle to stop profile again

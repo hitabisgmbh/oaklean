@@ -136,7 +136,10 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		return fs.readFileSync(this._options.outputFilePath).toString()
 	}
 
-	async readSensorValues(pid: number): Promise<MetricsDataCollection> {
+	async readSensorValues(pid: number): Promise<MetricsDataCollection | undefined> {
+		if (!await this.couldBeExecuted()) {
+			return undefined
+		}
 		let tries = 0
 		while (this.isRunning() && tries < 10) {
 			console.error(`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
@@ -241,6 +244,9 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	}
 
 	async startProfiling() {
+		if (!await this.couldBeExecuted()) {
+			return
+		}
 		if (fs.existsSync(this._options.outputFilePath)) {
 			fs.unlinkSync(this._options.outputFilePath) // remove output file to ensure clean measurements
 		}
@@ -267,6 +273,9 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	}
 
 	async stopProfiling() {
+		if (!await this.couldBeExecuted()) {
+			return
+		}
 		if (this._childProcess === undefined) {
 			return
 		}
