@@ -1,6 +1,6 @@
 The `@oaklean/cli` can be used to easily setup a `.oaklean` config file.
-1. Install the cli: `npm add -g @oaklean/cli`
-2. Run the init script: `oak init`
+1. Install the cli: `npm add --save-dev @oaklean/cli`
+2. Run the init script: `npx oak init`
 3. It will ask you which sensor interface should be used for energy measurements:
 ```
 Select a sensor interface (recommended for your platform: perf)
