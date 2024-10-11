@@ -1,7 +1,10 @@
 import { BaseModel } from './BaseModel'
 
-import { UnifiedPath_string } from '../types/UnifiedPath.types'
 import { BufferHelper } from '../helper/BufferHelper'
+// Types
+import {
+	UnifiedPath_string
+} from '../types'
 
 export type ModelMapKeyType = UnifiedPath_string | string | number
 

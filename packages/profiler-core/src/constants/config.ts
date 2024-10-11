@@ -1,6 +1,9 @@
-import { ProjectIdentifier_string } from '../model/ProjectReport'
-import { IProfilerConfig } from '../model/ProfilerConfig'
-import { MicroSeconds_number } from '../helper/TimeHelper'
+// Types
+import {
+	ProjectIdentifier_string,
+	MicroSeconds_number,
+	IProfilerConfig
+} from '../types'
 
 export const STATIC_CONFIG_FILENAME = '.oaklean'
 

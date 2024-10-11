@@ -3,8 +3,10 @@ import * as fs from 'fs'
 import { CPUModel } from '../../src/helper/CPUModel'
 import { CPUNode } from '../../src/helper/CPUNode'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { NanoSeconds_BigInt } from '../../src/helper/TimeHelper'
-import { MilliJoule_number } from '../../src/model/interfaces/BaseMetricsData'
+import {
+	NanoSeconds_BigInt,
+	MilliJoule_number
+} from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 const rootDir = CURRENT_DIR.join('..', '..', '..', '..')

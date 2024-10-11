@@ -1,5 +1,8 @@
 import { UnifiedPath } from '../system/UnifiedPath'
-import { UnifiedPathPart_string } from '../types/UnifiedPath.types'
+// Types
+import {
+	UnifiedPathPart_string
+} from '../types'
 
 export class NodeModuleUtils {
 	static getParentModuleFromPath(path: UnifiedPath): UnifiedPath | undefined {

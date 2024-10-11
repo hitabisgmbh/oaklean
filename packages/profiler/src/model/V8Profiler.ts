@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 
-import { Protocol as Cdp } from 'devtools-protocol'
+import type { Protocol as Cdp } from 'devtools-protocol'
 import { MicroSeconds_number, UnifiedPath } from '@oaklean/profiler-core'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

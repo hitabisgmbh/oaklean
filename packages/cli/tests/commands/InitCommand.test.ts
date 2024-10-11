@@ -7,7 +7,8 @@ import {
 	DEFAULT_PROFILER_CONFIG,
 	Crypto,
 	RegistryOptions,
-	IProfilerConfig
+	IProfilerConfig,
+	LoggerHelper
 } from '@oaklean/profiler-core'
 
 import InitCommands from '../../src/commands/InitCommands'
@@ -126,7 +127,7 @@ describe('InitCommands', () => {
 				configStoreToFile_spy = jest.spyOn(ProfilerConfig.prototype, 'storeToFile')
 				configStoreToFile_spy.mockImplementation(() => undefined)
 				configureConfig_spy = jest.spyOn(initCommands, 'configureConfig')
-				consoleLog_spy = jest.spyOn(console, 'log')
+				consoleLog_spy = jest.spyOn(LoggerHelper, 'log')
 				consoleLog_spy.mockImplementation(() => undefined)
 			})
 

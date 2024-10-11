@@ -1,21 +1,30 @@
 import * as fs from 'fs'
 
-import { ISourceFileMetaDataTree, SourceFileMetaDataTree, SourceFileMetaDataTreeType } from '../../src/model/SourceFileMetaDataTree'
-import { ISourceNodeMetaData, SourceNodeMetaData, SourceNodeMetaDataType } from '../../src/model/SourceNodeMetaData'
+import { NodeModule } from '../../src/model/NodeModule'
+import { SourceFileMetaDataTree } from '../../src/model/SourceFileMetaDataTree'
+import { SourceNodeMetaData } from '../../src/model/SourceNodeMetaData'
 import { ModelMap } from '../../src/model/ModelMap'
 import { ProjectReport } from '../../src/model/ProjectReport'
 import { SourceFileMetaData, AggregatedSourceNodeMetaData } from '../../src/model/SourceFileMetaData'
-import { NodeModule, NodeModuleIdentifier_string } from '../../src/model/NodeModule'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { UnifiedPathPart_string, UnifiedPath_string } from '../../src/types/UnifiedPath.types'
 import { SensorValues } from '../../src/model/SensorValues'
 import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
-import { SourceNodeIdentifier_string, GlobalSourceNodeIdentifier_string } from '../../src/types/SourceNodeIdentifiers.types'
-import { ModuleID_number } from '../../src/model/index/ModuleIndex'
-import { PathID_number } from '../../src/model/index/PathIndex'
-import { SourceNodeID_number } from '../../src/model/index/SourceNodeIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
+import {
+	ISourceFileMetaDataTree,
+	SourceFileMetaDataTreeType,
+	ISourceNodeMetaData,
+	SourceNodeMetaDataType,
+	NodeModuleIdentifier_string,
+	UnifiedPathPart_string,
+	UnifiedPath_string,
+	SourceNodeIdentifier_string,
+	GlobalSourceNodeIdentifier_string,
+	ModuleID_number,
+	PathID_number,
+	SourceNodeID_number
+} from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 

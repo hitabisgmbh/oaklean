@@ -1,0 +1,53 @@
+{
+	"name": "@oaklean/windows-sensorinterface",
+	"version": "0.1.3",
+	"author": "Hitabis GmbH",
+	"license": "MIT",
+	"description": "A library that provides a binary that utilizes the LibreHardwareMonitor library to capture energy measurements on Windows",
+	"keywords": [
+		"greenit",
+		"optimization",
+		"energy",
+		"consumption",
+		"javascript",
+		"typescript",
+		"windows",
+		"eco",
+		"librehardwaremonitor",
+		"measurement"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hitabisgmbh/oaklean.git"
+	},
+	"homepage": "https://www.oaklean.io/",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"directories": {
+		"dist": "dist"
+	},
+	"files": [
+		"LICENSE",
+		"README.md",
+		"dist/**/*"
+	],
+	"scripts": {
+		"exec": "cd $INIT_CWD && npx ts-node -r tsconfig-paths/register src/install.ts",
+		"build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc",
+		"postinstall": "node -e \"if (!require('fs').existsSync('dist/install.js')) { require('child_process').execSync('npm run build', { stdio: 'inherit' }); }\" && node dist/install.js",
+		"publish-registry": "npm publish",
+		"lint": "npx eslint --fix .",
+		"test": "",
+		"test-measure": "",
+		"test-update": "",
+		"generate-docs": "markdown-include md-configs/README.json"
+	},
+	"dependencies": {
+		"@oaklean/profiler-core": "^0.1.3",
+		"adm-zip": "^0.5.16"
+	},
+	"devDependencies": {
+		"@types/adm-zip": "^0.5.5",
+		"rimraf": "^6.0.1"
+	}
+}

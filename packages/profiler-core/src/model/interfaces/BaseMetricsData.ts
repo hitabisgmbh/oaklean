@@ -1,10 +1,11 @@
-import { IPowerMetricsData } from './PowerMetricsData'
-import { IPerfMetricsData } from './PerfMetricsData'
-
-import { NanoSeconds_BigInt } from '../../helper/TimeHelper'
-
-const MilliJouleSymbol: unique symbol = Symbol('MilliJouleSymbol')
-export type MilliJoule_number = number & { [MilliJouleSymbol]: never }
+// Types
+import {
+	MilliJoule_number,
+	NanoSeconds_BigInt,
+	IPowerMetricsData,
+	IPerfMetricsData,
+	IWindowsSensorInterfaceMetricsData
+} from '../../types'
 
 export class BaseMetricsData {
 	processIsPresent(pid: number): boolean {
@@ -39,7 +40,7 @@ export class BaseMetricsData {
 		throw new Error('BaseMetricsData.ramEnergy must be implemented')
 	}
 
-	toJSON(): IPowerMetricsData | IPerfMetricsData {
+	toJSON(): IPowerMetricsData | IPerfMetricsData | IWindowsSensorInterfaceMetricsData {
 		throw new Error('BaseMetricsData.toJSON must be implemented')
 	}
 

@@ -1,4 +1,5 @@
-import { BufferHelper, PrimitiveBufferTypes } from '../../src/helper/BufferHelper'
+import { BufferHelper } from '../../src/helper/BufferHelper'
+import { PrimitiveBufferTypes } from '../../src/types'
 
 const EXAMPLE_STRING_2L = 'Hello World'
 const EXAMPLE_STRING_2L_BUFFER = '0b0048656c6c6f20576f726c64'

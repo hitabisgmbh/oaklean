@@ -5,9 +5,16 @@ import * as ts from 'typescript'
 
 import { TypeScriptHelper } from './TypescriptHelper'
 
-import { ProgramStructureTree, ProgramStructureTreeType, NodeLocation, IdentifierType } from '../model/ProgramStructureTree'
+import { ProgramStructureTree } from '../model/ProgramStructureTree'
 import { UnifiedPath } from '../system/UnifiedPath'
-import { SourceNodeIdentifier_string } from '../types/SourceNodeIdentifiers.types'
+// Types
+import {
+	SourceNodeIdentifier_string,
+	ProgramStructureTreeType,
+	NodeLocation,
+	IdentifierType
+} from '../types'
+import { LoggerHelper } from './LoggerHelper'
 
 type TraverseNodeInfo = {
 	tree: ProgramStructureTree,
@@ -198,7 +205,7 @@ export class TypescriptParser {
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 						)
 					} else {
-						console.error(
+						LoggerHelper.error(
 							'TypescriptParser.parseFile.enterNode (isFunctionDeclaration): unhandled case: node.name.kind === ' + node.name?.kind, {
 								filePath,
 								kind: node.name?.kind,
@@ -271,7 +278,7 @@ export class TypescriptParser {
 											)
 											break
 										default:
-											console.error(
+											LoggerHelper.error(
 												'TypescriptParser.parseFile.enterNode (isFunctionExpression: PropertyDeclaration): unhandled case: parent.name.kind === ' + parent.name.kind,
 												{
 													filePath,
@@ -309,12 +316,12 @@ export class TypescriptParser {
 											)
 											break
 										default:
-											console.error(
+											LoggerHelper.error(
 												'Error: TypescriptParser.parseFile.enterNode',
 												filePath,
 												TypescriptParser.posToLoc(sourceFile, node.parent.getStart())
 											)
-											console.error(
+											LoggerHelper.error(
 												'TypescriptParser.parseFile.enterNode (isFunctionExpression: VariableDeclaration): unhandled case: node.parent.kind  === ' +
 												node.parent.kind, {
 													filePath,
@@ -380,7 +387,7 @@ export class TypescriptParser {
 							)
 							break
 						default:
-							console.error(
+							LoggerHelper.error(
 								'TypescriptParser.parseFile.enterNode (isMethodDeclaration): unhandled case: node.name.kind', {
 									filePath
 								}
@@ -437,7 +444,7 @@ export class TypescriptParser {
 										)
 										break
 									default:
-										console.error(
+										LoggerHelper.error(
 											'TypescriptParser.parseFile.enterNode (isArrowFunction: PropertyDeclaration): unhandled case: parent.name.kind === ' + parent.name.kind,
 											{
 												filePath,
@@ -475,12 +482,12 @@ export class TypescriptParser {
 										)
 										break
 									default:
-										console.error(
+										LoggerHelper.error(
 											'Error: TypescriptParser.parseFile.enterNode',
 											filePath,
 											TypescriptParser.posToLoc(sourceFile, node.parent.getStart())
 										)
-										console.error(
+										LoggerHelper.error(
 											'TypescriptParser.parseFile.enterNode (isArrowFunction: VariableDeclaration): unhandled case: node.parent.kind  === ' + node.parent.kind, {
 												filePath,
 												kind: node.parent.kind
@@ -561,7 +568,7 @@ export class TypescriptParser {
 		const result = ts.parseConfigFileTextToJson(configFileName, configFileText)
 		const configObject = result.config
 		if (!configObject) {
-			console.error(
+			LoggerHelper.error(
 				`TypescriptParser.readConfigFile could not parse the config file: ${configFileName}`
 			)
 			return undefined
@@ -570,7 +577,7 @@ export class TypescriptParser {
 		// Extract config information
 		const configParseResult = ts.parseJsonConfigFileContent(configObject, ts.sys, path.dirname(configFileName))
 		if (configParseResult.errors.length > 0) {
-			console.error(
+			LoggerHelper.error(
 				`TypescriptParser.readConfigFile errors while parsing the config file: ${configFileName}`,
 				JSON.stringify(configParseResult.errors, undefined, 2)
 			)

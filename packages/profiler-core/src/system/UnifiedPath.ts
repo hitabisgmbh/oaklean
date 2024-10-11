@@ -1,7 +1,11 @@
 import * as path from 'path'
 
 import { PathUtils } from '../helper/PathUtils'
-import { UnifiedPath_string, UnifiedPathPart_string } from '../types/UnifiedPath.types'
+// Types
+import {
+	UnifiedPath_string,
+	UnifiedPathPart_string
+} from '../types'
 
 export class UnifiedPath {
 	private readonly _unifiedPath: string

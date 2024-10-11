@@ -1,7 +1,10 @@
 import { NodeModule } from '../../src/model/NodeModule'
-import { SourceNodeIdentifier_string, GlobalSourceNodeIdentifier_string } from '../../src/types/SourceNodeIdentifiers.types'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
+import {
+	SourceNodeIdentifier_string,
+	GlobalSourceNodeIdentifier_string
+} from '../../src/types'
 
 describe('GlobalIdentifier', () => {
 	describe('instance related', () => {

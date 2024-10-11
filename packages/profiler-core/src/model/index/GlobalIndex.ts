@@ -1,21 +1,23 @@
-import { ModuleIndex, IModuleIndex, ModuleID_number } from './ModuleIndex'
-import { PathID_number, PathIndex } from './PathIndex'
-import { SourceNodeID_number, SourceNodeIndex, SourceNodeIndexType } from './SourceNodeIndex'
+import { ModuleIndex } from './ModuleIndex'
+import { PathIndex } from './PathIndex'
+import { SourceNodeIndex } from './SourceNodeIndex'
 
 import { BaseModel } from '../BaseModel'
 import { ModelMap } from '../ModelMap'
-import { NodeModule, NodeModuleIdentifier_string } from '../NodeModule'
+import { NodeModule } from '../NodeModule'
 import { GlobalIdentifier } from '../../system/GlobalIdentifier'
 import { LangInternalPathRegex } from '../../constants/SourceNodeRegex'
-
-export interface IGlobalIndex {
-	currentId: number
-	moduleMap: Record<NodeModuleIdentifier_string, IModuleIndex>
-}
-
-export type IndexRequestType = 'get' | 'upsert'
-
-export type GlobalIndexType = 'module' | 'path' | 'sourceNode'
+// Types
+import {
+	PathID_number,
+	ModuleID_number,
+	SourceNodeIndexType,
+	SourceNodeID_number,
+	NodeModuleIdentifier_string,
+	IndexRequestType,
+	GlobalIndexType,
+	IGlobalIndex
+} from '../../types'
 
 export class GlobalIndex extends BaseModel {
 	currentId: number

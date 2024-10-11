@@ -7,6 +7,7 @@ import * as ts from 'typescript'
 
 import { TypescriptParser } from '../../src/helper/TypescriptParser'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
+import { LoggerHelper } from '../../src'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
@@ -51,7 +52,7 @@ describe('TypescriptParser', () => {
 			let consoleErrorMock: jest.SpyInstance
 
 			beforeEach(() => {
-				consoleErrorMock = jest.spyOn(console, 'error')
+				consoleErrorMock = jest.spyOn(LoggerHelper, 'error')
 				consoleErrorMock.mockImplementation(() => undefined)
 			})
 

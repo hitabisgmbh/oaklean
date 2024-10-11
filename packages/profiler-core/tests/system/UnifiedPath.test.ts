@@ -1,5 +1,7 @@
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { UnifiedPathPart_string } from '../../src/types/UnifiedPath.types'
+import {
+	UnifiedPathPart_string
+} from '../../src/types'
 
 // Describe the module or function you want to test
 describe('UnifiedPath', () => {

@@ -2,10 +2,12 @@ import crypto from 'crypto'
 
 import { v4 as uuidv4 } from 'uuid'
 
-const UUID4_REGEX = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
+// Types
+import {
+	UUID_string
+} from '../types'
 
-const UUIDSymbol: unique symbol = Symbol('IUUIDSymbol')
-export type UUID_string = string & { [UUIDSymbol]: never }
+const UUID4_REGEX = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
 
 export class Crypto {
 	static hash(value: string | Buffer): string {

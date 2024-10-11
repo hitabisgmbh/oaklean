@@ -3,37 +3,41 @@ import path from 'path'
 
 import { CPUModel } from './CPUModel'
 import { CPUNode } from './CPUNode'
-import { NanoSeconds_BigInt } from './TimeHelper'
 import { memoize } from './memoize'
 import { TypescriptParser } from './TypescriptParser'
 import { TypeScriptHelper } from './TypescriptHelper'
+import { LoggerHelper } from './LoggerHelper'
 
 import { Report } from '../model/Report'
 import { ProjectReport } from '../model/ProjectReport'
 import { ModuleReport } from '../model/ModuleReport'
 import { UnifiedPath } from '../system/UnifiedPath'
-import { UnifiedPath_string } from '../types/UnifiedPath.types'
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { BaseAdapter } from '../adapters/transformer/BaseAdapter'
 import { MetricsDataCollection } from '../model/interfaces/MetricsDataCollection'
 import { TypeScriptAdapter } from '../adapters/transformer/TypeScriptAdapter'
 import { ModelMap } from '../model/ModelMap'
 import { ProgramStructureTree } from '../model/ProgramStructureTree'
-import { IPureCPUTime, IPureCPUEnergyConsumption, IPureRAMEnergyConsumption } from '../model/SensorValues'
-import { SourceNodeID_number } from '../model/index/SourceNodeIndex'
 import { SourceMap } from '../model/SourceMap'
 import {
-	SourceNodeMetaData,
-	SourceNodeMetaDataType
+	SourceNodeMetaData
 } from '../model/SourceNodeMetaData'
+import { GlobalIdentifier } from '../system/GlobalIdentifier'
+import { NodeModule } from '../model/NodeModule'
+// Types
 import {
+	UnifiedPath_string,
+	SourceNodeID_number,
+	SourceNodeMetaDataType,
 	LangInternalPath_string,
 	LangInternalSourceNodeIdentifier_string,
-	SourceNodeIdentifier_string
-} from '../types/SourceNodeIdentifiers.types'
-import { GlobalIdentifier } from '../system/GlobalIdentifier'
-import { MilliJoule_number } from '../model/interfaces/BaseMetricsData'
-import { NodeModule } from '../model/NodeModule'
+	SourceNodeIdentifier_string,
+	NanoSeconds_BigInt,
+	MilliJoule_number,
+	IPureCPUTime,
+	IPureCPUEnergyConsumption,
+	IPureRAMEnergyConsumption
+} from '../types'
 
 type CallIdentifier = {
 	reportID: number,
@@ -603,7 +607,7 @@ export class InsertCPUProfileHelper {
 			true : (programStructureTreeOriginal.sourceLocationOfIdentifier(functionIdentifier) !== undefined)
 
 		if (functionIdentifier === '') {
-			console.error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
+			LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
 				url: cpuNode.url.toString(),
 				lineNumber,
 				columnNumber

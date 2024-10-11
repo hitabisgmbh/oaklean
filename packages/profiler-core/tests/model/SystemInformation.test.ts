@@ -3,7 +3,11 @@ import * as fs from 'fs'
 import si from 'systeminformation'
 
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { SystemInformation, ISystemInformation } from '../../src/model/SystemInformation'
+import { SystemInformation } from '../../src/model/SystemInformation'
+import {
+	ISystemInformation
+} from '../../src/types'
+import { LoggerHelper } from '../../src'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
@@ -166,7 +170,7 @@ describe('SystemInformation', () => {
 		let consoleError: jest.SpyInstance
 
 		beforeEach(() => {
-			consoleError = jest.spyOn(console, 'error')
+			consoleError = jest.spyOn(LoggerHelper, 'error')
 			consoleError.mockImplementation(() => undefined)
 		})
 

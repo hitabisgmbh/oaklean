@@ -24,7 +24,8 @@
     "packages/profiler-core",
     "packages/profiler",
     "packages/profiler-jest-environment",
-    "packages/cli"
+    "packages/cli",
+    "packages/windows-sensorinterface"
   ],
   "engines": {
     "node": "20.11.1"

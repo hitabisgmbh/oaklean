@@ -1,16 +1,21 @@
+/* eslint-disable import/order */
 import { NodeModule } from '../../src/model/NodeModule'
 import { SensorValues } from '../../src/model/SensorValues'
 import {
-	ISourceNodeMetaData,
-	SourceNodeMetaData,
-	SourceNodeMetaDataType
+	SourceNodeMetaData
 } from '../../src/model/SourceNodeMetaData'
 import { GlobalIndex } from '../../src/model/index/GlobalIndex'
-import { SourceNodeID_number } from '../../src/model/index/SourceNodeIndex'
-import { MilliJoule_number } from '../../src/model/interfaces/BaseMetricsData'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
-import { UnifiedPath_string } from '../../src/types/UnifiedPath.types'
-import { SourceNodeIdentifier_string, GlobalSourceNodeIdentifier_string } from '../../src/types/SourceNodeIdentifiers.types'
+
+import {
+	SourceNodeID_number,
+	MilliJoule_number,
+	ISourceNodeMetaData,
+	SourceNodeMetaDataType,
+	UnifiedPath_string,
+	SourceNodeIdentifier_string,
+	GlobalSourceNodeIdentifier_string
+} from '../../src/types'
 
 const EXAMPLE_SOURCE_NODE_META_DATA = {
 	id: 2 as SourceNodeID_number,
