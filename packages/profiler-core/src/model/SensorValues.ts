@@ -504,4 +504,57 @@ export class SensorValues extends BaseModel {
 			remainingBuffer
 		}
 	}
+
+	add({
+		internSensorValues,
+		externSensorValues,
+		langInternalSensorValues,
+	}: {
+		internSensorValues?: SensorValues,
+		externSensorValues?: SensorValues,
+		langInternalSensorValues?: SensorValues,
+	}) {
+		const result = SensorValues.fromJSON(this.toJSON())
+
+		if (internSensorValues) {
+			result.aggregatedCPUTime += internSensorValues.aggregatedCPUTime
+			result.aggregatedCPUEnergyConsumption = result.aggregatedCPUEnergyConsumption +
+				internSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
+			result.aggregatedRAMEnergyConsumption = result.aggregatedRAMEnergyConsumption + 
+				internSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
+
+			result.internCPUTime += internSensorValues.aggregatedCPUTime
+			result.internCPUEnergyConsumption = result.internCPUEnergyConsumption +
+				internSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
+			result.internRAMEnergyConsumption = result.internRAMEnergyConsumption +
+				internSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
+		}
+		if (externSensorValues) {
+			result.aggregatedCPUTime += externSensorValues.aggregatedCPUTime
+			result.aggregatedCPUEnergyConsumption = result.aggregatedCPUEnergyConsumption +
+				externSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
+			result.aggregatedRAMEnergyConsumption = result.aggregatedRAMEnergyConsumption +
+				externSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
+
+			result.externCPUTime += externSensorValues.aggregatedCPUTime
+			result.externCPUEnergyConsumption = result.externCPUEnergyConsumption +
+				externSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
+			result.externRAMEnergyConsumption = result.externRAMEnergyConsumption +
+				externSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
+		}
+		if (langInternalSensorValues) {
+			result.aggregatedCPUTime += langInternalSensorValues.aggregatedCPUTime
+			result.aggregatedCPUEnergyConsumption = result.aggregatedCPUEnergyConsumption +
+				langInternalSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
+			result.aggregatedRAMEnergyConsumption = result.aggregatedRAMEnergyConsumption +
+				langInternalSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
+
+			result.langInternalCPUTime += langInternalSensorValues.aggregatedCPUTime
+			result.langInternalCPUEnergyConsumption = result.langInternalCPUEnergyConsumption +
+				langInternalSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
+			result.langInternalRAMEnergyConsumption = result.langInternalRAMEnergyConsumption +
+				langInternalSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
+		}
+		return result
+	}
 }
