@@ -26,7 +26,8 @@ import {
 	SourceNodeIndexType,
 	SourceNodeMetaDataType,
 	ISourceFileMetaData,
-	IAggregatedSourceNodeMetaData
+	IAggregatedSourceNodeMetaData,
+	MicroSeconds_number
 } from '../types'
 
 export class AggregatedSourceNodeMetaData extends BaseModel {
@@ -303,14 +304,7 @@ export class SourceFileMetaData extends BaseModel {
 			node = new SourceNodeMetaData<T>(
 				type,
 				sourceNodeID as T extends SourceNodeMetaDataType.Aggregate ? undefined : SourceNodeID_number,
-				new SensorValues({
-					profilerHits: 0,
-					selfCPUTime: 0,
-					aggregatedCPUTime: 0,
-					internCPUTime: 0,
-					externCPUTime: 0,
-					langInternalCPUTime: 0
-				}),
+				new SensorValues({}),
 				sourceNodeIndex as T extends SourceNodeMetaDataType.Aggregate ?
 					undefined : SourceNodeIndex<SourceNodeIndexType.SourceNode>
 			)
@@ -348,7 +342,8 @@ export class SourceFileMetaData extends BaseModel {
 			}
 		}
 		const result = SourceNodeMetaData.sum(...list)
-		result.sensorValues.aggregatedCPUTime -= compensateAggregatedTime
+		result.sensorValues.aggregatedCPUTime = result.sensorValues.aggregatedCPUTime -
+			compensateAggregatedTime as MicroSeconds_number
 
 		return result
 	}

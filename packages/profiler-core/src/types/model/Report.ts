@@ -14,6 +14,9 @@ import {
 import {
 	UnifiedPath_string
 } from '../system/UnifiedPath'
+import {
+	MicroSeconds_number
+} from '../helper/TimeHelper'
 
 export enum ReportKind {
 	measurement = 0,
@@ -25,6 +28,7 @@ export interface IReport {
 	kind: ReportKind,
 	relativeRootDir?: UnifiedPath_string
 	internMapping?: Record<PathID_number, PathID_number>
+	lang_internal_headless_cpu_time?: MicroSeconds_number
 	lang_internal?: Record<PathID_number, ISourceFileMetaData>
 	intern?: Record<PathID_number, ISourceFileMetaData>
 	extern?: Record<ModuleID_number, IModuleReport>

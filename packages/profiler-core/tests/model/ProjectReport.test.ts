@@ -392,8 +392,8 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
 				{
 					cpuTime: {
-						selfCPUTime: 111,
-						aggregatedCPUTime: 222,
+						selfCPUTime: 111 as MicroSeconds_number,
+						aggregatedCPUTime: 222 as MicroSeconds_number
 					},
 					cpuEnergyConsumption: {
 						selfCPUEnergyConsumption: 222 as MilliJoule_number,
@@ -442,9 +442,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						sensorValues: {
 							profilerHits: 1,
 
-							selfCPUTime: 20,
-							aggregatedCPUTime: 30,
-							langInternalCPUTime: 10,
+							selfCPUTime: 20 as MicroSeconds_number,
+							aggregatedCPUTime: 30 as MicroSeconds_number,
+							langInternalCPUTime: 10 as MicroSeconds_number,
 
 							selfCPUEnergyConsumption: 40 as MilliJoule_number,
 							aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
@@ -476,9 +476,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						sensorValues: {
 							profilerHits: 1,
 
-							selfCPUTime: 30,
-							aggregatedCPUTime: 60,
-							langInternalCPUTime: 30,
+							selfCPUTime: 30 as MicroSeconds_number,
+							aggregatedCPUTime: 60 as MicroSeconds_number,
+							langInternalCPUTime: 30 as MicroSeconds_number,
 
 							selfCPUEnergyConsumption: 60 as MilliJoule_number,
 							aggregatedCPUEnergyConsumption: 120 as MilliJoule_number,
@@ -518,9 +518,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						sensorValues: {
 							profilerHits: 1,
 
-							selfCPUTime: 20,
-							aggregatedCPUTime: 30,
-							langInternalCPUTime: 10,
+							selfCPUTime: 20 as MicroSeconds_number,
+							aggregatedCPUTime: 30 as MicroSeconds_number,
+							langInternalCPUTime: 10 as MicroSeconds_number,
 
 							selfCPUEnergyConsumption: 40 as MilliJoule_number,
 							aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
@@ -552,9 +552,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						sensorValues: {
 							profilerHits: 1,
 
-							selfCPUTime: 30,
-							aggregatedCPUTime: 60,
-							langInternalCPUTime: 30,
+							selfCPUTime: 30 as MicroSeconds_number,
+							aggregatedCPUTime: 60 as MicroSeconds_number,
+							langInternalCPUTime: 30 as MicroSeconds_number,
 
 							selfCPUEnergyConsumption: 60 as MilliJoule_number,
 							aggregatedCPUEnergyConsumption: 120 as MilliJoule_number,
@@ -589,8 +589,8 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
 					{
 						cpuTime: {
-							selfCPUTime: 123,
-							aggregatedCPUTime: 456
+							selfCPUTime: 123 as MicroSeconds_number,
+							aggregatedCPUTime: 456 as MicroSeconds_number
 						},
 						cpuEnergyConsumption: {
 							selfCPUEnergyConsumption: 246 as MilliJoule_number,
@@ -632,8 +632,8 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
 					{
 						cpuTime: {
-							selfCPUTime: 123,
-							aggregatedCPUTime: 456
+							selfCPUTime: 123 as MicroSeconds_number,
+							aggregatedCPUTime: 456 as MicroSeconds_number
 						},
 						cpuEnergyConsumption: {
 							selfCPUEnergyConsumption: 246 as MilliJoule_number,
@@ -811,8 +811,8 @@ describe('ProjectReport', () => {
 			'{root}.{class:Class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
 			{
 				cpuTime: {
-					selfCPUTime: 20,
-					aggregatedCPUTime: 30,
+					selfCPUTime: 20 as MicroSeconds_number,
+					aggregatedCPUTime: 30 as MicroSeconds_number
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 40 as MilliJoule_number,
@@ -831,8 +831,8 @@ describe('ProjectReport', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 0,
-					aggregatedCPUTime: 10
+					selfCPUTime: 0 as MicroSeconds_number,
+					aggregatedCPUTime: 10 as MicroSeconds_number
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 0 as MilliJoule_number,
@@ -849,8 +849,8 @@ describe('ProjectReport', () => {
 			'{root}.{class:Class}.{method:method2}' as SourceNodeIdentifier_string,
 			{
 				cpuTime: {
-					selfCPUTime: 30,
-					aggregatedCPUTime: 60,
+					selfCPUTime: 30 as MicroSeconds_number,
+					aggregatedCPUTime: 60 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 60 as MilliJoule_number,
@@ -869,8 +869,8 @@ describe('ProjectReport', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 0,
-					aggregatedCPUTime: 30
+					selfCPUTime: 0 as MicroSeconds_number,
+					aggregatedCPUTime: 30 as MicroSeconds_number
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 0 as MilliJoule_number,
@@ -892,8 +892,8 @@ describe('ProjectReport', () => {
 			'{root}.{class:Package}.{method:method}' as SourceNodeIdentifier_string,
 			{
 				cpuTime: {
-					selfCPUTime: 10,
-					aggregatedCPUTime: 10,
+					selfCPUTime: 10 as MicroSeconds_number,
+					aggregatedCPUTime: 10 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 20 as MilliJoule_number,
@@ -911,8 +911,8 @@ describe('ProjectReport', () => {
 			'{root}.{class:Package}.{method:method2}' as SourceNodeIdentifier_string,
 			{
 				cpuTime: {
-					selfCPUTime: 80,
-					aggregatedCPUTime: 80,
+					selfCPUTime: 80 as MicroSeconds_number,
+					aggregatedCPUTime: 80 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 160 as MilliJoule_number,

@@ -12,7 +12,8 @@ import {
 	IPureCPUTime,
 	IPureCPUEnergyConsumption,
 	IPureRAMEnergyConsumption,
-	EnergyValuesType
+	EnergyValuesType,
+	MicroSeconds_number
 } from '../types'
 
 export const RegExpTestRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
@@ -111,8 +112,8 @@ export class CPUNode {
 
 	get cpuTime(): IPureCPUTime {
 		return {
-			selfCPUTime: this.cpuNode.selfTime,
-			aggregatedCPUTime: this.cpuNode.aggregateTime
+			selfCPUTime: this.cpuNode.selfTime as MicroSeconds_number,
+			aggregatedCPUTime: this.cpuNode.aggregateTime as MicroSeconds_number
 		}
 	}
 

@@ -23,7 +23,8 @@ import {
 	LangInternalPath_string,
 	SourceNodeIdentifier_string,
 	UnifiedPath_string,
-	GlobalSourceNodeIdentifier_string
+	GlobalSourceNodeIdentifier_string,
+	MicroSeconds_number
 } from '../types'
 
 export function validateSourceNodeIdentifier(identifier: SourceNodeIdentifier_string) {
@@ -205,11 +206,11 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		const valuesToSum = {
 			profilerHits: 0,
 
-			selfCPUTime: 0,
-			aggregatedCPUTime: 0,
-			langInternalCPUTime: 0,
-			internCPUTime: 0,
-			externCPUTime: 0,
+			selfCPUTime: 0 as MicroSeconds_number,
+			aggregatedCPUTime: 0 as MicroSeconds_number,
+			langInternalCPUTime: 0 as MicroSeconds_number,
+			internCPUTime: 0 as MicroSeconds_number,
+			externCPUTime: 0 as MicroSeconds_number,
 
 			selfCPUEnergyConsumption: 0 as MilliJoule_number,
 			aggregatedCPUEnergyConsumption: 0 as MilliJoule_number,
@@ -245,11 +246,17 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				throw new Error('SourceNodeMetaData.merge: all SourceNodeMetaDatas should be from the same type.')
 			}
 			valuesToSum.profilerHits += currentSourceNodeMetaData.sensorValues.profilerHits
-			valuesToSum.selfCPUTime += currentSourceNodeMetaData.sensorValues.selfCPUTime
-			valuesToSum.aggregatedCPUTime += currentSourceNodeMetaData.sensorValues.aggregatedCPUTime
-			valuesToSum.langInternalCPUTime += currentSourceNodeMetaData.sensorValues.langInternalCPUTime
-			valuesToSum.internCPUTime += currentSourceNodeMetaData.sensorValues.internCPUTime
-			valuesToSum.externCPUTime += currentSourceNodeMetaData.sensorValues.externCPUTime
+			valuesToSum.selfCPUTime = valuesToSum.selfCPUTime +
+				currentSourceNodeMetaData.sensorValues.selfCPUTime as MicroSeconds_number
+			
+			valuesToSum.aggregatedCPUTime = valuesToSum.aggregatedCPUTime +
+				currentSourceNodeMetaData.sensorValues.aggregatedCPUTime as MicroSeconds_number
+			valuesToSum.langInternalCPUTime = valuesToSum.langInternalCPUTime +
+				currentSourceNodeMetaData.sensorValues.langInternalCPUTime as MicroSeconds_number
+			valuesToSum.internCPUTime = valuesToSum.internCPUTime +
+				currentSourceNodeMetaData.sensorValues.internCPUTime as MicroSeconds_number
+			valuesToSum.externCPUTime = valuesToSum.externCPUTime +
+				currentSourceNodeMetaData.sensorValues.externCPUTime as MicroSeconds_number
 
 			valuesToSum.selfCPUEnergyConsumption =
 				valuesToSum.selfCPUEnergyConsumption +
@@ -409,8 +416,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			}
 			
 			if (filePathIDs.includes(sourceNodeIndex.pathIndex.id as PathID_number)) {
-				this.sensorValues.internCPUTime -= sourceNodeMetaData.sensorValues.aggregatedCPUTime
-				this.sensorValues.aggregatedCPUTime -= sourceNodeMetaData.sensorValues.aggregatedCPUTime
+				this.sensorValues.internCPUTime = this.sensorValues.internCPUTime -
+					sourceNodeMetaData.sensorValues.aggregatedCPUTime as MicroSeconds_number
+				this.sensorValues.aggregatedCPUTime = this.sensorValues.aggregatedCPUTime -
+					sourceNodeMetaData.sensorValues.aggregatedCPUTime as MicroSeconds_number
 				this.sensorValues.internCPUEnergyConsumption = this.sensorValues.internCPUEnergyConsumption -
 					sourceNodeMetaData.sensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
 				this.sensorValues.aggregatedCPUEnergyConsumption = this.sensorValues.aggregatedCPUEnergyConsumption -
@@ -510,8 +519,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		cpuEnergyConsumption: IPureCPUEnergyConsumption,
 		ramEnergyConsumption: IPureRAMEnergyConsumption
 	}): SourceNodeMetaData<T> {
-		this.sensorValues.selfCPUTime += cpuTime.selfCPUTime || 0
-		this.sensorValues.aggregatedCPUTime += cpuTime.aggregatedCPUTime || 0
+		this.sensorValues.selfCPUTime = this.sensorValues.selfCPUTime +
+			(cpuTime.selfCPUTime || 0) as MicroSeconds_number
+		this.sensorValues.aggregatedCPUTime = this.sensorValues.aggregatedCPUTime +
+			(cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
 
 		this.sensorValues.selfCPUEnergyConsumption =
 			this.sensorValues.selfCPUEnergyConsumption +
@@ -550,14 +561,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			sourceNodeMetaData = new SourceNodeMetaData(
 				SourceNodeMetaDataType.LangInternalSourceNodeReference,
 				sourceNodeID,
-				new SensorValues({
-					profilerHits: 0,
-					selfCPUTime: 0,
-					aggregatedCPUTime: 0,
-					internCPUTime: 0,
-					externCPUTime: 0,
-					langInternalCPUTime: 0
-				}),
+				new SensorValues({}),
 				sourceNodeIndex
 			),
 			this.lang_internal.set(sourceNodeID, sourceNodeMetaData)
@@ -568,7 +572,8 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			cpuEnergyConsumption: values.cpuEnergyConsumption,
 			ramEnergyConsumption: values.ramEnergyConsumption
 		})
-		this.sensorValues.langInternalCPUTime += values.cpuTime.aggregatedCPUTime || 0
+		this.sensorValues.langInternalCPUTime = this.sensorValues.langInternalCPUTime +
+			(values.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
 
 		this.sensorValues.langInternalCPUEnergyConsumption =
 			this.sensorValues.langInternalCPUEnergyConsumption +
@@ -600,14 +605,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			sourceNodeMetaData = new SourceNodeMetaData(
 				SourceNodeMetaDataType.InternSourceNodeReference,
 				sourceNodeID,
-				new SensorValues({
-					profilerHits: 0,
-					selfCPUTime: 0,
-					aggregatedCPUTime: 0,
-					internCPUTime: 0,
-					externCPUTime: 0,
-					langInternalCPUTime: 0
-				}),
+				new SensorValues({}),
 				sourceNodeIndex
 			)
 			this.intern.set(sourceNodeID, sourceNodeMetaData)
@@ -618,7 +616,8 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			cpuEnergyConsumption: values.cpuEnergyConsumption,
 			ramEnergyConsumption: values.ramEnergyConsumption
 		})
-		this.sensorValues.internCPUTime += values.cpuTime.aggregatedCPUTime || 0
+		this.sensorValues.internCPUTime = this.sensorValues.internCPUTime +
+			(values.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
 
 		this.sensorValues.internCPUEnergyConsumption =
 			this.sensorValues.internCPUEnergyConsumption +	
@@ -650,14 +649,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			sourceNodeMetaData = new SourceNodeMetaData(
 				SourceNodeMetaDataType.ExternSourceNodeReference,
 				sourceNodeID,
-				new SensorValues({
-					profilerHits: 0,
-					selfCPUTime: 0,
-					aggregatedCPUTime: 0,
-					internCPUTime: 0,
-					externCPUTime: 0,
-					langInternalCPUTime: 0
-				}),
+				new SensorValues({}),
 				sourceNodeIndex
 			)
 			this.extern.set(sourceNodeID, sourceNodeMetaData)	
@@ -668,7 +660,8 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			cpuEnergyConsumption: values.cpuEnergyConsumption,
 			ramEnergyConsumption: values.ramEnergyConsumption
 		})
-		this.sensorValues.externCPUTime += values.cpuTime.aggregatedCPUTime || 0
+		this.sensorValues.externCPUTime = this.sensorValues.externCPUTime +
+			(values.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
 
 		this.sensorValues.externCPUEnergyConsumption =
 			this.sensorValues.externCPUEnergyConsumption +	

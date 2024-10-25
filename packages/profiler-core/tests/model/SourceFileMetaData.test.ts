@@ -15,7 +15,9 @@ import {
 	MilliJoule_number,
 	SourceNodeID_number,
 	SourceNodeIdentifier_string,
-	GlobalSourceNodeIdentifier_string
+	GlobalSourceNodeIdentifier_string,
+	MicroSeconds_number,
+	IAggregatedSourceNodeMetaData
 } from '../../src/types'
 
 const EXAMPLE_SOURCE_FILE_META_DATA: ISourceFileMetaData = {
@@ -68,12 +70,12 @@ describe('AggregatedSourceNodeMetaData', () => {
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
 					new SensorValues({
-						profilerHits: 1,
-						selfCPUTime: 2,
-						aggregatedCPUTime: 3,
-						internCPUTime: 4,
-						externCPUTime: 5,
-						langInternalCPUTime: 6
+						profilerHits: 1 as MicroSeconds_number,
+						selfCPUTime: 2 as MicroSeconds_number,
+						aggregatedCPUTime: 3 as MicroSeconds_number,
+						internCPUTime: 4 as MicroSeconds_number,
+						externCPUTime: 5 as MicroSeconds_number,
+						langInternalCPUTime: 6 as MicroSeconds_number
 					}),
 					undefined
 				),
@@ -81,12 +83,12 @@ describe('AggregatedSourceNodeMetaData', () => {
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
 					new SensorValues({
-						profilerHits: 7,
-						selfCPUTime: 8,
-						aggregatedCPUTime: 9,
-						internCPUTime: 10,
-						externCPUTime: 11,
-						langInternalCPUTime: 12
+						profilerHits: 7 as MicroSeconds_number,
+						selfCPUTime: 8 as MicroSeconds_number,
+						aggregatedCPUTime: 9 as MicroSeconds_number,
+						internCPUTime: 10 as MicroSeconds_number,
+						externCPUTime: 11 as MicroSeconds_number,
+						langInternalCPUTime: 12 as MicroSeconds_number
 					}),
 					undefined
 				)
@@ -136,29 +138,31 @@ describe('AggregatedSourceNodeMetaData', () => {
 	})
 
 	describe('deserialization', () => {
-		const expected = {
+		const expected: IAggregatedSourceNodeMetaData = {
 			total: {
+				id: undefined,
 				type: SourceNodeMetaDataType.Aggregate,
 				sensorValues: {
 					profilerHits: 1,
-					selfCPUTime: 2,
-					aggregatedCPUTime: 3,
-					internCPUTime: 4,
-					externCPUTime: 5,
-					langInternalCPUTime: 6
+					selfCPUTime: 2 as MicroSeconds_number,
+					aggregatedCPUTime: 3 as MicroSeconds_number,
+					internCPUTime: 4 as MicroSeconds_number,
+					externCPUTime: 5 as MicroSeconds_number,
+					langInternalCPUTime: 6 as MicroSeconds_number
 				}
-			} as SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
+			},
 			max: {
+				id: undefined,
 				type: SourceNodeMetaDataType.Aggregate,
 				sensorValues: {
-					profilerHits: 7,
-					selfCPUTime: 8,
-					aggregatedCPUTime: 9,
-					internCPUTime: 10,
-					externCPUTime: 11,
-					langInternalCPUTime: 12
-				}
-			} as SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
+					profilerHits: 7 as MicroSeconds_number,
+					selfCPUTime: 8 as MicroSeconds_number,
+					aggregatedCPUTime: 9 as MicroSeconds_number,
+					internCPUTime: 10 as MicroSeconds_number,
+					externCPUTime: 11 as MicroSeconds_number,
+					langInternalCPUTime: 12 as MicroSeconds_number
+				} as ISensorValues
+			}
 		}
 		test('deserialization from string', () => {
 			const aggregatedSourceNodeMetaData = AggregatedSourceNodeMetaData.fromJSON(JSON.stringify(expected))
@@ -318,7 +322,10 @@ describe('SourceFileMetaData', () => {
 			SourceNodeMetaDataType.SourceNode
 		)
 		node1.addToSensorValues({
-			cpuTime: { selfCPUTime: 2, aggregatedCPUTime: 2 },
+			cpuTime: {
+				selfCPUTime: 2 as MicroSeconds_number,
+				aggregatedCPUTime: 2 as MicroSeconds_number
+			},
 			cpuEnergyConsumption: {
 				selfCPUEnergyConsumption: 4 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 4 as MilliJoule_number
@@ -335,7 +342,10 @@ describe('SourceFileMetaData', () => {
 			SourceNodeMetaDataType.SourceNode
 		)
 		node2.addToSensorValues({
-			cpuTime: { selfCPUTime: 3, aggregatedCPUTime: 3 },
+			cpuTime: {
+				selfCPUTime: 3 as MicroSeconds_number,
+				aggregatedCPUTime: 3 as MicroSeconds_number
+			},
 			cpuEnergyConsumption: {
 				selfCPUEnergyConsumption: 6 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 6 as MilliJoule_number
@@ -352,7 +362,10 @@ describe('SourceFileMetaData', () => {
 			SourceNodeMetaDataType.SourceNode
 		)
 		node3.addToSensorValues({
-			cpuTime: { selfCPUTime: 2, aggregatedCPUTime: 2 },
+			cpuTime: {
+				selfCPUTime: 2 as MicroSeconds_number,
+				aggregatedCPUTime: 2 as MicroSeconds_number
+			},
 			cpuEnergyConsumption: {
 				selfCPUEnergyConsumption: 4 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 4 as MilliJoule_number

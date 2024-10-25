@@ -36,7 +36,8 @@ import {
 	MilliJoule_number,
 	IPureCPUTime,
 	IPureCPUEnergyConsumption,
-	IPureRAMEnergyConsumption
+	IPureRAMEnergyConsumption,
+	MicroSeconds_number
 } from '../types'
 
 type CallIdentifier = {
@@ -95,7 +96,7 @@ export class InsertCPUProfileHelper {
 			aggregatedRAMEnergyConsumption: ramEnergyConsumption.aggregatedRAMEnergyConsumption
 		}
 		if (visited) {
-			cpuTimeResult.aggregatedCPUTime = 0
+			cpuTimeResult.aggregatedCPUTime = 0 as MicroSeconds_number
 			cpuEnergyConsumptionResult.aggregatedCPUEnergyConsumption = 0 as MilliJoule_number
 			ramEnergyConsumptionResult.aggregatedRAMEnergyConsumption = 0 as MilliJoule_number
 		}
@@ -234,8 +235,9 @@ export class InsertCPUProfileHelper {
 		)
 
 		// IMPORTANT to change when new measurement type gets added
-		lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime -=
-			(sensorValuesCorrected.cpuTime.aggregatedCPUTime || 0)
+		lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime =
+			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime -
+			(sensorValuesCorrected.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
 		lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption =
 			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption -
 			(sensorValuesCorrected.
@@ -351,7 +353,8 @@ export class InsertCPUProfileHelper {
 					// IMPORTANT to change when new measurement type gets added
 					awaiterInternChild.
 						sensorValues.
-						aggregatedCPUTime -= (cpuTime.aggregatedCPUTime || 0)
+						aggregatedCPUTime = awaiterInternChild.sensorValues.aggregatedCPUTime -
+							(cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
 					awaiterInternChild.
 						sensorValues.
 						aggregatedCPUEnergyConsumption = awaiterInternChild.
@@ -366,8 +369,9 @@ export class InsertCPUProfileHelper {
 							(cpuEnergyConsumption.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
 
 					// IMPORTANT to change when new measurement type gets added
-					newLastInternSourceNode.sensorValues.internCPUTime -=
-						(cpuTime.aggregatedCPUTime || 0)
+					newLastInternSourceNode.sensorValues.internCPUTime =
+						newLastInternSourceNode.sensorValues.internCPUTime -
+						(cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
 					
 					newLastInternSourceNode.sensorValues.internCPUEnergyConsumption =
 						newLastInternSourceNode.sensorValues.internCPUEnergyConsumption -

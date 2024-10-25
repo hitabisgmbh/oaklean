@@ -128,27 +128,13 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				)
 			)
@@ -162,27 +148,13 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 			)
@@ -196,27 +168,13 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 			)
