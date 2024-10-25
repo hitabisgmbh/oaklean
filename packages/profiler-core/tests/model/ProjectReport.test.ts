@@ -79,6 +79,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 	projectMetaData: {
 		projectID: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
 	},
+	lang_internalHeadlessSensorValues: {},
 	executionDetails: EXAMPLE_EXECUTION_DETAILS,
 	globalIndex: {
 		currentId: 12,
@@ -245,6 +246,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 				name: '@oaklean/profiler-core',
 				version: '0.0.4',
 			},
+			lang_internalHeadlessSensorValues: {},
 			intern: {
 				[9 as PathID_number]: {
 					path: './test.js' as UnifiedPath_string,
