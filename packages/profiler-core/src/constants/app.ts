@@ -12,7 +12,7 @@ const package_version = JSON.parse(fs.readFileSync(
 	new UnifiedPath(packageJsonPath).toString()
 	, 'utf-8')).version
 
-export const VERSION = package_version === '0.0.0' ? '0.1.3' : package_version
+export const VERSION = package_version === '0.0.0' ? '0.1.4' : package_version
 
 export const APP_NAME = 'Oaklean'
 export const BIN_FILE_MAGIC = Buffer.from('894F414B', 'hex')
