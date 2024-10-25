@@ -113,32 +113,32 @@ export class SensorValues extends BaseModel {
 	public set selfCPUTime(v: MicroSeconds_number) {
 		this._selfCPUTime = v
 	}
-	public get selfCPUTime(): number {
-		return this._selfCPUTime || 0
+	public get selfCPUTime(): MicroSeconds_number {
+		return this._selfCPUTime || 0 as MicroSeconds_number
 	}
 	public set aggregatedCPUTime(v: MicroSeconds_number) {
 		this._aggregatedCPUTime = v
 	}
-	public get aggregatedCPUTime(): number {
-		return this._aggregatedCPUTime || 0
+	public get aggregatedCPUTime(): MicroSeconds_number {
+		return this._aggregatedCPUTime || 0 as MicroSeconds_number
 	}
 	public set internCPUTime(v: MicroSeconds_number) {
 		this._internCPUTime = v
 	}
-	public get internCPUTime(): number {
-		return this._internCPUTime || 0
+	public get internCPUTime(): MicroSeconds_number {
+		return this._internCPUTime || 0 as MicroSeconds_number
 	}
 	public set externCPUTime(v: MicroSeconds_number) {
 		this._externCPUTime = v
 	}
-	public get externCPUTime(): number {
-		return this._externCPUTime || 0
+	public get externCPUTime(): MicroSeconds_number {
+		return this._externCPUTime || 0 as MicroSeconds_number
 	}
 	public set langInternalCPUTime(v: MicroSeconds_number) {
 		this._langInternalCPUTime = v
 	}
-	public get langInternalCPUTime(): number {
-		return this._langInternalCPUTime || 0
+	public get langInternalCPUTime(): MicroSeconds_number {
+		return this._langInternalCPUTime || 0 as MicroSeconds_number
 	}	
 
 	// CPU Energy
