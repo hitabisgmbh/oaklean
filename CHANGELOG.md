@@ -7,6 +7,7 @@
 
 ### Added
 - A SensorInterface for Windows to measure the energy consumption
+- Added SensorValues to the ProjectReport format to track CPU and energy usage of Node.js activities not triggered by user code
 
 ### Fixes
 - Fix the bug that includes the configured sensor interface in the .oak report file, even when the sensor interface was not running during measurement
