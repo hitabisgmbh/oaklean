@@ -148,7 +148,7 @@ export class BufferHelper {
 	}
 
 	static UInt8ToBuffer(tinyInt: number): Buffer {
-		if (tinyInt < 0 || tinyInt > 2 ** (PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt] * 8) - 1) {
+		if (tinyInt < 0 || tinyInt > 2 ** (PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8] * 8) - 1) {
 			throw new Error(`BufferHelper.TIntToBuffer: value out of domain: ${tinyInt}`)
 		}
 
