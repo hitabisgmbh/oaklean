@@ -9,7 +9,8 @@ import {
 	NanoSeconds_BigInt,
 	MetricsDataCollectionType,
 	MilliJoule_number,
-	SensorInterfaceType
+	SensorInterfaceType,
+	LoggerHelper
 } from '@oaklean/profiler-core'
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
@@ -55,6 +56,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		if (debugOptions !== undefined) {
 			this._startTime = debugOptions.startTime,
 			this._stopTime = debugOptions.stopTime
+			this._couldBeExecuted = true
 		}
 	}
 
@@ -136,10 +138,14 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		return fs.readFileSync(this._options.outputFilePath).toString()
 	}
 
-	async readSensorValues(pid: number): Promise<MetricsDataCollection> {
+	async readSensorValues(pid: number): Promise<MetricsDataCollection | undefined> {
+		if (!await this.couldBeExecuted()) {
+			return undefined
+		}
 		let tries = 0
 		while (this.isRunning() && tries < 10) {
-			console.error(`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
+			LoggerHelper.error(
+				`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
 			tries += 1
 			await TimeHelper.sleep(1000)
 		}
@@ -241,11 +247,14 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	}
 
 	async startProfiling() {
+		if (!await this.couldBeExecuted()) {
+			return
+		}
 		if (fs.existsSync(this._options.outputFilePath)) {
 			fs.unlinkSync(this._options.outputFilePath) // remove output file to ensure clean measurements
 		}
 		if (PerfSensorInterface.runningInstances().length > 0) {
-			throw new Error('PerfSensorInterface.startProfiling: PowerMetrics instance already running, close it before taking any measurements')
+			throw new Error('PerfSensorInterface.startProfiling: Perf instance already running, close it before taking any measurements')
 		}
 
 		this._startTime = TimeHelper.getCurrentHighResolutionTime()
@@ -259,7 +268,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 			}
 		}
 
-		process.on('exit', this.cleanExit) // add event listener to close powermetrics if the parent process exits
+		process.on('exit', this.cleanExit) // add event listener to close perf if the parent process exits
 
 		// detach from current node.js process
 		this._childProcess.unref()
@@ -267,6 +276,9 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	}
 
 	async stopProfiling() {
+		if (!await this.couldBeExecuted()) {
+			return
+		}
 		if (this._childProcess === undefined) {
 			return
 		}
@@ -277,7 +289,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		let seconds = 0
 		while (this.isRunning()) {
 			if (seconds > 10) {
-				throw new Error('Waited 10 seconds for powermetrics to shut down, it is still running')
+				throw new Error('Waited 10 seconds for perf to shut down, it is still running')
 			}
 			await TimeHelper.sleep(1000)
 			seconds++

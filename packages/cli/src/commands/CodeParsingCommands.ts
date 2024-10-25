@@ -1,6 +1,11 @@
 import * as fs from 'fs'
 
-import { UnifiedPath, TypescriptParser, JestAdapter, TypeScriptAdapter } from '@oaklean/profiler-core'
+import {
+	UnifiedPath,
+	TypescriptParser,
+	JestAdapter,
+	TypeScriptAdapter
+} from '@oaklean/profiler-core'
 import { program } from 'commander'
 
 export default class CodeParsingCommands {
@@ -106,7 +111,6 @@ export default class CodeParsingCommands {
 		if (!fs.existsSync(outDir.toPlatformString())) {
 			fs.mkdirSync(outDir.toPlatformString(), { recursive: true })
 		}
-		console.log(outputPath.toPlatformString())
 
 		fs.writeFileSync(outputPath.toPlatformString(), await typeScriptAdapter.process(inputPath))
 	}

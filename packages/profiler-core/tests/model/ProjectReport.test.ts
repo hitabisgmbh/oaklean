@@ -1,27 +1,40 @@
 import * as fs from 'fs'
 
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { UnifiedPath_string } from '../../src/types/UnifiedPath.types'
-import { ProjectReport, IProjectReport, ProjectIdentifier_string, ProjectReportOrigin, IProjectReportExecutionDetails } from '../../src/model/ProjectReport'
+import { ProjectReport } from '../../src/model/ProjectReport'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
-import { ISourceNodeMetaData, SourceNodeMetaDataType } from '../../src/model/SourceNodeMetaData'
-import { SourceNodeIdentifier_string } from '../../src/types/SourceNodeIdentifiers.types'
-import { NodeModule, NodeModuleIdentifier_string } from '../../src/model/NodeModule'
-import { ISystemInformation } from '../../src/model/SystemInformation'
+import { NodeModule } from '../../src/model/NodeModule'
 import { VERSION } from '../../src/constants/app'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
-import { GitHash_string, GitHelper } from '../../src/helper/GitHelper'
-import { ProfilerConfig, SensorInterfaceType } from '../../src/model/ProfilerConfig'
-import { ISensorValues } from '../../src/model/SensorValues'
-import { MilliJoule_number } from '../../src/model/interfaces/BaseMetricsData'
-import { PathID_number } from '../../src/model/index/PathIndex'
-import { ModuleID_number } from '../../src/model/index/ModuleIndex'
-import { ISourceNodeIndex, SourceNodeID_number, SourceNodeIndexType } from '../../src/model/index/SourceNodeIndex'
+import { GitHelper } from '../../src/helper/GitHelper'
+import { ProfilerConfig } from '../../src/model/ProfilerConfig'
 import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
-import { MicroSeconds_number } from '../../src/helper/TimeHelper'
-import { ReportKind } from '../../src/model/Report'
 import { PermissionHelper } from '../../src/helper/PermissionHelper'
+import { LoggerHelper } from '../../src'
+import {
+	UnifiedPath_string,
+	IProjectReport,
+	ProjectIdentifier_string,
+	ProjectReportOrigin,
+	IProjectReportExecutionDetails,
+	ISourceNodeMetaData,
+	SourceNodeMetaDataType,
+	SourceNodeIdentifier_string,
+	NodeModuleIdentifier_string,
+	ISystemInformation,
+	GitHash_string,
+	SensorInterfaceType,
+	ISensorValues,
+	MilliJoule_number,
+	PathID_number,
+	ModuleID_number,
+	ISourceNodeIndex,
+	SourceNodeID_number,
+	SourceNodeIndexType,
+	MicroSeconds_number,
+	ReportKind
+} from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
@@ -66,6 +79,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 	projectMetaData: {
 		projectID: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
 	},
+	lang_internalHeadlessSensorValues: {},
 	executionDetails: EXAMPLE_EXECUTION_DETAILS,
 	globalIndex: {
 		currentId: 12,
@@ -232,6 +246,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 				name: '@oaklean/profiler-core',
 				version: '0.0.4',
 			},
+			lang_internalHeadlessSensorValues: {},
 			intern: {
 				[9 as PathID_number]: {
 					path: './test.js' as UnifiedPath_string,
@@ -379,8 +394,8 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
 				{
 					cpuTime: {
-						selfCPUTime: 111,
-						aggregatedCPUTime: 222,
+						selfCPUTime: 111 as MicroSeconds_number,
+						aggregatedCPUTime: 222 as MicroSeconds_number
 					},
 					cpuEnergyConsumption: {
 						selfCPUEnergyConsumption: 222 as MilliJoule_number,
@@ -429,9 +444,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						sensorValues: {
 							profilerHits: 1,
 
-							selfCPUTime: 20,
-							aggregatedCPUTime: 30,
-							langInternalCPUTime: 10,
+							selfCPUTime: 20 as MicroSeconds_number,
+							aggregatedCPUTime: 30 as MicroSeconds_number,
+							langInternalCPUTime: 10 as MicroSeconds_number,
 
 							selfCPUEnergyConsumption: 40 as MilliJoule_number,
 							aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
@@ -463,9 +478,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						sensorValues: {
 							profilerHits: 1,
 
-							selfCPUTime: 30,
-							aggregatedCPUTime: 60,
-							langInternalCPUTime: 30,
+							selfCPUTime: 30 as MicroSeconds_number,
+							aggregatedCPUTime: 60 as MicroSeconds_number,
+							langInternalCPUTime: 30 as MicroSeconds_number,
 
 							selfCPUEnergyConsumption: 60 as MilliJoule_number,
 							aggregatedCPUEnergyConsumption: 120 as MilliJoule_number,
@@ -505,9 +520,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						sensorValues: {
 							profilerHits: 1,
 
-							selfCPUTime: 20,
-							aggregatedCPUTime: 30,
-							langInternalCPUTime: 10,
+							selfCPUTime: 20 as MicroSeconds_number,
+							aggregatedCPUTime: 30 as MicroSeconds_number,
+							langInternalCPUTime: 10 as MicroSeconds_number,
 
 							selfCPUEnergyConsumption: 40 as MilliJoule_number,
 							aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
@@ -539,9 +554,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						sensorValues: {
 							profilerHits: 1,
 
-							selfCPUTime: 30,
-							aggregatedCPUTime: 60,
-							langInternalCPUTime: 30,
+							selfCPUTime: 30 as MicroSeconds_number,
+							aggregatedCPUTime: 60 as MicroSeconds_number,
+							langInternalCPUTime: 30 as MicroSeconds_number,
 
 							selfCPUEnergyConsumption: 60 as MilliJoule_number,
 							aggregatedCPUEnergyConsumption: 120 as MilliJoule_number,
@@ -576,8 +591,8 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
 					{
 						cpuTime: {
-							selfCPUTime: 123,
-							aggregatedCPUTime: 456
+							selfCPUTime: 123 as MicroSeconds_number,
+							aggregatedCPUTime: 456 as MicroSeconds_number
 						},
 						cpuEnergyConsumption: {
 							selfCPUEnergyConsumption: 246 as MilliJoule_number,
@@ -619,8 +634,8 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
 					{
 						cpuTime: {
-							selfCPUTime: 123,
-							aggregatedCPUTime: 456
+							selfCPUTime: 123 as MicroSeconds_number,
+							aggregatedCPUTime: 456 as MicroSeconds_number
 						},
 						cpuEnergyConsumption: {
 							selfCPUEnergyConsumption: 246 as MilliJoule_number,
@@ -798,8 +813,8 @@ describe('ProjectReport', () => {
 			'{root}.{class:Class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
 			{
 				cpuTime: {
-					selfCPUTime: 20,
-					aggregatedCPUTime: 30,
+					selfCPUTime: 20 as MicroSeconds_number,
+					aggregatedCPUTime: 30 as MicroSeconds_number
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 40 as MilliJoule_number,
@@ -818,8 +833,8 @@ describe('ProjectReport', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 0,
-					aggregatedCPUTime: 10
+					selfCPUTime: 0 as MicroSeconds_number,
+					aggregatedCPUTime: 10 as MicroSeconds_number
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 0 as MilliJoule_number,
@@ -836,8 +851,8 @@ describe('ProjectReport', () => {
 			'{root}.{class:Class}.{method:method2}' as SourceNodeIdentifier_string,
 			{
 				cpuTime: {
-					selfCPUTime: 30,
-					aggregatedCPUTime: 60,
+					selfCPUTime: 30 as MicroSeconds_number,
+					aggregatedCPUTime: 60 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 60 as MilliJoule_number,
@@ -856,8 +871,8 @@ describe('ProjectReport', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 0,
-					aggregatedCPUTime: 30
+					selfCPUTime: 0 as MicroSeconds_number,
+					aggregatedCPUTime: 30 as MicroSeconds_number
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 0 as MilliJoule_number,
@@ -879,8 +894,8 @@ describe('ProjectReport', () => {
 			'{root}.{class:Package}.{method:method}' as SourceNodeIdentifier_string,
 			{
 				cpuTime: {
-					selfCPUTime: 10,
-					aggregatedCPUTime: 10,
+					selfCPUTime: 10 as MicroSeconds_number,
+					aggregatedCPUTime: 10 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 20 as MilliJoule_number,
@@ -898,8 +913,8 @@ describe('ProjectReport', () => {
 			'{root}.{class:Package}.{method:method2}' as SourceNodeIdentifier_string,
 			{
 				cpuTime: {
-					selfCPUTime: 80,
-					aggregatedCPUTime: 80,
+					selfCPUTime: 80 as MicroSeconds_number,
+					aggregatedCPUTime: 80 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 160 as MilliJoule_number,
@@ -1382,7 +1397,7 @@ describe('ProjectReport', () => {
 		test('does not merge with different systems', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
-			const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+			const consoleError = jest.spyOn(LoggerHelper, 'error').mockImplementation(() => undefined)
 			instancesToMerge[0].executionDetails.systemInformation.cpu.manufacturer = 'abc'
 
 			const t = () => {

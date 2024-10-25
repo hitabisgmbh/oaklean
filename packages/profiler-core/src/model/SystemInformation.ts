@@ -2,144 +2,19 @@ import si, { Systeminformation } from 'systeminformation'
 
 import { BaseModel } from './BaseModel'
 
-export interface ISystemInformation_System {
-	manufacturer: string
-	model: string
-	version: string
-	sku: string
-	virtual: boolean
-	virtualHost?: string
-	raspberry?: {
-		manufacturer: string;
-		processor: string;
-		type: string;
-		revision: string;
-	}
-}
-
-export interface ISystemInformation_Chassis {
-	manufacturer: string
-	model: string
-	type: string
-	version: string
-	assetTag: string
-	sku: string
-}
-
-export interface ISystemInformation_Baseboard {
-	manufacturer: string
-	model: string
-	version: string
-	assetTag: string
-	memMax: number | null
-	memSlots: number | null
-}
-
-export interface ISystemInformation_Cpu {
-	manufacturer: string
-	brand: string
-	vendor: string
-	family: string
-	model: string
-	stepping: string
-	revision: string
-	voltage: string
-	speed: number
-	speedMin: number
-	speedMax: number
-	governor: string
-	cores: number
-	physicalCores: number
-	efficiencyCores?: number
-	performanceCores?: number
-	processors: number
-	socket: string
-	flags: string
-	virtualization: boolean
-	cache: {
-		l1d: number
-		l1i: number
-		l2: number
-		l3: number
-	}
-}
-
-export interface ISystemInformation_Memory {
-	total: number
-	free: number
-	used: number
-	active: number
-	available: number
-	buffcache: number
-	buffers: number
-	cached: number
-	slab: number
-	swaptotal: number
-	swapused: number
-	swapfree: number
-	writeback: number | null
-	dirty: number | null
-}
-
-export interface ISystemInformation_MemoryLayout {
-	size: number
-	bank: string
-	type: string
-	ecc?: boolean | null
-	clockSpeed: number | null
-	formFactor: string
-	manufacturer?: string
-	partNum: string
-	voltageConfigured: number | null
-	voltageMin: number | null
-	voltageMax: number | null
-}
-
-export interface ISystemInformation_Battery {
-	hasBattery: boolean
-	cycleCount: number
-	isCharging: boolean
-	voltage: number
-	designedCapacity: number
-	maxCapacity: number
-	currentCapacity: number
-	capacityUnit: string
-	percent: number
-	timeRemaining: number | null
-	acConnected: boolean
-	type: string
-	model: string
-	manufacturer: string
-	additionalBatteries?: ISystemInformation_Battery[]
-}
-
-export interface ISystemInformation_Os {
-	platform: string
-	distro: string
-	release: string
-	codename: string
-	kernel: string
-	arch: string
-	codepage: string
-	logofile: string
-	build: string
-	servicepack: string
-	uefi: boolean | null
-	hypervizor?: boolean
-	remoteSession?: boolean
-}
-
-export interface ISystemInformation {
-	system: ISystemInformation_System
-	baseBoard: ISystemInformation_Baseboard
-	chassis: ISystemInformation_Chassis
-	cpu: ISystemInformation_Cpu
-	memory: ISystemInformation_Memory
-	memoryLayout: ISystemInformation_MemoryLayout[]
-	battery: ISystemInformation_Battery
-	os: ISystemInformation_Os
-}
-
+// Types
+import {
+	ISystemInformation_System,
+	ISystemInformation_Baseboard,
+	ISystemInformation_Chassis,
+	ISystemInformation_Cpu,
+	ISystemInformation_Memory,
+	ISystemInformation_MemoryLayout,
+	ISystemInformation_Battery,
+	ISystemInformation_Os,
+	ISystemInformation
+} from '../types'
+import { LoggerHelper } from '../helper/LoggerHelper'
 
 export class SystemInformation extends BaseModel {
 	system: ISystemInformation_System
@@ -197,7 +72,7 @@ export class SystemInformation extends BaseModel {
 				firstSystem.virtual === currentSystem.virtual
 
 			if (!systemIsTheSame) {
-				console.error('SystemInformation.isSame: detected different systems')
+				LoggerHelper.error('SystemInformation.isSame: detected different systems')
 				return false
 			}
 
@@ -210,7 +85,7 @@ export class SystemInformation extends BaseModel {
 				firstBaseBoard.memMax === currentBaseBoard.memMax &&
 				firstBaseBoard.memSlots === currentBaseBoard.memSlots
 			if (!baseBoardIsTheSame) {
-				console.error('SystemInformation.isSame: detected different baseboards')
+				LoggerHelper.error('SystemInformation.isSame: detected different baseboards')
 				return false
 			}
 
@@ -224,7 +99,7 @@ export class SystemInformation extends BaseModel {
 				firstChassi.assetTag === currentChassis.assetTag &&
 				firstChassi.sku === currentChassis.sku
 			if (!chassisIsTheSame) {
-				console.error('SystemInformation.isSame: detected different chassis')
+				LoggerHelper.error('SystemInformation.isSame: detected different chassis')
 				return false
 			}
 
@@ -251,7 +126,7 @@ export class SystemInformation extends BaseModel {
 				firstCpu.cache.l2 === currentCpu.cache.l2 &&
 				firstCpu.cache.l3 === currentCpu.cache.l3
 			if (!cpuIsTheSame) {
-				console.error('SystemInformation.isSame: detected different cpus')
+				LoggerHelper.error('SystemInformation.isSame: detected different cpus')
 				return false
 			}
 
@@ -260,14 +135,14 @@ export class SystemInformation extends BaseModel {
 			const memoryIsTheSame =
 				firstMemory.total === currentMemory.total
 			if (!memoryIsTheSame) {
-				console.error('SystemInformation.isSame: detected different memory')
+				LoggerHelper.error('SystemInformation.isSame: detected different memory')
 				return false
 			}
 
 			const currentMemoryLayout = currentSystemInformation.memoryLayout
 
 			if (firstMemoryLayout.length !== currentMemoryLayout.length) {
-				console.error('SystemInformation.isSame: detected different memoryLayout')
+				LoggerHelper.error('SystemInformation.isSame: detected different memoryLayout')
 				return false
 			}
 
@@ -280,7 +155,7 @@ export class SystemInformation extends BaseModel {
 					firstMemoryLayout[i].voltageMax === currentMemoryLayout[i].voltageMax
 
 				if (!memoryLayoutIsTheSame) {
-					console.error('SystemInformation.isSame: detected different memoryLayout')
+					LoggerHelper.error('SystemInformation.isSame: detected different memoryLayout')
 					return false
 				}
 			}
@@ -292,7 +167,7 @@ export class SystemInformation extends BaseModel {
 				firstBattery.model === currentBattery.model &&
 				firstBattery.manufacturer === currentBattery.manufacturer
 			if (!batteryIsTheSame) {
-				console.error('SystemInformation.isSame: detected different battery')
+				LoggerHelper.error('SystemInformation.isSame: detected different battery')
 				return false
 			}
 
@@ -312,7 +187,7 @@ export class SystemInformation extends BaseModel {
 				firstOs.uefi === currentOs.uefi
 
 			if (!osIsTheSame) {
-				console.error('SystemInformation.isSame: detected different os')
+				LoggerHelper.error('SystemInformation.isSame: detected different os')
 				return false
 			}
 		}

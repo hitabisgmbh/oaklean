@@ -1,8 +1,21 @@
-import { MetricsDataCollection, NanoSeconds_BigInt, SensorInterfaceType } from '@oaklean/profiler-core'
+import {
+	MetricsDataCollection,
+	NanoSeconds_BigInt,
+	SensorInterfaceType
+} from '@oaklean/profiler-core'
 
 export class BaseSensorInterface {
+	protected _couldBeExecuted: boolean | undefined
+
 	type(): SensorInterfaceType{
 		throw new Error('BaseSensorInterface.type must be implemented')
+	}
+
+	async couldBeExecuted(): Promise<boolean> {
+		if (this._couldBeExecuted === undefined) {
+			this._couldBeExecuted = await this.canBeExecuted()
+		}
+		return this._couldBeExecuted
 	}
 
 	async canBeExecuted(): Promise<boolean> {
@@ -17,7 +30,7 @@ export class BaseSensorInterface {
 		throw new Error('BaseSensorInterface.startTime must be implemented')
 	}
 
-	async readSensorValues(pid: number): Promise<MetricsDataCollection> {
+	async readSensorValues(pid: number): Promise<MetricsDataCollection | undefined> {
 		throw new Error('BaseSensorInterface.readSensorValues must be implemented')
 	}
 

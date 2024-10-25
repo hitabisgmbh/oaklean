@@ -1,51 +1,59 @@
 import * as fs from 'fs'
 
-import { Profiler, PerfSensorInterface } from '@oaklean/profiler'
-import { ProfilerConfig, APP_NAME, SensorInterfaceType } from '@oaklean/profiler-core'
+import {
+	Profiler,
+	PerfSensorInterface
+} from '@oaklean/profiler'
+import {
+	ProfilerConfig,
+	APP_NAME,
+	SensorInterfaceType,
+	LoggerHelper
+} from '@oaklean/profiler-core'
 import { PerfEvent } from '@oaklean/profiler/dist/src/interfaces/perf/PerfSensorInterface'
 
 export default async function () {
 	if (!process.env.ENABLE_MEASUREMENTS) {
 		return
 	}
-	console.log(`\n(${APP_NAME} Profiler) Clean up Measurements`)
+	LoggerHelper.log(`\n(${APP_NAME} Profiler) Clean up Measurements`)
 	const profilerConfig = ProfilerConfig.autoResolve()
 	const outDir = profilerConfig.getOutDir().join('jest')
 
-	console.log(`(${APP_NAME} Profiler) V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
+	LoggerHelper.log(`(${APP_NAME} Profiler) V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
 	const sensorInterfaceOptions = profilerConfig.getSensorInterfaceOptions()
 	if (sensorInterfaceOptions !== undefined) {
-		console.log(`(${APP_NAME} Profiler) Using SensorInterface: `, profilerConfig.getSensorInterfaceType())
-		console.log(
+		LoggerHelper.log(`(${APP_NAME} Profiler) Using SensorInterface: `, profilerConfig.getSensorInterfaceType())
+		LoggerHelper.log(
 			`(${APP_NAME} Profiler) SensorInterface Sample Interval: ${sensorInterfaceOptions.sampleInterval}ms`
 		)
 
 		const sensorInterface = Profiler.getSensorInterface(profilerConfig)
 		if (sensorInterface !== undefined) {
 			if (await sensorInterface.canBeExecuted() === false) {
-				console.error(
+				LoggerHelper.error(
 					`(${APP_NAME} Profiler) Sensor Interface cannot be executed with these permissions`
 				)
 			} else {
 				if (sensorInterface.type() === SensorInterfaceType.perf) {
 					const availableMeasurementTypes = await (
 						sensorInterface as PerfSensorInterface).availableMeasurementTypes()
-					console.log(
+					LoggerHelper.log(
 						`(${APP_NAME} Profiler) Measure CPU Energy: ` +
 						`${availableMeasurementTypes[PerfEvent.ENERGY_CORES]}`
 					)
-					console.log(
+					LoggerHelper.log(
 						`(${APP_NAME} Profiler) Measure RAM Energy: ` +
 						`${availableMeasurementTypes[PerfEvent.ENERGY_RAM]}`
 					)
 				}
 			}
 		} else {
-			console.log(`(${APP_NAME} Profiler) Something went wrong loading the SensorInterface`)
+			LoggerHelper.log(`(${APP_NAME} Profiler) Something went wrong loading the SensorInterface`)
 		}
 
 	} else {
-		console.log(
+		LoggerHelper.log(
 			`(${APP_NAME} Profiler) no SensorInterface configured ` +
 			'(no energy measurements will be collected, only cpu time)'
 		)

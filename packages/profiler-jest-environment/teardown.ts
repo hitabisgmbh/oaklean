@@ -1,13 +1,20 @@
 import * as fs from 'fs'
 
 import { sync } from 'glob'
-import { ProfilerConfig, ProjectReport, UnifiedPath, GlobalIndex, NodeModule } from '@oaklean/profiler-core'
+import {
+	ProfilerConfig,
+	ProjectReport,
+	UnifiedPath,
+	GlobalIndex,
+	NodeModule,
+	LoggerHelper
+} from '@oaklean/profiler-core'
 
 export default async function () {
 	if (!process.env.ENABLE_MEASUREMENTS) {
 		return
 	}
-	console.log('Profiler: Combine Measurements and generate an aggregated report')
+	LoggerHelper.log('Profiler: Combine Measurements and generate an aggregated report')
 
 	const profilerConfig = ProfilerConfig.autoResolve()
 	const outDir = profilerConfig.getOutDir().join('jest')

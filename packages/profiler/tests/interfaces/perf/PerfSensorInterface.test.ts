@@ -146,7 +146,11 @@ describe('PerfSensorInterface', () => {
 				PerfEvent.ENERGY_RAM
 			])
 
-			expect((await instance.readSensorValues(0)).toJSON()).toEqual(COLLECTION_CORES_RAM)
+			const result = await instance.readSensorValues(0)
+			expect(result).toBeDefined()
+			if (result !== undefined) {
+				expect(result.toJSON()).toEqual(COLLECTION_CORES_RAM)
+			}
 		})
 
 		test('only perf event energy-cores available', async () => {
@@ -155,8 +159,11 @@ describe('PerfSensorInterface', () => {
 			instance.checkEventAvailability = mock_checkEventAvailability([
 				PerfEvent.ENERGY_CORES
 			])
-
-			expect((await instance.readSensorValues(0)).toJSON()).toEqual(COLLECTION_CORES)
+			const result = await instance.readSensorValues(0)
+			expect(result).toBeDefined()
+			if (result !== undefined) {
+				expect(result.toJSON()).toEqual(COLLECTION_CORES)
+			}
 		})
 
 		test('only perf event energy-ram available', async () => {
@@ -166,7 +173,11 @@ describe('PerfSensorInterface', () => {
 				PerfEvent.ENERGY_RAM
 			])
 
-			expect((await instance.readSensorValues(0)).toJSON()).toEqual(COLLECTION_RAM)
+			const result = await instance.readSensorValues(0)
+			expect(result).toBeDefined()
+			if (result !== undefined) {
+				expect(result.toJSON()).toEqual(COLLECTION_RAM)
+			}
 		})
 	})
 })

@@ -1,17 +1,13 @@
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 import {
-	SourceNodeMetaData,
-	SourceNodeMetaDataType,
-	ISourceNodeMetaData
+	SourceNodeMetaData
 } from './SourceNodeMetaData'
 import { SensorValues } from './SensorValues'
-import { PathID_number, PathIndex } from './index/PathIndex'
-import { GlobalIndex, IndexRequestType } from './index/GlobalIndex'
-import { SourceNodeID_number, SourceNodeIndex, SourceNodeIndexType } from './index/SourceNodeIndex'
+import { PathIndex } from './index/PathIndex'
+import { GlobalIndex } from './index/GlobalIndex'
+import { SourceNodeIndex } from './index/SourceNodeIndex'
 
-import { UnifiedPath_string } from '../types/UnifiedPath.types'
-import { LangInternalPath_string, SourceNodeIdentifier_string } from '../types/SourceNodeIdentifiers.types'
 import {
 	SourceNodeIdentifierRegex,
 	SourceNodeIdentifierRegexString,
@@ -19,17 +15,20 @@ import {
 	LangInternalSourceNodeIdentifierRegexString
 } from '../constants/SourceNodeRegex'
 import { BufferHelper } from '../helper/BufferHelper'
-
-export interface ISourceFileMetaData {
-	path: UnifiedPath_string | LangInternalPath_string,
-	functions?: Record<SourceNodeID_number, ISourceNodeMetaData<
-	SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>>
-}
-
-export interface IAggregatedSourceNodeMetaData {
-	total: ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
-	max: ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
-}
+// Types
+import {
+	LangInternalPath_string,
+	SourceNodeIdentifier_string,
+	UnifiedPath_string,
+	PathID_number,
+	SourceNodeID_number,
+	IndexRequestType,
+	SourceNodeIndexType,
+	SourceNodeMetaDataType,
+	ISourceFileMetaData,
+	IAggregatedSourceNodeMetaData,
+	MicroSeconds_number
+} from '../types'
 
 export class AggregatedSourceNodeMetaData extends BaseModel {
 	total: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
@@ -305,14 +304,7 @@ export class SourceFileMetaData extends BaseModel {
 			node = new SourceNodeMetaData<T>(
 				type,
 				sourceNodeID as T extends SourceNodeMetaDataType.Aggregate ? undefined : SourceNodeID_number,
-				new SensorValues({
-					profilerHits: 0,
-					selfCPUTime: 0,
-					aggregatedCPUTime: 0,
-					internCPUTime: 0,
-					externCPUTime: 0,
-					langInternalCPUTime: 0
-				}),
+				new SensorValues({}),
 				sourceNodeIndex as T extends SourceNodeMetaDataType.Aggregate ?
 					undefined : SourceNodeIndex<SourceNodeIndexType.SourceNode>
 			)
@@ -350,7 +342,8 @@ export class SourceFileMetaData extends BaseModel {
 			}
 		}
 		const result = SourceNodeMetaData.sum(...list)
-		result.sensorValues.aggregatedCPUTime -= compensateAggregatedTime
+		result.sensorValues.aggregatedCPUTime = result.sensorValues.aggregatedCPUTime -
+			compensateAggregatedTime as MicroSeconds_number
 
 		return result
 	}

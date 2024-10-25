@@ -1,5 +1,10 @@
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { INodeModule, NodeModule, NodeModuleIdentifier_string } from '../../src/model/NodeModule'
+import { NodeModule } from '../../src/model/NodeModule'
+import {
+	INodeModule,
+	NodeModuleIdentifier_string
+} from '../../src/types'
+
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 

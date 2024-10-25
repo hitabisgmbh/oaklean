@@ -1,22 +1,12 @@
-import { BaseMetricsData, MilliJoule_number } from './BaseMetricsData'
+import { BaseMetricsData } from './BaseMetricsData'
 
-import { NanoSeconds_BigInt } from '../../helper/TimeHelper'
-
-export interface IPerfMetricsDataOutputFormat {
-	elapsed_ns: NanoSeconds_BigInt,
-	timestamp: NanoSeconds_BigInt, // marks the start time of the sample
-	cpu_energy: MilliJoule_number
-	ram_energy: MilliJoule_number
-}
-
-export interface IPerfMetricsData {
-	data: {
-		elapsed_ns: string,
-		timestamp: string, // marks the start time of the sample
-		cpu_energy: MilliJoule_number,
-		ram_energy: MilliJoule_number
-	}
-}
+// Types
+import {
+	MilliJoule_number,
+	NanoSeconds_BigInt,
+	IPerfMetricsDataOutputFormat,
+	IPerfMetricsData
+} from '../../types'
 
 export class PerfMetricsData extends BaseMetricsData {
 	private _data: IPerfMetricsDataOutputFormat

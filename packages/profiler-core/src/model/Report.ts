@@ -2,53 +2,45 @@ import * as fs from 'fs'
 
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
-import { NodeModule, NodeModuleIdentifier_string } from './NodeModule'
+import { NodeModule } from './NodeModule'
 import {
-	ISourceFileMetaData,
 	SourceFileMetaData,
 	AggregatedSourceNodeMetaData
 } from './SourceFileMetaData'
 import {
-	SourceNodeMetaData,
-	SourceNodeMetaDataType
+	SourceNodeMetaData
 } from './SourceNodeMetaData'
 import { ProfilerConfig } from './ProfilerConfig'
-import { IPureCPUTime, IPureCPUEnergyConsumption, IPureRAMEnergyConsumption } from './SensorValues'
-import { ModuleID_number, ModuleIndex } from './index/ModuleIndex'
-import { GlobalIndex, IndexRequestType } from './index/GlobalIndex'
-import { PathIndex, PathID_number } from './index/PathIndex'
+import { SensorValues } from './SensorValues'
+import { ModuleIndex } from './index/ModuleIndex'
+import { GlobalIndex } from './index/GlobalIndex'
+import { PathIndex } from './index/PathIndex'
 
 import { PermissionHelper } from '../helper/PermissionHelper'
 import { VERSION } from '../constants/app'
+import { UnifiedPath } from '../system/UnifiedPath'
+import { BufferHelper } from '../helper/BufferHelper'
+import { VersionHelper } from '../helper/VersionHelper'
+// Types
 import {
 	LangInternalPath_string,
 	LangInternalSourceNodeIdentifier_string,
-	SourceNodeIdentifier_string
-} from '../types/SourceNodeIdentifiers.types'
-import { UnifiedPath } from '../system/UnifiedPath'
-import { UnifiedPath_string } from '../types/UnifiedPath.types'
-import { BufferHelper } from '../helper/BufferHelper'
+	SourceNodeIdentifier_string,
+	UnifiedPath_string,
+	SourceNodeMetaDataType,
+	ReportKind,
+	NodeModuleIdentifier_string,
+	IPureCPUTime,
+	IPureCPUEnergyConsumption,
+	IPureRAMEnergyConsumption,
+	ModuleID_number,
+	IndexRequestType,
+	PathID_number,
+	IReport,
+	ReportType,
+	ISourceFileMetaData
+} from '../types'
 
-export enum ReportKind {
-	measurement = 0,
-	accumulated = 1
-}
-
-export interface IReport {
-	reportVersion: string,
-	kind: ReportKind,
-	relativeRootDir?: UnifiedPath_string
-	internMapping?: Record<PathID_number, PathID_number>
-	lang_internal?: Record<PathID_number, ISourceFileMetaData>
-	intern?: Record<PathID_number, ISourceFileMetaData>
-	extern?: Record<ModuleID_number, IModuleReport>
-}
-
-export enum ReportType {
-	Report = 0,
-	ProjectReport = 1,
-	ModuleReport = 2
-}
 
 // global variable to assign an intern id to every report
 // the intern id is only used to uniquely identify a report within a project report,
@@ -60,6 +52,7 @@ export class Report extends BaseModel {
 	kind: ReportKind
 	relativeRootDir?: UnifiedPath
 	private _internMapping?: ModelMap<PathID_number, PathID_number>
+	private _lang_internalHeadlessSensorValues?: SensorValues
 	private _lang_internal?: ModelMap<PathID_number, SourceFileMetaData>
 	private _intern?: ModelMap<PathID_number, SourceFileMetaData>
 	private _extern?: ModelMap<ModuleID_number, ModuleReport>
@@ -135,6 +128,17 @@ export class Report extends BaseModel {
 		this._lang_internal = new_lang_internal
 		this._intern = new_intern
 		this._extern = new_extern
+	}
+
+	get lang_internalHeadlessSensorValues() {
+		if (this._lang_internalHeadlessSensorValues === undefined) {
+			this._lang_internalHeadlessSensorValues = new SensorValues({})
+		}
+		return this._lang_internalHeadlessSensorValues
+	}
+
+	set lang_internalHeadlessSensorValues(value: SensorValues) {
+		this._lang_internalHeadlessSensorValues = value
 	}
 
 	get internMapping(): ModelMap<PathID_number, PathID_number> {
@@ -508,6 +512,7 @@ export class Report extends BaseModel {
 			reportVersion: this.reportVersion,
 			kind: this.kind,
 			relativeRootDir: this.relativeRootDir?.toJSON(),
+			lang_internalHeadlessSensorValues: this.lang_internalHeadlessSensorValues.toJSON(),
 			internMapping: this.internMapping.toJSON(),
 			lang_internal: this.lang_internal.toJSON<ISourceFileMetaData>(),
 			intern: this.intern.toJSON<ISourceFileMetaData>(),
@@ -555,6 +560,10 @@ export class Report extends BaseModel {
 					)
 				)
 			}
+		}
+
+		if (data.lang_internalHeadlessSensorValues) {
+			result.lang_internalHeadlessSensorValues = SensorValues.fromJSON(data.lang_internalHeadlessSensorValues)
 		}
 
 		if (data.intern) {
@@ -655,6 +664,7 @@ export class Report extends BaseModel {
 		const version = args[0].reportVersion
 		result.reportVersion = version
 
+		const lang_internalHeadlessSensorValues: SensorValues[] = []
 		const valuesToMerge: {
 			lang_internal: Record<LangInternalPath_string, SourceFileMetaData[]>,
 			intern: Record<UnifiedPath_string, SourceFileMetaData[]>,
@@ -669,6 +679,7 @@ export class Report extends BaseModel {
 			if (currentProjectReport.reportVersion !== version) {
 				throw new Error('ProjectReport.merge: Project reports versions are not compatible')
 			}
+			lang_internalHeadlessSensorValues.push(currentProjectReport.lang_internalHeadlessSensorValues)
 			for (const [pathID, mappedPathID] of currentProjectReport.internMapping.entries()) {
 				// extract paths from the given IDs
 				const pathIndex = currentProjectReport.getPathIndexByID(pathID)
@@ -774,6 +785,7 @@ export class Report extends BaseModel {
 				ModuleReport.merge(nodeModuleIndex, ...moduleReports)
 			)
 		}
+		result.lang_internalHeadlessSensorValues = SensorValues.sum(...lang_internalHeadlessSensorValues)
 
 		return result
 	}
@@ -790,6 +802,12 @@ export class Report extends BaseModel {
 		if (this.relativeRootDir !== undefined) {
 			buffers.push(BufferHelper.String2LToBuffer(this.relativeRootDir.toString()))
 		}
+		// if current Oaklean version is greater or equal to 0.1.4
+		// add lang_internal_headless_cpu_time to the buffer
+		if (VersionHelper.compare(this.reportVersion, '0.1.4') >= 0) {
+			buffers.push(this.lang_internalHeadlessSensorValues.toBuffer())
+		}
+
 		buffers.push(
 			this.internMapping.toBuffer(),
 			this.intern.toBuffer(),
@@ -837,6 +855,18 @@ export class Report extends BaseModel {
 			} = BufferHelper.String2LFromBuffer(remainingBuffer)
 			relativeRootDir = instance
 			remainingBuffer = newRemainingBuffer3
+		}
+
+		let langInternalHeadLessSensorValues: SensorValues | undefined = undefined
+		// if the version of the Report is greater or equal to 0.1.4
+		// consume lang_internal_headless_cpu_time from the buffer
+		if (VersionHelper.compare(reportVersion, '0.1.4') >= 0) {
+			const {
+				instance: langInternalHeadLessSensorValues_instance,
+				remainingBuffer: newRemainingBuffer3_1
+			} = SensorValues.consumeFromBuffer(remainingBuffer)
+			remainingBuffer = newRemainingBuffer3_1
+			langInternalHeadLessSensorValues = langInternalHeadLessSensorValues_instance
 		}
 
 		const {
@@ -894,6 +924,9 @@ export class Report extends BaseModel {
 		result._intern = intern
 		result._lang_internal = lang_internal
 		result._extern = extern
+		if (langInternalHeadLessSensorValues) {
+			result.lang_internalHeadlessSensorValues = langInternalHeadLessSensorValues
+		}
 
 		return {
 			instance: result,
@@ -903,4 +936,8 @@ export class Report extends BaseModel {
 	}
 }
 // eslint-disable-next-line import/order
-import { IModuleReport, ModuleReport } from './ModuleReport'
+import { ModuleReport } from './ModuleReport'
+// eslint-disable-next-line import/order
+import {
+	IModuleReport
+} from '../types'

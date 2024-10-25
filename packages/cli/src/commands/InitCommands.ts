@@ -6,7 +6,8 @@ import {
 	ProjectIdentifier_string,
 	SensorInterfaceType,
 	MicroSeconds_number,
-	RegistryOptions
+	RegistryOptions,
+	LoggerHelper
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 import { confirm, select } from '@inquirer/prompts'
@@ -25,13 +26,13 @@ export default class InitCommands {
 
 	async initCommand() {
 		const config = await this.configureConfig()
-		console.log(JSON.stringify(config, null, 2))
+		LoggerHelper.log(JSON.stringify(config, null, 2))
 
 		if (await this.confirmConfigFileContent() === false) {
 			return
 		}
 		if (config.getSensorInterfaceType() === SensorInterfaceType.perf) {
-			console.log('perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
+			LoggerHelper.log('perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
 		}
 		config.storeToFile(config.filePath)
 	}
@@ -63,6 +64,15 @@ export default class InitCommands {
 					}
 				}
 				break
+			case SensorInterfaceType.windows:
+				config.runtimeOptions.sensorInterface = {
+					type: SensorInterfaceType.windows,
+					options: {
+						outputFilePath: 'energy-measurements.csv',
+						sampleInterval: 100 as MicroSeconds_number,
+					}
+				}
+				break
 			default:
 				break
 		}
@@ -82,7 +92,8 @@ export default class InitCommands {
 	async selectSensorInterface(): Promise<SensorInterfaceType | undefined> {
 		const sensorInterfacePerPlatform: Partial<Record<NodeJS.Platform, SensorInterfaceType>> = {
 			'linux': SensorInterfaceType.perf,
-			'darwin': SensorInterfaceType.powermetrics
+			'darwin': SensorInterfaceType.powermetrics,
+			'win32': SensorInterfaceType.windows
 		}
 
 		const recommendedSensorInterface = sensorInterfacePerPlatform[os.platform()]
@@ -106,6 +117,11 @@ export default class InitCommands {
 					name: 'perf (Linux only)',
 					value: SensorInterfaceType.perf,
 					description: 'energy measurements on Linux (Intel & AMD CPUs only)',
+				},
+				{
+					name: 'windows (Windows only)',
+					value: SensorInterfaceType.windows,
+					description: 'energy measurements on Windows (Intel & AMD CPUs only)',
 				}
 			],
 		})

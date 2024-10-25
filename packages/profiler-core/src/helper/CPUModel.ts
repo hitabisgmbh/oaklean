@@ -1,16 +1,16 @@
 import { CPUNode } from './CPUNode'
-import { NanoSeconds_BigInt, MicroSeconds_number } from './TimeHelper'
 
 import { IComputedNode, ILocation, IProfileModel, buildModel } from '../../lib/vscode-js-profile-core/src/cpu/model'
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { MetricsDataCollection } from '../model/interfaces/MetricsDataCollection'
-import { MilliJoule_number } from '../model/interfaces/BaseMetricsData'
-
-export enum EnergyValuesType {
-	CPU = 0,
-	RAM = 1
-}
+// Types
+import {
+	NanoSeconds_BigInt,
+	MicroSeconds_number,
+	MilliJoule_number,
+	EnergyValuesType
+} from '../types'
 
 export class CPUModel {
 	private rootDir: UnifiedPath

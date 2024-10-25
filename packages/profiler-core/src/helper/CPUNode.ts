@@ -1,13 +1,20 @@
 import { NodeModuleUtils } from './NodeModuleUtils'
-import { CPUModel, EnergyValuesType } from './CPUModel'
+import { CPUModel } from './CPUModel'
 
 import { LangInternalSourceNodeRegExpRegexString } from '../constants/SourceNodeRegex'
 import { NodeModule } from '../model/NodeModule'
 import { IComputedNode, ILocation } from '../../lib/vscode-js-profile-core/src/cpu/model'
-import { SourceNodeIdentifier_string } from '../types/SourceNodeIdentifiers.types'
 import { UnifiedPath } from '../system/UnifiedPath'
-import { IPureCPUTime, IPureCPUEnergyConsumption, IPureRAMEnergyConsumption } from '../model/SensorValues'
-import { MilliJoule_number } from '../model/interfaces/BaseMetricsData'
+// Types
+import {
+	MilliJoule_number,
+	SourceNodeIdentifier_string,
+	IPureCPUTime,
+	IPureCPUEnergyConsumption,
+	IPureRAMEnergyConsumption,
+	EnergyValuesType,
+	MicroSeconds_number
+} from '../types'
 
 export const RegExpTestRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
 
@@ -105,8 +112,8 @@ export class CPUNode {
 
 	get cpuTime(): IPureCPUTime {
 		return {
-			selfCPUTime: this.cpuNode.selfTime,
-			aggregatedCPUTime: this.cpuNode.aggregateTime
+			selfCPUTime: this.cpuNode.selfTime as MicroSeconds_number,
+			aggregatedCPUTime: this.cpuNode.aggregateTime as MicroSeconds_number
 		}
 	}
 

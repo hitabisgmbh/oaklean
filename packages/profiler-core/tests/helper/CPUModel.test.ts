@@ -2,7 +2,7 @@ import * as fs from 'fs'
 
 import { CPUModel } from '../../src/helper/CPUModel'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { NanoSeconds_BigInt } from '../../src/helper/TimeHelper'
+import { NanoSeconds_BigInt } from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 

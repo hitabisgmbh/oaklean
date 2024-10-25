@@ -1,12 +1,13 @@
 The `@oaklean/cli` can be used to easily setup a `.oaklean` config file.
-1. Install the cli: `npm add -g @oaklean/cli`
-2. Run the init script: `oak init`
+1. Install the cli: `npm add --save-dev @oaklean/cli`
+2. Run the init script: `npx oak init`
 3. It will ask you which sensor interface should be used for energy measurements:
 ```
 Select a sensor interface (recommended for your platform: perf)
   None (pure cpu time measurements)
   powermetrics (macOS only)
 ❯ perf (Linux only)
+  windows (Windows only)
 energy measurements on Linux (Intel & AMD CPUs only)
 ```
 4. The cli asks you to confirm your choice and generates a valid `.oaklean` config file for you:
@@ -48,6 +49,7 @@ energy measurements on Linux (Intel & AMD CPUs only)
 | --------------- | ---------------- |
 | powermetrics		| macOS						 |
 | perf						| linux						 |
+| windows					| windows					 |
 
 If you want to how to setup the Sensor Interfaces and how to make them work with **Docker** you can read more about it [here](/docs/SensorInterfaces.md)
 

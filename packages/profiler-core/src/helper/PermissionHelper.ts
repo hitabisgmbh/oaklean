@@ -1,12 +1,13 @@
 import ChildProcess, { ExecSyncOptions } from 'child_process'
 import * as fs from 'fs'
 import path from 'path'
+import os from 'os'
 
 import { UnifiedPath } from '../system/UnifiedPath'
-
-export enum PermissionTypes {
-	ReadWriteOnlyOwner = '600'
-}
+// Types
+import {
+	PermissionTypes
+} from '../types'
 
 /**
 	 * Get a flat list of all directories that were created recursively
@@ -87,4 +88,22 @@ export class PermissionHelper {
 		fs.writeFileSync(file, data)
 		PermissionHelper.changeFileOwnershipBackToUser(file)
 	}
+
+
+	static checkWindowsAdminRights(): Promise<boolean> {
+		return new Promise(resolve => {
+			const platform = os.platform()
+			if (platform !== 'win32') {
+				resolve(false)
+			}
+			ChildProcess.exec('fsutil dirty query ' + process.env.systemdrive, function (err, stdout, stderr) {
+				if (err) {
+					resolve(false)
+				} else {
+					resolve(true)
+				}
+			})
+		})
+	}
+
 }

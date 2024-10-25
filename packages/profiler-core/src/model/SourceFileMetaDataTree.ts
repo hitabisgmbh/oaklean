@@ -4,41 +4,39 @@ import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 import {
 	SourceFileMetaData,
-	ISourceFileMetaData,
 	AggregatedSourceNodeMetaData,
-	IAggregatedSourceNodeMetaData
 } from './SourceFileMetaData'
-import { SourceNodeMetaData, SourceNodeMetaDataType } from './SourceNodeMetaData'
+import { SourceNodeMetaData } from './SourceNodeMetaData'
 import { Report } from './Report'
 import { ProjectReport } from './ProjectReport'
 import { ModuleReport } from './ModuleReport'
-import { INodeModule, NodeModule, NodeModuleIdentifier_string } from './NodeModule'
+import { NodeModule } from './NodeModule'
 import { SensorValues } from './SensorValues'
-import { PathID_number, PathIndex } from './index/PathIndex'
-import { GlobalIndex, IGlobalIndex } from './index/GlobalIndex'
+import { PathIndex } from './index/PathIndex'
+import { GlobalIndex } from './index/GlobalIndex'
 import { ModuleIndex } from './index/ModuleIndex'
 
 import { UnifiedPath } from '../system/UnifiedPath'
-import { UnifiedPath_string, UnifiedPathPart_string } from '../types/UnifiedPath.types'
-import { LangInternalPath_string } from '../types/SourceNodeIdentifiers.types'
 import { PermissionHelper } from '../helper/PermissionHelper'
-
-export enum SourceFileMetaDataTreeType {
-	Root = 'Root',
-	File = 'File',
-	Directory = 'Directory',
-	Module = 'Module'
-}
+// Types
+import {
+	LangInternalPath_string,
+	SourceNodeMetaDataType,
+	SourceFileMetaDataTreeType,
+	UnifiedPath_stringOnlyForPathNode,
+	IGlobalIndexOnlyForRootNode,
+	IEngineModuleOnlyForRootNode,
+	ISourceFileMetaDataTree,
+	NodeModuleIdentifier_string,
+	PathID_number,
+	IGlobalIndex,
+	UnifiedPath_string,
+	UnifiedPathPart_string
+} from '../types'
+import { LoggerHelper } from '../helper/LoggerHelper'
 
 type UnifiedPathOnlyForPathNode<T> =
 	T extends SourceFileMetaDataTreeType.File | SourceFileMetaDataTreeType.Directory ? UnifiedPath : undefined
-
-
-type UnifiedPath_stringOnlyForPathNode<T> =
-	T extends SourceFileMetaDataTreeType.File | SourceFileMetaDataTreeType.Directory ? UnifiedPath_string : undefined
-
-type IGlobalIndexOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? IGlobalIndex : undefined
-type IEngineModuleOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? INodeModule : undefined
 
 type IndexTypeMap = {
 	[SourceFileMetaDataTreeType.Module]: ModuleIndex,
@@ -48,26 +46,6 @@ type IndexTypeMap = {
 }
 
 type IndexPerType<T extends SourceFileMetaDataTreeType> = IndexTypeMap[T]
-
-export interface ISourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> {
-	aggregatedLangInternalSourceNodeMetaData?: IAggregatedSourceNodeMetaData
-	aggregatedInternSourceMetaData?: IAggregatedSourceNodeMetaData
-	aggregatedExternSourceMetaData?: IAggregatedSourceNodeMetaData
-	type: T
-	filePath: UnifiedPath_stringOnlyForPathNode<T>
-	compiledSourceFilePath?: UnifiedPath_string,
-	originalSourceFilePath?: UnifiedPath_string,
-	langInternalChildren?: Record<
-	LangInternalPath_string,
-	ISourceFileMetaDataTree<SourceFileMetaDataTreeType.File>>
-	internChildren?: Record<
-	UnifiedPathPart_string,
-	ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Directory | SourceFileMetaDataTreeType.File>>
-	externChildren?: Record<NodeModuleIdentifier_string, ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Module>>
-	sourceFileMetaData?: ISourceFileMetaData
-	globalIndex: IGlobalIndexOnlyForRootNode<T>
-	engineModule: IEngineModuleOnlyForRootNode<T>
-}
 
 export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extends BaseModel{
 	private _aggregatedLangInternalSourceNodeMetaData?: AggregatedSourceNodeMetaData
@@ -150,27 +128,13 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				)
 			)
@@ -184,27 +148,13 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 			)
@@ -218,27 +168,13 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 				new SourceNodeMetaData(
 					SourceNodeMetaDataType.Aggregate,
 					undefined,
-					new SensorValues({
-						profilerHits: 0,
-						selfCPUTime: 0,
-						aggregatedCPUTime: 0,
-						internCPUTime: 0,
-						externCPUTime: 0,
-						langInternalCPUTime: 0
-					}),
+					new SensorValues({}),
 					undefined
 				),
 			)
@@ -329,12 +265,12 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		const max = SourceNodeMetaData.max(...maxs)
 
 		if (!SourceNodeMetaData.equals(this.aggregatedInternSourceMetaData.total, total)) {
-			console.error(total, this.aggregatedInternSourceMetaData.total, this.filePath?.toString())
+			LoggerHelper.error(total, this.aggregatedInternSourceMetaData.total, this.filePath?.toString())
 			throw new Error('SourceFileMetaDataTree.validate: Assertion error total is not correct' + this.filePath?.toString())
 		}
 
 		if (!SourceNodeMetaData.equals(this.aggregatedInternSourceMetaData.max, max)) {
-			console.error(max, this.aggregatedInternSourceMetaData.max, this.filePath?.toString())
+			LoggerHelper.error(max, this.aggregatedInternSourceMetaData.max, this.filePath?.toString())
 			throw new Error('SourceFileMetaDataTree.validate: Assertion error max is not correct' + this.filePath?.toString())
 		}
 	}
@@ -429,7 +365,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 					(index as IndexPerType<SourceFileMetaDataTreeType.Root>).getLangInternalIndex('get')?.getFilePathIndex('get', subTree.filePath)
 					: (index as ModuleIndex)?.globalIndex?.getLangInternalIndex('get')?.getFilePathIndex('get', subTree.filePath)
 				if (indexToPass === undefined) {
-					console.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
+					LoggerHelper.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
 					throw new Error('SourceFileMetaDataTree.fromJSON: (langInternal children) could not resolve index for subTree')
 				}
 				result.langInternalChildren.set(
@@ -462,7 +398,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 						throw new Error('SourceFileMetaDataTree.fromJSON: unexpected subTree type')
 				}
 				if (indexToPass === undefined) {
-					console.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
+					LoggerHelper.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
 					throw new Error('SourceFileMetaDataTree.fromJSON: (intern children) could not resolve index for subTree')
 				}
 				result.internChildren.set(
