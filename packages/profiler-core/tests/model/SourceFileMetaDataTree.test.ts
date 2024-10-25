@@ -23,7 +23,8 @@ import {
 	GlobalSourceNodeIdentifier_string,
 	ModuleID_number,
 	PathID_number,
-	SourceNodeID_number
+	SourceNodeID_number,
+	MicroSeconds_number
 } from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
@@ -54,8 +55,8 @@ describe('SourceFileMetaDataTree', () => {
 							type: SourceNodeMetaDataType.SourceNode,
 							sensorValues: {
 								profilerHits: 1,
-								selfCPUTime: 200,
-								aggregatedCPUTime: 200
+								selfCPUTime: 200 as MicroSeconds_number,
+								aggregatedCPUTime: 200 as MicroSeconds_number
 							}
 						}
 					}
@@ -325,11 +326,11 @@ describe('SourceFileMetaDataTree', () => {
 						undefined,
 						new SensorValues({
 							profilerHits: 1,
-							selfCPUTime: 2,
-							aggregatedCPUTime: 3,
-							internCPUTime: 4,
-							externCPUTime: 5,
-							langInternalCPUTime: 6
+							selfCPUTime: 2 as MicroSeconds_number,
+							aggregatedCPUTime: 3 as MicroSeconds_number,
+							internCPUTime: 4 as MicroSeconds_number,
+							externCPUTime: 5 as MicroSeconds_number,
+							langInternalCPUTime: 6 as MicroSeconds_number
 						}),
 						undefined
 					),
@@ -338,11 +339,11 @@ describe('SourceFileMetaDataTree', () => {
 						undefined,
 						new SensorValues({
 							profilerHits: 7,
-							selfCPUTime: 8,
-							aggregatedCPUTime: 9,
-							internCPUTime: 10,
-							externCPUTime: 11,
-							langInternalCPUTime: 12
+							selfCPUTime: 8 as MicroSeconds_number,
+							aggregatedCPUTime: 9 as MicroSeconds_number,
+							internCPUTime: 10 as MicroSeconds_number,
+							externCPUTime: 11 as MicroSeconds_number,
+							langInternalCPUTime: 12 as MicroSeconds_number
 						}),
 						undefined
 					),
@@ -389,14 +390,7 @@ describe('SourceFileMetaDataTree', () => {
 						new SourceNodeMetaData(
 							SourceNodeMetaDataType.Aggregate,
 							undefined,
-							new SensorValues({
-								profilerHits: 0,
-								selfCPUTime: 0,
-								aggregatedCPUTime: 0,
-								internCPUTime: 0,
-								externCPUTime: 0,
-								langInternalCPUTime: 0
-							}),
+							new SensorValues({}),
 							undefined
 						),
 					)
@@ -407,14 +401,7 @@ describe('SourceFileMetaDataTree', () => {
 						new SourceNodeMetaData(
 							SourceNodeMetaDataType.Aggregate,
 							undefined,
-							new SensorValues({
-								profilerHits: 0,
-								selfCPUTime: 0,
-								aggregatedCPUTime: 0,
-								internCPUTime: 0,
-								externCPUTime: 0,
-								langInternalCPUTime: 0
-							}),
+							new SensorValues({}),
 							undefined
 						),
 					)
@@ -430,11 +417,11 @@ describe('SourceFileMetaDataTree', () => {
 						undefined,
 						new SensorValues({
 							profilerHits: 1,
-							selfCPUTime: 2,
-							aggregatedCPUTime: 3,
-							internCPUTime: 4,
-							externCPUTime: 5,
-							langInternalCPUTime: 6
+							selfCPUTime: 2 as MicroSeconds_number,
+							aggregatedCPUTime: 3 as MicroSeconds_number,
+							internCPUTime: 4 as MicroSeconds_number,
+							externCPUTime: 5 as MicroSeconds_number,
+							langInternalCPUTime: 6 as MicroSeconds_number
 						}),
 						undefined
 					),
@@ -443,11 +430,11 @@ describe('SourceFileMetaDataTree', () => {
 						undefined,
 						new SensorValues({
 							profilerHits: 7,
-							selfCPUTime: 8,
-							aggregatedCPUTime: 9,
-							internCPUTime: 10,
-							externCPUTime: 11,
-							langInternalCPUTime: 12
+							selfCPUTime: 8 as MicroSeconds_number,
+							aggregatedCPUTime: 9 as MicroSeconds_number,
+							internCPUTime: 10 as MicroSeconds_number,
+							externCPUTime: 11 as MicroSeconds_number,
+							langInternalCPUTime: 12 as MicroSeconds_number
 						}),
 						undefined
 					),
@@ -495,14 +482,7 @@ describe('SourceFileMetaDataTree', () => {
 						new SourceNodeMetaData(
 							SourceNodeMetaDataType.Aggregate,
 							undefined,
-							new SensorValues({
-								profilerHits: 0,
-								selfCPUTime: 0,
-								aggregatedCPUTime: 0,
-								internCPUTime: 0,
-								externCPUTime: 0,
-								langInternalCPUTime: 0
-							}),
+							new SensorValues({}),
 							undefined
 						),
 					)
@@ -513,14 +493,7 @@ describe('SourceFileMetaDataTree', () => {
 						new SourceNodeMetaData(
 							SourceNodeMetaDataType.Aggregate,
 							undefined,
-							new SensorValues({
-								profilerHits: 0,
-								selfCPUTime: 0,
-								aggregatedCPUTime: 0,
-								internCPUTime: 0,
-								externCPUTime: 0,
-								langInternalCPUTime: 0
-							}),
+							new SensorValues({}),
 							undefined
 						),
 					)
@@ -536,11 +509,11 @@ describe('SourceFileMetaDataTree', () => {
 						undefined,
 						new SensorValues({
 							profilerHits: 1,
-							selfCPUTime: 2,
-							aggregatedCPUTime: 3,
-							internCPUTime: 4,
-							externCPUTime: 5,
-							langInternalCPUTime: 6
+							selfCPUTime: 2 as MicroSeconds_number,
+							aggregatedCPUTime: 3 as MicroSeconds_number,
+							internCPUTime: 4 as MicroSeconds_number,
+							externCPUTime: 5 as MicroSeconds_number,
+							langInternalCPUTime: 6 as MicroSeconds_number
 						}),
 						undefined
 					),
@@ -549,11 +522,11 @@ describe('SourceFileMetaDataTree', () => {
 						undefined,
 						new SensorValues({
 							profilerHits: 7,
-							selfCPUTime: 8,
-							aggregatedCPUTime: 9,
-							internCPUTime: 10,
-							externCPUTime: 11,
-							langInternalCPUTime: 12
+							selfCPUTime: 8 as MicroSeconds_number,
+							aggregatedCPUTime: 9 as MicroSeconds_number,
+							internCPUTime: 10 as MicroSeconds_number,
+							externCPUTime: 11 as MicroSeconds_number,
+							langInternalCPUTime: 12 as MicroSeconds_number
 						}),
 						undefined
 					),
@@ -601,14 +574,7 @@ describe('SourceFileMetaDataTree', () => {
 						new SourceNodeMetaData(
 							SourceNodeMetaDataType.Aggregate,
 							undefined,
-							new SensorValues({
-								profilerHits: 0,
-								selfCPUTime: 0,
-								aggregatedCPUTime: 0,
-								internCPUTime: 0,
-								externCPUTime: 0,
-								langInternalCPUTime: 0
-							}),
+							new SensorValues({}),
 							undefined
 						)
 					)
@@ -619,14 +585,7 @@ describe('SourceFileMetaDataTree', () => {
 						new SourceNodeMetaData(
 							SourceNodeMetaDataType.Aggregate,
 							undefined,
-							new SensorValues({
-								profilerHits: 0,
-								selfCPUTime: 0,
-								aggregatedCPUTime: 0,
-								internCPUTime: 0,
-								externCPUTime: 0,
-								langInternalCPUTime: 0
-							}),
+							new SensorValues({}),
 							undefined
 						),
 					)

@@ -10,6 +10,9 @@ import {
 import {
 	IModuleReport
 } from './ModuleReport'
+import {
+	ISensorValues
+} from './SensorValues'
 
 import {
 	UnifiedPath_string
@@ -25,6 +28,7 @@ export interface IReport {
 	kind: ReportKind,
 	relativeRootDir?: UnifiedPath_string
 	internMapping?: Record<PathID_number, PathID_number>
+	lang_internalHeadlessSensorValues?: ISensorValues
 	lang_internal?: Record<PathID_number, ISourceFileMetaData>
 	intern?: Record<PathID_number, ISourceFileMetaData>
 	extern?: Record<ModuleID_number, IModuleReport>

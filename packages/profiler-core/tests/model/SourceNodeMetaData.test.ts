@@ -14,16 +14,17 @@ import {
 	SourceNodeMetaDataType,
 	UnifiedPath_string,
 	SourceNodeIdentifier_string,
-	GlobalSourceNodeIdentifier_string
+	GlobalSourceNodeIdentifier_string,
+	MicroSeconds_number
 } from '../../src/types'
 
 const EXAMPLE_SOURCE_NODE_META_DATA = {
 	id: 2 as SourceNodeID_number,
 	type: SourceNodeMetaDataType.SourceNode,
 	sensorValues: {
-		langInternalCPUTime: 9699,
-		internCPUTime: 1245,
-		externCPUTime: 99921,
+		langInternalCPUTime: 9699 as MicroSeconds_number,
+		internCPUTime: 1245 as MicroSeconds_number,
+		externCPUTime: 99921 as MicroSeconds_number,
 
 		langInternalCPUEnergyConsumption: 19398 as MilliJoule_number,
 		internCPUEnergyConsumption: 2490 as MilliJoule_number,
@@ -197,14 +198,7 @@ describe('SourceNodeMetaData', () => {
 		const instance = new SourceNodeMetaData(
 			SourceNodeMetaDataType.SourceNode,
 			sourceNodeIndex.id,
-			new SensorValues({
-				profilerHits: 0,
-				selfCPUTime: 0,
-				aggregatedCPUTime: 0,
-				internCPUTime: 0,
-				externCPUTime: 0,
-				langInternalCPUTime: 0
-			}),
+			new SensorValues({}),
 			sourceNodeIndex
 		)
 
@@ -215,8 +209,8 @@ describe('SourceNodeMetaData', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 234,
-					aggregatedCPUTime: 567
+					selfCPUTime: 234 as MicroSeconds_number,
+					aggregatedCPUTime: 567 as MicroSeconds_number
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 468 as MilliJoule_number,
@@ -235,8 +229,8 @@ describe('SourceNodeMetaData', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 345,
-					aggregatedCPUTime: 678
+					selfCPUTime: 345 as MicroSeconds_number,
+					aggregatedCPUTime: 678 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 690 as MilliJoule_number,
@@ -256,8 +250,8 @@ describe('SourceNodeMetaData', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 456,
-					aggregatedCPUTime: 789,
+					selfCPUTime: 456 as MicroSeconds_number,
+					aggregatedCPUTime: 789 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 912 as MilliJoule_number,
@@ -276,8 +270,8 @@ describe('SourceNodeMetaData', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 567,
-					aggregatedCPUTime: 8910,
+					selfCPUTime: 567 as MicroSeconds_number,
+					aggregatedCPUTime: 8910 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 1134 as MilliJoule_number,
@@ -301,8 +295,8 @@ describe('SourceNodeMetaData', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 567,
-					aggregatedCPUTime: 8910
+					selfCPUTime: 567 as MicroSeconds_number,
+					aggregatedCPUTime: 8910 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 1134 as MilliJoule_number,
@@ -325,8 +319,8 @@ describe('SourceNodeMetaData', () => {
 			),
 			{
 				cpuTime: {
-					selfCPUTime: 678,
-					aggregatedCPUTime: 91011,
+					selfCPUTime: 678 as MicroSeconds_number,
+					aggregatedCPUTime: 91011 as MicroSeconds_number,
 				},
 				cpuEnergyConsumption: {
 					selfCPUEnergyConsumption: 1356 as MilliJoule_number,
@@ -441,11 +435,11 @@ describe('SourceNodeMetaData', () => {
 				new SensorValues({
 					profilerHits: 1,
 
-					selfCPUTime: 2,
-					aggregatedCPUTime: 3,
-					internCPUTime: 4,
-					externCPUTime: 5,
-					langInternalCPUTime: 6,
+					selfCPUTime: 2 as MicroSeconds_number,
+					aggregatedCPUTime: 3 as MicroSeconds_number,
+					internCPUTime: 4 as MicroSeconds_number,
+					externCPUTime: 5 as MicroSeconds_number,
+					langInternalCPUTime: 6 as MicroSeconds_number,
 
 					selfCPUEnergyConsumption: 6 as MilliJoule_number,
 					aggregatedCPUEnergyConsumption: 6 as MilliJoule_number,
@@ -467,11 +461,11 @@ describe('SourceNodeMetaData', () => {
 				new SensorValues({
 					profilerHits: 7,
 
-					selfCPUTime: 8,
-					aggregatedCPUTime: 9,
-					internCPUTime: 10,
-					externCPUTime: 11,
-					langInternalCPUTime: 12,
+					selfCPUTime: 8 as MicroSeconds_number,
+					aggregatedCPUTime: 9 as MicroSeconds_number,
+					internCPUTime: 10 as MicroSeconds_number,
+					externCPUTime: 11 as MicroSeconds_number,
+					langInternalCPUTime: 12 as MicroSeconds_number,
 
 					selfCPUEnergyConsumption: 16 as MilliJoule_number,
 					aggregatedCPUEnergyConsumption: 18 as MilliJoule_number,
@@ -493,11 +487,11 @@ describe('SourceNodeMetaData', () => {
 				new SensorValues({
 					profilerHits: 13,
 
-					selfCPUTime: 14,
-					aggregatedCPUTime: 15,
-					internCPUTime: 16,
-					externCPUTime: 17,
-					langInternalCPUTime: 18,
+					selfCPUTime: 14 as MicroSeconds_number,
+					aggregatedCPUTime: 15 as MicroSeconds_number,
+					internCPUTime: 16 as MicroSeconds_number,
+					externCPUTime: 17 as MicroSeconds_number,
+					langInternalCPUTime: 18 as MicroSeconds_number,
 
 					selfCPUEnergyConsumption: 28 as MilliJoule_number,
 					aggregatedCPUEnergyConsumption: 30 as MilliJoule_number,

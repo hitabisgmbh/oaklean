@@ -5,6 +5,7 @@ import {
 import {
 	PrimitiveBufferTypes
 } from '../helper/BufferHelper'
+import { MicroSeconds_number } from '../helper'
 
 export interface IPureCPUEnergyConsumption {
 	selfCPUEnergyConsumption?: MilliJoule_number,
@@ -17,16 +18,16 @@ export interface IPureRAMEnergyConsumption {
 }
 
 export interface IPureCPUTime {
-	selfCPUTime?: number,
-	aggregatedCPUTime?: number
+	selfCPUTime?: MicroSeconds_number,
+	aggregatedCPUTime?: MicroSeconds_number
 }
 
 export interface ISensorValues extends IPureCPUTime, IPureCPUEnergyConsumption, IPureRAMEnergyConsumption {
 	profilerHits?: number
 
-	internCPUTime?: number
-	externCPUTime?: number
-	langInternalCPUTime?: number
+	internCPUTime?: MicroSeconds_number
+	externCPUTime?: MicroSeconds_number
+	langInternalCPUTime?: MicroSeconds_number
 
 	internCPUEnergyConsumption?: MilliJoule_number
 	externCPUEnergyConsumption?: MilliJoule_number

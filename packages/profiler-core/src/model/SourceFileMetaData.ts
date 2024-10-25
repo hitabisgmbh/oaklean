@@ -26,7 +26,8 @@ import {
 	SourceNodeIndexType,
 	SourceNodeMetaDataType,
 	ISourceFileMetaData,
-	IAggregatedSourceNodeMetaData
+	IAggregatedSourceNodeMetaData,
+	MicroSeconds_number
 } from '../types'
 
 export class AggregatedSourceNodeMetaData extends BaseModel {
@@ -303,14 +304,7 @@ export class SourceFileMetaData extends BaseModel {
 			node = new SourceNodeMetaData<T>(
 				type,
 				sourceNodeID as T extends SourceNodeMetaDataType.Aggregate ? undefined : SourceNodeID_number,
-				new SensorValues({
-					profilerHits: 0,
-					selfCPUTime: 0,
-					aggregatedCPUTime: 0,
-					internCPUTime: 0,
-					externCPUTime: 0,
-					langInternalCPUTime: 0
-				}),
+				new SensorValues({}),
 				sourceNodeIndex as T extends SourceNodeMetaDataType.Aggregate ?
 					undefined : SourceNodeIndex<SourceNodeIndexType.SourceNode>
 			)
@@ -380,6 +374,7 @@ export class SourceFileMetaData extends BaseModel {
 				}
 			}
 		}
+
 		if (this.pathIndex.id === undefined) {
 			throw new Error('totalSourceNodeMetaData: expected pathIndex.id')
 		}

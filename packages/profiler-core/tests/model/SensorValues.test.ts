@@ -1,16 +1,17 @@
 import { MilliJoule_number } from '../../src'
 import { SensorValues } from '../../src/model/SensorValues'
 import {
-	ISensorValues
+	ISensorValues,
+	MicroSeconds_number
 } from '../../src/types'
 
 const EXAMPLE_SENSOR_VALUES: ISensorValues = {
 	profilerHits: 1,
-	selfCPUTime: 2,
-	aggregatedCPUTime: 3,
-	internCPUTime: 4,
-	externCPUTime: 5,
-	langInternalCPUTime: 6,
+	selfCPUTime: 2 as MicroSeconds_number,
+	aggregatedCPUTime: 3 as MicroSeconds_number,
+	internCPUTime: 4 as MicroSeconds_number,
+	externCPUTime: 5 as MicroSeconds_number,
+	langInternalCPUTime: 6 as MicroSeconds_number,
 	selfCPUEnergyConsumption: 0.01 as MilliJoule_number,
 	aggregatedCPUEnergyConsumption: 0.1 as MilliJoule_number,
 	internCPUEnergyConsumption: 0.02 as MilliJoule_number,
@@ -54,11 +55,11 @@ describe('SensorValues', () => {
 		return new SensorValues(
 			{
 				profilerHits: 1,
-				selfCPUTime: 2,
-				aggregatedCPUTime: 3,
-				internCPUTime: 4,
-				externCPUTime: 5,
-				langInternalCPUTime: 6,
+				selfCPUTime: 2 as MicroSeconds_number,
+				aggregatedCPUTime: 3 as MicroSeconds_number,
+				internCPUTime: 4 as MicroSeconds_number,
+				externCPUTime: 5 as MicroSeconds_number,
+				langInternalCPUTime: 6 as MicroSeconds_number,
 				selfCPUEnergyConsumption: 0.01 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 0.1 as MilliJoule_number,
 				internCPUEnergyConsumption: 0.02 as MilliJoule_number,
@@ -87,21 +88,7 @@ describe('SensorValues', () => {
 
 	describe('toBuffer with zero values', () => {
 		test('example 01', () => {
-			const example = new SensorValues(
-				{
-					profilerHits: 0,
-					selfCPUTime: 0,
-					aggregatedCPUTime: 0,
-					internCPUTime: 0,
-					externCPUTime: 0,
-					langInternalCPUTime: 0,
-					selfCPUEnergyConsumption: 0 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 0 as MilliJoule_number,
-					internCPUEnergyConsumption: 0 as MilliJoule_number,
-					externCPUEnergyConsumption: 0 as MilliJoule_number,
-					langInternalCPUEnergyConsumption: 0 as MilliJoule_number
-				}
-			)
+			const example = new SensorValues({})
 			const buffer = example.toBuffer()
 			expect(buffer.toString('hex')).toBe('0000')
 			const { instance, remainingBuffer } = SensorValues.consumeFromBuffer(buffer)
@@ -112,12 +99,12 @@ describe('SensorValues', () => {
 		test('example 02', () => {
 			const example = new SensorValues(
 				{
-					profilerHits: 1,
-					selfCPUTime: 0,
-					aggregatedCPUTime: 3,
-					internCPUTime: 0,
-					externCPUTime: 4,
-					langInternalCPUTime: 0,
+					profilerHits: 1 as MicroSeconds_number,
+					selfCPUTime: 0 as MicroSeconds_number,
+					aggregatedCPUTime: 3 as MicroSeconds_number,
+					internCPUTime: 0 as MicroSeconds_number,
+					externCPUTime: 4 as MicroSeconds_number,
+					langInternalCPUTime: 0 as MicroSeconds_number,
 					selfCPUEnergyConsumption: 0 as MilliJoule_number,
 					aggregatedCPUEnergyConsumption: 0.2 as MilliJoule_number,
 					internCPUEnergyConsumption: 0 as MilliJoule_number,
@@ -134,12 +121,6 @@ describe('SensorValues', () => {
 		test('example 02', () => {
 			const example = new SensorValues(
 				{
-					profilerHits: 0,
-					selfCPUTime: 0,
-					aggregatedCPUTime: 0,
-					internCPUTime: 0,
-					externCPUTime: 0,
-					langInternalCPUTime: 0,
 					selfCPUEnergyConsumption: 0.01 as MilliJoule_number,
 					aggregatedCPUEnergyConsumption: 0.1 as MilliJoule_number,
 					internCPUEnergyConsumption: 0.02 as MilliJoule_number,
@@ -178,27 +159,27 @@ describe('SensorValues', () => {
 		beforeEach(() => {
 			instanceA = new SensorValues({
 				profilerHits: 1,
-				selfCPUTime: 2,
-				aggregatedCPUTime: 3,
-				internCPUTime: 4,
-				externCPUTime: 5,
-				langInternalCPUTime: 6
+				selfCPUTime: 2 as MicroSeconds_number,
+				aggregatedCPUTime: 3 as MicroSeconds_number,
+				internCPUTime: 4 as MicroSeconds_number,
+				externCPUTime: 5 as MicroSeconds_number,
+				langInternalCPUTime: 6 as MicroSeconds_number
 			})
 			instanceB = new SensorValues({
-				profilerHits: 7,
-				selfCPUTime: 8,
-				aggregatedCPUTime: 9,
-				internCPUTime: 10,
-				externCPUTime: 11,
-				langInternalCPUTime: 12
+				profilerHits: 7 as MicroSeconds_number,
+				selfCPUTime: 8 as MicroSeconds_number,
+				aggregatedCPUTime: 9 as MicroSeconds_number,
+				internCPUTime: 10 as MicroSeconds_number,
+				externCPUTime: 11 as MicroSeconds_number,
+				langInternalCPUTime: 12 as MicroSeconds_number
 			})
 			instanceC = new SensorValues({
-				profilerHits: 13,
-				selfCPUTime: 14,
-				aggregatedCPUTime: 15,
-				internCPUTime: 16,
-				externCPUTime: 17,
-				langInternalCPUTime: 18
+				profilerHits: 13 as MicroSeconds_number,
+				selfCPUTime: 14 as MicroSeconds_number,
+				aggregatedCPUTime: 15 as MicroSeconds_number,
+				internCPUTime: 16 as MicroSeconds_number,
+				externCPUTime: 17 as MicroSeconds_number,
+				langInternalCPUTime: 18 as MicroSeconds_number
 			})
 		})
 

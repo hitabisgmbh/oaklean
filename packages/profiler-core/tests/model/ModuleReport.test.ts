@@ -22,7 +22,8 @@ const EXAMPLE_MODULE_REPORT: IModuleReport = {
 		name: 'package-name',
 		version: '1.0.1'
 	},
-	relativeRootDir: undefined
+	relativeRootDir: undefined,
+	lang_internalHeadlessSensorValues: {}
 }
 const EXAMPLE_MODULE_REPORT_BUFFER = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'module-report.instance.buffer').toString()).toString()
 
@@ -209,7 +210,8 @@ describe('ModuleReport', () => {
 				nodeModule: {
 					name: 'package-name',
 					version: '1.0.1'
-				}
+				},
+				lang_internalHeadlessSensorValues: {}
 			})
 		})
 	})
