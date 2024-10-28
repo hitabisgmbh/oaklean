@@ -310,6 +310,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			this.validate()
 		}
 		return {
+			lang_internalHeadlessSensorValues: this._lang_internalHeadlessSensorValues?.toJSON(),
 			aggregatedLangInternalSourceNodeMetaData: this._aggregatedLangInternalSourceNodeMetaData?.toJSON(),
 			aggregatedInternSourceMetaData: this._aggregatedInternSourceMetaData?.toJSON(),
 			aggregatedExternSourceMetaData: this._aggregatedExternSourceMetaData?.toJSON(),
@@ -368,6 +369,10 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			) ? new UnifiedPath(data.filePath as unknown as string) : undefined) as UnifiedPathOnlyForPathNode<T>,
 			index
 		)
+		if (data.lang_internalHeadlessSensorValues) {
+			result._lang_internalHeadlessSensorValues =
+				SensorValues.fromJSON(data.lang_internalHeadlessSensorValues)
+		}
 		if (data.aggregatedLangInternalSourceNodeMetaData) {
 			result._aggregatedLangInternalSourceNodeMetaData =
 				AggregatedSourceNodeMetaData.fromJSON(data.aggregatedLangInternalSourceNodeMetaData)

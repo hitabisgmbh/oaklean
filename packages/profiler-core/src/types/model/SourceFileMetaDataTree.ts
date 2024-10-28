@@ -2,11 +2,24 @@ import type {
 	ISourceFileMetaData,
 	IAggregatedSourceNodeMetaData
 } from './SourceFileMetaData'
-import type { IGlobalIndex } from './index/GlobalIndex'
-import type { INodeModule, NodeModuleIdentifier_string } from './NodeModule'
+import {
+	ISensorValues
+} from './SensorValues'
+import type {
+	INodeModule,
+	NodeModuleIdentifier_string
+} from './NodeModule'
+import type {
+	IGlobalIndex
+} from './index/GlobalIndex'
 
-import type { LangInternalPath_string } from '../SourceNodeIdentifiers'
-import type { UnifiedPath_string, UnifiedPathPart_string } from '../system/UnifiedPath'
+import type {
+	LangInternalPath_string
+} from '../SourceNodeIdentifiers'
+import type {
+	UnifiedPath_string,
+	UnifiedPathPart_string
+} from '../system/UnifiedPath'
 
 export enum SourceFileMetaDataTreeType {
 	Root = 'Root',
@@ -23,6 +36,7 @@ export type IEngineModuleOnlyForRootNode<T> = T extends SourceFileMetaDataTreeTy
 
 
 export interface ISourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> {
+	lang_internalHeadlessSensorValues?: ISensorValues
 	aggregatedLangInternalSourceNodeMetaData?: IAggregatedSourceNodeMetaData
 	aggregatedInternSourceMetaData?: IAggregatedSourceNodeMetaData
 	aggregatedExternSourceMetaData?: IAggregatedSourceNodeMetaData
