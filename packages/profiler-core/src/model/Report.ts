@@ -4,8 +4,7 @@ import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 import { NodeModule } from './NodeModule'
 import {
-	SourceFileMetaData,
-	AggregatedSourceNodeMetaData
+	SourceFileMetaData
 } from './SourceFileMetaData'
 import {
 	SourceNodeMetaData
