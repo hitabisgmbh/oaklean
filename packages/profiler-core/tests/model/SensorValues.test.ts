@@ -341,6 +341,13 @@ describe('SensorValues', () => {
 				langInternalRAMEnergyConsumption: 0.25 as MilliJoule_number,
 				aggregatedRAMEnergyConsumption: 0.94 as MilliJoule_number
 			})
+
+			// test with empty instance
+			expect(SensorValues.max(
+				new SensorValues({}),
+				new SensorValues({}),
+				new SensorValues({})
+			).toJSON()).toEqual(new SensorValues({}).toJSON())
 		})
 
 		test('sum', () => {
@@ -373,6 +380,13 @@ describe('SensorValues', () => {
 				langInternalRAMEnergyConsumption: 0.57 as MilliJoule_number,
 				aggregatedRAMEnergyConsumption: 2.1 as MilliJoule_number
 			})
+
+			// test with empty instance
+			expect(SensorValues.sum(
+				new SensorValues({}),
+				new SensorValues({}),
+				new SensorValues({})
+			).toJSON()).toEqual(new SensorValues({}).toJSON())
 		})
 
 		test('equal', () => {
@@ -383,6 +397,9 @@ describe('SensorValues', () => {
 			expect(SensorValues.equals(instanceA, instanceA)).toBe(true)
 			expect(SensorValues.equals(instanceB, instanceB)).toBe(true)
 			expect(SensorValues.equals(instanceC, instanceC)).toBe(true)
+
+			// test with empty instance
+			expect(SensorValues.equals(new SensorValues({}), new SensorValues({}))).toBe(true)
 		})
 
 		test('addToAggregated', () => {
@@ -397,6 +414,12 @@ describe('SensorValues', () => {
 				instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
 			expect(result.toJSON()).toEqual(expected.toJSON())
+
+			// test with empty instance
+			const result2 = instanceA.clone()
+			result2.addToAggregated(new SensorValues({}))
+
+			expect(instanceA.toJSON()).toEqual(result2.toJSON())
 		})
 
 		test('addToIntern', () => {
@@ -411,6 +434,12 @@ describe('SensorValues', () => {
 				instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
 			expect(result.toJSON()).toEqual(expected.toJSON())
+
+			// test with empty instance
+			const result2 = instanceA.clone()
+			result2.addToIntern(new SensorValues({}))
+
+			expect(instanceA.toJSON()).toEqual(result2.toJSON())
 		})
 
 		test('addToExtern', () => {
@@ -425,6 +454,12 @@ describe('SensorValues', () => {
 				instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
 			expect(result.toJSON()).toEqual(expected.toJSON())
+
+			// test with empty instance
+			const result2 = instanceA.clone()
+			result2.addToExtern(new SensorValues({}))
+
+			expect(instanceA.toJSON()).toEqual(result2.toJSON())
 		})
 
 		test('addToLangInternal', () => {
@@ -440,6 +475,12 @@ describe('SensorValues', () => {
 				instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
 			expect(result.toJSON()).toEqual(expected.toJSON())
+
+			// test with empty instance
+			const result2 = instanceA.clone()
+			result2.addToLangInternal(new SensorValues({}))
+
+			expect(instanceA.toJSON()).toEqual(result2.toJSON())
 		})
 
 		describe('add', () => {
@@ -477,6 +518,14 @@ describe('SensorValues', () => {
 				roundSensorValues(expected, 2)
 
 				expect(result.toJSON()).toEqual(expected.toJSON())
+
+				// test with empty instance
+				const result2 = instanceA.clone()
+				result2.add({
+					internSensorValues: new SensorValues({})
+				})
+
+				expect(instanceA.toJSON()).toEqual(result2.toJSON())
 			})
 
 			test('extern values', () => {
@@ -513,6 +562,14 @@ describe('SensorValues', () => {
 				roundSensorValues(expected, 2)
 
 				expect(result.toJSON()).toEqual(expected.toJSON())
+
+				// test with empty instance
+				const result2 = instanceA.clone()
+				result2.add({
+					externSensorValues: new SensorValues({})
+				})
+
+				expect(instanceA.toJSON()).toEqual(result2.toJSON())
 			})
 
 			test('langInternal values', () => {
@@ -549,6 +606,14 @@ describe('SensorValues', () => {
 				roundSensorValues(expected, 2)
 
 				expect(result.toJSON()).toEqual(expected.toJSON())
+
+				// test with empty instance
+				const result2 = instanceA.clone()
+				result2.add({
+					langInternalSensorValues: new SensorValues({})
+				})
+
+				expect(instanceA.toJSON()).toEqual(result2.toJSON())
 			})
 		})
 	})
