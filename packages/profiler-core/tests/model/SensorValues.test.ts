@@ -402,238 +402,440 @@ describe('SensorValues', () => {
 			expect(SensorValues.equals(new SensorValues({}), new SensorValues({}))).toBe(true)
 		})
 
-		test('addToSelf', () => {
-			const result = instanceA.clone()
-			result.addToSelf(instanceB)
+		describe('addToSelf', () => {
+			test('test with non empty SensorValues', () => {
+				const result = instanceA.clone()
+				result.addToSelf(instanceB)
 
-			const expected = instanceA.clone()
-			expected.selfCPUTime = expected.selfCPUTime + instanceB.selfCPUTime as MicroSeconds_number
-			expected.selfCPUEnergyConsumption = expected.selfCPUEnergyConsumption +
-				instanceB.selfCPUEnergyConsumption as MilliJoule_number
-			expected.selfRAMEnergyConsumption = expected.selfRAMEnergyConsumption +
-				instanceB.selfRAMEnergyConsumption as MilliJoule_number
+				const expected = instanceA.clone()
+				expected.selfCPUTime = expected.selfCPUTime + instanceB.selfCPUTime as MicroSeconds_number
+				expected.selfCPUEnergyConsumption = expected.selfCPUEnergyConsumption +
+					instanceB.selfCPUEnergyConsumption as MilliJoule_number
+				expected.selfRAMEnergyConsumption = expected.selfRAMEnergyConsumption +
+					instanceB.selfRAMEnergyConsumption as MilliJoule_number
 
-			expect(result.toJSON()).toEqual(expected.toJSON())
+				expect(result.toJSON()).toEqual(expected.toJSON())
+			})
 
-			// test with empty instance
-			const result2 = instanceA.clone()
-			result2.addToSelf(new SensorValues({}))
+			test('test with empty SensorValues', () => {
+				const result = instanceA.clone()
+				result.addToSelf(new SensorValues({}))
 
-			expect(instanceA.toJSON()).toEqual(result2.toJSON())
+				expect(instanceA.toJSON()).toEqual(result.toJSON())
+			})
+			
+			test('test with empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToSelf({})
+				expect(instanceA.toJSON()).toEqual(result.toJSON())
+			})
+
+			test('test with non empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToSelf(EXAMPLE_SENSOR_VALUES)
+				const expected = instanceA.clone()
+				expected.selfCPUTime = expected.selfCPUTime + 1 as MicroSeconds_number
+				expected.selfCPUEnergyConsumption = expected.selfCPUEnergyConsumption +
+					0.01 as MilliJoule_number
+				expected.selfRAMEnergyConsumption = expected.selfRAMEnergyConsumption +
+					0.05 as MilliJoule_number
+
+				expect(expected.toJSON()).toEqual(result.toJSON())
+			})
 		})
 
-		test('addToAggregated', () => {
-			const result = instanceA.clone()
-			result.addToAggregated(instanceB)
+		describe('addToAggregated', () => {
+			test('test with non empty SensorValues', () => {
+				const result = instanceA.clone()
+				result.addToAggregated(instanceB)
 
-			const expected = instanceA.clone()
-			expected.aggregatedCPUTime = expected.aggregatedCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
-			expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
-				instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-			expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
-				instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+				const expected = instanceA.clone()
+				expected.aggregatedCPUTime = expected.aggregatedCPUTime +
+					instanceB.aggregatedCPUTime as MicroSeconds_number
+				expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
+					instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+				expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
+					instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-			expect(result.toJSON()).toEqual(expected.toJSON())
+				expect(result.toJSON()).toEqual(expected.toJSON())
+			})
 
-			// test with empty instance
-			const result2 = instanceA.clone()
-			result2.addToAggregated(new SensorValues({}))
+			test('test with empty SensorValues', () => {
+				const result2 = instanceA.clone()
+				result2.addToAggregated(new SensorValues({}))
 
-			expect(instanceA.toJSON()).toEqual(result2.toJSON())
+				expect(instanceA.toJSON()).toEqual(result2.toJSON())
+			})
+			
+			test('test with empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToAggregated({})
+				expect(instanceA.toJSON()).toEqual(result.toJSON())
+			})
+
+			test('test with non empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToAggregated(EXAMPLE_SENSOR_VALUES)
+				const expected = instanceA.clone()
+				expected.aggregatedCPUTime = expected.aggregatedCPUTime + 10 as MicroSeconds_number
+				expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
+					0.1 as MilliJoule_number
+				expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
+					0.26 as MilliJoule_number
+
+				expect(expected.toJSON()).toEqual(result.toJSON())
+			})
 		})
 
-		test('addToIntern', () => {
-			const result = instanceA.clone()
-			result.addToIntern(instanceB)
+		describe('addToIntern', () => {
+			test('test with non empty SensorValues', () => {
+				const result = instanceA.clone()
+				result.addToIntern(instanceB)
 
-			const expected = instanceA.clone()
-			expected.internCPUTime = expected.internCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
-			expected.internCPUEnergyConsumption = expected.internCPUEnergyConsumption +
-				instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-			expected.internRAMEnergyConsumption = expected.internRAMEnergyConsumption +
-				instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+				const expected = instanceA.clone()
+				expected.internCPUTime = expected.internCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
+				expected.internCPUEnergyConsumption = expected.internCPUEnergyConsumption +
+					instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+				expected.internRAMEnergyConsumption = expected.internRAMEnergyConsumption +
+					instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-			expect(result.toJSON()).toEqual(expected.toJSON())
+				expect(result.toJSON()).toEqual(expected.toJSON())
+			})
 
-			// test with empty instance
-			const result2 = instanceA.clone()
-			result2.addToIntern(new SensorValues({}))
 
-			expect(instanceA.toJSON()).toEqual(result2.toJSON())
+			test('test with empty SensorValues', () => {
+				const result2 = instanceA.clone()
+				result2.addToIntern(new SensorValues({}))
+
+				expect(instanceA.toJSON()).toEqual(result2.toJSON())
+			})
+
+			test('test with empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToIntern({})
+				expect(instanceA.toJSON()).toEqual(result.toJSON())
+			})
+
+			test('test with non empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToIntern(EXAMPLE_SENSOR_VALUES)
+				const expected = instanceA.clone()
+				expected.internCPUTime = expected.internCPUTime + 10 as MicroSeconds_number
+				expected.internCPUEnergyConsumption = expected.internCPUEnergyConsumption +
+					0.1 as MilliJoule_number
+				expected.internRAMEnergyConsumption = expected.internRAMEnergyConsumption +
+					0.26 as MilliJoule_number
+
+				expect(expected.toJSON()).toEqual(result.toJSON())
+			})
 		})
 
-		test('addToExtern', () => {
-			const result = instanceA.clone()
-			result.addToExtern(instanceB)
+		describe('addToExtern', () => {
+			test('with non empty SensorValues', () => {
+				const result = instanceA.clone()
+				result.addToExtern(instanceB)
 
-			const expected = instanceA.clone()
-			expected.externCPUTime = expected.externCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
-			expected.externCPUEnergyConsumption = expected.externCPUEnergyConsumption +
-				instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-			expected.externRAMEnergyConsumption = expected.externRAMEnergyConsumption +
-				instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+				const expected = instanceA.clone()
+				expected.externCPUTime = expected.externCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
+				expected.externCPUEnergyConsumption = expected.externCPUEnergyConsumption +
+					instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+				expected.externRAMEnergyConsumption = expected.externRAMEnergyConsumption +
+					instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-			expect(result.toJSON()).toEqual(expected.toJSON())
+				expect(result.toJSON()).toEqual(expected.toJSON())
+			})
 
-			// test with empty instance
-			const result2 = instanceA.clone()
-			result2.addToExtern(new SensorValues({}))
+			test('with empty SensorValues', () => {
+				const result2 = instanceA.clone()
+				result2.addToExtern(new SensorValues({}))
 
-			expect(instanceA.toJSON()).toEqual(result2.toJSON())
+				expect(instanceA.toJSON()).toEqual(result2.toJSON())
+			})
+			
+			test('test with empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToExtern({})
+				expect(instanceA.toJSON()).toEqual(result.toJSON())
+			})
+
+			test('test with non empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToExtern(EXAMPLE_SENSOR_VALUES)
+				const expected = instanceA.clone()
+				expected.externCPUTime = expected.externCPUTime + 10 as MicroSeconds_number
+				expected.externCPUEnergyConsumption = expected.externCPUEnergyConsumption +
+					0.1 as MilliJoule_number
+				expected.externRAMEnergyConsumption = expected.externRAMEnergyConsumption +
+					0.26 as MilliJoule_number
+
+				expect(expected.toJSON()).toEqual(result.toJSON())
+			})
 		})
 
-		test('addToLangInternal', () => {
-			const result = instanceA.clone()
-			result.addToLangInternal(instanceB)
+		describe('addToLangInternal', () => {
+			test('with non empty SensorValues', () => {
+				const result = instanceA.clone()
+				result.addToLangInternal(instanceB)
 
-			const expected = instanceA.clone()
-			expected.langInternalCPUTime = expected.langInternalCPUTime +
-				instanceB.aggregatedCPUTime as MicroSeconds_number
-			expected.langInternalCPUEnergyConsumption = expected.langInternalCPUEnergyConsumption +
-				instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-			expected.langInternalRAMEnergyConsumption = expected.langInternalRAMEnergyConsumption +
-				instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+				const expected = instanceA.clone()
+				expected.langInternalCPUTime = expected.langInternalCPUTime +
+					instanceB.aggregatedCPUTime as MicroSeconds_number
+				expected.langInternalCPUEnergyConsumption = expected.langInternalCPUEnergyConsumption +
+					instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+				expected.langInternalRAMEnergyConsumption = expected.langInternalRAMEnergyConsumption +
+					instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-			expect(result.toJSON()).toEqual(expected.toJSON())
+				expect(result.toJSON()).toEqual(expected.toJSON())
+			})
 
-			// test with empty instance
-			const result2 = instanceA.clone()
-			result2.addToLangInternal(new SensorValues({}))
+			test('with empty SensorValues', () => {
+				const result2 = instanceA.clone()
+				result2.addToLangInternal(new SensorValues({}))
 
-			expect(instanceA.toJSON()).toEqual(result2.toJSON())
+				expect(instanceA.toJSON()).toEqual(result2.toJSON())
+			})
+
+			test('test with empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToLangInternal({})
+				expect(instanceA.toJSON()).toEqual(result.toJSON())
+			})
+
+			test('test with non empty Partial<ISensorValues>', () => {
+				const result = instanceA.clone()
+				result.addToLangInternal(EXAMPLE_SENSOR_VALUES)
+				const expected = instanceA.clone()
+				expected.langInternalCPUTime = expected.langInternalCPUTime + 10 as MicroSeconds_number
+				expected.langInternalCPUEnergyConsumption = expected.langInternalCPUEnergyConsumption +
+					0.1 as MilliJoule_number
+				expected.langInternalRAMEnergyConsumption = expected.langInternalRAMEnergyConsumption +
+					0.26 as MilliJoule_number
+
+				expect(expected.toJSON()).toEqual(result.toJSON())
+			})
 		})
 
 		describe('add', () => {
-			test('intern values', () => {
-				const result = instanceA.add({
-					internSensorValues: instanceB
+			describe('intern values', () => {
+				let expected: SensorValues
+
+				beforeEach(() => {
+					expected = instanceA.clone()
 				})
-				const expected = new SensorValues({
-					profilerHits: 1,
+				test('with non empty SensorValues', () => {
+					const result = instanceA.add({
+						internSensorValues: instanceB
+					})
+					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
+						instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-					// CPU Time
-					selfCPUTime: 2 as MicroSeconds_number,
-					internCPUTime: 3 + 38 as MicroSeconds_number,
-					externCPUTime: 4 as MicroSeconds_number,
-					langInternalCPUTime: 5 as MicroSeconds_number,
-					aggregatedCPUTime: 14 + 38 as MicroSeconds_number,
+					expected.internCPUTime = expected.internCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.internCPUEnergyConsumption = expected.internCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.internRAMEnergyConsumption = expected.internRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-					// CPU Energy Consumption
-					selfCPUEnergyConsumption: 0.06 as MilliJoule_number,
-					internCPUEnergyConsumption: 0.07 + 0.54 as MilliJoule_number,
-					externCPUEnergyConsumption: 0.08 as MilliJoule_number,
-					langInternalCPUEnergyConsumption: 0.09 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 0.3 + 0.54 as MilliJoule_number,
+					// Round to 2 decimal places since the values are floats and the sum might not be exact
+					roundSensorValues(result, 2)
+					roundSensorValues(expected, 2)
 
-					// RAM Energy Consumption
-					selfRAMEnergyConsumption: 0.1 as MilliJoule_number,
-					internRAMEnergyConsumption: 0.11 + 0.7 as MilliJoule_number,
-					externRAMEnergyConsumption: 0.12 as MilliJoule_number,
-					langInternalRAMEnergyConsumption: 0.13 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 0.46 + 0.7 as MilliJoule_number
-				})
-
-				// Round to 2 decimal places since the values are floats and the sum might not be exact
-				roundSensorValues(result, 2)
-				roundSensorValues(expected, 2)
-
-				expect(result.toJSON()).toEqual(expected.toJSON())
-
-				// test with empty instance
-				const result2 = instanceA.clone()
-				result2.add({
-					internSensorValues: new SensorValues({})
+					expect(result.toJSON()).toEqual(expected.toJSON())
 				})
 
-				expect(instanceA.toJSON()).toEqual(result2.toJSON())
+				test('with empty SensorValues', () => {
+					const result = instanceA.clone()
+					result.add({
+						internSensorValues: new SensorValues({})
+					})
+
+					expect(instanceA.toJSON()).toEqual(result.toJSON())
+				})
+
+				test('with empty Partial<ISensorValues>', () => {
+					const result = instanceA.clone()
+					result.add({
+						internSensorValues: {}
+					})
+
+					expect(instanceA.toJSON()).toEqual(result.toJSON())
+				})
+
+				test('with non empty Partial<ISensorValues>', () => {
+					const result = instanceA.add({
+						internSensorValues: instanceB.toJSON()
+					})
+					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
+						instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+
+					expected.internCPUTime = expected.internCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.internCPUEnergyConsumption = expected.internCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.internRAMEnergyConsumption = expected.internRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+
+					// Round to 2 decimal places since the values are floats and the sum might not be exact
+					roundSensorValues(result, 2)
+					roundSensorValues(expected, 2)
+
+					expect(result.toJSON()).toEqual(expected.toJSON())
+				})
 			})
 
-			test('extern values', () => {
-				const result = instanceA.add({
-					externSensorValues: instanceB
+			describe('extern values', () => {
+				let expected: SensorValues
+
+				beforeEach(() => {
+					expected = instanceA.clone()
 				})
-				const expected = new SensorValues({
-					profilerHits: 1,
+				test('with non empty SensorValues', () => {
+					const result = instanceA.add({
+						externSensorValues: instanceB
+					})
+					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
+						instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-					// CPU Time
-					selfCPUTime: 2 as MicroSeconds_number,
-					internCPUTime: 3 as MicroSeconds_number,
-					externCPUTime: 4 + 38 as MicroSeconds_number,
-					langInternalCPUTime: 5 as MicroSeconds_number,
-					aggregatedCPUTime: 14 + 38 as MicroSeconds_number,
+					expected.externCPUTime = expected.externCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.externCPUEnergyConsumption = expected.externCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.externRAMEnergyConsumption = expected.externRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-					// CPU Energy Consumption
-					selfCPUEnergyConsumption: 0.06 as MilliJoule_number,
-					internCPUEnergyConsumption: 0.07 as MilliJoule_number,
-					externCPUEnergyConsumption: 0.08 + 0.54 as MilliJoule_number,
-					langInternalCPUEnergyConsumption: 0.09 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 0.3 + 0.54 as MilliJoule_number,
+					// Round to 2 decimal places since the values are floats and the sum might not be exact
+					roundSensorValues(result, 2)
+					roundSensorValues(expected, 2)
 
-					// RAM Energy Consumption
-					selfRAMEnergyConsumption: 0.1 as MilliJoule_number,
-					internRAMEnergyConsumption: 0.11 as MilliJoule_number,
-					externRAMEnergyConsumption: 0.12 + 0.7 as MilliJoule_number,
-					langInternalRAMEnergyConsumption: 0.13 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 0.46 + 0.7 as MilliJoule_number
-				})
-
-				// Round to 2 decimal places since the values are floats and the sum might not be exact
-				roundSensorValues(result, 2)
-				roundSensorValues(expected, 2)
-
-				expect(result.toJSON()).toEqual(expected.toJSON())
-
-				// test with empty instance
-				const result2 = instanceA.clone()
-				result2.add({
-					externSensorValues: new SensorValues({})
+					expect(result.toJSON()).toEqual(expected.toJSON())
 				})
 
-				expect(instanceA.toJSON()).toEqual(result2.toJSON())
+				test('with empty SensorValues', () => {
+					const result2 = instanceA.clone()
+					result2.add({
+						externSensorValues: new SensorValues({})
+					})
+
+					expect(instanceA.toJSON()).toEqual(result2.toJSON())
+				})
+
+				test('with empty Partial<ISensorValues>', () => {
+					const result2 = instanceA.clone()
+					result2.add({
+						externSensorValues: {}
+					})
+
+					expect(instanceA.toJSON()).toEqual(result2.toJSON())
+				})
+
+				test('with non empty Partial<ISensorValues>', () => {
+					const result = instanceA.add({
+						externSensorValues: instanceB.toJSON()
+					})
+					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
+						instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+
+					expected.externCPUTime = expected.externCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.externCPUEnergyConsumption = expected.externCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.externRAMEnergyConsumption = expected.externRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+
+					// Round to 2 decimal places since the values are floats and the sum might not be exact
+					roundSensorValues(result, 2)
+					roundSensorValues(expected, 2)
+
+					expect(result.toJSON()).toEqual(expected.toJSON())
+				})
 			})
 
-			test('langInternal values', () => {
-				const result = instanceA.add({
-					langInternalSensorValues: instanceB
-				})
-				const expected = new SensorValues({
-					profilerHits: 1,
+			describe('langInternal values', () => {
+				let expected: SensorValues
 
-					// CPU Time
-					selfCPUTime: 2 as MicroSeconds_number,
-					internCPUTime: 3 as MicroSeconds_number,
-					externCPUTime: 4 as MicroSeconds_number,
-					langInternalCPUTime: 5 + 38 as MicroSeconds_number,
-					aggregatedCPUTime: 14 + 38 as MicroSeconds_number,
-
-					// CPU Energy Consumption
-					selfCPUEnergyConsumption: 0.06 as MilliJoule_number,
-					internCPUEnergyConsumption: 0.07 as MilliJoule_number,
-					externCPUEnergyConsumption: 0.08 as MilliJoule_number,
-					langInternalCPUEnergyConsumption: 0.09 + 0.54 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 0.3 + 0.54 as MilliJoule_number,
-
-					// RAM Energy Consumption
-					selfRAMEnergyConsumption: 0.1 as MilliJoule_number,
-					internRAMEnergyConsumption: 0.11 as MilliJoule_number,
-					externRAMEnergyConsumption: 0.12 as MilliJoule_number,
-					langInternalRAMEnergyConsumption: 0.13 + 0.7 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 0.46 + 0.7 as MilliJoule_number
+				beforeEach(() => {
+					expected = instanceA.clone()
 				})
 
-				// Round to 2 decimal places since the values are floats and the sum might not be exact
-				roundSensorValues(result, 2)
-				roundSensorValues(expected, 2)
+				test('with non empty SensorValues', () => {
+					const result = instanceA.add({
+						langInternalSensorValues: instanceB
+					})
+					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
+						instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-				expect(result.toJSON()).toEqual(expected.toJSON())
+					expected.langInternalCPUTime = expected.langInternalCPUTime +
+						instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.langInternalCPUEnergyConsumption = expected.langInternalCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.langInternalRAMEnergyConsumption = expected.langInternalRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
 
-				// test with empty instance
-				const result2 = instanceA.clone()
-				result2.add({
-					langInternalSensorValues: new SensorValues({})
+					// Round to 2 decimal places since the values are floats and the sum might not be exact
+					roundSensorValues(result, 2)
+					roundSensorValues(expected, 2)
+
+					expect(result.toJSON()).toEqual(expected.toJSON())
 				})
 
-				expect(instanceA.toJSON()).toEqual(result2.toJSON())
+				test('with empty SensorValues', () => {
+					const result = instanceA.clone()
+					result.add({
+						langInternalSensorValues: new SensorValues({})
+					})
+
+					expect(instanceA.toJSON()).toEqual(result.toJSON())
+				})
+
+				test('with empty Partial<ISensorValues>', () => {
+					const result = instanceA.clone()
+					result.add({
+						langInternalSensorValues: {}
+					})
+
+					expect(instanceA.toJSON()).toEqual(result.toJSON())
+				})
+
+				test('with non empty Partial<ISensorValues>', () => {
+					const result = instanceA.add({
+						langInternalSensorValues: instanceB.toJSON()
+					})
+					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
+						instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+
+					expected.langInternalCPUTime = expected.langInternalCPUTime +
+						instanceB.aggregatedCPUTime as MicroSeconds_number
+					expected.langInternalCPUEnergyConsumption = expected.langInternalCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
+					expected.langInternalRAMEnergyConsumption = expected.langInternalRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+
+					// Round to 2 decimal places since the values are floats and the sum might not be exact
+					roundSensorValues(result, 2)
+					roundSensorValues(expected, 2)
+
+					expect(result.toJSON()).toEqual(expected.toJSON())
+				})
 			})
 		})
 	})

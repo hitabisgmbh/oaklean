@@ -510,48 +510,48 @@ export class SensorValues extends BaseModel {
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToSelf(other: SensorValues) {
-		this.selfCPUTime = this.selfCPUTime + other.selfCPUTime as MicroSeconds_number
+	addToSelf(other: SensorValues | Partial<ISensorValues>) {
+		this.selfCPUTime = this.selfCPUTime + (other.selfCPUTime || 0) as MicroSeconds_number
 		this.selfCPUEnergyConsumption = this.selfCPUEnergyConsumption
-			+ other.selfCPUEnergyConsumption as MilliJoule_number
+			+ (other.selfCPUEnergyConsumption || 0) as MilliJoule_number
 		this.selfRAMEnergyConsumption = this.selfRAMEnergyConsumption
-			+ other.selfRAMEnergyConsumption as MilliJoule_number
+			+ (other.selfRAMEnergyConsumption || 0) as MilliJoule_number
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToAggregated(other: SensorValues) {
-		this.aggregatedCPUTime = this.aggregatedCPUTime + other.aggregatedCPUTime as MicroSeconds_number
+	addToAggregated(other: SensorValues | Partial<ISensorValues>) {
+		this.aggregatedCPUTime = this.aggregatedCPUTime + (other.aggregatedCPUTime || 0) as MicroSeconds_number
 		this.aggregatedCPUEnergyConsumption = this.aggregatedCPUEnergyConsumption
-			+ other.aggregatedCPUEnergyConsumption as MilliJoule_number
+			+ (other.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
 		this.aggregatedRAMEnergyConsumption = this.aggregatedRAMEnergyConsumption
-			+ other.aggregatedRAMEnergyConsumption as MilliJoule_number
+			+ (other.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToIntern(other: SensorValues) {
-		this.internCPUTime = this.internCPUTime + other.aggregatedCPUTime as MicroSeconds_number
+	addToIntern(other: SensorValues | Partial<ISensorValues>) {
+		this.internCPUTime = this.internCPUTime + (other.aggregatedCPUTime || 0) as MicroSeconds_number
 		this.internCPUEnergyConsumption = this.internCPUEnergyConsumption
-			+ other.aggregatedCPUEnergyConsumption as MilliJoule_number
+			+ (other.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
 		this.internRAMEnergyConsumption = this.internRAMEnergyConsumption
-			+ other.aggregatedRAMEnergyConsumption as MilliJoule_number
+			+ (other.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToExtern(other: SensorValues) {
-		this.externCPUTime = this.externCPUTime + other.aggregatedCPUTime as MicroSeconds_number
+	addToExtern(other: SensorValues | Partial<ISensorValues>) {
+		this.externCPUTime = this.externCPUTime + (other.aggregatedCPUTime || 0) as MicroSeconds_number
 		this.externCPUEnergyConsumption = this.externCPUEnergyConsumption
-			+ other.aggregatedCPUEnergyConsumption as MilliJoule_number
+			+ (other.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
 		this.externRAMEnergyConsumption = this.externRAMEnergyConsumption
-			+ other.aggregatedRAMEnergyConsumption as MilliJoule_number
+			+ (other.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToLangInternal(other: SensorValues) {
-		this.langInternalCPUTime = this.langInternalCPUTime + other.aggregatedCPUTime as MicroSeconds_number
+	addToLangInternal(other: SensorValues | Partial<ISensorValues>) {
+		this.langInternalCPUTime = this.langInternalCPUTime + (other.aggregatedCPUTime || 0) as MicroSeconds_number
 		this.langInternalCPUEnergyConsumption = this.langInternalCPUEnergyConsumption
-			+ other.aggregatedCPUEnergyConsumption as MilliJoule_number
+			+ (other.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
 		this.langInternalRAMEnergyConsumption = this.langInternalRAMEnergyConsumption
-			+ other.aggregatedRAMEnergyConsumption as MilliJoule_number
+			+ (other.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 	}
 
 	add({
@@ -559,9 +559,9 @@ export class SensorValues extends BaseModel {
 		externSensorValues,
 		langInternalSensorValues,
 	}: {
-		internSensorValues?: SensorValues,
-		externSensorValues?: SensorValues,
-		langInternalSensorValues?: SensorValues,
+		internSensorValues?: SensorValues | Partial<ISensorValues>,
+		externSensorValues?: SensorValues | Partial<ISensorValues>,
+		langInternalSensorValues?: SensorValues | Partial<ISensorValues>,
 	}) {
 		const result = SensorValues.fromJSON(this.toJSON())
 
