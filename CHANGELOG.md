@@ -12,6 +12,7 @@
 ### Fixes
 - Fix the bug that includes the configured sensor interface in the .oak report file, even when the sensor interface was not running during measurement
 - Add a warning when the configured sensor interface cannot be executed.
+- Fixed a critical bug that incorrectly calculated the RAM energy
 
 ## 0.1.3
 ### Added
