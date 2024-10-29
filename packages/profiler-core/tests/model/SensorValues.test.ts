@@ -402,6 +402,26 @@ describe('SensorValues', () => {
 			expect(SensorValues.equals(new SensorValues({}), new SensorValues({}))).toBe(true)
 		})
 
+		test('addToSelf', () => {
+			const result = instanceA.clone()
+			result.addToSelf(instanceB)
+
+			const expected = instanceA.clone()
+			expected.selfCPUTime = expected.selfCPUTime + instanceB.selfCPUTime as MicroSeconds_number
+			expected.selfCPUEnergyConsumption = expected.selfCPUEnergyConsumption +
+				instanceB.selfCPUEnergyConsumption as MilliJoule_number
+			expected.selfRAMEnergyConsumption = expected.selfRAMEnergyConsumption +
+				instanceB.selfRAMEnergyConsumption as MilliJoule_number
+
+			expect(result.toJSON()).toEqual(expected.toJSON())
+
+			// test with empty instance
+			const result2 = instanceA.clone()
+			result2.addToSelf(new SensorValues({}))
+
+			expect(instanceA.toJSON()).toEqual(result2.toJSON())
+		})
+
 		test('addToAggregated', () => {
 			const result = instanceA.clone()
 			result.addToAggregated(instanceB)

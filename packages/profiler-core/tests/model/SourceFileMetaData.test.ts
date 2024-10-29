@@ -17,8 +17,10 @@ import {
 	SourceNodeIdentifier_string,
 	GlobalSourceNodeIdentifier_string,
 	MicroSeconds_number,
-	IAggregatedSourceNodeMetaData
+	IAggregatedSourceNodeMetaData,
+	PathID_number
 } from '../../src/types'
+import { ModelMap } from '../../src'
 
 const EXAMPLE_SOURCE_FILE_META_DATA: ISourceFileMetaData = {
 	path: './file.js' as UnifiedPath_string,
@@ -253,21 +255,39 @@ function runInstanceTests(
 		})
 
 		test('totalSourceNodeMetaData', () => {
-			expect(instance.totalSourceNodeMetaData().toJSON()).toEqual({
-				type: SourceNodeMetaDataType.Aggregate,
-				lang_internal: undefined,
-				sensorValues: {
-					profilerHits: 3,
+			const result = instance.totalSourceNodeMetaData()
+			expect(Object.keys(result).length).toBe(4)
 
-					selfCPUTime: 7,
-					aggregatedCPUTime: 7,
+			expect({
+				sum: result.sum.toJSON(),
+				intern: result.intern.toJSON(),
+				extern: result.extern.toJSON(),
+				langInternal: result.langInternal.toJSON()
+			}).toEqual({
+				sum: {
+					id: undefined,
+					type: SourceNodeMetaDataType.Aggregate,
+					sensorValues: {
+						profilerHits: 3 as MicroSeconds_number,
 
-					selfCPUEnergyConsumption: 14,
-					aggregatedCPUEnergyConsumption: 14,
+						selfCPUTime: 7 as MicroSeconds_number,
+						aggregatedCPUTime: 7 as MicroSeconds_number,
 
-					selfRAMEnergyConsumption: 14,
-					aggregatedRAMEnergyConsumption: 14
-				} as ISensorValues
+						selfCPUEnergyConsumption: 14 as MilliJoule_number,
+						aggregatedCPUEnergyConsumption: 14 as MilliJoule_number,
+
+						selfRAMEnergyConsumption: 14 as MilliJoule_number,
+						aggregatedRAMEnergyConsumption: 14 as MilliJoule_number
+					}
+				},
+				intern: undefined,
+				extern: undefined,
+				langInternal: undefined
+			} satisfies {
+				sum: ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
+				intern: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>,
+				extern: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>,
+				langInternal: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>
 			})
 		})
 

@@ -510,6 +510,15 @@ export class SensorValues extends BaseModel {
 	}
 
 	// IMPORTANT to change when new measurement type gets added
+	addToSelf(other: SensorValues) {
+		this.selfCPUTime = this.selfCPUTime + other.selfCPUTime as MicroSeconds_number
+		this.selfCPUEnergyConsumption = this.selfCPUEnergyConsumption
+			+ other.selfCPUEnergyConsumption as MilliJoule_number
+		this.selfRAMEnergyConsumption = this.selfRAMEnergyConsumption
+			+ other.selfRAMEnergyConsumption as MilliJoule_number
+	}
+
+	// IMPORTANT to change when new measurement type gets added
 	addToAggregated(other: SensorValues) {
 		this.aggregatedCPUTime = this.aggregatedCPUTime + other.aggregatedCPUTime as MicroSeconds_number
 		this.aggregatedCPUEnergyConsumption = this.aggregatedCPUEnergyConsumption
