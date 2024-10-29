@@ -35,6 +35,30 @@ export const SENSOR_VALUES_BYTE_SIZE_MAP: SensorValueToDataTypeMap = {
 	langInternalRAMEnergyConsumption: PrimitiveBufferTypes.Double,
 }
 
+export const AGGREGATED_SENSOR_VALUE_NAMES: (keyof ISensorValues)[] = [
+	'aggregatedCPUTime',
+	'aggregatedCPUEnergyConsumption',
+	'aggregatedRAMEnergyConsumption'
+]
+
+export const INTERN_SENSOR_VALUE_NAMES: (keyof ISensorValues)[] = [
+	'internCPUTime',
+	'internCPUEnergyConsumption',
+	'internRAMEnergyConsumption'
+]
+
+export const EXTERN_SENSOR_VALUE_NAMES: (keyof ISensorValues)[] = [
+	'externCPUTime',
+	'externCPUEnergyConsumption',
+	'externRAMEnergyConsumption'
+]
+
+export const LANG_INTERNAL_SENSOR_VALUE_NAMES: (keyof ISensorValues)[] = [
+	'langInternalCPUTime',
+	'langInternalCPUEnergyConsumption',
+	'langInternalRAMEnergyConsumption'
+]
+
 export class SensorValues extends BaseModel {
 	[key: string]: any
 
@@ -485,6 +509,42 @@ export class SensorValues extends BaseModel {
 		}
 	}
 
+	// IMPORTANT to change when new measurement type gets added
+	addToAggregated(other: SensorValues) {
+		this.aggregatedCPUTime = this.aggregatedCPUTime + other.aggregatedCPUTime as MicroSeconds_number
+		this.aggregatedCPUEnergyConsumption = this.aggregatedCPUEnergyConsumption
+			+ other.aggregatedCPUEnergyConsumption as MilliJoule_number
+		this.aggregatedRAMEnergyConsumption = this.aggregatedRAMEnergyConsumption
+			+ other.aggregatedRAMEnergyConsumption as MilliJoule_number
+	}
+
+	// IMPORTANT to change when new measurement type gets added
+	addToIntern(other: SensorValues) {
+		this.internCPUTime = this.internCPUTime + other.aggregatedCPUTime as MicroSeconds_number
+		this.internCPUEnergyConsumption = this.internCPUEnergyConsumption
+			+ other.aggregatedCPUEnergyConsumption as MilliJoule_number
+		this.internRAMEnergyConsumption = this.internRAMEnergyConsumption
+			+ other.aggregatedRAMEnergyConsumption as MilliJoule_number
+	}
+
+	// IMPORTANT to change when new measurement type gets added
+	addToExtern(other: SensorValues) {
+		this.externCPUTime = this.externCPUTime + other.aggregatedCPUTime as MicroSeconds_number
+		this.externCPUEnergyConsumption = this.externCPUEnergyConsumption
+			+ other.aggregatedCPUEnergyConsumption as MilliJoule_number
+		this.externRAMEnergyConsumption = this.externRAMEnergyConsumption
+			+ other.aggregatedRAMEnergyConsumption as MilliJoule_number
+	}
+
+	// IMPORTANT to change when new measurement type gets added
+	addToLangInternal(other: SensorValues) {
+		this.langInternalCPUTime = this.langInternalCPUTime + other.aggregatedCPUTime as MicroSeconds_number
+		this.langInternalCPUEnergyConsumption = this.langInternalCPUEnergyConsumption
+			+ other.aggregatedCPUEnergyConsumption as MilliJoule_number
+		this.langInternalRAMEnergyConsumption = this.langInternalRAMEnergyConsumption
+			+ other.aggregatedRAMEnergyConsumption as MilliJoule_number
+	}
+
 	add({
 		internSensorValues,
 		externSensorValues,
@@ -497,50 +557,43 @@ export class SensorValues extends BaseModel {
 		const result = SensorValues.fromJSON(this.toJSON())
 
 		if (internSensorValues) {
-			result.aggregatedCPUTime = result.aggregatedCPUTime +
-				internSensorValues.aggregatedCPUTime as MicroSeconds_number
-			result.aggregatedCPUEnergyConsumption = result.aggregatedCPUEnergyConsumption +
-				internSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-			result.aggregatedRAMEnergyConsumption = result.aggregatedRAMEnergyConsumption + 
-				internSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
-
-			result.internCPUTime = result.internCPUTime +
-				internSensorValues.aggregatedCPUTime as MicroSeconds_number
-			result.internCPUEnergyConsumption = result.internCPUEnergyConsumption +
-				internSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-			result.internRAMEnergyConsumption = result.internRAMEnergyConsumption +
-				internSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
+			result.addToAggregated(internSensorValues)
+			result.addToIntern(internSensorValues)
 		}
 		if (externSensorValues) {
-			result.aggregatedCPUTime = result.aggregatedCPUTime +
-				externSensorValues.aggregatedCPUTime as MicroSeconds_number
-			result.aggregatedCPUEnergyConsumption = result.aggregatedCPUEnergyConsumption +
-				externSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-			result.aggregatedRAMEnergyConsumption = result.aggregatedRAMEnergyConsumption +
-				externSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
-
-			result.externCPUTime = result.externCPUTime +
-				externSensorValues.aggregatedCPUTime as MicroSeconds_number
-			result.externCPUEnergyConsumption = result.externCPUEnergyConsumption +
-				externSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-			result.externRAMEnergyConsumption = result.externRAMEnergyConsumption +
-				externSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
+			result.addToAggregated(externSensorValues)
+			result.addToExtern(externSensorValues)
 		}
 		if (langInternalSensorValues) {
-			result.aggregatedCPUTime = result.aggregatedCPUTime +
-				langInternalSensorValues.aggregatedCPUTime as MicroSeconds_number
-			result.aggregatedCPUEnergyConsumption = result.aggregatedCPUEnergyConsumption +
-				langInternalSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-			result.aggregatedRAMEnergyConsumption = result.aggregatedRAMEnergyConsumption +
-				langInternalSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
-
-			result.langInternalCPUTime = result.langInternalCPUTime +
-				langInternalSensorValues.aggregatedCPUTime as MicroSeconds_number
-			result.langInternalCPUEnergyConsumption = result.langInternalCPUEnergyConsumption +
-				langInternalSensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-			result.langInternalRAMEnergyConsumption = result.langInternalRAMEnergyConsumption +
-				langInternalSensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
+			result.addToAggregated(langInternalSensorValues)
+			result.addToLangInternal(langInternalSensorValues)
 		}
+		return result
+	}
+
+	clone(): SensorValues {
+		return new SensorValues(this.toJSON())
+	}
+
+	// clones the object but removes all reference values to other objects
+	// the aggregated values equal the self values
+	cloneAsIsolated(): SensorValues {
+		// IMPORTANT to change when new measurement type gets added
+		return new SensorValues({
+			profilerHits: this.profilerHits,
+			selfCPUTime: this.selfCPUTime,
+			aggregatedCPUTime: this.selfCPUTime,
+			selfCPUEnergyConsumption: this.selfCPUEnergyConsumption,
+			aggregatedCPUEnergyConsumption: this.selfCPUEnergyConsumption,
+			selfRAMEnergyConsumption: this.selfRAMEnergyConsumption,
+			aggregatedRAMEnergyConsumption: this.selfRAMEnergyConsumption
+		})
+	}
+
+	// clones the object but only the aggregated values
+	cloneAsAggregated(): SensorValues {
+		const result = new SensorValues({})
+		result.addToAggregated(this)
 		return result
 	}
 }

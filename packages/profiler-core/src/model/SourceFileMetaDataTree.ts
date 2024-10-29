@@ -867,11 +867,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			const externSum = SensorValues.sum(...total.extern.values())
 			const langInternalSum = SensorValues.sum(...total.langInternal.values())
 
-			const ownSensorValues = new SensorValues({
-				profilerHits: total.sum.sensorValues.profilerHits,
-				selfCPUTime: total.sum.sensorValues.selfCPUTime,
-				aggregatedCPUTime: total.sum.sensorValues.selfCPUTime,
-			})
+			// clones the total sensor values but removes the references
+			const ownSensorValues = total.sum.sensorValues.cloneAsIsolated()
 			allSensorValuesToSum.push(ownSensorValues)
 
 			node.addToAggregatedInternSourceNodeMetaDataOfTree(
