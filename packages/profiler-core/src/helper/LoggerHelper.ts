@@ -16,14 +16,14 @@ export class LoggerHelper {
 	}
 
 	static log(message?: any, ...optionalParams: any[]) {
-		console.log(LoggerHelper.logString(message, optionalParams))
+		console.log(LoggerHelper.logString(message, ...optionalParams))
 	}
 
 	static warn(message?: any, ...optionalParams: any[]) {
-		console.warn(LoggerHelper.warnString(message, optionalParams))
+		console.warn(LoggerHelper.warnString(message, ...optionalParams))
 	}
 
 	static error(message?: any, ...optionalParams: any[]) {
-		console.error(LoggerHelper.errorString(message, optionalParams))
+		console.error(LoggerHelper.errorString(message, ...optionalParams))
 	}
 }
