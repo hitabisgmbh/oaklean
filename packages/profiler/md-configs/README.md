@@ -31,7 +31,7 @@ A library to measure the energy consumption of your javascript/typescript code
 - Option 2 (Code wrapping):
 	```typescript
 	import { Profiler } from '@oaklean/profiler'
-	const profile = new Profiler(true, 'profile-name')
+	const profile = new Profiler('profile-name')
 
 	async function main() {
 		await profile.start("<report-name>")
