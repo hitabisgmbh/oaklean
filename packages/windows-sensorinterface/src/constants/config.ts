@@ -3,7 +3,7 @@ import { UnifiedPath } from '@oaklean/profiler-core'
 import { VERSION } from './app'
 
 const BINARY_DISTRIBUTION_PACKAGES = {
-	'win32': 'windows-sensorinterface/win32'
+	'win32': 'OakleanWindowsSensorInterface_x64'
 }
 
 export type SupportedPlatforms = keyof typeof BINARY_DISTRIBUTION_PACKAGES
@@ -14,7 +14,7 @@ export function getPlatformSpecificBinaryDirectoryPath(platform: SupportedPlatfo
 
 export function getPlatformSpecificBinaryPath(platform: SupportedPlatforms) {
 	const dirPath = getPlatformSpecificBinaryDirectoryPath(platform)
-	return dirPath.join('Worker.exe')
+	return dirPath.join('OakleanWindowsSensorInterface.exe')
 }
 
 export function getPlatformSpecificPackageName(platform: SupportedPlatforms) {
@@ -24,5 +24,6 @@ export function getPlatformSpecificPackageName(platform: SupportedPlatforms) {
 export function getPlatformSpecificDownloadLink(platform: SupportedPlatforms) {
 	const platformSpecificPackageName = getPlatformSpecificPackageName(platform)
 
-	return `https://github.com/KMakowsky/Windows-SensorInterface/releases/download/${VERSION}/${VERSION}.zip`
+	// eslint-disable-next-line max-len
+	return `https://github.com/hitabisgmbh/oaklean-windows-sensorinterface/releases/download/v${VERSION}/${platformSpecificPackageName}.zip`
 }

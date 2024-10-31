@@ -54,7 +54,7 @@ export class InstallHelper {
 
 		ZipHelper.extractSpecificDirectory(
 			tarballDownloadBuffer,
-			new UnifiedPath(VERSION),
+			new UnifiedPath('./'),
 			getPlatformSpecificBinaryDirectoryPath(platform)
 		)
 	}
