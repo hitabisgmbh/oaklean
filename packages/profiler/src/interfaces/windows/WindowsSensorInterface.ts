@@ -224,20 +224,25 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 
 		// capture first measurement to determine start time
 		let firstCapture = false
-		this._childProcess.stdout?.on('data', async (data) => {
+		// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+		const onFirstCapture =  async (data: any) => {
 			if (!firstCapture){
 				const currentTime = TimeHelper.getCurrentHighResolutionTime()
 				const content = data.toString()
-				if (content.trim() === 'Starting service') {
+				if (!content.startsWith('BEGIN_MEASUREMENT')) {
+					LoggerHelper.error('WindowsSensorInterface.startProfiling: Could not capture first measurement, unexpected output:', content)
 					return
 				}
 				firstCapture = true
-				const values = content.trim().split('|')
-				const duration = parseFloat(values[0].replace(/,/g, '.')) / 1e3 // seconds
+				const values = content.trim().split(' ')
+				const duration = parseFloat(values[1].replace(/,/g, '.')) / 1e3 // seconds
 				this._offsetTime = duration
 				this._startTime = currentTime
+
+				this._childProcess?.stdout?.removeListener('data', onFirstCapture)
 			}
-		})
+		}
+		this._childProcess.stdout?.on('data', onFirstCapture)
 
 		process.on('exit', this.cleanExit) // add event listener to close powermetrics if the parent process exits
 
