@@ -13,6 +13,7 @@
 - Fix the bug that includes the configured sensor interface in the .oak report file, even when the sensor interface was not running during measurement
 - Add a warning when the configured sensor interface cannot be executed.
 - Fixed a critical bug that incorrectly calculated the RAM energy
+- Fix documentation for the [@oaklean/profiler-jest-environment](/packages/profiler-jest-environment/README.md) (the --runInBand option is now mandatory)
 
 ## 0.1.3
 ### Added
