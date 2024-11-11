@@ -29,6 +29,7 @@ build:
       - ./packages/profiler-core/dist
       - ./packages/profiler-jest-environment/*.js
       - ./packages/cli/dist
+      - ./packages/windows-sensorinterface/dist
   script:
     - npm run build
 
