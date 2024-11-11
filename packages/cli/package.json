@@ -27,7 +27,8 @@
 	],
 	"scripts": {
 		"exec": "cd $INIT_CWD && npx ts-node -r tsconfig-paths/register src/index.ts",
-		"build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc",
+		"clear-build": "npx rimraf ./dist",
+		"build": "npm run clear-build && npx cross-env NODE_ENV=production npx tsc",
 		"lint": "npx eslint --fix .",
 		"publish-registry": "npm publish",
 		"test": "npx jest --coverage",

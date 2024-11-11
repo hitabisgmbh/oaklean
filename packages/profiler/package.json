@@ -1,63 +1,64 @@
 {
-  "name": "@oaklean/profiler",
-  "version": "0.1.4",
-  "author": "Hitabis GmbH",
-  "license": "MIT",
-  "description": "A library to measure the energy consumption of your javascript/typescript code",
-  "keywords": [
-    "greenit",
-    "optimization",
-    "energy",
-    "consumption",
-    "javascript",
-    "typescript",
-    "jest",
-    "eco",
-    "profiler",
-    "measurement"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hitabisgmbh/oaklean.git"
-  },
-  "homepage": "https://www.oaklean.io/",
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
-  "directories": {
-    "dist": "dist",
-    "src": "src"
-  },
-  "files": [
-    "LICENSE",
-    "README.md",
-    "dist/**/*"
-  ],
-  "scripts": {
-    "build": "npx rimraf ./dist && npx cross-env NODE_ENV=production npx tsc",
-    "lint": "npx eslint --fix .",
-    "test": "npx jest --coverage",
-    "test-measure": "npx cross-env ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand",
-    "test-update": "",
-    "publish-registry": "npm publish",
-    "generate-docs": "markdown-include md-configs/README.json"
-  },
-  "dependencies": {
-    "@jest/environment": "^29.4.3",
-    "@oaklean/profiler-core": "^0.1.4",
-    "plist": "^3.1.0",
-    "seedrandom": "^3.0.5",
-    "v8-profiler-next": "^1.10.0"
-  },
-  "devDependencies": {
-    "@types/html-minifier": "4.0.2",
-    "@types/plist": "^3.0.5",
-    "@types/seedrandom": "^3.0.5",
-    "cross-env": "^7.0.3",
-    "devtools-protocol": "^0.0.1140464",
-    "html-minifier": "4.0.0",
-    "rimraf": "^4.4.1"
-  },
-  "optionalDependencies": {
-    "@oaklean/windows-sensorinterface": "0.1.0"
-  }
+	"name": "@oaklean/profiler",
+	"version": "0.1.4",
+	"author": "Hitabis GmbH",
+	"license": "MIT",
+	"description": "A library to measure the energy consumption of your javascript/typescript code",
+	"keywords": [
+		"greenit",
+		"optimization",
+		"energy",
+		"consumption",
+		"javascript",
+		"typescript",
+		"jest",
+		"eco",
+		"profiler",
+		"measurement"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hitabisgmbh/oaklean.git"
+	},
+	"homepage": "https://www.oaklean.io/",
+	"main": "./dist/src/index.js",
+	"types": "./dist/src/index.d.ts",
+	"directories": {
+		"dist": "dist",
+		"src": "src"
+	},
+	"files": [
+		"LICENSE",
+		"README.md",
+		"dist/**/*"
+	],
+	"scripts": {
+		"clear-build": "npx rimraf ./dist",
+		"build": "npm run clear-build && npx cross-env NODE_ENV=production npx tsc",
+		"lint": "npx eslint --fix .",
+		"test": "npx jest --coverage",
+		"test-measure": "npx cross-env ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand",
+		"test-update": "",
+		"publish-registry": "npm publish",
+		"generate-docs": "markdown-include md-configs/README.json"
+	},
+	"dependencies": {
+		"@jest/environment": "^29.4.3",
+		"@oaklean/profiler-core": "^0.1.4",
+		"plist": "^3.1.0",
+		"seedrandom": "^3.0.5",
+		"v8-profiler-next": "^1.10.0"
+	},
+	"devDependencies": {
+		"@types/html-minifier": "4.0.2",
+		"@types/plist": "^3.0.5",
+		"@types/seedrandom": "^3.0.5",
+		"cross-env": "^7.0.3",
+		"devtools-protocol": "^0.0.1140464",
+		"html-minifier": "4.0.0",
+		"rimraf": "^4.4.1"
+	},
+	"optionalDependencies": {
+		"@oaklean/windows-sensorinterface": "0.1.0"
+	}
 }
