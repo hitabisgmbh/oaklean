@@ -677,9 +677,6 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		path: UnifiedPath_string | LangInternalPath_string,
 		identifier: SourceNodeIdentifier_string
 	) {
-		let totalAggregatedTime = 0
-		let totalAggregatedEnergyConsumption = 0
-
 		if (this.type !== SourceNodeMetaDataType.SourceNode) {
 			return
 		}
@@ -688,78 +685,111 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		}
 		this.sensorValues.validate(path, identifier)
 
-		let totalLangInternalCPUTime = 0
-		let totalLangInternalEnergyConsumption = 0
+		const totalSensorValues: SensorValues[] = []
+		const totalLangInternalSensorValues: SensorValues[] = []
+		const totalInternSensorValues: SensorValues[] = []
+		const totalExternSensorValues: SensorValues[] = []
+
 		for (const nodeMetaData of this.lang_internal.values()) {
-			totalAggregatedTime += nodeMetaData.sensorValues.aggregatedCPUTime
-			totalLangInternalCPUTime += nodeMetaData.sensorValues.aggregatedCPUTime
-
-			totalAggregatedEnergyConsumption += nodeMetaData.sensorValues.aggregatedCPUEnergyConsumption
-			totalLangInternalEnergyConsumption += nodeMetaData.sensorValues.aggregatedCPUEnergyConsumption
-
+			const aggregatedSensorValues = nodeMetaData.sensorValues.cloneAsAggregated()
+			totalSensorValues.push(aggregatedSensorValues)
+			totalLangInternalSensorValues.push(aggregatedSensorValues)
 			nodeMetaData.sensorValues.validate(path, identifier)
 		}
-		let totalInternCPUTime = 0
-		let totalInternEnergyConsumption = 0
 		for (const nodeMetaData of this.intern.values()) {
-			totalAggregatedTime += nodeMetaData.sensorValues.aggregatedCPUTime
-			totalInternCPUTime += nodeMetaData.sensorValues.aggregatedCPUTime
-
-			totalAggregatedEnergyConsumption += nodeMetaData.sensorValues.aggregatedCPUEnergyConsumption
-			totalInternEnergyConsumption += nodeMetaData.sensorValues.aggregatedCPUEnergyConsumption
-
+			const aggregatedSensorValues = nodeMetaData.sensorValues.cloneAsAggregated()
+			totalSensorValues.push(aggregatedSensorValues)
+			totalInternSensorValues.push(aggregatedSensorValues)
 			nodeMetaData.sensorValues.validate(path, identifier)
 		}
-		let totalExternCPUTime = 0
-		let totalExternEnergyConsumption = 0
 		for (const nodeMetaData of this.extern.values()) {
-			totalAggregatedTime += nodeMetaData.sensorValues.aggregatedCPUTime
-			totalExternCPUTime += nodeMetaData.sensorValues.aggregatedCPUTime
-
-			totalAggregatedEnergyConsumption += nodeMetaData.sensorValues.aggregatedCPUEnergyConsumption
-			totalExternEnergyConsumption += nodeMetaData.sensorValues.aggregatedCPUEnergyConsumption
-			
+			const aggregatedSensorValues = nodeMetaData.sensorValues.cloneAsAggregated()
+			totalSensorValues.push(aggregatedSensorValues)
+			totalExternSensorValues.push(aggregatedSensorValues)
 			nodeMetaData.sensorValues.validate(path, identifier)
 		}
+		
+		const totalAggregate = SensorValues.sum(...totalSensorValues)
+		const totalLangInternalAggregate = SensorValues.sum(...totalLangInternalSensorValues)
+		const totalInternAggregate = SensorValues.sum(...totalInternSensorValues)
+		const totalExternAggregate = SensorValues.sum(...totalExternSensorValues)
+
+		// IMPORTANT to change when new measurement type gets added
 		if (
-			totalAggregatedTime < this.sensorValues.aggregatedCPUTime - this.sensorValues.selfCPUTime ||
-			totalLangInternalCPUTime !== this.sensorValues.langInternalCPUTime ||
-			totalExternCPUTime !== this.sensorValues.externCPUTime ||
-			totalInternCPUTime !== this.sensorValues.internCPUTime ||
-			(totalAggregatedEnergyConsumption <
+			totalAggregate.aggregatedCPUTime < this.sensorValues.aggregatedCPUTime - this.sensorValues.selfCPUTime ||
+			totalLangInternalAggregate.aggregatedCPUTime !== this.sensorValues.langInternalCPUTime ||
+			totalExternAggregate.aggregatedCPUTime !== this.sensorValues.externCPUTime ||
+			totalInternAggregate.aggregatedCPUTime !== this.sensorValues.internCPUTime ||
+			
+			// CPU Energy Consumption
+			(totalAggregate.aggregatedCPUEnergyConsumption <
 				this.sensorValues.aggregatedCPUEnergyConsumption - this.sensorValues.selfCPUEnergyConsumption &&
-			!areNumbersClose(totalAggregatedEnergyConsumption,
-				this.sensorValues.aggregatedCPUEnergyConsumption - this.sensorValues.selfCPUEnergyConsumption
-			)
+				!areNumbersClose(totalAggregate.aggregatedCPUEnergyConsumption,
+					this.sensorValues.aggregatedCPUEnergyConsumption - this.sensorValues.selfCPUEnergyConsumption
+				)
 			) ||
-			!areNumbersClose(totalLangInternalEnergyConsumption, this.sensorValues.langInternalCPUEnergyConsumption) ||
-			!areNumbersClose(totalExternEnergyConsumption, this.sensorValues.externCPUEnergyConsumption) ||
-			!areNumbersClose(totalInternEnergyConsumption, this.sensorValues.internCPUEnergyConsumption)
+			!areNumbersClose(
+				totalLangInternalAggregate.aggregatedCPUEnergyConsumption,
+				this.sensorValues.langInternalCPUEnergyConsumption
+			) ||
+			!areNumbersClose(
+				totalExternAggregate.aggregatedCPUEnergyConsumption,
+				this.sensorValues.externCPUEnergyConsumption
+			) ||
+			!areNumbersClose(
+				totalInternAggregate.aggregatedCPUEnergyConsumption,
+				this.sensorValues.internCPUEnergyConsumption
+			) ||
+
+			// RAM Energy Consumption
+			(totalAggregate.aggregatedRAMEnergyConsumption <
+				this.sensorValues.aggregatedRAMEnergyConsumption - this.sensorValues.selfRAMEnergyConsumption &&
+				!areNumbersClose(totalAggregate.aggregatedRAMEnergyConsumption,
+					this.sensorValues.aggregatedRAMEnergyConsumption - this.sensorValues.selfRAMEnergyConsumption
+				)
+			) ||
+			!areNumbersClose(
+				totalLangInternalAggregate.aggregatedRAMEnergyConsumption,
+				this.sensorValues.langInternalRAMEnergyConsumption
+			) ||
+			!areNumbersClose(
+				totalExternAggregate.aggregatedRAMEnergyConsumption,
+				this.sensorValues.externRAMEnergyConsumption
+			) ||
+			!areNumbersClose(
+				totalInternAggregate.aggregatedRAMEnergyConsumption,
+				this.sensorValues.internRAMEnergyConsumption
+			)
 		) {
 			throw new Error(
 				`SourceNodeMetaData.validate: Assertion error (SourceNode validation) ${path}:${identifier} \n` +
 				JSON.stringify(this, null, 2) + '\n' +
 				JSON.stringify({
-					totalAggregatedTime,
-					totalLangInternalCPUTime,
-					totalExternCPUTime,
-					totalInternCPUTime,
-					totalAggregatedEnergyConsumption,
-					totalLangInternalEnergyConsumption,
-					totalExternEnergyConsumption,
-					totalInternEnergyConsumption,
+					totalAggregate,
+					totalLangInternalAggregate,
+					totalInternAggregate,
+					totalExternAggregate,
 					reason: {
-						'totalAggregatedTime < aggregatedCPUTime - selfCPUTime': totalAggregatedTime < this.sensorValues.aggregatedCPUTime - this.sensorValues.selfCPUTime,
-						'totalLangInternalCPUTime != langInternalCPUTime': totalLangInternalCPUTime !== this.sensorValues.langInternalCPUTime,
-						'totalExternCPUTime != externCPUTime': totalExternCPUTime !== this.sensorValues.externCPUTime,
-						'totalInternCPUTime != internCPUTime': totalInternCPUTime !== this.sensorValues.internCPUTime,
+						'totalAggregatedTime < aggregatedCPUTime - selfCPUTime': totalAggregate.aggregatedCPUTime < this.sensorValues.aggregatedCPUTime - this.sensorValues.selfCPUTime,
+						'totalLangInternalCPUTime != langInternalCPUTime': totalLangInternalAggregate.aggregatedCPUTime !== this.sensorValues.langInternalCPUTime,
+						'totalExternCPUTime != externCPUTime': totalExternAggregate.aggregatedCPUTime !== this.sensorValues.externCPUTime,
+						'totalInternCPUTime != internCPUTime': totalInternAggregate.aggregatedCPUTime !== this.sensorValues.internCPUTime,
 
-						'totalAggregatedEnergyConsumption < aggregatedEnergyConsumption - selfEnergyConsumption': !areNumbersClose(totalAggregatedEnergyConsumption,
+						// CPU Energy Consumption
+						'totalAggregatedCPUEnergyConsumption < aggregatedCPUEnergyConsumption - selfCPUEnergyConsumption': !areNumbersClose(totalAggregate.aggregatedCPUEnergyConsumption,
 							this.sensorValues.aggregatedCPUEnergyConsumption
 							- this.sensorValues.selfCPUEnergyConsumption),
-						'totalLangInternalEnergyConsumption != langInternalEnergyConsumption': !areNumbersClose(totalLangInternalEnergyConsumption, this.sensorValues.langInternalCPUEnergyConsumption),
-						'totalExternEnergyConsumption != externEnergyConsumption': !areNumbersClose(totalExternEnergyConsumption, this.sensorValues.externCPUEnergyConsumption),
-						'totalInternEnergyConsumption != internEnergyConsumption': !areNumbersClose(totalInternEnergyConsumption, this.sensorValues.internCPUEnergyConsumption)
+						'totalLangInternalCPUEnergyConsumption != langInternalCPUEnergyConsumption': !areNumbersClose(totalLangInternalAggregate.aggregatedCPUEnergyConsumption, this.sensorValues.langInternalCPUEnergyConsumption),
+						'totalExternCPUEnergyConsumption != externCPUEnergyConsumption': !areNumbersClose(totalExternAggregate.aggregatedCPUEnergyConsumption, this.sensorValues.externCPUEnergyConsumption),
+						'totalInternCPUEnergyConsumption != internCPUEnergyConsumption': !areNumbersClose(totalInternAggregate.aggregatedCPUEnergyConsumption, this.sensorValues.internCPUEnergyConsumption),
+
+						// RAM Energy Consumption
+						'totalAggregatedRAMEnergyConsumption < aggregatedRAMEnergyConsumption - selfRAMEnergyConsumption': !areNumbersClose(totalAggregate.aggregatedRAMEnergyConsumption,
+							this.sensorValues.aggregatedRAMEnergyConsumption
+							- this.sensorValues.selfRAMEnergyConsumption),
+						'totalLangInternalRAMEnergyConsumption != langInternalRAMEnergyConsumption': !areNumbersClose(totalLangInternalAggregate.aggregatedRAMEnergyConsumption, this.sensorValues.langInternalRAMEnergyConsumption),
+						'totalExternRAMEnergyConsumption != externRAMEnergyConsumption': !areNumbersClose(totalExternAggregate.aggregatedRAMEnergyConsumption, this.sensorValues.externRAMEnergyConsumption),
+						'totalInternRAMEnergyConsumption != internRAMEnergyConsumption': !areNumbersClose(totalInternAggregate.aggregatedRAMEnergyConsumption, this.sensorValues.internRAMEnergyConsumption)
 					}
 				}, null, 2)
 			)

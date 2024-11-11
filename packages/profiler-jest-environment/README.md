@@ -89,7 +89,7 @@ To enable measurements during test execution you must set an environment variabl
 When running Jest tests with this environment variable, the measurement data should be saved in the specified output directory.
 
 > :pinched_fingers: **For more accurate measurement results**<br>
-It is recommended to run Jest with the --runInBand option. This ensures that the tests are executed sequentially and not in different threads: npx jest --coverage --runInBand.
+It is mandatory to run Jest with the --runInBand option. This ensures that the tests are executed sequentially and not in different threads: npx jest --coverage --runInBand.
 
 Execute the tests:
 `ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand`

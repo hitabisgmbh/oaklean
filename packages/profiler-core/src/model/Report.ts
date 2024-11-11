@@ -4,8 +4,8 @@ import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 import { NodeModule } from './NodeModule'
 import {
-	SourceFileMetaData,
-	AggregatedSourceNodeMetaData
+	AggregatedSourceNodeMetaData,
+	SourceFileMetaData
 } from './SourceFileMetaData'
 import {
 	SourceNodeMetaData
@@ -485,8 +485,8 @@ export class Report extends BaseModel {
 		const maxs: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>[] = []
 
 		for (const sourceFileMetaData of this.intern.values()) {
-			totals.push(sourceFileMetaData.totalSourceNodeMataData())
-			maxs.push(sourceFileMetaData.maxSourceNodeMataData())
+			totals.push(sourceFileMetaData.totalSourceNodeMetaData().sum)
+			maxs.push(sourceFileMetaData.maxSourceNodeMetaData())
 		}
 
 		return new AggregatedSourceNodeMetaData(
@@ -494,6 +494,8 @@ export class Report extends BaseModel {
 			SourceNodeMetaData.max(...maxs)
 		)
 	}
+
+
 
 	validate() {
 		for (const sourceFileMetaData of this.intern.values()) {

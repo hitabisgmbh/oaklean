@@ -438,7 +438,7 @@ export class InsertCPUProfileHelper {
 						aggregatedRAMEnergyConsumption = awaiterInternChild.
 							sensorValues.
 							aggregatedRAMEnergyConsumption -
-							(cpuEnergyConsumption.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
+					(ramEnergyConsumption.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 
 					// IMPORTANT to change when new measurement type gets added
 					newLastInternSourceNode.sensorValues.internCPUTime =

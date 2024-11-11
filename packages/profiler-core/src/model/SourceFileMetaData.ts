@@ -316,39 +316,82 @@ export class SourceFileMetaData extends BaseModel {
 	/**
 	 * Calculates the total SourceNodeMetaData for the SourceFile
 	 * 
-	 * hits, selfTime, langInternalTime, externTime and internTime are added up
-	 * 
-	 * the aggregatedTime gets calculated similar, but calls within the source file are excluded
-	 * to ensure that cpu times are not counted multiple times
+	 * hits, selfTime, aggregatedTime, langInternalTime, externTime and internTime are added up
 	 * 
 	 * @returns number
 	 */
-	totalSourceNodeMataData() {
-		const list: SourceNodeMetaData<
-		SourceNodeMetaDataType.SourceNode| SourceNodeMetaDataType.LangInternalSourceNode>[] = []
+	totalSourceNodeMetaData(): {
+		sum: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
+		intern: ModelMap<PathID_number, SensorValues>,
+		extern: ModelMap<PathID_number, SensorValues>,
+		langInternal: ModelMap<PathID_number, SensorValues>
+	} {
+		const listToSum: SourceNodeMetaData<
+		SourceNodeMetaDataType.SourceNode |
+		SourceNodeMetaDataType.LangInternalSourceNode
+		>[] = []
+		const intern = new ModelMap<PathID_number, SensorValues>('number')
+		const extern = new ModelMap<PathID_number, SensorValues>('number')
+		const langInternal = new ModelMap<PathID_number, SensorValues>('number')
 
-		let compensateAggregatedTime = 0
 		for (const sourceNodeMetaData of this.functions.values()) {
-			list.push(sourceNodeMetaData)
-			for (const [sourceNodeID, internSourceNodeMetaData] of sourceNodeMetaData.intern.entries()) {
-				const sourceNodeIndex = this.pathIndex.moduleIndex.globalIndex.getSourceNodeIndexByID(sourceNodeID)
+			listToSum.push(sourceNodeMetaData)
+			for (const sourceNodeMetaDataReferences of [
+				sourceNodeMetaData.lang_internal,
+				sourceNodeMetaData.intern,
+				sourceNodeMetaData.extern
+			]) {
+				for (const sourceNodeMetaDataReference of sourceNodeMetaDataReferences.values()) {
+					const pathID = sourceNodeMetaDataReference.sourceNodeIndex.pathIndex.id
 
-				if (sourceNodeIndex?.pathIndex.moduleIndex.identifier === '{node}') {
-					throw new Error('totalSourceNodeMataData: sourceNodeMetaData.intern should not contain node module source nodes')
-				}
-				if (sourceNodeIndex?.pathIndex.identifier === this.path) {
-					compensateAggregatedTime += internSourceNodeMetaData.sensorValues.aggregatedCPUTime
+					if (pathID === undefined) {
+						throw new Error('totalSourceNodeMetaData: expected pathID')
+					}
+					switch (sourceNodeMetaDataReferences) {
+						case sourceNodeMetaData.lang_internal: {
+							const sensorValuesOfFile = langInternal.get(pathID)
+							langInternal.set(pathID, SensorValues.sum(
+								sourceNodeMetaDataReference.sensorValues,
+								...(sensorValuesOfFile ? [sensorValuesOfFile] : [])
+							))
+						} break
+						case sourceNodeMetaData.intern: {
+							const sensorValuesOfFile = intern.get(pathID)
+							intern.set(pathID, SensorValues.sum(
+								sourceNodeMetaDataReference.sensorValues,
+								...(sensorValuesOfFile ? [sensorValuesOfFile] : [])
+							))
+						} break
+						case sourceNodeMetaData.extern: {
+							const sensorValuesOfFile = extern.get(pathID)
+							extern.set(pathID, SensorValues.sum(
+								sourceNodeMetaDataReference.sensorValues,
+								...(sensorValuesOfFile ? [sensorValuesOfFile] : [])
+							))
+						} break
+					}
+
 				}
 			}
 		}
-		const result = SourceNodeMetaData.sum(...list)
-		result.sensorValues.aggregatedCPUTime = result.sensorValues.aggregatedCPUTime -
-			compensateAggregatedTime as MicroSeconds_number
 
-		return result
+		if (this.pathIndex.id === undefined) {
+			throw new Error('totalSourceNodeMetaData: expected pathIndex.id')
+		}
+		// remove self references
+		intern.delete(this.pathIndex.id)
+
+		const result = SourceNodeMetaData.sum(...listToSum)
+
+		return {
+			sum: result,
+			intern,
+			extern,
+			langInternal
+		}
 	}
 
-	maxSourceNodeMataData() {
+	maxSourceNodeMetaData() {
 		return SourceNodeMetaData.max(...this.functions.values())
 	}
 
