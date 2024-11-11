@@ -16,6 +16,9 @@ import {
 import {
 	AuthenticationHelper
 } from './helper/AuthenticationHelper'
+import {
+	VersionHelper
+} from './helper/VersionHelper'
 import { DEFAULT_PROFILER_CONFIG } from './constants/config'
 import {
 	ProfilerConfig,
@@ -138,6 +141,7 @@ export {
 	PathIndex,
 	SourceNodeIndex,
 	BufferHelper,
+	VersionHelper,
 	AuthenticationHelper,
 	SourceNodeNameRegexString,
 	SourceNodeNameExpressionRegex,
