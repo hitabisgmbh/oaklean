@@ -14,7 +14,8 @@ import {
 	MicroSeconds_number,
 	ReportKind,
 	PermissionHelper,
-	LoggerHelper
+	LoggerHelper,
+	ExecutionDetails
 } from '@oaklean/profiler-core'
 import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 
@@ -199,7 +200,7 @@ export class Profiler {
 		if (executionDetails) {
 			this.executionDetails = executionDetails
 		} else {
-			this.executionDetails = await ProjectReport.resolveExecutionDetails()
+			this.executionDetails = await ExecutionDetails.resolveExecutionDetails()
 		}
 		V8Profiler.setGenerateType(1) // must be set to generate new cpuprofile format
 		V8Profiler.setSamplingInterval(this.config.getV8CPUSamplingInterval()) // sets the sampling interval in microseconds

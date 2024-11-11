@@ -24,6 +24,9 @@ import {
 	ProfilerConfig,
 } from './model/ProfilerConfig'
 import {
+	ExecutionDetails,
+} from './model/ExecutionDetails'
+import {
 	ProgramStructureTree
 } from './model/ProgramStructureTree'
 import {
@@ -115,6 +118,7 @@ export {
 	TimeHelper,
 	DEFAULT_PROFILER_CONFIG,
 	ProfilerConfig,
+	ExecutionDetails,
 	ProgramStructureTree,
 	ModuleReport,
 	Report,
