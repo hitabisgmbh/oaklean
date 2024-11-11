@@ -30,7 +30,7 @@
 		"teardown.d.ts"
 	],
 	"scripts": {
-		"clear-build": "npx rimraf ./dist",
+		"clear-build": "npx tsc --build --clean",
 		"build": "npm run clear-build && npx cross-env NODE_ENV=production npx tsc",
 		"lint": "npx eslint --fix .",
 		"publish-registry": "npm publish",
