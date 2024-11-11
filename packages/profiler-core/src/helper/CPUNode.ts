@@ -228,14 +228,36 @@ export class CPUNode {
 		return CPUNodeType.intern
 	}
 
+	private functionNameToSourceNodeIdentifier(functionName: string) {
+		const chunks = []
+
+		let chunk = ''
+		let lastChar = ''
+		for (const char of functionName) {
+			if (char === '.') {
+				if (lastChar === '.') {
+					chunk += char
+				} else {
+					chunks.push(`{${chunk}}`)
+					chunk = ''
+				}
+			} else {
+				chunk += char
+			}
+			lastChar = char
+		}
+		chunks.push(`{${chunk}}`)
+		return chunks.join('.') as SourceNodeIdentifier_string
+	}
+
 	get sourceNodeIdentifier() {
 		if (this._sourceNodeIdentifier === undefined) {
 			if (RegExpTestRegex.test(this.ISourceLocation.callFrame.functionName)) {
 				this._sourceNodeIdentifier = this.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
 			} else {
-				this._sourceNodeIdentifier = this.ISourceLocation.callFrame.functionName.split('.').map(
-					(x) => `{${x}}`
-				).join('.') as SourceNodeIdentifier_string
+				this._sourceNodeIdentifier = this.functionNameToSourceNodeIdentifier(
+					this.ISourceLocation.callFrame.functionName
+				)
 			}
 		}
 		return this._sourceNodeIdentifier
