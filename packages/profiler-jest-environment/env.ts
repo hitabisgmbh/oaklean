@@ -9,7 +9,8 @@ import {
 	ProjectReportOrigin,
 	LoggerHelper,
 	ExecutionDetails,
-	IProjectReportExecutionDetails
+	IProjectReportExecutionDetails,
+	PerformanceHelper
 } from '@oaklean/profiler-core'
 
 declare global {
@@ -58,9 +59,19 @@ class CustomEnvironment extends NodeEnvironment {
 	async setup() {
 		await super.setup()
 		if (process.env.ENABLE_MEASUREMENTS && this.profiler) {
+			const performance = new PerformanceHelper()
 			try {
+				performance.start('jestEnv.env.setup')
+				performance.start('jestEnv.env.resolveConfig')
 				const config = ProfilerConfig.autoResolve()
+				performance.stop('jestEnv.env.resolveConfig')
+
+				performance.start('jestEnv.env.resolveExecutionDetails')
 				const executionDetails = await this.getExecutionDetails(config)
+				performance.stop('jestEnv.env.resolveExecutionDetails')
+
+				performance.stop('jestEnv.env.setup')
+				performance.printReport('jestEnv.env.setup')
 
 				await this.profiler.start(
 					this.testPath.toString(),
@@ -75,8 +86,13 @@ class CustomEnvironment extends NodeEnvironment {
 
 	async teardown() {
 		if (process.env.ENABLE_MEASUREMENTS && this.profiler) {
+			const performance = new PerformanceHelper()
 			try {
+				performance.start('jestEnv.env.teardown')
 				const stopTime = process.hrtime.bigint() as NanoSeconds_BigInt
+				performance.stop('jestEnv.env.teardown')
+				performance.printReport('jestEnv.env.teardown')
+
 				await this.profiler.finish(this.testPath.toString(), stopTime)
 			} catch (e) {
 				LoggerHelper.error('CustomEnvironment.teardown(): ', e)

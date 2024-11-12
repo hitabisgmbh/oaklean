@@ -8,7 +8,8 @@ import {
 	ProfilerConfig,
 	APP_NAME,
 	SensorInterfaceType,
-	LoggerHelper
+	LoggerHelper,
+	PerformanceHelper
 } from '@oaklean/profiler-core'
 import { PerfEvent } from '@oaklean/profiler/dist/src/interfaces/perf/PerfSensorInterface'
 
@@ -16,21 +17,32 @@ export default async function () {
 	if (!process.env.ENABLE_MEASUREMENTS) {
 		return
 	}
+	const performance = new PerformanceHelper()
+	performance.start('jestEnv.setup')
 	LoggerHelper.log(`\n(${APP_NAME} Profiler) Clean up Measurements`)
+	performance.start('jestEnv.setup.resolveConfig')
 	const profilerConfig = ProfilerConfig.autoResolve()
+	performance.stop('jestEnv.setup.resolveConfig')
 	const outDir = profilerConfig.getOutDir().join('jest')
 
 	LoggerHelper.log(`(${APP_NAME} Profiler) V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
+	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
 	const sensorInterfaceOptions = profilerConfig.getSensorInterfaceOptions()
+	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
 	if (sensorInterfaceOptions !== undefined) {
 		LoggerHelper.log(`(${APP_NAME} Profiler) Using SensorInterface: `, profilerConfig.getSensorInterfaceType())
 		LoggerHelper.log(
 			`(${APP_NAME} Profiler) SensorInterface Sample Interval: ${sensorInterfaceOptions.sampleInterval}ms`
 		)
 
+		performance.start('jestEnv.setup.Profiler.getSensorInterface')
 		const sensorInterface = Profiler.getSensorInterface(profilerConfig)
+		performance.stop('jestEnv.setup.Profiler.getSensorInterface')
 		if (sensorInterface !== undefined) {
-			if (await sensorInterface.canBeExecuted() === false) {
+			performance.start('jestEnv.setup.sensorInterface.canBeExecuted')
+			const canBeExecuted = await sensorInterface.canBeExecuted()
+			performance.stop('jestEnv.setup.sensorInterface.canBeExecuted')
+			if (canBeExecuted === false) {
 				LoggerHelper.error(
 					`(${APP_NAME} Profiler) Sensor Interface cannot be executed with these permissions`
 				)
@@ -59,7 +71,11 @@ export default async function () {
 		)
 	}
 
+	performance.start('jestEnv.setup.clearOutDir')
 	if (fs.existsSync(outDir.toString())) {
 		fs.rmSync(outDir.toString(), { recursive: true })
 	}
+	performance.stop('jestEnv.setup.clearOutDir')
+	performance.stop('jestEnv.setup')
+	performance.printReport('jestEnv.setup')
 }
