@@ -78,4 +78,5 @@ export default async function () {
 	performance.stop('jestEnv.setup.clearOutDir')
 	performance.stop('jestEnv.setup')
 	performance.printReport('jestEnv.setup')
+	performance.exportAndSum(outDir.join('performance.json'))
 }

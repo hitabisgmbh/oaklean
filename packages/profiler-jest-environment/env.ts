@@ -72,6 +72,7 @@ class CustomEnvironment extends NodeEnvironment {
 
 				performance.stop('jestEnv.env.setup')
 				performance.printReport('jestEnv.env.setup')
+				performance.exportAndSum(this.profiler.outputDir().join('performance.json'))
 
 				await this.profiler.start(
 					this.testPath.toString(),
@@ -92,6 +93,7 @@ class CustomEnvironment extends NodeEnvironment {
 				const stopTime = process.hrtime.bigint() as NanoSeconds_BigInt
 				performance.stop('jestEnv.env.teardown')
 				performance.printReport('jestEnv.env.teardown')
+				performance.exportAndSum(this.profiler.outputDir().join('performance.json'))
 
 				await this.profiler.finish(this.testPath.toString(), stopTime)
 			} catch (e) {

@@ -246,6 +246,7 @@ export class Profiler {
 		performance.stop('Profiler.start.V8Profiler.startProfiling')
 		performance.stop('Profiler.start')
 		performance.printReport('Profiler.start')
+		performance.exportAndSum(this.outputDir().join('performance.json'))
 	}
 
 	outputDir(): UnifiedPath {
@@ -364,12 +365,11 @@ export class Profiler {
 		}
 
 		if (await report.shouldBeStoredInRegistry()) {
-			performance.start('Profiler.finish.uploadToRegistry')
 			await report.uploadToRegistry(this.config)
-			performance.stop('Profiler.finish.uploadToRegistry')
 		}
 		performance.stop('Profiler.finish')
 		performance.printReport('Profiler.finish')
+		performance.exportAndSum(this.outputDir().join('performance.json'))
 
 		return report
 	}

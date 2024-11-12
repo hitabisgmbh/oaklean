@@ -74,5 +74,6 @@ export default async function () {
 		}
 		performance.stop('jestEnv.teardown')
 		performance.printReport('jestEnv.teardown')
+		performance.exportAndSum(outDir.join('performance.json'))
 	}
 }
