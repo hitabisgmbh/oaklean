@@ -36,7 +36,7 @@
 		"lint": "npx eslint --fix .",
 		"test": "npx jest --coverage",
 		"test-update": "npx cross-env UPDATE_TEST_REPORTS=1 npx jest --coverage",
-		"test-measure": "npx cross-env ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand",
+		"test-measure": "npx cross-env ENABLE_MEASUREMENTS=1 OAKLEAN_ENABLE_PERFORMANCE_TRACKING=1 npx jest --coverage --runInBand",
 		"publish-registry": "npm publish",
 		"generate-docs": ""
 	},

@@ -11,6 +11,9 @@ import {
 	TimeHelper
 } from './helper/TimeHelper'
 import {
+	PerformanceHelper
+} from './helper/PerformanceHelper'
+import {
 	BufferHelper
 } from './helper/BufferHelper'
 import {
@@ -116,6 +119,7 @@ export {
 	NodeModuleUtils,
 	PermissionHelper,
 	TimeHelper,
+	PerformanceHelper,
 	DEFAULT_PROFILER_CONFIG,
 	ProfilerConfig,
 	ExecutionDetails,
