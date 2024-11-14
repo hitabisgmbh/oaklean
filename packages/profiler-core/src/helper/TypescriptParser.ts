@@ -4,6 +4,7 @@ import * as path from 'path'
 import * as ts from 'typescript'
 
 import { TypeScriptHelper } from './TypescriptHelper'
+import { LoggerHelper } from './LoggerHelper'
 
 import { ProgramStructureTree } from '../model/ProgramStructureTree'
 import { UnifiedPath } from '../system/UnifiedPath'
@@ -14,7 +15,6 @@ import {
 	NodeLocation,
 	IdentifierType
 } from '../types'
-import { LoggerHelper } from './LoggerHelper'
 
 type TraverseNodeInfo = {
 	tree: ProgramStructureTree,
