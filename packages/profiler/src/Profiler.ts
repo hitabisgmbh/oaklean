@@ -14,7 +14,9 @@ import {
 	MicroSeconds_number,
 	ReportKind,
 	PermissionHelper,
-	LoggerHelper
+	LoggerHelper,
+	ExecutionDetails,
+	PerformanceHelper
 } from '@oaklean/profiler-core'
 import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 
@@ -186,35 +188,65 @@ export class Profiler {
 	}
 
 	async start(title: string, executionDetails?: IProjectReportExecutionDetails) {
+		const performance = new PerformanceHelper()
+		performance.start('Profiler.start')
+
 		const outFileReport = this.outputReportPath(title)
 		const outDir = outFileReport.dirName()
+
+		performance.start('Profiler.start.createOutDir')
 		if (!fs.existsSync(outDir.toPlatformString())) {
 			PermissionHelper.mkdirRecursivelyWithUserPermission(outDir)
 		}
+		performance.stop('Profiler.start.createOutDir')
+
+		performance.start('Profiler.start.seedRandom')
 		const mathRandomSeed = this.config.getSeedForMathRandom()
 		if (mathRandomSeed) {
 			seedrandom(mathRandomSeed, { global: true })
 		}
+		performance.stop('Profiler.start.seedRandom')
 
 		if (executionDetails) {
 			this.executionDetails = executionDetails
 		} else {
-			this.executionDetails = await ProjectReport.resolveExecutionDetails()
+			performance.start('Profiler.start.resolveExecutionDetails')
+			this.executionDetails = await ExecutionDetails.resolveExecutionDetails()
+			performance.stop('Profiler.start.resolveExecutionDetails')
 		}
+		performance.start('Profiler.start.V8Profiler.setGenerateType')
 		V8Profiler.setGenerateType(1) // must be set to generate new cpuprofile format
+		performance.stop('Profiler.start.V8Profiler.setGenerateType')
+
+		performance.start('Profiler.start.getV8CPUSamplingInterval')
 		V8Profiler.setSamplingInterval(this.config.getV8CPUSamplingInterval()) // sets the sampling interval in microseconds
+		performance.stop('Profiler.start.getV8CPUSamplingInterval')
+
+		performance.start('Profiler.start.startCapturingProfilerTracingEvents')
 		await this.startCapturingProfilerTracingEvents()
+		performance.stop('Profiler.start.startCapturingProfilerTracingEvents')
+
+		performance.start('Profiler.start.sensorInterface.couldBeExecuted')
 		if (this._sensorInterface !== undefined && !await this._sensorInterface.couldBeExecuted()) {
 			// remove sensor interface from execution details since it cannot be executed
 			this.executionDetails.runTimeOptions.sensorInterface = undefined
 			LoggerHelper.warn(`(${APP_NAME} Profiler) Warning: ` + 
 				'Sensor Interface can not be executed, no energy measurements will be collected')
 		}
+		performance.stop('Profiler.start.sensorInterface.couldBeExecuted')
+
+		performance.start('Profiler.start.sensorInterface.startProfiling')
 		await this._sensorInterface?.startProfiling()
+		performance.stop('Profiler.start.sensorInterface.startProfiling')
 
 		// title - handle to stop profile again
 		// recsampels(boolean) - record samples, if false no cpu times will be captured
+		performance.start('Profiler.start.V8Profiler.startProfiling')
 		V8Profiler.startProfiling(title, true)
+		performance.stop('Profiler.start.V8Profiler.startProfiling')
+		performance.stop('Profiler.start')
+		performance.printReport('Profiler.start')
+		performance.exportAndSum(this.outputDir().join('performance.json'))
 	}
 
 	outputDir(): UnifiedPath {
@@ -234,6 +266,9 @@ export class Profiler {
 	}
 
 	async finish(title: string, highResolutionStopTime?: NanoSeconds_BigInt): Promise<ProjectReport> {
+		const performance = new PerformanceHelper()
+		
+		performance.start('Profiler.finish')
 		if (this.executionDetails === undefined) {
 			throw new Error('Profiler.finish: Profiler was not started yet')
 		}
@@ -241,9 +276,18 @@ export class Profiler {
 			this.executionDetails.highResolutionStopTime = highResolutionStopTime.toString()
 		}
 
+		performance.start('Profiler.finish.stopProfiling')
 		const profile = V8Profiler.stopProfiling(title)
+		performance.stop('Profiler.finish.stopProfiling')
+
+		performance.start('Profiler.finish.stopCapturingProfilerTracingEvents')
 		this.stopCapturingProfilerTracingEvents()
+		performance.stop('Profiler.finish.stopCapturingProfilerTracingEvents')
+
+		performance.start('Profiler.finish.sensorInterface.stopProfiling')
 		await this._sensorInterface?.stopProfiling()
+		performance.stop('Profiler.finish.sensorInterface.stopProfiling')
+
 		const CPUProfilerBeginTime = BigInt(await this.getCPUProfilerBeginTime()) * BigInt(1000) as NanoSeconds_BigInt
 		this.executionDetails.highResolutionBeginTime = CPUProfilerBeginTime.toString()
 
@@ -266,6 +310,7 @@ export class Profiler {
 			if (!fs.existsSync(this.outputDir().toPlatformString())) {
 				PermissionHelper.mkdirRecursivelyWithUserPermission(this.outputDir())
 			}
+			performance.start('Profiler.finish.exportJestConfig')
 			PermissionHelper.writeFileWithUserPermission(
 				this.outputDir().join('jest.config').toPlatformString(),
 				JSON.stringify({
@@ -273,42 +318,59 @@ export class Profiler {
 					context: this.options.jestAdapter.context
 				})
 			)
+			performance.stop('Profiler.finish.exportJestConfig')
 		}
 		const outFileCPUProfile = this.outputProfilePath(title)
 		const outFileReport = this.outputReportPath(title)
 		const outFileMetricCollection = this.outputMetricCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
+			performance.start('Profiler.finish.exportV8Profile')
 			PermissionHelper.writeFileWithUserPermission(
 				outFileCPUProfile.toPlatformString(),
 				JSON.stringify(exportData, null, 2),
 			)
+			performance.stop('Profiler.finish.exportV8Profile')
 		}
+		performance.start('Profiler.finish.sensorInterface.readSensorValues')
 		const metricsDataCollection = await this._sensorInterface?.readSensorValues(process.pid)
+		performance.stop('Profiler.finish.sensorInterface.readSensorValues')
 
 		const rootDir = this.config.getRootDir()
 		const report = new ProjectReport(this.executionDetails, ReportKind.measurement)
 		if (this.config.shouldExportSensorInterfaceData()) {
 			if (metricsDataCollection !== undefined) {
+				performance.start('Profiler.finish.exportMetricsDataCollection')
 				metricsDataCollection.storeToFile(outFileMetricCollection)
+				performance.stop('Profiler.finish.exportMetricsDataCollection')
 			}
 		}
 
+		performance.start('Profiler.finish.insertCPUProfile')
 		await report.insertCPUProfile(
 			rootDir,
 			profile,
 			transformerAdapter,
 			metricsDataCollection
 		)
+		performance.stop('Profiler.finish.insertCPUProfile')
 
+		performance.start('Profiler.finish.trackUncommittedFiles')
 		await report.trackUncommittedFiles(rootDir)
+		performance.stop('Profiler.finish.trackUncommittedFiles')
 
 		if (this.config.shouldExportReport()) {
+			performance.start('Profiler.finish.exportReport')
 			report.storeToFile(outFileReport, 'bin', this.config)
+			performance.stop('Profiler.finish.exportReport')
 		}
 
 		if (await report.shouldBeStoredInRegistry()) {
 			await report.uploadToRegistry(this.config)
 		}
+		performance.stop('Profiler.finish')
+		performance.printReport('Profiler.finish')
+		performance.exportAndSum(this.outputDir().join('performance.json'))
+
 		return report
 	}
 }

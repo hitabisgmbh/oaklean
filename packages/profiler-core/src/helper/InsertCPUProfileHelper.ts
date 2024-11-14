@@ -739,24 +739,38 @@ export class InsertCPUProfileHelper {
 			cpuModel.energyValuesPerNode = cpuModel.energyValuesPerNodeByMetricsData(metricsDataCollection)
 		}
 		const awaiterStack: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>[] = []
-		/**
-		 * 
-		 * @param reportToCredit the ProjectReport that is used to store the measurements
-		 * @param node current node in the call tree 
-		 * 
-		 * @param accounted Source Node (call identifier) already includes
-		 * 		subCalls of: (call identifier)[]
-		 */
-		async function traverse(
-			originalReport: Report,
-			reportToCredit: Report,
-			cpuNode: CPUNode,
-			lastNodeCallInfo: {
-				report: Report,
-				sourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
-			} | undefined,
+
+		function afterTraverse(
+			parentSourceNode_CallIdentifier: CallIdentifier | undefined,
+			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
+			isAwaiterSourceNode: boolean,
 			accounted: AccountedTracker
 		) {
+			// equivalent to leave node since after child traverse
+			if (parentSourceNode_CallIdentifier) {
+				const childCalls = accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
+					parentSourceNode_CallIdentifier))
+				if (childCalls === undefined) {
+					throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present')
+				}
+				childCalls.pop() // remove self from parent
+			}
+			if (firstTimeVisitedSourceNode_CallIdentifier !== undefined) {
+				InsertCPUProfileHelper.removeFromAccounted(accounted, firstTimeVisitedSourceNode_CallIdentifier)
+			}
+			if (isAwaiterSourceNode) {
+				awaiterStack.pop()
+			}
+		}
+
+		async function beforeTraverse(
+			cpuNode: CPUNode,
+			originalReport: Report,
+			reportToCreditArg: Report,
+			lastNodeCallInfo: LastNodeCallInfo | undefined,
+			accounted: AccountedTracker
+		) {
+			let reportToCredit = reportToCreditArg
 			if (!cpuNode.isExtern && !cpuNode.isLangInternal) {
 				reportToCredit = originalReport
 			}
@@ -795,7 +809,7 @@ export class InsertCPUProfileHelper {
 					getSourceMapOfFile,
 					getSourceMapFromSourceCode
 				)
-
+				
 				// add to intern if the source file is not part of a node module
 				// or the reportToCredit is the node module that source file belongs to
 				const addToIntern =
@@ -860,6 +874,41 @@ export class InsertCPUProfileHelper {
 				newLastInternSourceNode.presentInOriginalSourceCode = functionIdentifierPresentInOriginalFile
 			}
 
+			return {
+				originalReport,
+				reportToCredit,
+				newReportToCredit,
+				newLastInternSourceNode,
+				parentSourceNode_CallIdentifier,
+				firstTimeVisitedSourceNode_CallIdentifier,
+				isAwaiterSourceNode,
+				accounted
+			}
+		}
+
+		async function traverse(
+			originalReport: Report,
+			reportToCredit: Report,
+			cpuNode: CPUNode,
+			lastNodeCallInfo: {
+				report: Report,
+				sourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+			} | undefined,
+			accounted: AccountedTracker
+		) {
+			const {
+				newReportToCredit,
+				newLastInternSourceNode,
+				parentSourceNode_CallIdentifier,
+				firstTimeVisitedSourceNode_CallIdentifier,
+				isAwaiterSourceNode,
+			} = await beforeTraverse(
+				cpuNode,
+				originalReport,
+				reportToCredit,
+				lastNodeCallInfo,
+				accounted
+			)
 			for (const child of cpuNode.children()) {
 				await traverse(
 					originalReport,
@@ -872,21 +921,12 @@ export class InsertCPUProfileHelper {
 					accounted
 				)
 			}
-			// equivalent to leave node since after child traverse
-			if (parentSourceNode_CallIdentifier) {
-				const childCalls = accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
-					parentSourceNode_CallIdentifier))
-				if (childCalls === undefined) {
-					throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present')
-				}
-				childCalls.pop() // remove self from parent
-			}
-			if (firstTimeVisitedSourceNode_CallIdentifier !== undefined) {
-				InsertCPUProfileHelper.removeFromAccounted(accounted, firstTimeVisitedSourceNode_CallIdentifier)
-			}
-			if (isAwaiterSourceNode) {
-				awaiterStack.pop()
-			}
+			afterTraverse(
+				parentSourceNode_CallIdentifier,
+				firstTimeVisitedSourceNode_CallIdentifier,
+				isAwaiterSourceNode,
+				accounted
+			)
 		}
 
 		await traverse(

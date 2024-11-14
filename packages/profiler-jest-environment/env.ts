@@ -7,8 +7,10 @@ import {
 	NanoSeconds_BigInt,
 	ProfilerConfig,
 	ProjectReportOrigin,
-	ProjectReport,
-	LoggerHelper
+	LoggerHelper,
+	ExecutionDetails,
+	IProjectReportExecutionDetails,
+	PerformanceHelper
 } from '@oaklean/profiler-core'
 
 declare global {
@@ -42,13 +44,35 @@ class CustomEnvironment extends NodeEnvironment {
 		this.ranSuccessfully = true
 	}
 
+	private async getExecutionDetails(config: ProfilerConfig): Promise<IProjectReportExecutionDetails> {
+		const executionDetailsPath = config.getOutDir().join('jest', 'execution-details.json')
+		let executionDetails = ExecutionDetails.loadFromFile(executionDetailsPath)
+
+		if (executionDetails === undefined) {
+			executionDetails = await ExecutionDetails.resolveExecutionDetails(config)
+			executionDetails.origin = ProjectReportOrigin.jestEnv
+			ExecutionDetails.storeToFile(executionDetails, executionDetailsPath)
+		}
+		return executionDetails
+	}
+
 	async setup() {
 		await super.setup()
 		if (process.env.ENABLE_MEASUREMENTS && this.profiler) {
+			const performance = new PerformanceHelper()
 			try {
+				performance.start('jestEnv.env.setup')
+				performance.start('jestEnv.env.resolveConfig')
 				const config = ProfilerConfig.autoResolve()
-				const executionDetails = await ProjectReport.resolveExecutionDetails(config)
-				executionDetails.origin = ProjectReportOrigin.jestEnv
+				performance.stop('jestEnv.env.resolveConfig')
+
+				performance.start('jestEnv.env.resolveExecutionDetails')
+				const executionDetails = await this.getExecutionDetails(config)
+				performance.stop('jestEnv.env.resolveExecutionDetails')
+
+				performance.stop('jestEnv.env.setup')
+				performance.printReport('jestEnv.env.setup')
+				performance.exportAndSum(this.profiler.outputDir().join('performance.json'))
 
 				await this.profiler.start(
 					this.testPath.toString(),
@@ -63,8 +87,14 @@ class CustomEnvironment extends NodeEnvironment {
 
 	async teardown() {
 		if (process.env.ENABLE_MEASUREMENTS && this.profiler) {
+			const performance = new PerformanceHelper()
 			try {
+				performance.start('jestEnv.env.teardown')
 				const stopTime = process.hrtime.bigint() as NanoSeconds_BigInt
+				performance.stop('jestEnv.env.teardown')
+				performance.printReport('jestEnv.env.teardown')
+				performance.exportAndSum(this.profiler.outputDir().join('performance.json'))
+
 				await this.profiler.finish(this.testPath.toString(), stopTime)
 			} catch (e) {
 				LoggerHelper.error('CustomEnvironment.teardown(): ', e)

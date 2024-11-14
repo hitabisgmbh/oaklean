@@ -53,7 +53,12 @@ export class PathUtils {
 		let tmpDir = startDir
 
 		while (tmpDir !== root) {
-			const list = fs.readdirSync(tmpDir)
+			let list: string[]
+			try {
+				list = fs.readdirSync(tmpDir)
+			} catch (e: any) {
+				break
+			}
 			if (list.includes(filename) && fs.statSync(path.join(tmpDir, filename)).isFile()) {
 				// found
 				return path.join(tmpDir, filename)

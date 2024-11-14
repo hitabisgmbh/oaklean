@@ -13,7 +13,6 @@ import { ModuleIndex } from './index/ModuleIndex'
 
 import { BaseAdapter } from '../adapters/transformer/BaseAdapter'
 import { GitHelper } from '../helper/GitHelper'
-import { TimeHelper } from '../helper/TimeHelper'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
@@ -74,36 +73,6 @@ export class ProjectReport extends Report {
 
 	public get engineModule() : NodeModule {
 		return this.globalIndex.engineModule
-	}
-
-	static async resolveExecutionDetails(config?: ProfilerConfig): Promise<IProjectReportExecutionDetails> {
-		const commitHash = GitHelper.currentCommitHash()
-		const commitTimestamp = GitHelper.currentCommitTimestamp()
-		const timestamp = TimeHelper.getCurrentTimestamp()
-
-		if (timestamp === undefined) {
-			throw new Error('ProjectReport.resolveExecutionDetails: Could not resolve execution details.' + JSON.stringify({
-				commitHash: commitHash,
-				timestamp: timestamp
-			}, undefined, 2))
-		}
-		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
-
-		const engineModule = NodeModule.currentEngineModule()
-
-		return {
-			origin: ProjectReportOrigin.pure,
-			commitHash: commitHash,
-			commitTimestamp: commitTimestamp,
-			timestamp: timestamp,
-			uncommittedChanges: undefined,
-			systemInformation: await SystemInformation.collect(),
-			languageInformation: {
-				name: engineModule.name,
-				version: engineModule.version
-			},
-			runTimeOptions: usedConfig.getAnonymizedRuntimeOptions()
-		}
 	}
 
 	isCompatibleWith(other: ProjectReport) {
