@@ -886,36 +886,6 @@ export class InsertCPUProfileHelper {
 			}
 		}
 
-		const nodeStack: {
-			visited: boolean,
-			originalReport: Report,
-			reportToCredit: Report,
-			cpuNode: CPUNode,
-			lastNodeCallInfo: {
-				report: Report,
-				sourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
-			} | undefined,
-			scoped: {
-				parentSourceNode_CallIdentifier: CallIdentifier | undefined,
-				firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
-				isAwaiterSourceNode: boolean
-			} | undefined
-		}[] = [
-			{
-				visited: false,
-				originalReport: reportToApply,
-				reportToCredit: reportToApply,
-				cpuNode: cpuModel.getNode(0),
-				lastNodeCallInfo: undefined,
-				scoped: undefined
-			}]
-		const accounted: AccountedTracker = {
-			map: new Map<string, string[]>(),
-			internMap: new Map<string, boolean>(),
-			externMap: new Map<string, boolean>(),
-			langInternalMap: new Map<string, boolean>()
-		}
-
 		async function traverse(
 			originalReport: Report,
 			reportToCredit: Report,
@@ -959,79 +929,17 @@ export class InsertCPUProfileHelper {
 			)
 		}
 
-		// await traverse(
-		// 	reportToApply,
-		// 	reportToApply,
-		// 	cpuModel.getNode(0),
-		// 	undefined,
-		// 	{
-		// 		map: new Map<string, string[]>,
-		// 		internMap: new Map<string, boolean>(),
-		// 		externMap: new Map<string, boolean>(),
-		// 		langInternalMap: new Map<string, boolean>()
-		// 	}
-		// )
-		
-		while (nodeStack.length > 0) {
-			const node = nodeStack.pop()!
-
-			if (node.visited) {
-				if (node.scoped === undefined) {
-					throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: expected scoped to be present')
-				}
-				const {
-					parentSourceNode_CallIdentifier,
-					firstTimeVisitedSourceNode_CallIdentifier,
-					isAwaiterSourceNode
-				} = node.scoped
-
-				afterTraverse(
-					parentSourceNode_CallIdentifier,
-					firstTimeVisitedSourceNode_CallIdentifier,
-					isAwaiterSourceNode,
-					accounted
-				)
-			} else {
-				node.visited = true
-				nodeStack.push(node)
-
-				const {
-					originalReport,
-					reportToCredit,
-					newReportToCredit,
-					newLastInternSourceNode,
-					parentSourceNode_CallIdentifier,
-					firstTimeVisitedSourceNode_CallIdentifier,
-					isAwaiterSourceNode
-				} = await beforeTraverse(
-					node.cpuNode,
-					node.originalReport,
-					node.reportToCredit,
-					node.lastNodeCallInfo,
-					accounted
-				)
-				node.scoped = {
-					parentSourceNode_CallIdentifier,
-					firstTimeVisitedSourceNode_CallIdentifier,
-					isAwaiterSourceNode
-				}
-
-				const nodesToPush = []
-				for (const child of node.cpuNode.children()) {
-					nodesToPush.unshift({
-						visited: false,
-						originalReport: originalReport,
-						reportToCredit: newReportToCredit ? newReportToCredit : reportToCredit,
-						cpuNode: child,
-						lastNodeCallInfo: newLastInternSourceNode !== undefined ? {
-							report: reportToCredit,
-							sourceNode: newLastInternSourceNode
-						} : undefined,
-						scoped: undefined
-					})
-				}
-				nodeStack.push(...nodesToPush)
+		await traverse(
+			reportToApply,
+			reportToApply,
+			cpuModel.getNode(0),
+			undefined,
+			{
+				map: new Map<string, string[]>,
+				internMap: new Map<string, boolean>(),
+				externMap: new Map<string, boolean>(),
+				langInternalMap: new Map<string, boolean>()
 			}
-		}
+		)
 	}
 }
