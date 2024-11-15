@@ -40,7 +40,7 @@ export class ProjectReport extends Report {
 		kind: ReportKind,
 		projectMetaData?: IProjectMetaData,
 		globalIndex?: GlobalIndex,
-		config?: ProfilerConfig
+		config?: ProfilerConfig | null
 	) {
 		let index = globalIndex
 		if (index === undefined) {
@@ -59,6 +59,9 @@ export class ProjectReport extends Report {
 		if (projectMetaData) {
 			this.projectMetaData = projectMetaData
 		} else {
+			if (usedConfig === null) {
+				throw new Error('ProjectReport: no config was provided')
+			}
 			this.projectMetaData = {
 				projectID: usedConfig.getProjectIdentifier()
 			}
@@ -139,8 +142,7 @@ export class ProjectReport extends Report {
 	}
 
 	static fromJSON(
-		json: string | IProjectReport,
-		config?: ProfilerConfig
+		json: string | IProjectReport
 	): ProjectReport {
 		let data: IProjectReport
 		if (typeof json === 'string') {
@@ -157,7 +159,7 @@ export class ProjectReport extends Report {
 				data.executionDetails.languageInformation.name,
 				data.executionDetails.languageInformation.version
 			)),
-			config
+			null
 		)
 
 		const result = Object.assign(
@@ -170,8 +172,7 @@ export class ProjectReport extends Report {
 
 	static loadFromFile(
 		filePath: UnifiedPath,
-		kind: 'json' | 'bin',
-		config?: ProfilerConfig
+		kind: 'json' | 'bin'
 	): ProjectReport | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
@@ -179,13 +180,11 @@ export class ProjectReport extends Report {
 		switch (kind) {
 			case 'json':
 				return ProjectReport.fromJSON(
-					fs.readFileSync(filePath.toPlatformString()).toString(),
-					config
+					fs.readFileSync(filePath.toPlatformString()).toString()
 				)
 			case 'bin': {
 				const { instance } = ProjectReport.consumeFromBuffer(
-					fs.readFileSync(filePath.toPlatformString()),
-					config
+					fs.readFileSync(filePath.toPlatformString())
 				)
 				return instance
 			}
@@ -347,7 +346,7 @@ export class ProjectReport extends Report {
 				report.kind,
 				projectMetaData,
 				globalIndex,
-				config
+				null
 			),
 			report
 		)
