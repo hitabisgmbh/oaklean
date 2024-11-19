@@ -37,6 +37,7 @@ import {
 } from '../types'
 import { LoggerHelper } from '../helper/LoggerHelper'
 import { SetHelper } from '../helper/SetHelper'
+import { UnitHelper } from '../helper/UnitHelper'
 
 type UnifiedPathOnlyForPathNode<T> =
 	T extends SourceFileMetaDataTreeType.File |
@@ -51,6 +52,10 @@ type IndexTypeMap = {
 }
 
 type IndexPerType<T extends SourceFileMetaDataTreeType> = IndexTypeMap[T]
+
+function areNumbersClose(a: number, b: number, epsilon = 1e-10) {
+	return Math.abs(a - b) < epsilon
+}
 
 export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extends BaseModel{
 	private _lang_internalHeadlessSensorValues?: SensorValues
@@ -294,14 +299,57 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		const total = SourceNodeMetaData.sum(...totals)
 		const max = SourceNodeMetaData.max(...maxs)
 
-		if (!SourceNodeMetaData.equals(this.aggregatedInternSourceMetaData.total, total)) {
-			LoggerHelper.error(total, this.aggregatedInternSourceMetaData.total, this.filePath?.toString())
-			throw new Error('SourceFileMetaDataTree.validate: Assertion error total is not correct' + this.filePath?.toString())
+		// IMPORTANT to change when new measurement type gets added
+		if (this.type === SourceFileMetaDataTreeType.Root) {
+			total.sensorValues.aggregatedCPUTime = UnitHelper.sumMicroSeconds(
+				total.sensorValues.aggregatedCPUTime,
+				this.lang_internalHeadlessSensorValues.aggregatedCPUTime,
+				1
+			)
+			total.sensorValues.aggregatedCPUEnergyConsumption = UnitHelper.sumMilliJoule(
+				total.sensorValues.aggregatedCPUEnergyConsumption,
+				this.lang_internalHeadlessSensorValues.aggregatedCPUEnergyConsumption,
+				1
+			)
+			total.sensorValues.aggregatedRAMEnergyConsumption = UnitHelper.sumMilliJoule(
+				total.sensorValues.aggregatedRAMEnergyConsumption,
+				this.lang_internalHeadlessSensorValues.aggregatedRAMEnergyConsumption,
+				1
+			)
+		}
+
+		if (total.sensorValues.aggregatedCPUTime !== 
+			total.sensorValues.selfCPUTime +
+			total.sensorValues.internCPUTime +
+			total.sensorValues.externCPUTime +
+			total.sensorValues.langInternalCPUTime
+		||
+			!areNumbersClose(
+				total.sensorValues.aggregatedCPUEnergyConsumption,
+				total.sensorValues.selfCPUEnergyConsumption +
+				total.sensorValues.internCPUEnergyConsumption +
+				total.sensorValues.externCPUEnergyConsumption +
+				total.sensorValues.langInternalCPUEnergyConsumption
+			)
+			||
+			!areNumbersClose(
+				total.sensorValues.aggregatedRAMEnergyConsumption,
+				total.sensorValues.selfRAMEnergyConsumption +
+				total.sensorValues.internRAMEnergyConsumption +
+				total.sensorValues.externRAMEnergyConsumption +
+				total.sensorValues.langInternalRAMEnergyConsumption
+			)
+		) {
+			LoggerHelper.error(
+				total.sensorValues,
+				this.filePath?.toString()
+			)
+			throw new Error('SourceFileMetaDataTree.validate: Assertion error aggregatedCPUTime is not correct')
 		}
 
 		if (!SourceNodeMetaData.equals(this.aggregatedInternSourceMetaData.max, max)) {
 			LoggerHelper.error(max, this.aggregatedInternSourceMetaData.max, this.filePath?.toString())
-			throw new Error('SourceFileMetaDataTree.validate: Assertion error max is not correct' + this.filePath?.toString())
+			throw new Error('SourceFileMetaDataTree.validate: Assertion error max is not correct ' + this.filePath?.toString())
 		}
 	}
 
@@ -365,7 +413,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			data.type,
 			((
 				data.type === SourceFileMetaDataTreeType.File ||
-				data.type === SourceFileMetaDataTreeType.Directory
+				data.type === SourceFileMetaDataTreeType.Directory ||
+				data.type === SourceFileMetaDataTreeType.Module
 			) ? new UnifiedPath(data.filePath as unknown as string) : undefined) as UnifiedPathOnlyForPathNode<T>,
 			index
 		)
