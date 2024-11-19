@@ -12,6 +12,7 @@ import {
 	ISensorValues,
 	MicroSeconds_number
 } from '../types'
+import { UnitHelper } from '../helper/UnitHelper'
 
 export const SENSOR_VALUES_BYTE_SIZE_MAP: SensorValueToDataTypeMap = {
 	profilerHits: PrimitiveBufferTypes.UInt,
@@ -60,8 +61,6 @@ export const LANG_INTERNAL_SENSOR_VALUE_NAMES: (keyof ISensorValues)[] = [
 ]
 
 export class SensorValues extends BaseModel {
-	[key: string]: any
-
 	private _profilerHits?: number
 	private _selfCPUTime?: MicroSeconds_number
 	private _aggregatedCPUTime?: MicroSeconds_number
@@ -490,7 +489,7 @@ export class SensorValues extends BaseModel {
 	toBuffer(): Buffer {
 		return BufferHelper.numberMapToBuffer(
 			SENSOR_VALUES_BYTE_SIZE_MAP as Record<string, PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double>,
-			this
+			this as Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
 		)
 	}
 
@@ -510,48 +509,114 @@ export class SensorValues extends BaseModel {
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToSelf(other: SensorValues | Partial<ISensorValues>) {
-		this.selfCPUTime = this.selfCPUTime + (other.selfCPUTime || 0) as MicroSeconds_number
-		this.selfCPUEnergyConsumption = this.selfCPUEnergyConsumption
-			+ (other.selfCPUEnergyConsumption || 0) as MilliJoule_number
-		this.selfRAMEnergyConsumption = this.selfRAMEnergyConsumption
-			+ (other.selfRAMEnergyConsumption || 0) as MilliJoule_number
+	addToSelf(
+		other: SensorValues | Partial<ISensorValues>,
+		sign = 1
+	) {
+		this.selfCPUTime = UnitHelper.sumMicroSeconds(
+			this.selfCPUTime,
+			other.selfCPUTime,
+			sign
+		)
+		this.selfCPUEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.selfCPUEnergyConsumption,
+			other.selfCPUEnergyConsumption,
+			sign
+		)
+		this.selfRAMEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.selfRAMEnergyConsumption,
+			other.selfRAMEnergyConsumption,
+			sign
+		)
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToAggregated(other: SensorValues | Partial<ISensorValues>) {
-		this.aggregatedCPUTime = this.aggregatedCPUTime + (other.aggregatedCPUTime || 0) as MicroSeconds_number
-		this.aggregatedCPUEnergyConsumption = this.aggregatedCPUEnergyConsumption
-			+ (other.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-		this.aggregatedRAMEnergyConsumption = this.aggregatedRAMEnergyConsumption
-			+ (other.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+	addToAggregated(
+		other: SensorValues | Partial<ISensorValues>,
+		sign = 1
+	) {
+		this.aggregatedCPUTime = UnitHelper.sumMicroSeconds(
+			this.aggregatedCPUTime,
+			other.aggregatedCPUTime,
+			sign
+		)
+		this.aggregatedCPUEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.aggregatedCPUEnergyConsumption,
+			other.aggregatedCPUEnergyConsumption,
+			sign
+		)
+		this.aggregatedRAMEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.aggregatedRAMEnergyConsumption,
+			other.aggregatedRAMEnergyConsumption,
+			sign
+		)
+	}
+
+
+	// IMPORTANT to change when new measurement type gets added
+	addToIntern(
+		other: SensorValues | Partial<ISensorValues>,
+		sign = 1
+	) {
+		this.internCPUTime = UnitHelper.sumMicroSeconds(
+			this.internCPUTime,
+			other.aggregatedCPUTime,
+			sign
+		)
+		this.internCPUEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.internCPUEnergyConsumption,
+			other.aggregatedCPUEnergyConsumption,
+			sign
+		)
+		this.internRAMEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.internRAMEnergyConsumption,
+			other.aggregatedRAMEnergyConsumption,
+			sign
+		)
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToIntern(other: SensorValues | Partial<ISensorValues>) {
-		this.internCPUTime = this.internCPUTime + (other.aggregatedCPUTime || 0) as MicroSeconds_number
-		this.internCPUEnergyConsumption = this.internCPUEnergyConsumption
-			+ (other.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-		this.internRAMEnergyConsumption = this.internRAMEnergyConsumption
-			+ (other.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+	addToExtern(
+		other: SensorValues | Partial<ISensorValues>,
+		sign = 1
+	) {
+		this.externCPUTime = UnitHelper.sumMicroSeconds(
+			this.externCPUTime,
+			other.aggregatedCPUTime,
+			sign
+		)
+		this.externCPUEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.externCPUEnergyConsumption,
+			other.aggregatedCPUEnergyConsumption,
+			sign
+		)
+		this.externRAMEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.externRAMEnergyConsumption,
+			other.aggregatedRAMEnergyConsumption,
+			sign
+		)
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToExtern(other: SensorValues | Partial<ISensorValues>) {
-		this.externCPUTime = this.externCPUTime + (other.aggregatedCPUTime || 0) as MicroSeconds_number
-		this.externCPUEnergyConsumption = this.externCPUEnergyConsumption
-			+ (other.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-		this.externRAMEnergyConsumption = this.externRAMEnergyConsumption
-			+ (other.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
-	}
-
-	// IMPORTANT to change when new measurement type gets added
-	addToLangInternal(other: SensorValues | Partial<ISensorValues>) {
-		this.langInternalCPUTime = this.langInternalCPUTime + (other.aggregatedCPUTime || 0) as MicroSeconds_number
-		this.langInternalCPUEnergyConsumption = this.langInternalCPUEnergyConsumption
-			+ (other.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-		this.langInternalRAMEnergyConsumption = this.langInternalRAMEnergyConsumption
-			+ (other.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+	addToLangInternal(
+		other: SensorValues | Partial<ISensorValues>,
+		sign = 1
+	) {
+		this.langInternalCPUTime = UnitHelper.sumMicroSeconds(
+			this.langInternalCPUTime,
+			other.aggregatedCPUTime,
+			sign
+		)
+		this.langInternalCPUEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.langInternalCPUEnergyConsumption,
+			other.aggregatedCPUEnergyConsumption,
+			sign
+		)
+		this.langInternalRAMEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.langInternalRAMEnergyConsumption,
+			other.aggregatedRAMEnergyConsumption,
+			sign
+		)
 	}
 
 	add({
