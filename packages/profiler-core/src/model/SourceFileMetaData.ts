@@ -318,6 +318,8 @@ export class SourceFileMetaData extends BaseModel {
 	 * 
 	 * hits, selfTime, aggregatedTime, langInternalTime, externTime and internTime are added up
 	 * 
+	 * intern self references are removed
+	 * 
 	 * @returns number
 	 */
 	totalSourceNodeMetaData(): {
@@ -378,10 +380,17 @@ export class SourceFileMetaData extends BaseModel {
 		if (this.pathIndex.id === undefined) {
 			throw new Error('totalSourceNodeMetaData: expected pathIndex.id')
 		}
-		// remove self references
-		intern.delete(this.pathIndex.id)
+		const selfReference = intern.get(this.pathIndex.id)
 
 		const result = SourceNodeMetaData.sum(...listToSum)
+		if (selfReference !== undefined) {
+			// remove self references
+			result.sensorValues.addToIntern(selfReference, -1)
+			result.sensorValues.addToAggregated(selfReference, -1)
+			// remove self references
+			intern.delete(this.pathIndex.id)
+		}
+
 
 		return {
 			sum: result,
