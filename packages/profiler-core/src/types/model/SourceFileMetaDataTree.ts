@@ -29,7 +29,9 @@ export enum SourceFileMetaDataTreeType {
 }
 
 export type UnifiedPath_stringOnlyForPathNode<T> =
-	T extends SourceFileMetaDataTreeType.File | SourceFileMetaDataTreeType.Directory ? UnifiedPath_string : undefined
+	T extends SourceFileMetaDataTreeType.File |
+	SourceFileMetaDataTreeType.Directory |
+	SourceFileMetaDataTreeType.Module ? UnifiedPath_string : undefined
 
 export type IGlobalIndexOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? IGlobalIndex : undefined
 export type IEngineModuleOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? INodeModule : undefined

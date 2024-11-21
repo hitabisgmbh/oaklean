@@ -22,6 +22,9 @@ import {
 import {
 	VersionHelper
 } from './helper/VersionHelper'
+import {
+	UnitHelper
+} from './helper/UnitHelper'
 import { DEFAULT_PROFILER_CONFIG } from './constants/config'
 import {
 	ProfilerConfig,
@@ -150,6 +153,7 @@ export {
 	SourceNodeIndex,
 	BufferHelper,
 	VersionHelper,
+	UnitHelper,
 	AuthenticationHelper,
 	SourceNodeNameRegexString,
 	SourceNodeNameExpressionRegex,
