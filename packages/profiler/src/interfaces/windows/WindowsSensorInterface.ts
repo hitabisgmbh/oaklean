@@ -248,12 +248,12 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 
 		// detach from current node.js process
 		this._childProcess.unref()
-		await TimeHelper.sleep(1000 + this._options.sampleInterval) // wait to ensure measurements started, since the measurements only starts at full seconds
 		// wait until the start time is set (the first measurement is captured)
 		return new Promise<void>((resolve) => {
-			const interval = setInterval(() => {
+			const interval = setInterval(async () => {
 				if (this._startTime !== undefined) {
 					clearInterval(interval)
+					await TimeHelper.sleep(1000 + this._options.sampleInterval) // wait to ensure measurements started, since the measurements only starts at full seconds
 					resolve()
 				}
 			}, 100)
