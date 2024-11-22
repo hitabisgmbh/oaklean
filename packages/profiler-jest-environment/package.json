@@ -40,7 +40,9 @@
 		"generate-docs": "markdown-include md-configs/README.json"
 	},
 	"dependencies": {
-		"@oaklean/profiler": "^0.1.4",
+		"@oaklean/profiler": "0.1.4"
+	},
+	"peerDependencies": {
 		"@jest/environment": "^29.4.3"
 	},
 	"devDependencies": {

@@ -43,8 +43,10 @@
 		"test-update": "",
 		"generate-docs": "markdown-include md-configs/README.json"
 	},
+	"peerDependencies": {
+		"@oaklean/profiler-core": "^0.1.4"
+	},
 	"dependencies": {
-		"@oaklean/profiler-core": "^0.1.4",
 		"adm-zip": "^0.5.16"
 	},
 	"devDependencies": {
