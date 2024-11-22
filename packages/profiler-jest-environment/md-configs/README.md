@@ -1,5 +1,6 @@
 # `@oaklean/jest-profiler-environment`
 
+Supports Jest versions 28 & 29
 A jest environment to collect energy measurements on source code level during test execution.
 
 ## Usage

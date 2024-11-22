@@ -43,7 +43,8 @@
 		"@oaklean/profiler": "0.1.4"
 	},
 	"peerDependencies": {
-		"@jest/environment": "^29.4.3"
+		"@jest/environment": "^28.1.3",
+		"jest": "^28.0.0"
 	},
 	"devDependencies": {
 		"cross-env": "^7.0.3",

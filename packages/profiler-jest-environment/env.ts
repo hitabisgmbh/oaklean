@@ -1,6 +1,6 @@
 // my-custom-environment
 import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
-import jestEnvironmentDefault, { TestEnvironment as ImportedNodeEnvironment } from 'jest-environment-node'
+import { TestEnvironment as NodeEnvironment } from 'jest-environment-node'
 import { Profiler } from '@oaklean/profiler'
 import {
 	UnifiedPath,
@@ -13,11 +13,6 @@ import {
 	PerformanceHelper
 } from '@oaklean/profiler-core'
 
-let NodeEnvironment = ImportedNodeEnvironment
-
-if (NodeEnvironment === undefined) {
-	NodeEnvironment = jestEnvironmentDefault
-}
 declare global {
 	interface globalThis {
 		jestConfig: JestEnvironmentConfig
