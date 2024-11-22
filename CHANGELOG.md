@@ -4,6 +4,7 @@
 ## 0.1.4
 ### Improvement
 - Types are now outsourced into separate files, enabling their usage in browser environments
+- Improved the calculation for source files and directories in the SourceFileMetaDataTree.
 
 ### Added
 - A SensorInterface for Windows to measure the energy consumption
