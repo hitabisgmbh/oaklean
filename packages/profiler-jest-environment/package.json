@@ -1,6 +1,6 @@
 {
 	"name": "@oaklean/profiler-jest-environment",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"author": "Hitabis GmbH",
 	"license": "MIT",
 	"description": "A jest environment to collect energy measurements on source code level during test execution.",
@@ -40,7 +40,7 @@
 		"generate-docs": "markdown-include md-configs/README.json"
 	},
 	"dependencies": {
-		"@oaklean/profiler": "0.1.4"
+		"@oaklean/profiler": "0.1.5"
 	},
 	"peerDependencies": {
 		"@jest/environment": "^28.0.0 || ^29.0.0",
