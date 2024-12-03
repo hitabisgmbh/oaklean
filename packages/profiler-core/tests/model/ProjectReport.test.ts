@@ -736,7 +736,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				instance.trackUncommittedFiles(new UnifiedPath('./'))
 				expect(instance.executionDetails.uncommittedChanges).toBe(undefined)
 
-				uncommittedFiles_mock.mockReset()
+				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('no uncommitted changes exist', () => {
@@ -744,7 +744,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				instance.trackUncommittedFiles(new UnifiedPath('./'))
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
-				uncommittedFiles_mock.mockReset()
+				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('uncommitted changes exist', () => {
@@ -752,7 +752,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				instance.trackUncommittedFiles(new UnifiedPath('./'))
 				expect(instance.executionDetails.uncommittedChanges).toBe(true)
 
-				uncommittedFiles_mock.mockReset()
+				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('uncommitted changes exist in node modules has no effect', () => {
@@ -760,7 +760,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				instance.trackUncommittedFiles(new UnifiedPath('./'))
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
-				uncommittedFiles_mock.mockReset()
+				uncommittedFiles_mock.mockRestore()
 			})
 		})
 	})
@@ -1406,7 +1406,7 @@ describe('ProjectReport', () => {
 			expect(t).toThrow('ProjectReport.merge: cannot merge ProjectReports from different systems')
 
 			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different cpus')
-			consoleError.mockReset()
+			consoleError.mockRestore()
 		})
 
 		describe('merges uncommitted changes correctly', () => {

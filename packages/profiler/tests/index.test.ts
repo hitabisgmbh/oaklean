@@ -50,6 +50,6 @@ describe('testing index file', () => {
 		expect(t).not.toThrow()
 		fs.rmSync(CURRENT_DIR.join('..', '..', '..', 'profiles', 'test-profile').toPlatformString(), { recursive: true })
 
-		uploadMethod.mockReset()
+		uploadMethod.mockRestore()
 	}, 1000 * 60 * 5) // timout after 5 minutes
 })

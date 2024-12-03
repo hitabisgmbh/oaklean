@@ -57,7 +57,7 @@ describe('TypescriptParser', () => {
 			})
 
 			afterEach(() => {
-				consoleErrorMock.mockReset()
+				consoleErrorMock.mockRestore()
 			})
 
 			it('prints error if the config file could not be parsed', () => {
@@ -67,7 +67,7 @@ describe('TypescriptParser', () => {
 				const configFilePath = CURRENT_DIR.join('typescriptParserAssets', 'subDir', 'tsconfig.json').toPlatformString()
 
 				const config = TypescriptParser.readConfigFile(configFilePath)
-				parseConfigFileTextToJsonMock.mockReset()
+				parseConfigFileTextToJsonMock.mockRestore()
 
 				expect(config).toBeUndefined()
 
@@ -91,7 +91,7 @@ describe('TypescriptParser', () => {
 				const configFilePath = CURRENT_DIR.join('typescriptParserAssets', 'subDir', 'tsconfig.json').toPlatformString()
 
 				const config = TypescriptParser.readConfigFile(configFilePath)
-				parseJsonConfigFileContentMock.mockReset()
+				parseJsonConfigFileContentMock.mockRestore()
 
 				expect(config).toBeUndefined()
 
@@ -156,7 +156,7 @@ describe('TypescriptParser', () => {
 			findConfigFileMock.mockReturnValue(undefined)
 			
 			const configPath = TypescriptParser.tsConfigFilePathFromFile(CURRENT_DIR.toPlatformString())
-			findConfigFileMock.mockReset()
+			findConfigFileMock.mockRestore()
 
 			expect(configPath).toBeUndefined()
 		})

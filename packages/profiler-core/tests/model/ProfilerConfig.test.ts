@@ -468,7 +468,7 @@ describe('ProfilerConfig', () => {
 			const config = ProfilerConfig.autoResolve()
 
 			expect(config.toJSON()).toEqual(expectedConfig.toJSON())
-			findUpMock.mockReset()
+			findUpMock.mockRestore()
 		})
 	})
 	describe('special cases', () => {
