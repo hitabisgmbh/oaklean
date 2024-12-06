@@ -1,6 +1,13 @@
 
 # Change Log
 
+## 0.1.5
+### Improvement
+- Added support for frameworks that modify or transform the original source code.
+
+### Fixes
+- Fixed a bug that caused incorrect measurements in __awaiter functions.
+
 ## 0.1.4
 ### Improvement
 - Types are now outsourced into separate files, enabling their usage in browser environments

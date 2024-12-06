@@ -132,7 +132,7 @@ describe('SourceMap', () => {
 			const sourceMapFilePath = new UnifiedPath(__dirname).join('abc.js')
 			const sourceMap = SourceMap.fromCompiledJSFile(sourceMapFilePath)
 
-			expect(sourceMap).toBeUndefined()
+			expect(sourceMap).toBeNull()
 		})
 	})
 
@@ -157,7 +157,7 @@ describe('SourceMap', () => {
 
 			expect(SourceMap.isSourceMap(validFormat)).toBe(true)
 			expect(SourceMap.isSourceMap(inValidFormat)).toBe(false)
-			expect(SourceMap.isSourceMap(undefined)).toBe(false)
+			expect(SourceMap.isSourceMap(null)).toBe(false)
 		})
 	})
 })

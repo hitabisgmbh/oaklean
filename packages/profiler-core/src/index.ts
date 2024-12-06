@@ -7,6 +7,8 @@ import { CPUNode, CPUNodeType } from './helper/CPUNode'
 import { GitHelper } from './helper/GitHelper'
 import { NodeModuleUtils } from './helper/NodeModuleUtils'
 import { PermissionHelper } from './helper/PermissionHelper'
+import { DataUrlUtils } from './helper/DataUrlUtils'
+import { InspectorHelper } from './helper/InspectorHelper'
 import {
 	TimeHelper
 } from './helper/TimeHelper'
@@ -123,6 +125,8 @@ export {
 	PermissionHelper,
 	TimeHelper,
 	PerformanceHelper,
+	DataUrlUtils,
+	InspectorHelper,
 	DEFAULT_PROFILER_CONFIG,
 	ProfilerConfig,
 	ExecutionDetails,

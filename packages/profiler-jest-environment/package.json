@@ -44,7 +44,8 @@
 	},
 	"peerDependencies": {
 		"@jest/environment": "^28.0.0 || ^29.0.0",
-		"jest": "^28.0.0 || ^29.0.0"
+		"jest": "^28.0.0 || ^29.0.0",
+		"jest-environment-jsdom": "^28.0.0 || ^29.0.0"
 	},
 	"devDependencies": {
 		"cross-env": "^7.0.3",

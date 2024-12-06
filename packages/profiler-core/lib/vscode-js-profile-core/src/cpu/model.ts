@@ -31,6 +31,7 @@ export interface ILocation extends INode {
   selfTime: number;
   aggregateTime: number;
   ticks: number;
+	callFrame: Cdp.Runtime.CallFrame;
 }
 
 export interface IGraphNode extends ILocation {

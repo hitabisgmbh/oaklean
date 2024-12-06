@@ -892,7 +892,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		const buffers = [
 			BufferHelper.UIntToBuffer(self.id),
 			BufferHelper.UIntToBuffer(this.type),
-			this.sensorValues.toBuffer()
+			this.sensorValues.toBuffer(this.globalIdentifier()?.identifier)
 		]
 
 		if (this.lang_internal !== undefined) {

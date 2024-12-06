@@ -16,7 +16,8 @@ import {
 	PermissionHelper,
 	LoggerHelper,
 	ExecutionDetails,
-	PerformanceHelper
+	PerformanceHelper,
+	InspectorHelper
 } from '@oaklean/profiler-core'
 import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 
@@ -55,6 +56,7 @@ export class Profiler {
 	options?: ProfilerOptions
 	executionDetails?: IProjectReportExecutionDetails
 
+	private _inspectorHelper: InspectorHelper
 	private _sensorInterface: BaseSensorInterface | undefined
 	private _traceEventSession: Session | undefined
 	private _profilerStartTime: MicroSeconds_number | undefined
@@ -67,6 +69,7 @@ export class Profiler {
 		this.config = ProfilerConfig.autoResolve()
 		this.options = options
 		this.loadSensorInterface()
+		this._inspectorHelper = new InspectorHelper()
 	}
 
 	static getSensorInterface(config: ProfilerConfig) {
@@ -244,6 +247,10 @@ export class Profiler {
 		performance.start('Profiler.start.V8Profiler.startProfiling')
 		V8Profiler.startProfiling(title, true)
 		performance.stop('Profiler.start.V8Profiler.startProfiling')
+		performance.start('Profiler.start.inspectorHelper.connect')
+		await this._inspectorHelper.connect()
+		this._inspectorHelper.listen()
+		performance.stop('Profiler.start.inspectorHelper.connect')
 		performance.stop('Profiler.start')
 		performance.printReport('Profiler.start')
 		performance.exportAndSum(this.outputDir().join('performance.json'))
@@ -263,6 +270,10 @@ export class Profiler {
 
 	outputProfilePath(title: string): UnifiedPath {
 		return this.outputDir().join(`${title}.cpuprofile`)
+	}
+
+	outputInspectorHelperPath(title: string): UnifiedPath {
+		return this.outputDir().join(`${title}.inspector.json`)
 	}
 
 	async finish(title: string, highResolutionStopTime?: NanoSeconds_BigInt): Promise<ProjectReport> {
@@ -321,6 +332,7 @@ export class Profiler {
 			performance.stop('Profiler.finish.exportJestConfig')
 		}
 		const outFileCPUProfile = this.outputProfilePath(title)
+		const outFileInspectorHelper = this.outputInspectorHelperPath(title)
 		const outFileReport = this.outputReportPath(title)
 		const outFileMetricCollection = this.outputMetricCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
@@ -349,10 +361,23 @@ export class Profiler {
 		await report.insertCPUProfile(
 			rootDir,
 			profile,
-			transformerAdapter,
+			this._inspectorHelper,
 			metricsDataCollection
 		)
 		performance.stop('Profiler.finish.insertCPUProfile')
+
+		performance.start('Profiler.finish.inspectorHelper.disconnect')
+		await this._inspectorHelper.disconnect()
+		performance.stop('Profiler.finish.inspectorHelper.disconnect')
+
+		if (this.config.shouldExportV8Profile()) {
+			performance.start('Profiler.finish.exportInspectorHelper')
+			PermissionHelper.writeFileWithUserPermission(
+				outFileInspectorHelper.toPlatformString(),
+				JSON.stringify(this._inspectorHelper, null, 2),
+			)
+			performance.stop('Profiler.finish.exportInspectorHelper')
+		}
 
 		performance.start('Profiler.finish.trackUncommittedFiles')
 		await report.trackUncommittedFiles(rootDir)

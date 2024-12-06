@@ -11,7 +11,6 @@ import { MetricsDataCollection } from './interfaces/MetricsDataCollection'
 import { GlobalIndex } from './index/GlobalIndex'
 import { ModuleIndex } from './index/ModuleIndex'
 
-import { BaseAdapter } from '../adapters/transformer/BaseAdapter'
 import { GitHelper } from '../helper/GitHelper'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { UnifiedPath } from '../system/UnifiedPath'
@@ -29,6 +28,7 @@ import {
 	ProjectReportOrigin,
 	IProjectReport
 } from '../types'
+import { InspectorHelper } from '../helper/InspectorHelper'
 
 export class ProjectReport extends Report {
 	executionDetails: IProjectReportExecutionDetails
@@ -220,14 +220,14 @@ export class ProjectReport extends Report {
 	async insertCPUProfile(
 		rootDir: UnifiedPath,
 		profile: ICpuProfileRaw,
-		transformerAdapter?: BaseAdapter,
+		inspectorHelper: InspectorHelper,
 		metricsDataCollection?: MetricsDataCollection
 	) {
 		await InsertCPUProfileHelper.insertCPUProfile(
 			this,
 			rootDir,
 			profile,
-			transformerAdapter,
+			inspectorHelper,
 			metricsDataCollection
 		)
 	}

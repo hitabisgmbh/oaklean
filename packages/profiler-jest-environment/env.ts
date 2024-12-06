@@ -1,6 +1,9 @@
 // my-custom-environment
-import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
-import { TestEnvironment as NodeEnvironment } from 'jest-environment-node'
+import type { JestEnvironment } from '@jest/environment'
+import {
+	JestEnvironmentConfig,
+	EnvironmentContext
+} from '@jest/environment'
 import { Profiler } from '@oaklean/profiler'
 import {
 	UnifiedPath,
@@ -12,6 +15,9 @@ import {
 	IProjectReportExecutionDetails,
 	PerformanceHelper
 } from '@oaklean/profiler-core'
+// Jest Environments
+import NodeEnvironment from 'jest-environment-node'
+import JSDOMEnvironment from 'jest-environment-jsdom'
 
 declare global {
 	interface globalThis {
@@ -20,14 +26,48 @@ declare global {
 	}
 }
 
-class CustomEnvironment extends NodeEnvironment {
+class CustomEnvironment implements JestEnvironment {
+	private environment: NodeEnvironment | JSDOMEnvironment
+
 	// private profilers: Profiler
 	private testPath: UnifiedPath
 	private profiler?: Profiler
 	private ranSuccessfully: boolean
 
+	get global() {
+		return this.environment.global
+	}
+
+	get fakeTimers() {
+		return this.environment.fakeTimers
+	}
+
+	get fakeTimersModern() {
+		return this.environment.fakeTimersModern
+	}
+
+	get moduleMocker() {
+		return this.environment.moduleMocker
+	}
+
+	getVmContext() {
+		return this.environment.getVmContext()
+	}
+
+	exportConditions() {
+		return this.environment.exportConditions()
+	}
+
 	constructor(config: JestEnvironmentConfig, context: EnvironmentContext) {
-		super(config, context)
+		switch (config.projectConfig.testEnvironmentOptions['testEnvironment']) {
+			case 'jsdom':
+				this.environment = new JSDOMEnvironment(config, context)
+				break
+			case 'node':
+			default:
+				this.environment = new NodeEnvironment(config, context)
+				break
+		}
 		const rootDir = new UnifiedPath(config.projectConfig.rootDir)
 		this.testPath = rootDir.pathTo(new UnifiedPath(context.testPath))
 		this.global.jestConfig = config
@@ -57,7 +97,7 @@ class CustomEnvironment extends NodeEnvironment {
 	}
 
 	async setup() {
-		await super.setup()
+		await this.environment.setup()
 		if (process.env.ENABLE_MEASUREMENTS && this.profiler) {
 			const performance = new PerformanceHelper()
 			try {
@@ -100,11 +140,7 @@ class CustomEnvironment extends NodeEnvironment {
 				LoggerHelper.error('CustomEnvironment.teardown(): ', e)
 			}
 		}
-		await super.teardown()
-	}
-
-	getVmContext() {
-		return super.getVmContext()
+		await this.environment.teardown()
 	}
 
 	// async handleTestEvent(event, state) {

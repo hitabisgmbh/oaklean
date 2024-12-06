@@ -12,6 +12,7 @@ export class TypeScriptAdapter extends BaseAdapter {
 	}
 
 	async shouldProcess(filePath: UnifiedPath): Promise<boolean> {
-		return filePath.toPlatformString().slice(-3) === '.ts'
+		const extname = filePath.extname()
+		return extname === '.ts' || extname === '.tsx'
 	}
 }

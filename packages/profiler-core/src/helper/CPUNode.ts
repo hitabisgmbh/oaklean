@@ -38,6 +38,7 @@ export class CPUNode {
 	private _isLangInternal?: boolean
 	private _isExtern?: boolean
 
+	private _scriptId?: string
 	private _rawUrl?: string
 	private _url?: UnifiedPath
 	private _relativeUrl?: UnifiedPath
@@ -146,6 +147,13 @@ export class CPUNode {
 			this._isEmpty = this.ISourceLocation.callFrame.url === ''
 		}
 		return this._isEmpty
+	}
+
+	get scriptId() {
+		if (this._scriptId === undefined) {
+			this._scriptId = this.ISourceLocation.callFrame.scriptId.toString()
+		}
+		return this._scriptId
 	}
 
 	get rawUrl() {
@@ -265,7 +273,8 @@ export class CPUNode {
 
 	get isWithinTypescriptFile() {
 		if (this._isWithinTypescriptFile === undefined) {
-			this._isWithinTypescriptFile = this.relativeUrl.toString().slice(-3) === '.ts'
+			const extname = this.relativeUrl.extname()
+			this._isWithinTypescriptFile = extname === '.ts' || extname === '.tsx'
 		}
 		return this._isWithinTypescriptFile
 	}

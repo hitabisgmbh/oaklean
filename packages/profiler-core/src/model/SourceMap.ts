@@ -106,9 +106,10 @@ export class SourceMap extends BaseModel implements ISourceMap {
 				mappings
 			)
 		}
+		return null
 	}
 
-	static isSourceMap(sourceMapCandidate: object | undefined): boolean {
+	static isSourceMap(sourceMapCandidate: object | null): boolean {
 		if (!sourceMapCandidate) {
 			return false
 		}
@@ -120,7 +121,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return true
 	}
 
-	static fromCompiledJSString(filePath: UnifiedPath, sourceCode: string): SourceMap | undefined {
+	static fromCompiledJSString(filePath: UnifiedPath, sourceCode: string): SourceMap | null {
 		const match = SOURCE_MAPPING_URL_REGEX.exec(sourceCode)
 
 		const numberOfLinesInCompiledFile = (sourceCode.match(/\r\n|\r|\n/g) || []).length
@@ -142,11 +143,12 @@ export class SourceMap extends BaseModel implements ISourceMap {
 				}
 			}
 		}
-	}	
+		return null
+	}
 
-	static fromCompiledJSFile (filePath: UnifiedPath): SourceMap | undefined {
+	static fromCompiledJSFile (filePath: UnifiedPath): SourceMap | null {
 		if (!fs.existsSync(filePath.toPlatformString())) {
-			return undefined
+			return null
 		}
 
 		const sourceCode = fs.readFileSync(filePath.toPlatformString(), { encoding: 'utf-8' })
