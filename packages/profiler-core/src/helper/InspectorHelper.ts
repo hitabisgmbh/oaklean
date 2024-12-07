@@ -3,12 +3,12 @@ import inspector from 'inspector'
 
 import { LoggerHelper } from './LoggerHelper'
 import { CPUModel } from './CPUModel'
+import { PermissionHelper } from './PermissionHelper'
 
 import { SourceMap } from '../model/SourceMap'
 import { UnifiedPath } from '../system/UnifiedPath'
 // Types
 import { IInspectorHelper } from '../types/helper/InspectorHelper'
-import { PermissionHelper } from './PermissionHelper'
 
 export class InspectorHelper {
 	private _session: inspector.Session
@@ -70,8 +70,7 @@ export class InspectorHelper {
 
 	toJSON(): IInspectorHelper {
 		return {
-			sourceCodeMap: Object.fromEntries(this.sourceCodeMap),
-			sourceMapMap: Object.fromEntries(this.sourceMapMap)
+			sourceCodeMap: Object.fromEntries(this.sourceCodeMap)
 		}
 	}
 
@@ -87,13 +86,6 @@ export class InspectorHelper {
 		const result = new InspectorHelper()
 		for (const [key, value] of Object.entries(data.sourceCodeMap)) {
 			result.sourceCodeMap.set(key, value)
-		}
-		for (const [key, value] of Object.entries(data.sourceMapMap)) {
-			if (value === null) {
-				result.sourceMapMap.set(key, null)
-				continue
-			}
-			result.sourceMapMap.set(key, SourceMap.fromJSON(value))
 		}
 
 		return result
@@ -145,7 +137,7 @@ export class InspectorHelper {
 			return null
 		}
 		let source = this.sourceCodeMap.get(scriptId)
-		if (source) {
+		if (source !== undefined) {
 			return source
 		}
 

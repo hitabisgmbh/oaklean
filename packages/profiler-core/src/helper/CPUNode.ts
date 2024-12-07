@@ -48,7 +48,7 @@ export class CPUNode {
 
 	private _sourceNodeIdentifier?: SourceNodeIdentifier_string
 
-	private _isWithinTypescriptFile?: boolean
+	private _isWithinJavascriptFile?: boolean
 	private _javascriptUrl?: UnifiedPath
 	private _relativeJavascriptUrl?: UnifiedPath
 
@@ -271,12 +271,12 @@ export class CPUNode {
 		return this._sourceNodeIdentifier
 	}
 
-	get isWithinTypescriptFile() {
-		if (this._isWithinTypescriptFile === undefined) {
+	get isWithinJavascriptFile() {
+		if (this._isWithinJavascriptFile === undefined) {
 			const extname = this.relativeUrl.extname()
-			this._isWithinTypescriptFile = extname === '.ts' || extname === '.tsx'
+			this._isWithinJavascriptFile = extname === '.js' || extname !== '.jsx'
 		}
-		return this._isWithinTypescriptFile
+		return this._isWithinJavascriptFile
 	}
 
 	get relativeJavascriptUrl() {

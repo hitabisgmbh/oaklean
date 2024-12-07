@@ -605,7 +605,8 @@ export class InsertCPUProfileHelper {
 	static async resolveFunctionIdentifier(
 		rootDir: UnifiedPath,
 		cpuNode: CPUNode,
-		programStructureTreePerFile: ModelMap<UnifiedPath_string, ProgramStructureTree>,
+		// script id -> ProgramStructureTree
+		programStructureTreePerFileCompiled: ModelMap<string, ProgramStructureTree>,
 		programStructureTreePerOriginalFile: ModelMap<UnifiedPath_string, ProgramStructureTree>,
 		inspectorHelper: InspectorHelper
 	) {
@@ -613,24 +614,26 @@ export class InsertCPUProfileHelper {
 		 * Resolve procedure:
 		 * 
 		 * if file "dir/dir/file.ext" is transformable
-		 * 	- store transformed source code at programStructureTreePerFile["dir/dir/file.ext"]
+		 * 	- store transformed source code at programStructureTreePerFileCompiled["dir/dir/file.ext"]
 		 * 	- store original source code at
 		 * 		programStructureTreePerOriginalFile["_ORIGINAL_dir/dir/file.ext"]
 		 * else: (file is already transformed)
 		 * 	- store transformed source code at
-		 * 		programStructureTreePerFile["dir/dir/file.ext"]
+		 * 		programStructureTreePerFileCompiled["dir/dir/file.ext"]
 		 *  - get source map of transformed file
 		 * 	- store original source code at
 		 * 		programStructureTreePerOriginalFile[path.resolve("dir/dir/" + sourcemap.source)]
 		 */
 
-		let programStructureTree = undefined
-		let programStructureTreeOriginal = undefined
-		programStructureTree = programStructureTreePerFile.get(cpuNode.relativeUrl.toString())
+		let programStructureTreeCompiled: ProgramStructureTree | undefined =
+			programStructureTreePerFileCompiled.get(cpuNode.scriptId)
+		let programStructureTreeOriginal: ProgramStructureTree | undefined = undefined
 		const { lineNumber, columnNumber } = cpuNode.sourceLocation
 		let relativeOriginalSourcePath = undefined
 
-		if (programStructureTree === undefined) {
+		if (programStructureTreeCompiled === undefined) {
+			// request source code from the node engine
+			// (it is already transformed event if it is the original file path)
 			const sourceCode = await inspectorHelper.sourceCodeFromId(cpuNode.scriptId)
 			if (sourceCode === null) {
 				throw new Error(
@@ -638,45 +641,78 @@ export class InsertCPUProfileHelper {
 					`scriptId: ${cpuNode.scriptId} (${cpuNode.url.toPlatformString()})`
 				)
 			}
-			programStructureTree = TypescriptParser.parseSource(
+			programStructureTreeCompiled = TypescriptParser.parseSource(
 				cpuNode.url,
 				sourceCode
 			)
-			programStructureTreePerFile.set(cpuNode.relativeUrl.toString(), programStructureTree)
+			programStructureTreePerFileCompiled.set(cpuNode.scriptId, programStructureTreeCompiled)
 		}
 
-		const sourceMap = await inspectorHelper.sourceMapFromId(cpuNode.url, cpuNode.scriptId)
-		const originalPosition = sourceMap?.getOriginalSourceLocation(lineNumber, columnNumber)
-		if (originalPosition && originalPosition.source) {
-			const absoluteOriginalSourcePath = new UnifiedPath(
-				path.resolve(path.join(path.dirname(cpuNode.url.toString()), originalPosition.source))
+		if (!cpuNode.isWithinJavascriptFile) {
+			relativeOriginalSourcePath = cpuNode.relativeUrl
+			const originalFilePath = '_ORIGINAL_' + cpuNode.relativeUrl.toString() as UnifiedPath_string
+			programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
+				originalFilePath
 			)
-			if (fs.existsSync(absoluteOriginalSourcePath.toPlatformString())) {
-				const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
-				relativeOriginalSourcePath = (cpuNode.nodeModulePath && cpuNode.nodeModule)
-					? cpuNode.nodeModulePath.pathTo(pureRelativeOriginalSourcePath) : pureRelativeOriginalSourcePath
-
-				programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
-					pureRelativeOriginalSourcePath.toString()
+			if (programStructureTreeOriginal === undefined) {
+				programStructureTreeOriginal = TypescriptParser.parseFile(cpuNode.url)
+				programStructureTreePerOriginalFile.set(
+					originalFilePath,
+					programStructureTreeOriginal
 				)
-				if (programStructureTreeOriginal === undefined) {
-					programStructureTreeOriginal = TypescriptParser.parseFile(absoluteOriginalSourcePath)
-					programStructureTreePerOriginalFile.set(
-						pureRelativeOriginalSourcePath.toString(),
-						programStructureTreeOriginal
+			}
+		} else {
+			const sourceMap = await inspectorHelper.sourceMapFromId(cpuNode.url, cpuNode.scriptId)
+			const originalPosition = sourceMap?.getOriginalSourceLocation(lineNumber, columnNumber)
+			if (originalPosition && originalPosition.source) {
+				const originalPositionPath = new UnifiedPath(originalPosition.source)
+				const absoluteOriginalSourcePath = originalPositionPath.isRelative() ? new UnifiedPath(
+					path.resolve(path.join(path.dirname(cpuNode.url.toString()), originalPosition.source))
+				) : originalPositionPath
+
+				if (fs.existsSync(absoluteOriginalSourcePath.toPlatformString())) {
+					const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
+					relativeOriginalSourcePath = (cpuNode.nodeModulePath && cpuNode.nodeModule)
+						? cpuNode.nodeModulePath.pathTo(pureRelativeOriginalSourcePath) :
+						pureRelativeOriginalSourcePath
+
+					programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
+						pureRelativeOriginalSourcePath.toString()
 					)
+					if (programStructureTreeOriginal === undefined) {
+						// found the original source file from the source map but it is not yet parsed
+						programStructureTreeOriginal = TypescriptParser.parseFile(absoluteOriginalSourcePath)
+						programStructureTreePerOriginalFile.set(
+							pureRelativeOriginalSourcePath.toString(),
+							programStructureTreeOriginal
+						)
+					}
+				} else {
+					// since node modules often include source maps that point to non-existing files we ignore them
+					if (!cpuNode.nodeModulePath || !cpuNode.nodeModule) {
+						LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
+							originalPositionSource: originalPosition.source,
+							absoluteOriginalSourcePath,
+							sources: sourceMap?.sources,
+							url: cpuNode.url.toString(),
+							lineNumber,
+							columnNumber
+						})
+					}
 				}
 			}
-		}
-		if (programStructureTreeOriginal === undefined) {
-			programStructureTreeOriginal = programStructureTree
+			// if there is not source map or the source map does not contain the original source location
+			// we use the compiled source
+			if (programStructureTreeOriginal === undefined) {
+				programStructureTreeOriginal = programStructureTreeCompiled
+			}
 		}
 
-		const functionIdentifier = programStructureTree.identifierBySourceLocation(
+		const functionIdentifier = programStructureTreeCompiled.identifierBySourceLocation(
 			{ line: lineNumber, column: columnNumber }
 		)
 
-		const functionIdentifierPresentInOriginalFile = programStructureTree === programStructureTreeOriginal ?
+		const functionIdentifierPresentInOriginalFile = programStructureTreeCompiled === programStructureTreeOriginal ?
 			true : (programStructureTreeOriginal.sourceLocationOfIdentifier(functionIdentifier) !== undefined)
 
 		if (functionIdentifier === '') {
@@ -686,6 +722,12 @@ export class InsertCPUProfileHelper {
 				columnNumber
 			})
 			throw new Error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty')
+		}
+
+
+		if (cpuNode.relativeSourceFilePath.toString() === relativeOriginalSourcePath?.toString()) {
+			// prevents self mapping
+			relativeOriginalSourcePath = undefined
 		}
 
 		return {
@@ -712,7 +754,8 @@ export class InsertCPUProfileHelper {
 		)
 		await inspectorHelper.fillSourceMapsFromCPUModel(cpuModel)
 
-		const programStructureTreePerFile: ModelMap<UnifiedPath_string, ProgramStructureTree> =
+		// script id -> ProgramStructureTree
+		const programStructureTreePerFileCompiled: ModelMap<string, ProgramStructureTree> =
 			new ModelMap<UnifiedPath_string, ProgramStructureTree>('string')
 
 		const programStructureTreePerOriginalFile: ModelMap<UnifiedPath_string, ProgramStructureTree> =
@@ -787,7 +830,7 @@ export class InsertCPUProfileHelper {
 				} = await InsertCPUProfileHelper.resolveFunctionIdentifier(
 					rootDir,
 					cpuNode,
-					programStructureTreePerFile,
+					programStructureTreePerFileCompiled,
 					programStructureTreePerOriginalFile,
 					inspectorHelper
 				)

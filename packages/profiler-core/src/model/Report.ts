@@ -260,6 +260,9 @@ export class Report extends BaseModel {
 		}
 		const sourceFilePathIndex = this.getPathIndex('upsert', sourceFilePath.toString())
 		const sourceFilePathID = sourceFilePathIndex.id as PathID_number
+		if (sourceFilePathID === compiledFilePathID) {
+			throw new Error('report.addSourceFileMapLink: sourceFilePathID and compiledFilePathID are the same')
+		}
 		this.internMapping.set(sourceFilePathID, compiledFilePathID)
 	}
 
@@ -698,7 +701,7 @@ export class Report extends BaseModel {
 				).id as PathID_number
 
 				const resultValue = result.internMapping.get(newPathID)
-				if (!resultValue) {
+				if (resultValue === undefined) {
 					// add old MappedPathID to new index and get its newMappedPathID
 					const newMappedPathID = result.getPathIndex(
 						'upsert',
@@ -707,6 +710,11 @@ export class Report extends BaseModel {
 					result.internMapping.set(newPathID, newMappedPathID)
 				} else {
 					if (result.getPathIndexByID(resultValue)?.identifier !== mappedPathIndex.identifier) {
+						LoggerHelper.error('Report.merge: (internMapping) the ProjectReports contain different path mapping', {
+							pathID,
+							expectedIdentifier: result.getPathIndexByID(resultValue)?.identifier,
+							mappedIdentifier: mappedPathIndex.identifier
+						})
 						throw new Error('ProjectReport.merge: the ProjectReports contain different path mapping')
 					}
 				}

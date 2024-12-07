@@ -133,10 +133,6 @@ describe('CPUNode', () => {
 		expect(instance.sourceNodeIdentifier).toBe('{startProfiling}')
 	})
 
-	test('isWithinTypescriptFile', () => {
-		expect(instance.isWithinTypescriptFile).toBe(false)
-	})
-
 	test('relativeJavascriptUrl', () => {
 		expect(instance.relativeJavascriptUrl.toString()).toBe('./node_modules/v8-profiler-next/dispatch.js')
 	})

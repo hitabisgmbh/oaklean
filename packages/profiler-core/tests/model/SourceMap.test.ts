@@ -8,7 +8,6 @@ describe('SourceMap', () => {
 		beforeEach(() => {
 			instance = new SourceMap(
 				new UnifiedPath('index.js'),
-				new UnifiedPath('index.js'),
 				3,
 				[
 					new UnifiedPath('../src/index.ts'),

@@ -7,7 +7,7 @@ import { BaseModel } from './BaseModel'
 import { DataUrlUtils } from '../helper/DataUrlUtils'
 import { UnifiedPath } from '../system/UnifiedPath'
 
-const SOURCE_MAPPING_URL_REGEX = /\/\/# sourceMappingURL=(.*)$/
+const SOURCE_MAPPING_URL_REGEX = /\/\/# sourceMappingURL=(.*)$/m
 const SOURCE_MAP_ATTRIBUTE_NAMES = ['version', 'sources', 'names', 'mappings']
 
 export interface ISourceMap {
@@ -21,7 +21,6 @@ export class SourceMap extends BaseModel implements ISourceMap {
 	private _consumer: SourceMapConsumer | undefined
 	private _numberOfLinesInCompiledFile: number | undefined
 
-	compiledFileLocation: UnifiedPath
 	sourceMapLocation: UnifiedPath // location of the source map, for inline sourceMaps it is the .js file
 
 	version: number
@@ -30,7 +29,6 @@ export class SourceMap extends BaseModel implements ISourceMap {
 	mappings: string
 
 	constructor(
-		compiledFileLocation: UnifiedPath,
 		sourceMapLocation: UnifiedPath,
 		version: number,
 		sources: UnifiedPath[],
@@ -38,7 +36,6 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		mappings: string
 	) {
 		super()
-		this.compiledFileLocation = compiledFileLocation
 		this.sourceMapLocation = sourceMapLocation
 		this.version = version
 		this.sources = sources.map((x) => x.toString())
@@ -79,7 +76,6 @@ export class SourceMap extends BaseModel implements ISourceMap {
 
 		return new SourceMap(
 			new UnifiedPath(''),
-			new UnifiedPath(''),
 			data.version,
 			data.sources.map((x) => new UnifiedPath(x as unknown as string)),
 			data.names,
@@ -89,16 +85,13 @@ export class SourceMap extends BaseModel implements ISourceMap {
 
 	static fromJsonString(
 		s: string,
-		sourceMapLocation: UnifiedPath,
-		compiledFileLocation: UnifiedPath,
-		numberOfLinesInCompiledFile: number
-	): SourceMap | undefined {
+		sourceMapLocation: UnifiedPath
+	): SourceMap | null {
 		const parsed = JSON.parse(s)
 
 		if (SourceMap.isSourceMap(parsed)) {
 			const { version, sources, names, mappings } = parsed
 			return new SourceMap(
-				compiledFileLocation,
 				sourceMapLocation,
 				version,
 				sources.map((sourcePath: string) => new UnifiedPath(sourcePath)),
@@ -124,22 +117,20 @@ export class SourceMap extends BaseModel implements ISourceMap {
 	static fromCompiledJSString(filePath: UnifiedPath, sourceCode: string): SourceMap | null {
 		const match = SOURCE_MAPPING_URL_REGEX.exec(sourceCode)
 
-		const numberOfLinesInCompiledFile = (sourceCode.match(/\r\n|\r|\n/g) || []).length
-
 		if (match) {
 			const sourceMapUrl = match[1]
 
 			if (DataUrlUtils.isDataUrl(sourceMapUrl)) {
 				// inline source map
 				const data = DataUrlUtils.parseDataUrl(sourceMapUrl)
-				return SourceMap.fromJsonString(data, filePath, filePath, numberOfLinesInCompiledFile)
+				return SourceMap.fromJsonString(data, filePath)
 			} else {
 				// source map file
 				const directoryPath = filePath.dirName()
 				const sourceMapLocation = directoryPath.join(sourceMapUrl)
 				if (fs.existsSync(sourceMapLocation.toString())) {
 					const data = fs.readFileSync(sourceMapLocation.toString(), { encoding: 'utf-8' })
-					return SourceMap.fromJsonString(data, sourceMapLocation, filePath, numberOfLinesInCompiledFile)
+					return SourceMap.fromJsonString(data, sourceMapLocation)
 				}
 			}
 		}
