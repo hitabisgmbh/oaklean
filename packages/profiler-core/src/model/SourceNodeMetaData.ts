@@ -641,10 +641,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		path: UnifiedPath_string | LangInternalPath_string,
 		identifier: SourceNodeIdentifier_string
 	) {
-		if (
-			this.type !== SourceNodeMetaDataType.SourceNode &&
-			this.type !== SourceNodeMetaDataType.LangInternalSourceNode
-		) {
+		if (this.type !== SourceNodeMetaDataType.SourceNode) {
 			return
 		}
 		if (this.sourceNodeIndex?.id !== this.id) {
