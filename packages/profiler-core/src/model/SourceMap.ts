@@ -153,21 +153,14 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return this._consumer
 	}
 
-	getOriginalSourceLocation(lineNumber: number, columnNumber: number): MappedPosition | undefined {
-		// sourcemap expects 1-based line and column
-		const line = lineNumber + 1
-		const column = columnNumber + 1
-		
-		let originalPosition = this.asConsumer().originalPositionFor(
+	getOriginalSourceLocation(line: number, column: number): MappedPosition | undefined {
+		const originalPosition = this.asConsumer().originalPositionFor(
 			{ line, column })
 
-		// if the source is not properly set we need to skip the lines without a mapping
-		// (e.g. "use strict" at the beginning of a file)
-		let offset = 1
-		while (!originalPosition.source && line + offset < this.numberOfLinesInCompiledFile + 1) {
-			originalPosition = this.asConsumer().originalPositionFor(
-				{ line: line + offset++, column: column })
+		if (!originalPosition.source) {
+			return undefined
 		}
+
 		return originalPosition
 	}
 }

@@ -1,5 +1,6 @@
-import { ISourceMap } from '../../model/SourceMap'
+import { UnifiedPath_string } from '../system'
 
 export type IInspectorHelper = {
-	sourceCodeMap: Record<string, string>
+	sourceCodeMap: Record<string, string>,
+	loadedFiles: Record<UnifiedPath_string, string>
 }

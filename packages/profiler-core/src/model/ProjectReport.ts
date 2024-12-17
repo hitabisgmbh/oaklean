@@ -19,6 +19,7 @@ import { BufferHelper } from '../helper/BufferHelper'
 import { AuthenticationHelper } from '../helper/AuthenticationHelper'
 import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper'
 import { BIN_FILE_MAGIC } from '../constants/app'
+import { InspectorHelper } from '../helper/InspectorHelper'
 // Types
 import {
 	ReportKind,
@@ -28,7 +29,6 @@ import {
 	ProjectReportOrigin,
 	IProjectReport
 } from '../types'
-import { InspectorHelper } from '../helper/InspectorHelper'
 
 export class ProjectReport extends Report {
 	executionDetails: IProjectReportExecutionDetails

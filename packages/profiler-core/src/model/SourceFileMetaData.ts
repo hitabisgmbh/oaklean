@@ -205,19 +205,6 @@ export class SourceFileMetaData extends BaseModel {
 			pathIndex.getSourceNodeIndex<T>(indexRequestType, sourceNodeIdentifier)
 	}
 
-	removeFromIntern(filePath: UnifiedPath_string | UnifiedPath_string[]) {
-		let filePaths: UnifiedPath_string[] = []
-		if (typeof filePath === 'string') {
-			filePaths = [filePath]
-		} else {
-			filePaths = filePath
-		}
-
-		for (const sourceNodeMetaData of this.functions.values()) {
-			sourceNodeMetaData.removeFromIntern(filePaths)			
-		}
-	}
-
 	validate() {
 		for (const [sourceNodeID, sourceNodeMetaData] of this.functions.entries()) {
 			const sourceNodeIndex = this.getSourceNodeIndexByID(sourceNodeID)

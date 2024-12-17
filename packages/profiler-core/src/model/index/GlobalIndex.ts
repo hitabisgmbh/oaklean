@@ -24,18 +24,18 @@ export class GlobalIndex extends BaseModel {
 	moduleMap: ModelMap<NodeModuleIdentifier_string, ModuleIndex>
 	engineModule: NodeModule
 
-	moduleReverseIndex: ModelMap<number, ModuleIndex>
-	pathReverseIndex: ModelMap<number, PathIndex>
-	sourceNodeReverseIndex: ModelMap<number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>
+	moduleReverseIndex: ModelMap<ModuleID_number, ModuleIndex>
+	pathReverseIndex: ModelMap<PathID_number, PathIndex>
+	sourceNodeReverseIndex: ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>
 
 	constructor(engineModule: NodeModule, currentId = 0) {
 		super()
 		this.currentId = currentId
 		this.engineModule = engineModule
 		this.moduleMap = new ModelMap<NodeModuleIdentifier_string, ModuleIndex>('string')
-		this.moduleReverseIndex = new ModelMap<number, ModuleIndex>('number')
-		this.pathReverseIndex = new ModelMap<number, PathIndex>('number')
-		this.sourceNodeReverseIndex = new ModelMap<number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>('number')
+		this.moduleReverseIndex = new ModelMap<ModuleID_number, ModuleIndex>('number')
+		this.pathReverseIndex = new ModelMap<PathID_number, PathIndex>('number')
+		this.sourceNodeReverseIndex = new ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>('number')
 	}
 
 	toBuffer(): Buffer {
@@ -86,13 +86,16 @@ export class GlobalIndex extends BaseModel {
 	) {
 		switch (type) {
 			case 'module':
-				this.moduleReverseIndex.set(id, index as ModuleIndex)
+				this.moduleReverseIndex.set(id as ModuleID_number, index as ModuleIndex)
 				break
 			case 'path':
-				this.pathReverseIndex.set(id, index as PathIndex)
+				this.pathReverseIndex.set(id as PathID_number, index as PathIndex)
 				break
 			case 'sourceNode':
-				this.sourceNodeReverseIndex.set(id, index as SourceNodeIndex<SourceNodeIndexType.SourceNode>)
+				this.sourceNodeReverseIndex.set(
+					id as SourceNodeID_number,
+					index as SourceNodeIndex<SourceNodeIndexType.SourceNode>
+				)
 				break
 		}
 	}

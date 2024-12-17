@@ -4,11 +4,13 @@ import inspector from 'inspector'
 import { LoggerHelper } from './LoggerHelper'
 import { CPUModel } from './CPUModel'
 import { PermissionHelper } from './PermissionHelper'
+import { TypescriptParser } from './TypescriptParser'
 
 import { SourceMap } from '../model/SourceMap'
 import { UnifiedPath } from '../system/UnifiedPath'
 // Types
 import { IInspectorHelper } from '../types/helper/InspectorHelper'
+import { UnifiedPath_string } from '../types'
 
 export class InspectorHelper {
 	private _session: inspector.Session
@@ -17,10 +19,14 @@ export class InspectorHelper {
 	// maps scriptId to a source map
 	private sourceMapMap: Map<string, SourceMap | null>
 
+	// loaded files from the file system
+	private loadedFiles: Map<UnifiedPath_string, string>
+
 	constructor() {
 		this._session = new inspector.Session()
 		this.sourceCodeMap = new Map()
 		this.sourceMapMap = new Map()
+		this.loadedFiles = new Map()
 	}
 
 	async connect() {
@@ -70,7 +76,8 @@ export class InspectorHelper {
 
 	toJSON(): IInspectorHelper {
 		return {
-			sourceCodeMap: Object.fromEntries(this.sourceCodeMap)
+			sourceCodeMap: Object.fromEntries(this.sourceCodeMap),
+			loadedFiles: Object.fromEntries(this.loadedFiles)
 		}
 	}
 
@@ -86,6 +93,10 @@ export class InspectorHelper {
 		const result = new InspectorHelper()
 		for (const [key, value] of Object.entries(data.sourceCodeMap)) {
 			result.sourceCodeMap.set(key, value)
+		}
+
+		for (const [key, value] of Object.entries(data.loadedFiles)) {
+			result.loadedFiles.set(key as UnifiedPath_string, value)
 		}
 
 		return result
@@ -127,6 +138,21 @@ export class InspectorHelper {
 		}
 
 		await Promise.all(promises)
+	}
+
+	loadFile(relativePath: UnifiedPath, filePath: UnifiedPath) {
+		let source = this.loadedFiles.get(relativePath.toString())
+		if (source !== undefined) {
+			return source
+		}
+		source = fs.readFileSync(filePath.toPlatformString()).toString()
+		this.loadedFiles.set(relativePath.toString(), source)
+		return source
+	}
+
+	parseFile(relativePath: UnifiedPath, filePath: UnifiedPath) {
+		const source = this.loadFile(relativePath, filePath)
+		return TypescriptParser.parseSource(filePath, source)
 	}
 
 	async sourceCodeFromId(

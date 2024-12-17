@@ -7,6 +7,7 @@
 
 ### Fixes
 - Fixed a bug that caused incorrect measurements in __awaiter functions.
+- Fixed a bug related to the correct resolving of source maps.
 
 ## 0.1.4
 ### Improvement

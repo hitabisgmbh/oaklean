@@ -53,7 +53,11 @@ describe('SourceMap', () => {
 		})
 
 		test('getOriginalSourceLocation', () => {
-			expect(instance.getOriginalSourceLocation(1, 1)).toEqual({
+			// non existing location
+			expect(instance.getOriginalSourceLocation(1, 1)).toBeUndefined()
+
+			// existing location
+			expect(instance.getOriginalSourceLocation(6, 0)).toEqual({
 				column: 0,
 				line: 1,
 				name: null,
