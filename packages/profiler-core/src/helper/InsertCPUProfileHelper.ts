@@ -8,7 +8,6 @@ import { CPUNode } from './CPUNode'
 import { TypescriptParser } from './TypescriptParser'
 import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
-import { WebpackHelper } from './WebpackHelper'
 import { InspectorHelper } from './InspectorHelper'
 
 import { ProjectReport } from '../model/ProjectReport'
