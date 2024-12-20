@@ -723,7 +723,7 @@ export class InsertCPUProfileHelper {
 			if (fs.existsSync(absoluteOriginalSourcePath.toPlatformString())) {
 				const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
 				const relativeOriginalSourcePath = (cpuNode.nodeModulePath && cpuNode.nodeModule)
-					? cpuNode.nodeModulePath.pathTo(pureRelativeOriginalSourcePath) :
+					? cpuNode.nodeModulePath.pathTo(absoluteOriginalSourcePath) :
 					pureRelativeOriginalSourcePath
 
 				programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
