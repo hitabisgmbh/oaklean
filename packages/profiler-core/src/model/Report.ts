@@ -420,21 +420,6 @@ export class Report extends BaseModel {
 		)
 	}
 
-	totalAndMaxMetaData(): AggregatedSourceNodeMetaData {
-		const totals: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>[] = []
-		const maxs: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>[] = []
-
-		for (const sourceFileMetaData of this.intern.values()) {
-			totals.push(sourceFileMetaData.totalSourceNodeMetaData().sum)
-			maxs.push(sourceFileMetaData.maxSourceNodeMetaData())
-		}
-
-		return new AggregatedSourceNodeMetaData(
-			SourceNodeMetaData.sum(...totals),
-			SourceNodeMetaData.max(...maxs)
-		)
-	}
-
 	validate() {
 		for (const sourceFileMetaData of this.intern.values()) {
 			sourceFileMetaData.validate()
