@@ -48,7 +48,6 @@ export class CPUNode {
 
 	private _sourceNodeIdentifier?: SourceNodeIdentifier_string
 
-	private _isWithinJavascriptFile?: boolean
 	private _javascriptUrl?: UnifiedPath
 	private _relativeJavascriptUrl?: UnifiedPath
 
@@ -269,14 +268,6 @@ export class CPUNode {
 			}
 		}
 		return this._sourceNodeIdentifier
-	}
-
-	get isWithinJavascriptFile() {
-		if (this._isWithinJavascriptFile === undefined) {
-			const extname = this.relativeUrl.extname()
-			this._isWithinJavascriptFile = extname === '.js' || extname !== '.jsx'
-		}
-		return this._isWithinJavascriptFile
 	}
 
 	get relativeJavascriptUrl() {

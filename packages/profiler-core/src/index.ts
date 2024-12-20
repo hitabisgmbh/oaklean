@@ -40,9 +40,6 @@ import {
 import {
 	SystemInformation
 } from './model/SystemInformation'
-import { BaseAdapter } from './adapters/transformer/BaseAdapter'
-import { JestAdapter } from './adapters/transformer/JestAdapter'
-import { TypeScriptAdapter } from './adapters/transformer/TypeScriptAdapter'
 import { SourceFileMetaDataTree } from './model/SourceFileMetaDataTree'
 import { ModuleReport } from './model/ModuleReport'
 import { GlobalIdentifier } from './system/GlobalIdentifier'
@@ -103,16 +100,12 @@ import { PerfMetricsData} from './model/interfaces/PerfMetricsData'
 import { WindowsSensorInterfaceMetricsData } from './model/interfaces/WindowsSensorInterfaceMetricsData'
 export * from './types'
 
-
 export {
 	APP_NAME,
 	BaseModel,
 	ModelMap,
 	ModelMapKeyType,
 	GlobalIdentifier,
-	BaseAdapter,
-	JestAdapter,
-	TypeScriptAdapter,
 	LoggerHelper,
 	PathUtils,
 	UnifiedPath,

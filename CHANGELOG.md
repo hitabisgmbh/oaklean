@@ -9,6 +9,9 @@
 - Fixed a bug that caused incorrect measurements in __awaiter functions.
 - Fixed a bug related to the correct resolving of source maps.
 
+### Removed
+- Removed all transform adapters, as the transpiled source code is now directly retrieved from the V8 engine.
+
 ## 0.1.4
 ### Improvement
 - Types are now outsourced into separate files, enabling their usage in browser environments

@@ -9,7 +9,6 @@ import { TypescriptParser } from './TypescriptParser'
 import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
 import { InspectorHelper } from './InspectorHelper'
-import { PermissionHelper } from './PermissionHelper'
 
 import { ProjectReport } from '../model/ProjectReport'
 import { ModuleReport } from '../model/ModuleReport'
@@ -40,8 +39,6 @@ import {
 } from '../types'
 import { SourceMap } from '../model/SourceMap'
 
-type ReportType = ProjectReport | ModuleReport
-
 type AccountedTracker = {
 	map: Map<string, string[]>,
 	internMap: Map<string, boolean>,
@@ -55,7 +52,7 @@ type CallIdentifier = {
 }
 
 type LastNodeCallInfo = {
-	report: ReportType,
+	report: ProjectReport | ModuleReport,
 	sourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
 }
 
@@ -165,7 +162,7 @@ export class InsertCPUProfileHelper {
 
 	static async accountToLangInternal(
 		cpuNode: CPUNode,
-		reportToCredit: ReportType,
+		reportToCredit: ProjectReport | ModuleReport,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		accounted: AccountedTracker
 	) {
@@ -346,7 +343,7 @@ export class InsertCPUProfileHelper {
 	}
 
 	static async accountToIntern(
-		reportToCredit: ReportType,
+		reportToCredit: ProjectReport | ModuleReport,
 		cpuNode: CPUNode,
 		sourceNodeLocation: SourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
@@ -503,7 +500,7 @@ export class InsertCPUProfileHelper {
 	}
 
 	static async accountToExtern(
-		reportToCredit: ReportType,
+		reportToCredit: ProjectReport | ModuleReport,
 		cpuNode: CPUNode,
 		nodeModule: NodeModule,
 		sourceNodeLocation: SourceNodeLocation,
@@ -855,7 +852,7 @@ export class InsertCPUProfileHelper {
 		async function beforeTraverse(
 			cpuNode: CPUNode,
 			originalReport: ProjectReport,
-			reportToCreditArg: ReportType,
+			reportToCreditArg: ProjectReport | ModuleReport,
 			lastNodeCallInfo: LastNodeCallInfo | undefined,
 			accounted: AccountedTracker
 		) {
@@ -874,7 +871,7 @@ export class InsertCPUProfileHelper {
 			let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let isAwaiterSourceNode = false
 			let newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined = undefined
-			let newReportToCredit: ReportType | undefined = undefined
+			let newReportToCredit: ProjectReport | ModuleReport | undefined = undefined
 			if (cpuNode.isLangInternal) {
 				const result = await InsertCPUProfileHelper.accountToLangInternal(
 					cpuNode,
@@ -971,7 +968,7 @@ export class InsertCPUProfileHelper {
 
 		async function traverse(
 			originalReport: ProjectReport,
-			reportToCredit: ReportType,
+			reportToCredit: ProjectReport | ModuleReport,
 			cpuNode: CPUNode,
 			lastNodeCallInfo: LastNodeCallInfo | undefined,
 			accounted: AccountedTracker
