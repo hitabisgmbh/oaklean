@@ -12,7 +12,7 @@ import { program } from 'commander'
 export default class FormatCommands {
 	constructor() {
 		const baseCommand = program
-			.command('format')
+			.command('report')
 			.description('commands to convert or inspect the profiler\'s format')
 
 		baseCommand
@@ -40,6 +40,12 @@ export default class FormatCommands {
 			.description('Checks wether all files in the profiler format are present')
 			.argument('<input>', 'input file path')
 			.action(this.check.bind(this))
+
+		baseCommand
+			.command('inspect')
+			.description('Displays an overview of the reports stats')
+			.argument('<input>', 'input file path')
+			.action(this.inspect.bind(this))
 	}
 
 	static init() {
@@ -146,5 +152,44 @@ export default class FormatCommands {
 				}
 			}
 		}
+	}
+
+	async inspect(input: string) {
+		let inputPath = new UnifiedPath(input)
+		if (inputPath.isRelative()) {
+			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
+		}
+
+		const report = ProjectReport.loadFromFile(inputPath, 'bin')
+		if (report === undefined) {
+			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			return
+		}
+
+		const nodeModuleCount = report.globalIndex.moduleMap.size - 1
+
+		const total = report.totalAggregate()
+
+		LoggerHelper.table([
+			{
+				type: 'Node modules count',
+				value: nodeModuleCount
+			},
+			{
+				type: 'Total cpu time',
+				value: total.sensorValues.aggregatedCPUTime,
+				unit: 'µs'
+			},
+			{
+				type: 'Total cpu energy',
+				value: total.sensorValues.aggregatedCPUEnergyConsumption,
+				unit: 'mJ'
+			},
+			{
+				type: 'Total ram energy',
+				value: total.sensorValues.aggregatedRAMEnergyConsumption,
+				unit: 'mJ'
+			}
+		], ['type', 'value', 'unit'])
 	}
 }

@@ -2,6 +2,7 @@ import fs from 'fs'
 
 import { TimeHelper } from './TimeHelper'
 import { PermissionHelper } from './PermissionHelper'
+import { LoggerHelper } from './LoggerHelper'
 
 import { NanoSeconds_BigInt } from '../types'
 import { UnifiedPath } from '../system/UnifiedPath'
@@ -83,7 +84,7 @@ export class PerformanceHelper {
 
 	static printAccumulatedReport(path: UnifiedPath) {
 		const loadedReport = PerformanceHelper.loadFromFile(path)
-		console.log('Accumulated performance report:')
+		LoggerHelper.log('Accumulated performance report:')
 		const report: { [key: string]: Record<string, string> } = {}
 		for (const name of Object.keys(loadedReport.measures)) {
 			report[name] = {
@@ -91,7 +92,7 @@ export class PerformanceHelper {
 			}
 		}
 
-		console.table(report, ['Duration'])
+		LoggerHelper.table(report, ['Duration'])
 	}
 
 	printReport(title: string) {
@@ -117,7 +118,7 @@ export class PerformanceHelper {
 				}
 			}
 		}
-		console.log(`Performance report (${title}):`, (total / 1e9).toFixed(3), 's')
-		console.table(report, ['Duration', 'Percentage'])
+		LoggerHelper.log(`Performance report (${title}):`, (total / 1e9).toFixed(3), 's')
+		LoggerHelper.table(report, ['Duration', 'Percentage'])
 	}
 }

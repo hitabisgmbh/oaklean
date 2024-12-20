@@ -34,4 +34,8 @@ export class LoggerHelper {
 	static success(message?: any, ...optionalParams: any[]) {
 		console.log(LoggerHelper.successString(message, ...optionalParams))
 	}
+
+	static table(tabularData: any, properties?: readonly string[]) {
+		console.table(tabularData, properties)
+	}
 }

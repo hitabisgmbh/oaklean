@@ -385,6 +385,41 @@ export class Report extends BaseModel {
 		return this.intern.get(relativeFilePathID)
 	}
 
+	/**
+	 * @returns the total sensor values (sum) of all measurements in the report
+	 */
+	totalAggregate(): SourceNodeMetaData<SourceNodeMetaDataType.Aggregate> {
+		function aggregate(report: Report) {
+			const result: SensorValues[] = []
+
+			for (const file of report.intern.values()) {
+				for (const func of file.functions.values()) {
+					result.push(func.sensorValues)
+				}
+			}
+
+			for (const file of report.lang_internal.values()) {
+				for (const func of file.functions.values()) {
+					result.push(func.sensorValues)
+				}
+			}
+
+			for (const externReport of report.extern.values()) {
+				result.push(...aggregate(externReport))
+			}
+
+			return result
+		}
+		const totalSensorValues = SensorValues.sum(...aggregate(this)).cloneAsIsolated()
+
+		return new SourceNodeMetaData(
+			SourceNodeMetaDataType.Aggregate,
+			undefined,
+			totalSensorValues,
+			undefined
+		)
+	}
+
 	totalAndMaxMetaData(): AggregatedSourceNodeMetaData {
 		const totals: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>[] = []
 		const maxs: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>[] = []

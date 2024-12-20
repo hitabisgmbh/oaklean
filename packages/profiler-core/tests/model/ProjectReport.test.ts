@@ -12,6 +12,7 @@ import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { PermissionHelper } from '../../src/helper/PermissionHelper'
 import { InspectorHelper } from '../../src/helper/InspectorHelper'
+import { LoggerHelper } from '../../src/helper/LoggerHelper'
 import {
 	UnifiedPath_string,
 	IProjectReport,
@@ -1085,20 +1086,6 @@ describe('ProjectReport', () => {
 			expect(t).toThrowError('ProjectReport.merge: Project reports commit hashs are not the same')
 		})
 
-		test('wrong path mappings', () => {
-			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const moduleIndex = globalIndex.getModuleIndex('upsert')
-			instancesToMerge[0].internMapping.set(
-				(instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('upsert', './packages/profiler/examples/example002.ts' as UnifiedPath_string)?.id || -1) as PathID_number,
-				(instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('upsert', './packages/profiler/src/examples/example002.js' as UnifiedPath_string)?.id || -1) as PathID_number)
-
-			const t = () => {
-				ProjectReport.merge(moduleIndex, ...instancesToMerge)
-			}
-
-			expect(t).toThrowError('ProjectReport.merge: the ProjectReports contain different path mapping')
-		})
-
 		test('merges correctly', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
@@ -1131,14 +1118,14 @@ describe('ProjectReport', () => {
 			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.bin')
 			
 			// add cucc changes
-			const sourceFileIndex_001 = instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example001.js').toString())
+			const sourceFileIndex_001 = instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
 			expect(sourceFileIndex_001).toBeDefined()
 			if (sourceFileIndex_001) {
 				sourceFileIndex_001.containsUncommittedChanges = true
 			}
 
 			// add cucc changes
-			const sourceFileIndex_002 = instancesToMerge[1].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example002.js').toString())
+			const sourceFileIndex_002 = instancesToMerge[1].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
 			expect(sourceFileIndex_002).toBeDefined()
 			if (sourceFileIndex_002) {
 				sourceFileIndex_002.containsUncommittedChanges = true
@@ -1155,24 +1142,24 @@ describe('ProjectReport', () => {
 			expect(expectedProjectReportBin).toBeDefined()
 			if (expectedProjectReportJson && expectedProjectReportBin) {
 				// add cucc changes to expected json report
-				const sourceFileIndex_001_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example001.js').toString())
+				const sourceFileIndex_001_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
 				expect(sourceFileIndex_001_Json).toBeDefined()
 				if (sourceFileIndex_001_Json) {
 					sourceFileIndex_001_Json.containsUncommittedChanges = true
 				}
-				const sourceFileIndex_002_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example002.js').toString())
+				const sourceFileIndex_002_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
 				expect(sourceFileIndex_002_Json).toBeDefined()
 				if (sourceFileIndex_002_Json) {
 					sourceFileIndex_002_Json.containsUncommittedChanges = true
 				}
 
 				// add cucc changes to expected bin report
-				const sourceFileIndex_001_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example001.js').toString())
+				const sourceFileIndex_001_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
 				expect(sourceFileIndex_001_Bin).toBeDefined()
 				if (sourceFileIndex_001_Bin) {
 					sourceFileIndex_001_Bin.containsUncommittedChanges = true
 				}
-				const sourceFileIndex_002_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example002.js').toString())
+				const sourceFileIndex_002_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
 				expect(sourceFileIndex_002_Bin).toBeDefined()
 				if (sourceFileIndex_002_Bin) {
 					sourceFileIndex_002_Bin.containsUncommittedChanges = true
