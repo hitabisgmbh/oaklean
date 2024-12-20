@@ -9,6 +9,7 @@ import { TypescriptParser } from './TypescriptParser'
 import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
 import { InspectorHelper } from './InspectorHelper'
+import { PermissionHelper } from './PermissionHelper'
 
 import { ProjectReport } from '../model/ProjectReport'
 import { ModuleReport } from '../model/ModuleReport'
@@ -38,7 +39,6 @@ import {
 	MicroSeconds_number
 } from '../types'
 import { SourceMap } from '../model/SourceMap'
-import { PermissionHelper } from './PermissionHelper'
 
 type ReportType = ProjectReport | ModuleReport
 
@@ -135,10 +135,10 @@ export class InsertCPUProfileHelper {
 		ramEnergyConsumption: IPureRAMEnergyConsumption,
 		visited: boolean,
 	): {
-		cpuTime: IPureCPUTime,
-		cpuEnergyConsumption: IPureCPUEnergyConsumption,
-		ramEnergyConsumption: IPureRAMEnergyConsumption
-	} {
+			cpuTime: IPureCPUTime,
+			cpuEnergyConsumption: IPureCPUEnergyConsumption,
+			ramEnergyConsumption: IPureRAMEnergyConsumption
+		} {
 		const cpuTimeResult: IPureCPUTime = {
 			selfCPUTime: cpuTime.selfCPUTime,
 			aggregatedCPUTime: cpuTime.aggregatedCPUTime
