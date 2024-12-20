@@ -73,13 +73,7 @@ class CustomEnvironment implements JestEnvironment {
 		this.global.jestConfig = config
 		this.global.jestContext = context
 		if (process.env.ENABLE_MEASUREMENTS) {
-			this.profiler = new Profiler('jest', {
-				transformerAdapter: 'ts-jest',
-				jestAdapter: {
-					config,
-					context
-				}
-			})
+			this.profiler = new Profiler('jest')
 		}
 		this.ranSuccessfully = true
 	}

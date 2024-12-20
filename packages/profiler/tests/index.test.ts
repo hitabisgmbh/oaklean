@@ -24,13 +24,7 @@ describe('testing index file', () => {
 	test('profile should be created', async () => {
 		const uploadMethod = jest.spyOn(ProjectReport.prototype, 'uploadToRegistry').mockResolvedValue(undefined)
 		
-		const profile = new Profiler('test-profile', {
-			transformerAdapter: 'ts-jest',
-			jestAdapter: {
-				config: globalAny.jestConfig,
-				context: globalAny.jestContext
-			}
-		})
+		const profile = new Profiler('test-profile')
 		await profile.start('latest')
 		fibonacci(20)
 		await profile.finish('latest')

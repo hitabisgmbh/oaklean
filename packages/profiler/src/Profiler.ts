@@ -8,7 +8,6 @@ import {
 	ProfilerConfig,
 	ProjectReport,
 	IProjectReportExecutionDetails,
-	JestAdapter,
 	TimeHelper,
 	NanoSeconds_BigInt,
 	MicroSeconds_number,
@@ -19,7 +18,6 @@ import {
 	PerformanceHelper,
 	InspectorHelper
 } from '@oaklean/profiler-core'
-import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 
 import { V8Profiler } from './model/V8Profiler'
 import { TraceEventHelper } from './helper/TraceEventHelper'
@@ -27,16 +25,6 @@ import { BaseSensorInterface } from './interfaces/BaseSensorInterface'
 import { PowerMetricsSensorInterface } from './interfaces/powermetrics/PowerMetricsSensorInterface'
 import { PerfSensorInterface } from './interfaces/perf/PerfSensorInterface'
 import { WindowsSensorInterface } from './interfaces/windows/WindowsSensorInterface'
-
-export type TransformerAdapter = 'ts-jest'
-
-export type ProfilerOptions = {
-	transformerAdapter?: TransformerAdapter
-	jestAdapter: {
-		config: JestEnvironmentConfig,
-		context: EnvironmentContext
-	}
-}
 
 interface TraceEventParams {
 	pid: number,
@@ -53,7 +41,6 @@ interface TraceEventParams {
 export class Profiler {
 	subOutputDir: string | undefined
 	config: ProfilerConfig
-	options?: ProfilerOptions
 	executionDetails?: IProjectReportExecutionDetails
 
 	private _inspectorHelper: InspectorHelper
@@ -62,12 +49,10 @@ export class Profiler {
 	private _profilerStartTime: MicroSeconds_number | undefined
 
 	constructor(
-		subOutputDir?: string,
-		options?: ProfilerOptions
+		subOutputDir?: string
 	) {
 		this.subOutputDir = subOutputDir
 		this.config = ProfilerConfig.autoResolve()
-		this.options = options
 		this.loadSensorInterface()
 		this._inspectorHelper = new InspectorHelper()
 	}
@@ -308,28 +293,6 @@ export class Profiler {
 			endTime: profile.endTime,
 			samples: profile.samples,
 			timeDeltas: profile.timeDeltas
-		}
-		let transformerAdapter = undefined
-		if (this.options?.transformerAdapter === 'ts-jest') {
-			if (!this.options.jestAdapter.config || !this.options.jestAdapter.context) {
-				throw new Error('Please provide the JestEnvironmentConfig and EnvironmentContext in the profiler options at options.jestAdapter')
-			}
-			transformerAdapter = new JestAdapter(
-				this.options.jestAdapter.config,
-				this.options.jestAdapter.context
-			)
-			if (!fs.existsSync(this.outputDir().toPlatformString())) {
-				PermissionHelper.mkdirRecursivelyWithUserPermission(this.outputDir())
-			}
-			performance.start('Profiler.finish.exportJestConfig')
-			PermissionHelper.writeFileWithUserPermission(
-				this.outputDir().join('jest.config').toPlatformString(),
-				JSON.stringify({
-					config: this.options.jestAdapter.config,
-					context: this.options.jestAdapter.context
-				})
-			)
-			performance.stop('Profiler.finish.exportJestConfig')
 		}
 		const outFileCPUProfile = this.outputProfilePath(title)
 		const outFileInspectorHelper = this.outputInspectorHelperPath(title)
