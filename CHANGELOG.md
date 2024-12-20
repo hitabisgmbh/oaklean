@@ -8,6 +8,7 @@
 ### Fixes
 - Fixed a bug that caused incorrect measurements in __awaiter functions.
 - Fixed a bug related to the correct resolving of source maps.
+- Fixed a bug that occasionally resolved an incorrect node module path.
 
 ### Removed
 - Removed all transform adapters, as the transpiled source code is now directly retrieved from the V8 engine.

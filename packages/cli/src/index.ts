@@ -3,7 +3,7 @@ import { program } from 'commander'
 
 import { VERSION } from './constants/app'
 import BackendCommands from './commands/BackendCommands'
-import FormatCommands from './commands/FormatCommands'
+import ReportCommand from './commands/ReportCommands'
 import CPUProfileCommands from './commands/CPUProfileCommands'
 import CodeParsingCommands from './commands/CodeParsingCommands'
 import InitCommands from './commands/InitCommands'
@@ -13,7 +13,7 @@ program
 	.description('An CLI to interact with the @oaklean suite')
 
 InitCommands.init()
-FormatCommands.init()
+ReportCommand.init()
 CPUProfileCommands.init()
 CodeParsingCommands.init()
 BackendCommands.init()

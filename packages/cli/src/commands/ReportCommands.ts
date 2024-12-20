@@ -1,15 +1,19 @@
 import * as fs from 'fs'
 
 import {
+	LangInternalPath_string,
 	LoggerHelper,
 	NodeModule,
+	ProgramStructureTree,
 	ProjectReport,
 	SourceFileMetaDataTree,
-	UnifiedPath
+	TypescriptParser,
+	UnifiedPath,
+	UnifiedPath_string
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
-export default class FormatCommands {
+export default class ReportCommand {
 	constructor() {
 		const baseCommand = program
 			.command('report')
@@ -38,6 +42,7 @@ export default class FormatCommands {
 		baseCommand
 			.command('check')
 			.description('Checks wether all files in the profiler format are present')
+			.option('-sn, --source-nodes', 'Specifies if source nodes should also be checked', false)
 			.argument('<input>', 'input file path')
 			.action(this.check.bind(this))
 
@@ -50,7 +55,7 @@ export default class FormatCommands {
 	}
 
 	static init() {
-		return new FormatCommands()
+		return new ReportCommand()
 	}
 
 	async toHash(input: string) {
@@ -116,7 +121,7 @@ export default class FormatCommands {
 		tree.storeToFile(outputPath, 'pretty-json')
 	}
 
-	async check(input: string) {
+	async check(input: string, options: { sourceNodes: boolean }) {
 		let inputPath = new UnifiedPath(input)
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
@@ -134,9 +139,37 @@ export default class FormatCommands {
 			return
 		}
 
+		const pstPerFile = new Map<
+		UnifiedPath_string | LangInternalPath_string,
+		ProgramStructureTree
+		>()
+
 		for (const pathIndex of reversePathMap.values()) {
 			if (!fs.existsSync(new UnifiedPath(pathIndex.identifier).toPlatformString())) {
 				LoggerHelper.error(`Could not find file ${pathIndex.identifier}`)
+				continue
+			}
+
+			if (options.sourceNodes) {
+				let pst = pstPerFile.get(pathIndex.identifier)
+				if (pst === undefined) {
+					pst = TypescriptParser.parseFile(new UnifiedPath(pathIndex.identifier))
+					pstPerFile.set(pathIndex.identifier, pst)
+				}
+
+				const notFoundSourceNodes = []
+
+				for (const sourceNodeIndex of pathIndex.reverseSourceNodeMap.values()) {
+					if (sourceNodeIndex.presentInOriginalSourceCode) {
+						if (pst.sourceLocationOfIdentifier(sourceNodeIndex.identifier) === undefined) {
+							notFoundSourceNodes.push(sourceNodeIndex.identifier)
+						}
+					}
+				}
+				if (notFoundSourceNodes.length > 0) {
+					LoggerHelper.error(`Could not find source nodes in file ${pathIndex.identifier}`)
+					LoggerHelper.table(notFoundSourceNodes)
+				}
 			}
 		}
 

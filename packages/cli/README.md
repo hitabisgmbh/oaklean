@@ -30,10 +30,6 @@ Commands:
   parse           commands to parse javascript or typescript files
      - toPST Converts a given javascript/typescript file and extracts the ProgramStructureTree from it and stores it into a file
 
-  transpile       commands to parse javascript or typescript files
-     - withJest Transpiles a given javascript/typescript file with jest and stores the transpiled code into a file
-     - withTS Transpiles a given javascript/typescript file with typescript and stores the transpiled code into a file
-
   backend         commands to interact with the backend
      - send Sends a given .oak report to a backend specified in the .oaklean config
 
