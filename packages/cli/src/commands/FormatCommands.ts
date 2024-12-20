@@ -45,6 +45,7 @@ export default class FormatCommands {
 			.command('inspect')
 			.description('Displays an overview of the reports stats')
 			.argument('<input>', 'input file path')
+			.option('-lm, --list-modules', 'Displays a list of node modules', false)
 			.action(this.inspect.bind(this))
 	}
 
@@ -154,7 +155,7 @@ export default class FormatCommands {
 		}
 	}
 
-	async inspect(input: string) {
+	async inspect(input: string, options: { listModules: boolean }) {
 		let inputPath = new UnifiedPath(input)
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
@@ -166,14 +167,20 @@ export default class FormatCommands {
 			return
 		}
 
-		const nodeModuleCount = report.globalIndex.moduleMap.size - 1
+		const node_modules = []
+		for (const key of report.globalIndex.moduleMap.keys()) {
+			if (key === '{self}' || key === '{node}') {
+				continue
+			}
+			node_modules.push(key)
+		}
 
 		const total = report.totalAggregate()
 
 		LoggerHelper.table([
 			{
 				type: 'Node modules count',
-				value: nodeModuleCount
+				value: node_modules.length
 			},
 			{
 				type: 'Total cpu time',
@@ -191,5 +198,10 @@ export default class FormatCommands {
 				unit: 'mJ'
 			}
 		], ['type', 'value', 'unit'])
+
+		if (options.listModules) {
+			LoggerHelper.log('Node modules:')
+			LoggerHelper.table(node_modules)
+		}
 	}
 }

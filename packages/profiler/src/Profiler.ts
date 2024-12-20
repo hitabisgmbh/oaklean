@@ -249,7 +249,7 @@ export class Profiler {
 		performance.stop('Profiler.start.V8Profiler.startProfiling')
 		performance.start('Profiler.start.inspectorHelper.connect')
 		await this._inspectorHelper.connect()
-		this._inspectorHelper.listen()
+		await this._inspectorHelper.listen()
 		performance.stop('Profiler.start.inspectorHelper.connect')
 		performance.stop('Profiler.start')
 		performance.printReport('Profiler.start')

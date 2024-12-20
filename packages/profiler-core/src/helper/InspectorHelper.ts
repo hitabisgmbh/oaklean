@@ -102,8 +102,8 @@ export class InspectorHelper {
 		return result
 	}
 
-	listen() {
-		this._session.on('inspectorNotification', async (message) => {
+	async listen() {
+		await this._session.on('inspectorNotification', async (message) => {
 			if (message.method === 'Debugger.scriptParsed') {
 				const params = message.params as {
 					url: string,
