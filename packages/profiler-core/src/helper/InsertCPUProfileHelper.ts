@@ -398,19 +398,9 @@ export class InsertCPUProfileHelper {
 			})
 		}
 
-		const awaiterSourceNodeIndex = newLastInternSourceNode.getIndex()?.pathIndex.getSourceNodeIndex(
-			'get',
-			'{root}.{functionExpression:__awaiter}' as SourceNodeIdentifier_string,
-		)
-
 		if (
 			!isAwaiterSourceNode &&
-			awaiterSourceNodeIndex &&
-			accounted.map.has(
-				InsertCPUProfileHelper.callIdentifierToString({
-					reportID: reportToCredit.internID,
-					sourceNodeID: awaiterSourceNodeIndex.id
-				}))
+			awaiterStack.length > 0
 		) {
 			/*
 				The current source node is not an awaiter
@@ -423,7 +413,11 @@ export class InsertCPUProfileHelper {
 				throw new Error('InsertCPUProfileHelper.accountToIntern: expected an awaiter in awaiterStack')
 			}
 			if (
-				lastAwaiterNode.awaiter !== lastNodeCallInfo?.sourceNode
+				accounted.map.has(
+					InsertCPUProfileHelper.callIdentifierToString({
+						reportID: reportToCredit.internID,
+						sourceNodeID: lastAwaiterNode.awaiter.id
+					}))
 				&& lastAwaiterNode.awaiterParent === newLastInternSourceNode
 			) {
 				// the async function resolved when the awaiter was called,
@@ -431,7 +425,7 @@ export class InsertCPUProfileHelper {
 				// and the current source node is the async function that called the awaiter
 
 				const awaiterInternChild = newLastInternSourceNode.intern.get(
-					awaiterSourceNodeIndex.id
+					lastAwaiterNode.awaiter.id
 				)
 				if (awaiterInternChild !== undefined) {
 					// IMPORTANT to change when new measurement type gets added
@@ -871,7 +865,7 @@ export class InsertCPUProfileHelper {
 			let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let isAwaiterSourceNode = false
 			let newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined = undefined
-			let newReportToCredit: ProjectReport | ModuleReport | undefined = undefined
+			let newReportToCredit: ProjectReport | ModuleReport | undefined = reportToCredit
 			if (cpuNode.isLangInternal) {
 				const result = await InsertCPUProfileHelper.accountToLangInternal(
 					cpuNode,
@@ -989,10 +983,10 @@ export class InsertCPUProfileHelper {
 			for (const child of cpuNode.children()) {
 				await traverse(
 					originalReport,
-					newReportToCredit ? newReportToCredit : reportToCredit,
+					newReportToCredit,
 					child,
 					newLastInternSourceNode !== undefined ? {
-						report: reportToCredit,
+						report: newReportToCredit,
 						sourceNode: newLastInternSourceNode
 					} : undefined,
 					accounted
@@ -1006,17 +1000,33 @@ export class InsertCPUProfileHelper {
 			)
 		}
 
+		const accounted: AccountedTracker = {
+			map: new Map<string, string[]>,
+			internMap: new Map<string, boolean>(),
+			externMap: new Map<string, boolean>(),
+			langInternalMap: new Map<string, boolean>()
+		}
+
 		await traverse(
 			reportToApply,
 			reportToApply,
 			cpuModel.getNode(0),
 			undefined,
-			{
-				map: new Map<string, string[]>,
-				internMap: new Map<string, boolean>(),
-				externMap: new Map<string, boolean>(),
-				langInternalMap: new Map<string, boolean>()
-			}
+			accounted
 		)
+
+		if (accounted.map.size !== 0 ||
+			accounted.internMap.size !== 0 ||
+			accounted.externMap.size !== 0 ||
+			accounted.langInternalMap.size !== 0) {
+			LoggerHelper.error('InsertCPUProfileHelper.insertCPUProfile: accounted tracker should be empty after traverse', {
+				mapSize: accounted.map.size,
+				internMapSize: accounted.internMap.size,
+				externMapSize: accounted.externMap.size,
+				langInternalMapSize: accounted.langInternalMap.size
+			}
+			)
+			throw new Error('InsertCPUProfileHelper.insertCPUProfile: accounted tracker should be empty after traverse')
+		}
 	}
 }
