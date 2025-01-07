@@ -530,7 +530,6 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			),
 			this.lang_internal.set(sourceNodeID, sourceNodeMetaData)
 		}
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({
 			cpuTime: values.cpuTime,
 			cpuEnergyConsumption: values.cpuEnergyConsumption,
@@ -574,7 +573,6 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			)
 			this.intern.set(sourceNodeID, sourceNodeMetaData)
 		}
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({
 			cpuTime: values.cpuTime,
 			cpuEnergyConsumption: values.cpuEnergyConsumption,
@@ -618,7 +616,6 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			)
 			this.extern.set(sourceNodeID, sourceNodeMetaData)	
 		}
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({
 			cpuTime: values.cpuTime,
 			cpuEnergyConsumption: values.cpuEnergyConsumption,

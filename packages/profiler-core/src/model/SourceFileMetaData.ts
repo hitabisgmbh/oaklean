@@ -301,13 +301,64 @@ export class SourceFileMetaData extends BaseModel {
 	}
 
 	/**
-	 * Calculates the total SourceNodeMetaData for the SourceFile
+	 * Calculates the total SourceNodeMetaData of the SourceFile (the sum of all functions)
+	 * as well as the intern, extern and langInternal references.
 	 * 
-	 * hits, selfTime, aggregatedTime, langInternalTime, externTime and internTime are added up
+	 * TLDR:
+	 * Returns the total sum of the measurements of the file and each external reference (not included in that file)
+	 * with their own sum of measurements.
 	 * 
-	 * intern self references are removed
 	 * 
-	 * @returns number
+	 * Example:
+	 * 
+	 * // File: FileA
+	 * ClassA:
+	 * 		functionA:
+	 * 				selfTime: 1
+	 * 				aggregatedTime: 6
+	 * 				intern:
+	 * 					ClassA.functionB:
+	 * 						aggregatedTime: 5
+	 * 		functionB:
+	 * 				selfTime: 2
+	 * 				aggregatedTime: 5
+	 * 				intern:
+	 * 					ClassA.functionC:
+	 * 						aggregatedTime: 3
+	 * 		functionC:
+	 * 				selfTime: 2
+	 * 				aggregatedTime: 3
+	 * 				intern:
+	 * 					ClassB.functionD:
+	 * 						aggregatedTime: 1
+	 * 
+	 * // File: FileB
+	 * ClassB:
+	 * 		functionD:
+	 * 				selfTime: 1
+	 * 				aggregatedTime: 1
+	 * 
+	 * 
+	 * Would return:
+	 * 
+	 * sum: { selfTime: 5, aggregatedTime: 6, internCPUTime: 1 }
+	 * intern:
+	 * 		ClassB.functionD:
+	 * 			aggregatedCPUTime: 1
+	 * extern: empty
+	 * langInternal: empty
+	 * 
+	 * For each function in the file the sum is calculated by adding up:
+	 * hits, selfTime, aggregatedTime, langInternalTime, externTime and internTime
+	 * 
+	 * Then intern self references within the same file are removed from the sum
+	 * 
+	 * @returns {
+	 * 		sum // the sum of all functions in the file
+	 * 		intern // the sum of all intern references of each function in the file
+	 * 		extern // the sum of all extern references of each function in the file
+	 * 		langInternal // the sum of all langInternal references of each function in the file
+	 * }
 	 */
 	totalSourceNodeMetaData(): {
 		sum: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,

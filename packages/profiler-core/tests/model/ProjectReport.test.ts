@@ -164,8 +164,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 					id: 2 as SourceNodeID_number,
 					type: SourceNodeMetaDataType.SourceNode,
 					sensorValues: {
-						profilerHits: 1,
-
 						selfCPUTime: 20,
 						aggregatedCPUTime: 30,
 						langInternalCPUTime: 10,
@@ -183,7 +181,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 							id: 5 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 							sensorValues: {
-								profilerHits: 1,
 								aggregatedCPUTime: 10,
 								aggregatedCPUEnergyConsumption: 20,
 
@@ -196,8 +193,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 					id: 6 as SourceNodeID_number,
 					type: SourceNodeMetaDataType.SourceNode,
 					sensorValues: {
-						profilerHits: 1,
-
 						selfCPUTime: 30,
 						aggregatedCPUTime: 60,
 						langInternalCPUTime: 30,
@@ -215,8 +210,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 							id: 5 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 							sensorValues: {
-								profilerHits: 1,
-
 								aggregatedCPUTime: 30,
 
 								aggregatedCPUEnergyConsumption: 60,
@@ -246,8 +239,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 							id: 9 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.SourceNode,
 							sensorValues: {
-								profilerHits: 1,
-
 								selfCPUTime: 10,
 								aggregatedCPUTime: 10,
 
@@ -262,8 +253,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 							id: 10 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.SourceNode,
 							sensorValues: {
-								profilerHits: 1,
-
 								selfCPUTime: 80,
 								aggregatedCPUTime: 80,
 
@@ -381,8 +370,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 					type: SourceNodeMetaDataType.SourceNode,
 					id: 13,
 					sensorValues: {
-						profilerHits: 1,
-
 						selfCPUTime: 222,
 						aggregatedCPUTime: 222,
 
@@ -406,8 +393,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						id: 2 as SourceNodeID_number,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 1,
-
 							selfCPUTime: 20 as MicroSeconds_number,
 							aggregatedCPUTime: 30 as MicroSeconds_number,
 							langInternalCPUTime: 10 as MicroSeconds_number,
@@ -425,8 +410,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 								id: 5 as SourceNodeID_number,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
-									profilerHits: 1,
-
 									aggregatedCPUTime: 10,
 
 									aggregatedCPUEnergyConsumption: 20,
@@ -440,8 +423,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						id: 6 as SourceNodeID_number,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 1,
-
 							selfCPUTime: 30 as MicroSeconds_number,
 							aggregatedCPUTime: 60 as MicroSeconds_number,
 							langInternalCPUTime: 30 as MicroSeconds_number,
@@ -459,8 +440,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 								id: 5 as SourceNodeID_number,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
-									profilerHits: 1,
-
 									aggregatedCPUTime: 30,
 
 									aggregatedCPUEnergyConsumption: 60,
@@ -501,8 +480,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						id: 12 as SourceNodeID_number,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 1,
-
 							selfCPUTime: 456,
 							aggregatedCPUTime: 456,
 

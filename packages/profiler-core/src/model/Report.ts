@@ -223,7 +223,6 @@ export class Report extends BaseModel {
 			filePath,
 			functionIdentifier
 		)
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
 		return sourceNodeMetaData
 	}
@@ -268,7 +267,6 @@ export class Report extends BaseModel {
 			filePath,
 			functionIdentifier
 		)
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
 		return sourceNodeMetaData
 	}
@@ -322,7 +320,6 @@ export class Report extends BaseModel {
 			nodeModule,
 			functionIdentifier,
 		)
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
 		return {
 			report,
