@@ -56,6 +56,9 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return this._numberOfLinesInCompiledFile
 	}
 	
+	copy(): SourceMap {
+		return SourceMap.fromJSON(this.toJSON())
+	}
 
 	toJSON(): ISourceMap {
 		return {
@@ -114,27 +117,61 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return true
 	}
 
-	static fromCompiledJSString(filePath: UnifiedPath, sourceCode: string): SourceMap | null {
+	static base64StringCompiledJSString(sourceCode: string): {
+		base64: string | null | undefined,
+		sourceMapUrl: string
+	} | null {
 		const match = SOURCE_MAPPING_URL_REGEX.exec(sourceCode)
 
 		if (match) {
 			const sourceMapUrl = match[1]
 
 			if (DataUrlUtils.isDataUrl(sourceMapUrl)) {
-				// inline source map
-				const data = DataUrlUtils.parseDataUrl(sourceMapUrl)
-				return SourceMap.fromJsonString(data, filePath)
-			} else {
-				// source map file
-				const directoryPath = filePath.dirName()
-				const sourceMapLocation = directoryPath.join(sourceMapUrl)
-				if (fs.existsSync(sourceMapLocation.toString())) {
-					const data = fs.readFileSync(sourceMapLocation.toString(), { encoding: 'utf-8' })
-					return SourceMap.fromJsonString(data, sourceMapLocation)
+				return {
+					base64: DataUrlUtils.base64StringFromDataUrl(sourceMapUrl),
+					sourceMapUrl
 				}
+			}
+			return {
+				base64: undefined,
+				sourceMapUrl
 			}
 		}
 		return null
+	}
+
+	static fromCompiledJSString(filePath: UnifiedPath, sourceCode: string): SourceMap | null {
+		const result = SourceMap.base64StringCompiledJSString(sourceCode)
+
+		if (result === null) {
+			return null
+		}
+
+		if (result.base64 !== undefined) {
+			const jsonString = result.base64 !== null ?
+				Buffer.from(result.base64, 'base64').toString('utf-8') :
+				'{}'
+			return SourceMap.fromJsonString(jsonString, filePath)
+		} else {
+			// source map file
+			const directoryPath = filePath.dirName()
+			const sourceMapLocation = directoryPath.join(result.sourceMapUrl)
+			if (fs.existsSync(sourceMapLocation.toString())) {
+				const data = fs.readFileSync(sourceMapLocation.toString(), { encoding: 'utf-8' })
+				return SourceMap.fromJsonString(data, sourceMapLocation)
+			}
+		}
+		return null
+	}
+
+	toBase64String(): string {
+		const data: any = {}
+		
+		for (const attributeName of SOURCE_MAP_ATTRIBUTE_NAMES) {
+			data[attributeName] = (this as any)[attributeName]
+		}
+
+		return Buffer.from(JSON.stringify(data)).toString('base64')
 	}
 
 	static fromCompiledJSFile (filePath: UnifiedPath): SourceMap | null {

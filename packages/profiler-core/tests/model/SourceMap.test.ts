@@ -64,6 +64,14 @@ describe('SourceMap', () => {
 				source: '../src/index.ts',
 			})
 		})
+
+		test('dataUrl', () => {
+			const base64String = instance.toBase64String()
+			const compiledJSString = '//# sourceMappingURL=data:application/json;base64,' + base64String
+
+			const sourceMap = SourceMap.fromCompiledJSString(new UnifiedPath('abc.js'), compiledJSString)
+			expect(sourceMap?.toJSON()).toEqual(instance.toJSON())
+		})
 	})
 
 	describe('deserialization', () => {

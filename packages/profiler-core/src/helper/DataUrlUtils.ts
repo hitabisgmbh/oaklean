@@ -6,24 +6,24 @@ export class DataUrlUtils {
 		return VALID_DATA_URL_REGEX.test((s || '').trim())
 	}
 
-	static parseDataUrl(s: string): string {
+	static base64StringFromDataUrl(s: string): string | null {
 		if (!DataUrlUtils.isDataUrl(s)) {
-			return '{}'
+			return null
 		}
 
 		const parts = s.trim().match(VALID_DATA_URL_REGEX)
 
 		if (parts === null || parts[3] === undefined || parts[4] === undefined) {
-			return '{}'
+			return null
 		}
 
 		const contentType = parts[3].slice(1)
 		const content = parts[4]
 
 		if (contentType !== 'base64' && contentType !== 'charset=utf-8;base64') {
-			throw new Error(`DataUrlUtils.parseDataUrl: The Format ${contentType} is not supported`)
+			throw new Error(`DataUrlUtils.base64StringFromDataUrl: The Format ${contentType} is not supported`)
 		}
 
-		return Buffer.from(content, 'base64').toString('utf-8')
+		return content
 	}
 }

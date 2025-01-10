@@ -21,12 +21,22 @@ export class InspectorHelper {
 
 	// loaded files from the file system
 	private loadedFiles: Map<UnifiedPath_string, string>
+	private loadedFilesSourceMapMap: Map<UnifiedPath_string, SourceMap | null>
 
 	constructor() {
 		this._session = new inspector.Session()
 		this.sourceCodeMap = new Map()
 		this.sourceMapMap = new Map()
 		this.loadedFiles = new Map()
+		this.loadedFilesSourceMapMap = new Map()
+	}
+
+	get scriptIds() {
+		return Array.from(this.sourceCodeMap.keys())
+	}
+
+	get loadedFilePaths() {
+		return Array.from(this.loadedFiles.keys())
 	}
 
 	async connect() {
@@ -150,6 +160,20 @@ export class InspectorHelper {
 		return source
 	}
 
+	async sourceMapFromLoadedFile(
+		relativePath: UnifiedPath,
+		filePath: UnifiedPath
+	): Promise<SourceMap | null> {
+		let sourceMap = this.loadedFilesSourceMapMap.get(relativePath.toString())
+		if (sourceMap !== undefined) {
+			return sourceMap
+		}
+		const source = this.loadFile(relativePath, filePath)
+		sourceMap = SourceMap.fromCompiledJSString(filePath, source)
+		this.loadedFilesSourceMapMap.set(relativePath.toString(), sourceMap)
+		return sourceMap
+	}
+
 	parseFile(relativePath: UnifiedPath, filePath: UnifiedPath) {
 		const source = this.loadFile(relativePath, filePath)
 		return TypescriptParser.parseSource(filePath, source)
@@ -208,6 +232,53 @@ export class InspectorHelper {
 		sourceMap = SourceMap.fromCompiledJSString(filePath, sourceCode)
 		this.sourceMapMap.set(scriptId, sourceMap)
 		return sourceMap
-		
+	}
+
+	async replaceSourceMapById(
+		scriptId: string,
+		newSourceMap: SourceMap
+	) {
+		const oldSourceCode = this.sourceCodeMap.get(scriptId)
+		if (oldSourceCode === undefined || oldSourceCode === null) {
+			throw new Error(`No source code found for scriptId ${scriptId}`)
+		}
+		const result = SourceMap.base64StringCompiledJSString(oldSourceCode)
+		if (result === null || result.base64 === undefined || result.base64 === null) {
+			throw new Error(`No source map found for scriptId ${scriptId}`)
+		}
+
+		const oldBase64String = result.base64
+		const newBase64String = newSourceMap.toBase64String()
+
+		if (oldBase64String === newBase64String) {
+			return
+		}
+
+		this.sourceCodeMap.set(scriptId, oldSourceCode.replace(oldBase64String, newBase64String))
+		this.sourceMapMap.set(scriptId, newSourceMap)
+	}
+
+	async replaceSourceMapByLoadedFile(
+		relativePath: UnifiedPath,
+		newSourceMap: SourceMap
+	) {
+		const oldSourceCode = this.loadedFiles.get(relativePath.toString())
+		if (oldSourceCode === undefined || oldSourceCode === null) {
+			throw new Error(`No source code found for relativePath ${relativePath.toString()}`)
+		}
+		const result = SourceMap.base64StringCompiledJSString(oldSourceCode)
+		if (result === null || result.base64 === undefined || result.base64 === null) {
+			throw new Error(`No source map found for relativePath ${relativePath.toString()}`)
+		}
+
+		const oldBase64String = result.base64
+		const newBase64String = newSourceMap.toBase64String()
+
+		if (oldBase64String === newBase64String) {
+			return
+		}
+
+		this.loadedFiles.set(relativePath.toString(), oldSourceCode.replace(oldBase64String, newBase64String))
+		this.loadedFilesSourceMapMap.set(relativePath.toString(), newSourceMap)
 	}
 }

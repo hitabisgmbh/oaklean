@@ -273,6 +273,58 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 const EXAMPLE_PROJECT_REPORT_BUFFER = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer').toString()).toString()
 const EXAMPLE_PROJECT_REPORT_HASH = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash').toString()).toString()
 
+const INSPECTOR_HELPER_FILE_PATH_EXAMPLE001 = CURRENT_DIR.join('assets', 'InspectorHelpers', 'example001.inspector.json')
+const INSPECTOR_HELPER_FILE_PATH_EXAMPLE002 = CURRENT_DIR.join('assets', 'InspectorHelpers', 'example002.inspector.json')
+
+/**
+ * Preprocess the inspector helper files to ensure that source maps are relative and do not contain absolute paths.
+ * So the tests can be run on different machines.
+ */
+async function preprocess() {
+	for (const inspectorHelperPath of [
+		INSPECTOR_HELPER_FILE_PATH_EXAMPLE001,
+		INSPECTOR_HELPER_FILE_PATH_EXAMPLE002
+	]) {
+		const inspectorHelper = InspectorHelper.loadFromFile(inspectorHelperPath)
+
+		if (inspectorHelper === undefined) {
+			console.error('Failed to load InspectorHelper')
+			return
+		}
+
+		for (const scriptId of inspectorHelper.scriptIds) {
+			const sourceMap = (await inspectorHelper.sourceMapFromId(inspectorHelperPath, scriptId.toString()))?.copy()
+
+			if (sourceMap !== undefined && sourceMap !== null) {
+				const newSources = sourceMap.sources.map((source) => {
+					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
+				})
+				sourceMap.sources = newSources
+				inspectorHelper.replaceSourceMapById(scriptId, sourceMap)
+			}
+		}
+
+		for (const loadedFilePath of inspectorHelper.loadedFilePaths) {
+			const filePath = new UnifiedPath(loadedFilePath)
+			const sourceMap = (await inspectorHelper.sourceMapFromLoadedFile(
+				filePath,
+				filePath)
+			)?.copy()
+
+			if (sourceMap !== undefined && sourceMap !== null) {
+				const newSources = sourceMap.sources.map((source) => {
+					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
+				})
+				sourceMap.sources = newSources
+				inspectorHelper.replaceSourceMapByLoadedFile(filePath, sourceMap)
+			}
+		}
+
+		inspectorHelper.storeToFile(inspectorHelperPath, 'pretty-json')
+	}
+}
+
+preprocess()
 
 function setProfilesContext(profile: ICpuProfileRaw) {
 	for (const node of profile.nodes) {
@@ -826,8 +878,7 @@ describe('ProjectReport', () => {
 	describe('insertCPUProfile', () => {
 		test('test case example001', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
-			const inspectorHelperFilePath = CURRENT_DIR.join('assets', 'InspectorHelpers', 'example001.inspector.json')
-			const inspectorHelper = InspectorHelper.loadFromFile(inspectorHelperFilePath)!
+			const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE001)!
 
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 			setProfilesContext(profile)
@@ -899,8 +950,7 @@ describe('ProjectReport', () => {
 
 		test('test case example002', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example002.cpuprofile').toString()
-			const inspectorHelperFilePath = CURRENT_DIR.join('assets', 'InspectorHelpers', 'example002.inspector.json')
-			const inspectorHelper = InspectorHelper.loadFromFile(inspectorHelperFilePath)!
+			const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE002)!
 
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 			setProfilesContext(profile)
@@ -971,8 +1021,7 @@ describe('ProjectReport', () => {
 
 		test('not existing Sourcefile', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
-			const inspectorHelperFilePath = CURRENT_DIR.join('assets', 'InspectorHelpers', 'example001.inspector.json')
-			const inspectorHelper = InspectorHelper.loadFromFile(inspectorHelperFilePath)!
+			const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE001)!
 			
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 			const projectReport = new ProjectReport({
