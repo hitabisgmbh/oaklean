@@ -117,7 +117,12 @@ export default class ReportCommand {
 			fs.mkdirSync(outDir.toPlatformString(), { recursive: true })
 		}
 
-		const tree = SourceFileMetaDataTree.fromProjectReport(report)
+		const tree = SourceFileMetaDataTree.fromProjectReport(report).filter(undefined, undefined).node
+		if (tree === null) {
+			LoggerHelper.error('Could not create SourceFileMetaDataTree')
+			return
+		}
+
 		tree.storeToFile(outputPath, 'pretty-json')
 	}
 
@@ -208,7 +213,7 @@ export default class ReportCommand {
 			node_modules.push(key)
 		}
 
-		const total = report.totalAggregate()
+		const total = report.totalAndMaxMetaData().total
 
 		LoggerHelper.table([
 			{

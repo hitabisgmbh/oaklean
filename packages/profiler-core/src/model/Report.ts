@@ -383,9 +383,9 @@ export class Report extends BaseModel {
 	}
 
 	/**
-	 * @returns the total sensor values (sum) of all measurements in the report
+	 * @returns the total sensor values (sum) and the maximum (max) of all measurements in the report
 	 */
-	totalAggregate(): SourceNodeMetaData<SourceNodeMetaDataType.Aggregate> {
+	totalAndMaxMetaData(): AggregatedSourceNodeMetaData {
 		function aggregate(report: Report) {
 			const result: SensorValues[] = []
 
@@ -407,13 +407,24 @@ export class Report extends BaseModel {
 
 			return result
 		}
-		const totalSensorValues = SensorValues.sum(...aggregate(this)).cloneAsIsolated()
+		const allSensorValues = aggregate(this)
 
-		return new SourceNodeMetaData(
-			SourceNodeMetaDataType.Aggregate,
-			undefined,
-			totalSensorValues,
-			undefined
+		const totalSensorValues = SensorValues.sum(...allSensorValues).cloneAsIsolated()
+		const maxSensorValues = SensorValues.max(...allSensorValues)
+
+		return new AggregatedSourceNodeMetaData(
+			new SourceNodeMetaData(
+				SourceNodeMetaDataType.Aggregate,
+				undefined,
+				totalSensorValues,
+				undefined
+			),
+			new SourceNodeMetaData(
+				SourceNodeMetaDataType.Aggregate,
+				undefined,
+				maxSensorValues,
+				undefined
+			)
 		)
 	}
 
