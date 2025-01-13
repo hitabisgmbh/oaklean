@@ -7,7 +7,7 @@ import { BaseModel } from './BaseModel'
 import { DataUrlUtils } from '../helper/DataUrlUtils'
 import { UnifiedPath } from '../system/UnifiedPath'
 
-const SOURCE_MAPPING_URL_REGEX = /\/\/# sourceMappingURL=(.*)$/m
+const SOURCE_MAPPING_URL_REGEX = /^\/\/# sourceMappingURL=(.*)$/m
 const SOURCE_MAP_ATTRIBUTE_NAMES = ['version', 'sources', 'names', 'mappings']
 
 export interface ISourceMap {

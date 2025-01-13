@@ -300,6 +300,11 @@ export class Profiler {
 		const outFileMetricCollection = this.outputMetricCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportV8Profile')
+			// create parent directories if they do not exist
+			const dir = outFileCPUProfile.dirName()
+			if (!fs.existsSync(dir.toPlatformString())) {
+				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
+			}
 			PermissionHelper.writeFileWithUserPermission(
 				outFileCPUProfile.toPlatformString(),
 				JSON.stringify(exportData, null, 2),
@@ -335,6 +340,11 @@ export class Profiler {
 
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportInspectorHelper')
+			// create parent directories if they do not exist
+			const dir = outFileInspectorHelper.dirName()
+			if (!fs.existsSync(dir.toPlatformString())) {
+				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
+			}
 			PermissionHelper.writeFileWithUserPermission(
 				outFileInspectorHelper.toPlatformString(),
 				JSON.stringify(this._inspectorHelper, null, 2),
