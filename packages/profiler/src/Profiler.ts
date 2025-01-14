@@ -325,15 +325,11 @@ export class Profiler {
 			}
 		}
 
-		performance.start('Profiler.finish.insertCPUProfile')
-		await report.insertCPUProfile(
-			rootDir,
-			profile,
-			this._inspectorHelper,
-			metricsDataCollection
-		)
-		performance.stop('Profiler.finish.insertCPUProfile')
-
+		// load all script sources from inspector
+		performance.start('Profiler.finish.inspectorHelper.fillSourceMapsFromCPUProfile')
+		await this._inspectorHelper.fillSourceMapsFromCPUProfile(profile)
+		performance.stop('Profiler.finish.inspectorHelper.fillSourceMapsFromCPUProfile')
+		
 		performance.start('Profiler.finish.inspectorHelper.disconnect')
 		await this._inspectorHelper.disconnect()
 		performance.stop('Profiler.finish.inspectorHelper.disconnect')
@@ -351,6 +347,15 @@ export class Profiler {
 			)
 			performance.stop('Profiler.finish.exportInspectorHelper')
 		}
+
+		performance.start('Profiler.finish.insertCPUProfile')
+		await report.insertCPUProfile(
+			rootDir,
+			profile,
+			this._inspectorHelper,
+			metricsDataCollection
+		)
+		performance.stop('Profiler.finish.insertCPUProfile')
 
 		performance.start('Profiler.finish.trackUncommittedFiles')
 		await report.trackUncommittedFiles(rootDir)

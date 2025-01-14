@@ -9,6 +9,7 @@ import { TypescriptParser } from './TypescriptParser'
 import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
 import { InspectorHelper } from './InspectorHelper'
+import { WebpackHelper } from './WebpackHelper'
 
 import { ProjectReport } from '../model/ProjectReport'
 import { ModuleReport } from '../model/ModuleReport'
@@ -21,7 +22,7 @@ import {
 	SourceNodeMetaData
 } from '../model/SourceNodeMetaData'
 import { GlobalIdentifier } from '../system/GlobalIdentifier'
-import { NodeModule } from '../model/NodeModule'
+import { NodeModule, NOT_FOUND_NODE_MODULE, WASM_NODE_MODULE } from '../model/NodeModule'
 // Types
 import {
 	UnifiedPath_string,
@@ -709,9 +710,12 @@ export class InsertCPUProfileHelper {
 		) : undefined
 
 		if (originalPosition && originalPosition.source) {
-			const originalPositionPath = new UnifiedPath(originalPosition.source)
+			const originalPositionPath = WebpackHelper.transformSourceMapSourcePath(
+				rootDir,
+				originalPosition.source
+			)
 			const absoluteOriginalSourcePath = originalPositionPath.isRelative() ? new UnifiedPath(
-				path.resolve(path.join(path.dirname(cpuNode.url.toString()), originalPosition.source))
+				path.resolve(path.join(path.dirname(cpuNode.url.toString()), originalPositionPath.toString()))
 			) : originalPositionPath
 
 			if (fs.existsSync(absoluteOriginalSourcePath.toPlatformString())) {
@@ -724,38 +728,47 @@ export class InsertCPUProfileHelper {
 					pureRelativeOriginalSourcePath.toString()
 				)
 				if (programStructureTreeOriginal === undefined) {
-					// found the original source file from the source map but it is not yet parsed
-					programStructureTreeOriginal = inspectorHelper.parseFile(
-						pureRelativeOriginalSourcePath,
-						absoluteOriginalSourcePath
-					)
-					programStructureTreePerOriginalFile.set(
-						pureRelativeOriginalSourcePath.toString(),
-						programStructureTreeOriginal
-					)
+					try {
+						// found the original source file from the source map but it is not yet parsed
+						programStructureTreeOriginal = inspectorHelper.parseFile(
+							pureRelativeOriginalSourcePath,
+							absoluteOriginalSourcePath
+						)
+						programStructureTreePerOriginalFile.set(
+							pureRelativeOriginalSourcePath.toString(),
+							programStructureTreeOriginal
+						)
+					} catch {
+						// LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: could not parse original source file', {
+						// 	filePath: pureRelativeOriginalSourcePath
+						// })
+						programStructureTreeOriginal = undefined
+					}
 				}
-				const originalFunctionIdentifier = programStructureTreeOriginal.identifierBySourceLocation(
-					{ line: originalPosition.line, column: originalPosition.column }
-				)
-				functionIdentifierPresentInOriginalFile = programStructureTreeOriginal.sourceLocationOfIdentifier(
-					functionIdentifier
-				) !== undefined
-				sourceNodeLocation = {
-					relativeFilePath: relativeOriginalSourcePath,
-					functionIdentifier: originalFunctionIdentifier
+				if (programStructureTreeOriginal !== undefined) {
+					const originalFunctionIdentifier = programStructureTreeOriginal.identifierBySourceLocation(
+						{ line: originalPosition.line, column: originalPosition.column }
+					)
+					functionIdentifierPresentInOriginalFile = programStructureTreeOriginal.sourceLocationOfIdentifier(
+						functionIdentifier
+					) !== undefined
+					sourceNodeLocation = {
+						relativeFilePath: relativeOriginalSourcePath,
+						functionIdentifier: originalFunctionIdentifier
+					}
 				}
 			} else {
 				// since node modules often include source maps that point to non-existing files we ignore them
-				if (!cpuNode.nodeModulePath || !cpuNode.nodeModule) {
-					LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
-						originalPositionSource: originalPosition.source,
-						absoluteOriginalSourcePath,
-						sources: sourceMap?.sources,
-						url: cpuNode.url.toString(),
-						lineNumber,
-						columnNumber
-					})
-				}
+				// if (!cpuNode.nodeModulePath || !cpuNode.nodeModule) {
+				// 	LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
+				// 		originalPositionSource: originalPosition.source,
+				// 		absoluteOriginalSourcePath,
+				// 		sources: sourceMap?.sources,
+				// 		url: cpuNode.url.toString(),
+				// 		lineNumber,
+				// 		columnNumber
+				// 	})
+				// }
 			}
 		} else {
 			if (sourceMap) {
@@ -805,7 +818,6 @@ export class InsertCPUProfileHelper {
 			profile,
 			BigInt(reportToApply.executionDetails.highResolutionBeginTime) as NanoSeconds_BigInt
 		)
-		await inspectorHelper.fillSourceMapsFromCPUModel(cpuModel)
 
 		// script id -> ProgramStructureTree
 		const programStructureTreePerNodeScript: ModelMap<string, ProgramStructureTree> =
@@ -851,22 +863,44 @@ export class InsertCPUProfileHelper {
 			accounted: AccountedTracker
 		) {
 			let reportToCredit = reportToCreditArg
-			if (!cpuNode.isExtern && !cpuNode.isLangInternal) {
+			if (!cpuNode.isExtern && !cpuNode.isLangInternal && !cpuNode.isWASM) {
 				reportToCredit = originalReport
 			}
 			const sourceFileExists =
-				fs.existsSync(cpuNode.url.toString()) && fs.statSync(cpuNode.url.toString()).isFile()
+				fs.existsSync(cpuNode.url.toString()) && 
+				fs.statSync(cpuNode.url.toString()).isFile()
 
-			if (!cpuNode.isEmpty && !cpuNode.isLangInternal && !sourceFileExists) {
-				throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: Sourcefile does not exist: ' + cpuNode.url)
-			}
+			// if the source file does not exist, account it to an extern node module ({not-found})
+			const sourceFileNotFound =
+				!cpuNode.isEmpty &&
+				!cpuNode.isLangInternal &&
+				!cpuNode.isWASM &&
+				!sourceFileExists
 
 			let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let isAwaiterSourceNode = false
 			let newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined = undefined
 			let newReportToCredit: ProjectReport | ModuleReport | undefined = reportToCredit
-			if (cpuNode.isLangInternal) {
+			if (sourceFileNotFound) {
+				const result = await InsertCPUProfileHelper.accountToExtern(
+					reportToCredit,
+					cpuNode,
+					NOT_FOUND_NODE_MODULE,
+					{
+						relativeFilePath: cpuNode.relativeSourceFilePath,
+						functionIdentifier:
+							cpuNode.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
+					},
+					lastNodeCallInfo,
+					accounted
+				)
+
+				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
+				newLastInternSourceNode = result.newLastInternSourceNode
+				newReportToCredit = result.newReportToCredit
+			} else if (cpuNode.isLangInternal) {
 				const result = await InsertCPUProfileHelper.accountToLangInternal(
 					cpuNode,
 					reportToCredit,
@@ -875,6 +909,24 @@ export class InsertCPUProfileHelper {
 				)
 				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+			} else if (cpuNode.isWASM) {
+				const result = await InsertCPUProfileHelper.accountToExtern(
+					reportToCredit,
+					cpuNode,
+					WASM_NODE_MODULE,
+					{
+						relativeFilePath: cpuNode.relativeSourceFilePath,
+						functionIdentifier:
+							cpuNode.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
+					},
+					lastNodeCallInfo,
+					accounted
+				)
+
+				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
+				newLastInternSourceNode = result.newLastInternSourceNode
+				newReportToCredit = result.newReportToCredit
 			} else if (!cpuNode.isEmpty) {
 				const {
 					sourceNodeLocation,

@@ -1,6 +1,8 @@
 import * as fs from 'fs'
 import inspector from 'inspector'
 
+import type { Protocol as Cdp } from 'devtools-protocol'
+
 import { LoggerHelper } from './LoggerHelper'
 import { CPUModel } from './CPUModel'
 import { PermissionHelper } from './PermissionHelper'
@@ -131,17 +133,17 @@ export class InspectorHelper {
 		this._session.disconnect()
 	}
 
-	async fillSourceMapsFromCPUModel(cpuModel: CPUModel) {
+	async fillSourceMapsFromCPUProfile(profile: Cdp.Profiler.Profile) {
 		const scriptMap = new Map<string, string>()
 
-		for (const location of cpuModel.ILocations) {
+		for (const location of profile.nodes) {
 			const scriptId = location.callFrame.scriptId.toString()
 			if (scriptMap.has(scriptId)) {
 				continue
 			}
 			scriptMap.set(scriptId, location.callFrame.url)
 		}
-		
+
 		const promises = []
 		for (const [scriptId, filePath] of scriptMap) {
 			promises.push(this.sourceMapFromId(new UnifiedPath(filePath), scriptId))

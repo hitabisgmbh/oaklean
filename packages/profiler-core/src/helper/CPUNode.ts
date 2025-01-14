@@ -36,6 +36,7 @@ export class CPUNode {
 	private _sourceLocation?: ILocation
 	private _isEmpty?: boolean
 	private _isLangInternal?: boolean
+	private _isWASM?: boolean
 	private _isExtern?: boolean
 
 	private _scriptId?: string
@@ -141,6 +142,14 @@ export class CPUNode {
 		return this._isLangInternal
 	}
 
+	get isWASM() {
+		if (this._isWASM === undefined) {
+			const sourceLocation = this.ISourceLocation
+			this._isWASM = sourceLocation.callFrame.url.startsWith('wasm://')
+		}
+		return this._isWASM
+	}
+
 	get isEmpty() {
 		if (this._isEmpty === undefined) {
 			this._isEmpty = this.ISourceLocation.callFrame.url === ''
@@ -205,13 +214,17 @@ export class CPUNode {
 
 	get relativeSourceFilePath() {
 		if (this._relativeSourceFilePath === undefined) {
-			if (!this.nodeModulePath || !this.nodeModule) {
-				this._relativeSourceFilePath = this.relativeUrl
+			if (this.isWASM) {
+				this._relativeSourceFilePath = new UnifiedPath(this.rawUrl.substring(7)) // remove the 'wasm://' prefix
 			} else {
-				if (this.url.isRelative()) {
-					this._relativeSourceFilePath = this.nodeModulePath.pathTo(this.rootDir.join(this.url))
+				if (!this.nodeModulePath || !this.nodeModule) {
+					this._relativeSourceFilePath = this.relativeUrl
 				} else {
-					this._relativeSourceFilePath = this.nodeModulePath.pathTo(this.url)
+					if (this.url.isRelative()) {
+						this._relativeSourceFilePath = this.nodeModulePath.pathTo(this.rootDir.join(this.url))
+					} else {
+						this._relativeSourceFilePath = this.nodeModulePath.pathTo(this.url)
+					}
 				}
 			}
 		}

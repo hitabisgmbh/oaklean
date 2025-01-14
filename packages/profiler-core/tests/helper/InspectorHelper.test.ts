@@ -1,3 +1,5 @@
+import type { Protocol as Cdp } from 'devtools-protocol'
+
 import * as inspector from '../__mocks__/inspector.mock'
 import { InspectorHelper } from '../../src/helper/InspectorHelper'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
@@ -71,8 +73,8 @@ describe('InspectorHelper', () => {
 			expect(instance.disconnect).toBeTruthy()
 		})
 
-		it('should have a method fillSourceMapsFromCPUModel()', () => {
-			expect(instance.fillSourceMapsFromCPUModel).toBeTruthy()
+		it('should have a method fillSourceMapsFromCPUProfile()', () => {
+			expect(instance.fillSourceMapsFromCPUProfile).toBeTruthy()
 		})
 
 		it('should have a method loadFile()', () => {
@@ -205,56 +207,52 @@ describe('InspectorHelper', () => {
 		})
 	})
 
-	test('fillSourceMapsFromCPUModel', async () => {
-		const cpuModel = new CPUModel(
-			ROOT_DIR,
-			{
-				nodes: [{
-					id: 1,
-					callFrame: {
-						functionName: 'foo',
-						url: SCRIPT_01_PATH.toString(),
-						scriptId: '1',
-						lineNumber: 1,
-						columnNumber: 1
-					},
-					hitCount: 1,
-					children: [2]
-				}, {
-					id: 2,
-					callFrame: {
-						functionName: 'bar',
-						url: SCRIPT_02_PATH.toString(),
-						scriptId: '2',
-						lineNumber: 2,
-						columnNumber: 2
-					},
-					hitCount: 1,
-					children: [3]
-				}, {
-					id: 3,
-					callFrame: {
-						functionName: 'baz',
-						url: SCRIPT_03_PATH.toString(),
-						scriptId: '3',
-						lineNumber: 3,
-						columnNumber: 3
-					},
-					hitCount: 1,
-					children: []
-				}],
-				samples: [1,2,3],
-				timeDeltas: [10, 20, 30],
-				startTime: 0,
-				endTime: 100
-			},
-			BigInt(0) as NanoSeconds_BigInt
-		)
+	test('fillSourceMapsFromCPUProfile', async () => {
+		const profile: Cdp.Profiler.Profile = {
+			nodes: [{
+				id: 1,
+				callFrame: {
+					functionName: 'foo',
+					url: SCRIPT_01_PATH.toString(),
+					scriptId: '1',
+					lineNumber: 1,
+					columnNumber: 1
+				},
+				hitCount: 1,
+				children: [2]
+			}, {
+				id: 2,
+				callFrame: {
+					functionName: 'bar',
+					url: SCRIPT_02_PATH.toString(),
+					scriptId: '2',
+					lineNumber: 2,
+					columnNumber: 2
+				},
+				hitCount: 1,
+				children: [3]
+			}, {
+				id: 3,
+				callFrame: {
+					functionName: 'baz',
+					url: SCRIPT_03_PATH.toString(),
+					scriptId: '3',
+					lineNumber: 3,
+					columnNumber: 3
+				},
+				hitCount: 1,
+				children: []
+			}],
+			samples: [1, 2, 3],
+			timeDeltas: [10, 20, 30],
+			startTime: 0,
+			endTime: 100
+		}
 
 		const instance = new InspectorHelper()
 		instance.connect()
 
-		await instance.fillSourceMapsFromCPUModel(cpuModel)
+		await instance.fillSourceMapsFromCPUProfile(profile)
 
 		expect(instance.toJSON()).toEqual({
 			sourceCodeMap: inspector.SCRIPT_SOURCES,

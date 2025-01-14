@@ -3,6 +3,21 @@ import * as fs from 'fs'
 import type { Protocol as Cdp } from 'devtools-protocol'
 import { MicroSeconds_number, UnifiedPath } from '@oaklean/profiler-core'
 
+const WEBPACK_URL_REGEX = /webpack-internal:\/\/(.+?[^/]\/)([^?]+)(.*)$/
+
+function parseWebpackSourceMapUrl(url: string) {
+	const matches = WEBPACK_URL_REGEX.exec(url)
+	if (matches && matches.length > 2) {
+		const module = matches[1]
+		const filePath = matches[2]
+		return {
+			module,
+			filePath
+		}
+	}
+	return null
+}
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const v8Profiler = require('v8-profiler-next')
 
@@ -34,9 +49,27 @@ export class V8Profiler {
 	 */
 	static unifyProfile(profile: Cdp.Profiler.Profile) {
 		for (const node of profile.nodes) {
-			if (node.callFrame.url !== '' && !node.callFrame.url.startsWith('node:')) {
+			if (
+				node.callFrame.url !== '' &&
+				!node.callFrame.url.startsWith('node:') &&
+				!node.callFrame.url.startsWith('wasm://')
+			) {
 				if (node.callFrame.url.startsWith('file://')) {
 					node.callFrame.url = node.callFrame.url.slice(7)
+				}
+				if (node.callFrame.url.startsWith('webpack-internal://')) {
+					const match = parseWebpackSourceMapUrl(node.callFrame.url)
+					if (match !== null) {
+						// console.log({
+						// 	id: node.id,
+						// 	module: match.module,
+						// 	pureUrl: node.callFrame.url,
+						// 	url: match.filePath,
+						// 	line: node.callFrame.lineNumber,
+						// 	col: node.callFrame.columnNumber
+						// })
+						node.callFrame.url = match.filePath
+					}
 				}
 				node.callFrame.url = new UnifiedPath(node.callFrame.url).toString()
 			}

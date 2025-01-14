@@ -190,7 +190,7 @@ export class Report extends BaseModel {
 		const pathIndex = this.getLangInternalPathIndex('upsert', filePath)
 		const filePathID = pathIndex.id as PathID_number
 
-		// check if filePath is in intern
+		// check if filePath is in lang_internal
 		let sourceFileMetaData = this.lang_internal.get(filePathID)
 		if (!sourceFileMetaData) {
 			sourceFileMetaData = new SourceFileMetaData(

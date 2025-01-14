@@ -31,14 +31,14 @@ export class SourceMap extends BaseModel implements ISourceMap {
 	constructor(
 		sourceMapLocation: UnifiedPath,
 		version: number,
-		sources: UnifiedPath[],
+		sources: string[],
 		names: string[],
 		mappings: string
 	) {
 		super()
 		this.sourceMapLocation = sourceMapLocation
 		this.version = version
-		this.sources = sources.map((x) => x.toString())
+		this.sources = sources
 		this.names = names
 		this.mappings = mappings
 	}
@@ -80,7 +80,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return new SourceMap(
 			new UnifiedPath(''),
 			data.version,
-			data.sources.map((x) => new UnifiedPath(x as unknown as string)),
+			data.sources,
 			data.names,
 			data.mappings
 		)
@@ -97,7 +97,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 			return new SourceMap(
 				sourceMapLocation,
 				version,
-				sources.map((sourcePath: string) => new UnifiedPath(sourcePath)),
+				sources,
 				names,
 				mappings
 			)
