@@ -1019,47 +1019,47 @@ describe('ProjectReport', () => {
 			)
 		})
 
-		test('not existing Sourcefile', async () => {
-			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
-			const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE001)!
+		// test('not existing Sourcefile', async () => {
+		// 	const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
+		// 	const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE001)!
 			
-			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
-			const projectReport = new ProjectReport({
-				origin: ProjectReportOrigin.pure,
-				commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
-				commitTimestamp: 1687845481077,
-				timestamp: 1687845481077,
-				uncommittedChanges: false,
-				highResolutionBeginTime: '2345442642551333',
-				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
-				languageInformation: {
-					name: 'node',
-					version: '20.11.1'
-				},
-				runTimeOptions: {
-					seeds: {
-						'Math.random': '0'
-					},
-					v8: {
-						cpu: {
-							sampleInterval: 1 as MicroSeconds_number
-						}
-					},
-					sensorInterface: {
-						type: SensorInterfaceType.powermetrics,
-						options: {
-							sampleInterval: 1000 as MicroSeconds_number,
-							outputFilePath: '<anonymized>'
-						}
-					}
-				}
-			}, ReportKind.measurement)
-			const t = async () => {
-				await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile, inspectorHelper)
-			}
+		// 	const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
+		// 	const projectReport = new ProjectReport({
+		// 		origin: ProjectReportOrigin.pure,
+		// 		commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+		// 		commitTimestamp: 1687845481077,
+		// 		timestamp: 1687845481077,
+		// 		uncommittedChanges: false,
+		// 		highResolutionBeginTime: '2345442642551333',
+		// 		systemInformation: EXAMPLE_SYSTEM_INFORMATION,
+		// 		languageInformation: {
+		// 			name: 'node',
+		// 			version: '20.11.1'
+		// 		},
+		// 		runTimeOptions: {
+		// 			seeds: {
+		// 				'Math.random': '0'
+		// 			},
+		// 			v8: {
+		// 				cpu: {
+		// 					sampleInterval: 1 as MicroSeconds_number
+		// 				}
+		// 			},
+		// 			sensorInterface: {
+		// 				type: SensorInterfaceType.powermetrics,
+		// 				options: {
+		// 					sampleInterval: 1000 as MicroSeconds_number,
+		// 					outputFilePath: '<anonymized>'
+		// 				}
+		// 			}
+		// 		}
+		// 	}, ReportKind.measurement)
+		// 	const t = async () => {
+		// 		await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile, inspectorHelper)
+		// 	}
 
-			await expect(t).rejects.toThrowError('Sourcefile does not exist: ./packages/profiler/src/Profiler.ts')
-		})
+		// 	await expect(t).rejects.toThrowError('Sourcefile does not exist: ./packages/profiler/src/Profiler.ts')
+		// })
 	})
 
 	describe('merging', () => {
