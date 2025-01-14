@@ -739,9 +739,11 @@ export class InsertCPUProfileHelper {
 							programStructureTreeOriginal
 						)
 					} catch {
-						// LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: could not parse original source file', {
-						// 	filePath: pureRelativeOriginalSourcePath
-						// })
+						// LoggerHelper.error(
+						// 	'InsertCPUProfileHelper.resolveFunctionIdentifier: could not parse original source file', {
+						// 		filePath: pureRelativeOriginalSourcePath
+						// 	}
+						// )
 						programStructureTreeOriginal = undefined
 					}
 				}
@@ -760,14 +762,16 @@ export class InsertCPUProfileHelper {
 			} else {
 				// since node modules often include source maps that point to non-existing files we ignore them
 				// if (!cpuNode.nodeModulePath || !cpuNode.nodeModule) {
-				// 	LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
-				// 		originalPositionSource: originalPosition.source,
-				// 		absoluteOriginalSourcePath,
-				// 		sources: sourceMap?.sources,
-				// 		url: cpuNode.url.toString(),
-				// 		lineNumber,
-				// 		columnNumber
-				// 	})
+				// 	LoggerHelper.error(
+				// 		'InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
+				// 			originalPositionSource: originalPosition.source,
+				// 			absoluteOriginalSourcePath,
+				// 			sources: sourceMap?.sources,
+				// 			url: cpuNode.url.toString(),
+				// 			lineNumber,
+				// 			columnNumber
+				// 		}
+				// 	)
 				// }
 			}
 		} else {
