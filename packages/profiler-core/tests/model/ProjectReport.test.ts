@@ -3,7 +3,10 @@ import * as fs from 'fs'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { ProjectReport } from '../../src/model/ProjectReport'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
-import { NodeModule } from '../../src/model/NodeModule'
+import {
+	NodeModule,
+	NOT_FOUND_NODE_MODULE
+} from '../../src/model/NodeModule'
 import { VERSION } from '../../src/constants/app'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
 import { GitHelper } from '../../src/helper/GitHelper'
@@ -1019,47 +1022,56 @@ describe('ProjectReport', () => {
 			)
 		})
 
-		// test('not existing Sourcefile', async () => {
-		// 	const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
-		// 	const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE001)!
+		test('not existing Sourcefile', async () => {
+			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
+			const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE001)!
 			
-		// 	const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
-		// 	const projectReport = new ProjectReport({
-		// 		origin: ProjectReportOrigin.pure,
-		// 		commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
-		// 		commitTimestamp: 1687845481077,
-		// 		timestamp: 1687845481077,
-		// 		uncommittedChanges: false,
-		// 		highResolutionBeginTime: '2345442642551333',
-		// 		systemInformation: EXAMPLE_SYSTEM_INFORMATION,
-		// 		languageInformation: {
-		// 			name: 'node',
-		// 			version: '20.11.1'
-		// 		},
-		// 		runTimeOptions: {
-		// 			seeds: {
-		// 				'Math.random': '0'
-		// 			},
-		// 			v8: {
-		// 				cpu: {
-		// 					sampleInterval: 1 as MicroSeconds_number
-		// 				}
-		// 			},
-		// 			sensorInterface: {
-		// 				type: SensorInterfaceType.powermetrics,
-		// 				options: {
-		// 					sampleInterval: 1000 as MicroSeconds_number,
-		// 					outputFilePath: '<anonymized>'
-		// 				}
-		// 			}
-		// 		}
-		// 	}, ReportKind.measurement)
-		// 	const t = async () => {
-		// 		await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile, inspectorHelper)
-		// 	}
+			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
+			const projectReport = new ProjectReport({
+				origin: ProjectReportOrigin.pure,
+				commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+				commitTimestamp: 1687845481077,
+				timestamp: 1687845481077,
+				uncommittedChanges: false,
+				highResolutionBeginTime: '2345442642551333',
+				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
+				languageInformation: {
+					name: 'node',
+					version: '20.11.1'
+				},
+				runTimeOptions: {
+					seeds: {
+						'Math.random': '0'
+					},
+					v8: {
+						cpu: {
+							sampleInterval: 1 as MicroSeconds_number
+						}
+					},
+					sensorInterface: {
+						type: SensorInterfaceType.powermetrics,
+						options: {
+							sampleInterval: 1000 as MicroSeconds_number,
+							outputFilePath: '<anonymized>'
+						}
+					}
+				}
+			}, ReportKind.measurement)
+			await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile, inspectorHelper)
 
-		// 	await expect(t).rejects.toThrowError('Sourcefile does not exist: ./packages/profiler/src/Profiler.ts')
-		// })
+			const notFoundModuleIndex = projectReport.globalIndex.getModuleIndex('get', NOT_FOUND_NODE_MODULE.identifier)
+			const missingFilePathIndex = notFoundModuleIndex?.getFilePathIndex('get', './packages/profiler/src/Profiler.ts' as UnifiedPath_string)
+
+			expect(notFoundModuleIndex).toBeDefined()
+			expect(missingFilePathIndex).toBeDefined()
+
+			const sourceFileMetaData = projectReport.extern.
+				get(notFoundModuleIndex?.id as ModuleID_number)?.
+				intern.
+				get(missingFilePathIndex?.id as PathID_number)
+
+			expect(sourceFileMetaData).toBeDefined()
+		})
 	})
 
 	describe('merging', () => {
