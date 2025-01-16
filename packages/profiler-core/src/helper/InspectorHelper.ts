@@ -1,10 +1,7 @@
 import * as fs from 'fs'
 import inspector from 'inspector'
 
-import type { Protocol as Cdp } from 'devtools-protocol'
-
 import { LoggerHelper } from './LoggerHelper'
-import { CPUModel } from './CPUModel'
 import { PermissionHelper } from './PermissionHelper'
 import { TypescriptParser } from './TypescriptParser'
 
@@ -13,6 +10,7 @@ import { UnifiedPath } from '../system/UnifiedPath'
 // Types
 import { IInspectorHelper } from '../types/helper/InspectorHelper'
 import { UnifiedPath_string } from '../types'
+import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 
 export class InspectorHelper {
 	private _session: inspector.Session
@@ -133,7 +131,7 @@ export class InspectorHelper {
 		this._session.disconnect()
 	}
 
-	async fillSourceMapsFromCPUProfile(profile: Cdp.Profiler.Profile) {
+	async fillSourceMapsFromCPUProfile(profile: ICpuProfileRaw) {
 		const scriptMap = new Map<string, string>()
 
 		for (const location of profile.nodes) {

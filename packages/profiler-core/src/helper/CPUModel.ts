@@ -78,6 +78,14 @@ export class CPUModel {
 		return this.cpuModel.samples
 	}
 
+	get startTime(): number {
+		return this._startTime
+	}
+
+	get endTime(): number {
+		return this._endTime
+	}
+
 	energyValuesPerNodeByMetricsData(metricsDataCollection: MetricsDataCollection):
 	[MilliJoule_number, MilliJoule_number][] {
 		/**

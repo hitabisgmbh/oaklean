@@ -1,12 +1,11 @@
-import type { Protocol as Cdp } from 'devtools-protocol'
-
 import * as inspector from '../__mocks__/inspector.mock'
 import { InspectorHelper } from '../../src/helper/InspectorHelper'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { NanoSeconds_BigInt, PermissionHelper } from '../../src'
+import { PermissionHelper } from '../../src'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
-import { CPUModel } from '../../src/helper/CPUModel'
 import { SourceMap } from '../../src/model/SourceMap'
+// Types
+import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 
 const ROOT_DIR = new UnifiedPath(__dirname).join('..', '..', '..', '..')
 
@@ -208,7 +207,7 @@ describe('InspectorHelper', () => {
 	})
 
 	test('fillSourceMapsFromCPUProfile', async () => {
-		const profile: Cdp.Profiler.Profile = {
+		const profile: ICpuProfileRaw = {
 			nodes: [{
 				id: 1,
 				callFrame: {
