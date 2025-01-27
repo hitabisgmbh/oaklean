@@ -9,6 +9,7 @@ import { NodeModuleUtils } from './helper/NodeModuleUtils'
 import { PermissionHelper } from './helper/PermissionHelper'
 import { DataUrlUtils } from './helper/DataUrlUtils'
 import { InspectorHelper } from './helper/InspectorHelper'
+import { SetHelper } from './helper/SetHelper'
 import {
 	TimeHelper
 } from './helper/TimeHelper'
@@ -120,6 +121,7 @@ export {
 	PerformanceHelper,
 	DataUrlUtils,
 	InspectorHelper,
+	SetHelper,
 	DEFAULT_PROFILER_CONFIG,
 	ProfilerConfig,
 	ExecutionDetails,

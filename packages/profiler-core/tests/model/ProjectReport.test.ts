@@ -296,7 +296,7 @@ async function preprocess() {
 		}
 
 		for (const scriptId of inspectorHelper.scriptIds) {
-			const sourceMap = (await inspectorHelper.sourceMapFromId(inspectorHelperPath, scriptId.toString()))?.copy()
+			const sourceMap = (await inspectorHelper.sourceMapFromId(inspectorHelperPath, scriptId))?.copy()
 
 			if (sourceMap !== undefined && sourceMap !== null) {
 				const newSources = sourceMap.sources.map((source) => {

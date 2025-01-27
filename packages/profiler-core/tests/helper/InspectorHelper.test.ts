@@ -1,11 +1,13 @@
 import * as inspector from '../__mocks__/inspector.mock'
 import { InspectorHelper } from '../../src/helper/InspectorHelper'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { NodeModule, PermissionHelper } from '../../src'
+import { NodeModule } from '../../src/model/NodeModule'
+import { PermissionHelper } from '../../src/helper/PermissionHelper'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { SourceMap } from '../../src/model/SourceMap'
 // Types
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
+import { ScriptID_string } from '../../src/types'
 
 const ROOT_DIR = new UnifiedPath(__dirname).join('..', '..', '..', '..')
 
@@ -107,18 +109,19 @@ describe('InspectorHelper', () => {
 		test('toJSON()', () => {
 			expect(instance.toJSON()).toEqual({
 				sourceCodeMap: inspector.SCRIPT_SOURCES,
+				sourceMapMap: {},
 				loadedFiles: {
 					[ROOT_DIR.pathTo(SCRIPT_01_PATH).toString()]: inspector.SCRIPT_SOURCES['1'],
 					[ROOT_DIR.pathTo(SCRIPT_02_PATH).toString()]: inspector.SCRIPT_SOURCES['2'],
 					[ROOT_DIR.pathTo(SCRIPT_03_PATH).toString()]: inspector.SCRIPT_SOURCES['3']
 				},
+				loadedFilesSourceMapMap: {},
 				nodeModules: {
 					'./node_modules/module': {
 						name: 'module',
 						version: '1.2.3'
 					}
-				},
-				sourceMapMap: {}
+				}
 			})
 		})
 
@@ -153,7 +156,7 @@ describe('InspectorHelper', () => {
 		})
 
 		test('sourceCodeFromId()', async () => {
-			expect(await instance.sourceCodeFromId('0')).toBeNull()
+			expect(await instance.sourceCodeFromId('0' as ScriptID_string)).toBeNull()
 		})
 
 		test('loadFromFile', async () => {
@@ -176,12 +179,12 @@ describe('InspectorHelper', () => {
 		test('sourceMapFromId()', async () => {
 			expect(await instance.sourceMapFromId(
 				SCRIPT_01_PATH,
-				'0'
+				'0' as ScriptID_string
 			)).toBeNull()
 
 			expect((await instance.sourceMapFromId(
 				SCRIPT_01_PATH,
-				'1'
+				'1' as ScriptID_string
 			))?.toJSON()).toEqual(SourceMap.fromCompiledJSString(
 				SCRIPT_01_PATH,
 				inspector.SCRIPT_SOURCES['1']
@@ -274,8 +277,6 @@ describe('InspectorHelper', () => {
 
 		expect(instance.toJSON()).toEqual({
 			sourceCodeMap: inspector.SCRIPT_SOURCES,
-			loadedFiles: {},
-			nodeModules: {},
 			sourceMapMap: {
 				'1': {
 					mappings: ';AAAA,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA',
@@ -301,7 +302,10 @@ describe('InspectorHelper', () => {
 					],
 					version: 3,
 				},
-			}
+			},
+			loadedFiles: {},
+			loadedFilesSourceMapMap: {},
+			nodeModules: {}
 		})
 	})
 })

@@ -104,7 +104,7 @@ export class InspectorHelper {
 			nodeModuleJSON[key] = value.toJSON()
 		}
 
-		const sourceMapMapJson: Record<string, ISourceMap | null> = {}
+		const sourceMapMapJson: Record<ScriptID_string, ISourceMap | null> = {}
 		for (const [key, value] of this.sourceMapMap.entries()) {
 			if (value === null) {
 				sourceMapMapJson[key] = null
@@ -113,10 +113,20 @@ export class InspectorHelper {
 			sourceMapMapJson[key] = value.toJSON()
 		}
 
+		const loadedFilesSourceMapMapJson: Record<UnifiedPath_string, ISourceMap | null> = {}
+		for (const [key, value] of this.loadedFilesSourceMapMap.entries()) {
+			if (value === null) {
+				loadedFilesSourceMapMapJson[key] = null
+				continue
+			}
+			loadedFilesSourceMapMapJson[key] = value.toJSON()
+		}
+
 		return {
 			sourceCodeMap: Object.fromEntries(this.sourceCodeMap),
 			sourceMapMap: sourceMapMapJson,
 			loadedFiles: Object.fromEntries(this.loadedFiles),
+			loadedFilesSourceMapMap: loadedFilesSourceMapMapJson,
 			nodeModules: nodeModuleJSON
 		}
 	}
@@ -135,16 +145,29 @@ export class InspectorHelper {
 			result.sourceCodeMap.set(key as ScriptID_string, value)
 		}
 
+		for (const [key, value] of Object.entries(data.sourceMapMap)) {
+			result.sourceMapMap.set(
+				key as ScriptID_string,
+				value !== null ? SourceMap.fromJSON(value) : null
+			)
+		}
+
 		for (const [key, value] of Object.entries(data.loadedFiles)) {
 			result.loadedFiles.set(key as UnifiedPath_string, value)
 		}
 
-		for (const [key, value] of Object.entries(data.nodeModules)) {
-			result.nodeModules.set(key as UnifiedPath_string, value !== null ? NodeModule.fromJSON(value) : null)
+		for (const [key, value] of Object.entries(data.loadedFilesSourceMapMap)) {
+			result.loadedFilesSourceMapMap.set(
+				key as UnifiedPath_string,
+				value !== null ? SourceMap.fromJSON(value) : null
+			)
 		}
 
-		for (const [key, value] of Object.entries(data.sourceMapMap)) {
-			result.sourceMapMap.set(key as ScriptID_string, value !== null ? SourceMap.fromJSON(value) : null)
+		for (const [key, value] of Object.entries(data.nodeModules)) {
+			result.nodeModules.set(
+				key as UnifiedPath_string,
+				value !== null ? NodeModule.fromJSON(value) : null
+			)
 		}
 
 		return result
