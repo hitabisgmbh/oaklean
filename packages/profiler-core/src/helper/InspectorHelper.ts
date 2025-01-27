@@ -14,15 +14,16 @@ import {
 	IInspectorHelper,
 	INodeModule,
 	UnifiedPath_string,
+	ScriptID_string
 } from '../types'
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 
 export class InspectorHelper {
 	private _session: inspector.Session
 	// maps scriptId to source code
-	private sourceCodeMap: Map<string, string>
+	private sourceCodeMap: Map<ScriptID_string, string>
 	// maps scriptId to a source map
-	private sourceMapMap: Map<string, SourceMap | null>
+	private sourceMapMap: Map<ScriptID_string, SourceMap | null>
 
 	// loaded files from the file system
 	private loadedFiles: Map<UnifiedPath_string, string | null> // null represents that the file was not found
@@ -131,7 +132,7 @@ export class InspectorHelper {
 		}
 		const result = new InspectorHelper()
 		for (const [key, value] of Object.entries(data.sourceCodeMap)) {
-			result.sourceCodeMap.set(key, value)
+			result.sourceCodeMap.set(key as ScriptID_string, value)
 		}
 
 		for (const [key, value] of Object.entries(data.loadedFiles)) {
@@ -143,7 +144,7 @@ export class InspectorHelper {
 		}
 
 		for (const [key, value] of Object.entries(data.sourceMapMap)) {
-			result.sourceMapMap.set(key as UnifiedPath_string, value !== null ? SourceMap.fromJSON(value) : null)
+			result.sourceMapMap.set(key as ScriptID_string, value !== null ? SourceMap.fromJSON(value) : null)
 		}
 
 		return result
@@ -154,7 +155,7 @@ export class InspectorHelper {
 			if (message.method === 'Debugger.scriptParsed') {
 				const params = message.params as {
 					url: string,
-					scriptId: string
+					scriptId: ScriptID_string
 				}
 				await this.sourceCodeFromId(params.scriptId)
 			}
@@ -169,10 +170,10 @@ export class InspectorHelper {
 	}
 
 	async fillSourceMapsFromCPUProfile(profile: ICpuProfileRaw) {
-		const scriptMap = new Map<string, string>()
+		const scriptMap = new Map<ScriptID_string, string>()
 
 		for (const location of profile.nodes) {
-			const scriptId = location.callFrame.scriptId.toString()
+			const scriptId = location.callFrame.scriptId.toString() as ScriptID_string
 			if (scriptMap.has(scriptId)) {
 				continue
 			}
@@ -229,7 +230,7 @@ export class InspectorHelper {
 	}
 
 	async sourceCodeFromId(
-		scriptId: string,
+		scriptId: ScriptID_string,
 		filePath?: UnifiedPath
 	): Promise<string | null> {
 		if (scriptId === '0') {
@@ -265,7 +266,7 @@ export class InspectorHelper {
 
 	async sourceMapFromId(
 		filePath: UnifiedPath,
-		scriptId: string
+		scriptId: ScriptID_string
 	): Promise<SourceMap | null> {
 		if (scriptId === '0') {
 			return null
@@ -297,7 +298,7 @@ export class InspectorHelper {
 	}
 
 	async replaceSourceMapById(
-		scriptId: string,
+		scriptId: ScriptID_string,
 		newSourceMap: SourceMap
 	) {
 		const oldSourceCode = this.sourceCodeMap.get(scriptId)

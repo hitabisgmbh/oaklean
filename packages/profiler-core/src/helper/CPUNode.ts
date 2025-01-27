@@ -13,7 +13,8 @@ import {
 	IPureCPUEnergyConsumption,
 	IPureRAMEnergyConsumption,
 	EnergyValuesType,
-	MicroSeconds_number
+	MicroSeconds_number,
+	ScriptID_string
 } from '../types'
 
 export const RegExpTestRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
@@ -39,7 +40,7 @@ export class CPUNode {
 	private _isWASM?: boolean
 	private _isExtern?: boolean
 
-	private _scriptId?: string
+	private _scriptId?: ScriptID_string
 	private _rawUrl?: string
 	private _url?: UnifiedPath
 	private _relativeUrl?: UnifiedPath
@@ -159,7 +160,7 @@ export class CPUNode {
 
 	get scriptId() {
 		if (this._scriptId === undefined) {
-			this._scriptId = this.ISourceLocation.callFrame.scriptId.toString()
+			this._scriptId = this.ISourceLocation.callFrame.scriptId.toString() as ScriptID_string
 		}
 		return this._scriptId
 	}
