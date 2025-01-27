@@ -1,7 +1,7 @@
 import * as inspector from '../__mocks__/inspector.mock'
 import { InspectorHelper } from '../../src/helper/InspectorHelper'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { PermissionHelper } from '../../src'
+import { NodeModule, PermissionHelper } from '../../src'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { SourceMap } from '../../src/model/SourceMap'
 // Types
@@ -38,6 +38,18 @@ describe('InspectorHelper', () => {
 				ROOT_DIR.pathTo(SCRIPT_03_PATH),
 				SCRIPT_03_PATH
 			)
+
+			const nodeModulePath = new UnifiedPath('./node_modules/module')
+			const nodeModuleSpy = jest.spyOn(NodeModule, 'fromNodeModulePath').mockImplementation((path: UnifiedPath) => {
+				if (path.toString() === nodeModulePath.toString()) {
+					return new NodeModule('module', '1.2.3')
+				}
+			})
+			instance.nodeModuleFromPath(
+				nodeModulePath,
+				nodeModulePath
+			)
+			nodeModuleSpy.mockRestore()
 		})
 
 		it('instance should be an instanceof ProjectReport', () => {
@@ -99,7 +111,14 @@ describe('InspectorHelper', () => {
 					[ROOT_DIR.pathTo(SCRIPT_01_PATH).toString()]: inspector.SCRIPT_SOURCES['1'],
 					[ROOT_DIR.pathTo(SCRIPT_02_PATH).toString()]: inspector.SCRIPT_SOURCES['2'],
 					[ROOT_DIR.pathTo(SCRIPT_03_PATH).toString()]: inspector.SCRIPT_SOURCES['3']
-				}
+				},
+				nodeModules: {
+					'./node_modules/module': {
+						name: 'module',
+						version: '1.2.3'
+					}
+				},
+				sourceMapMap: {}
 			})
 		})
 
@@ -255,7 +274,34 @@ describe('InspectorHelper', () => {
 
 		expect(instance.toJSON()).toEqual({
 			sourceCodeMap: inspector.SCRIPT_SOURCES,
-			loadedFiles: {}
+			loadedFiles: {},
+			nodeModules: {},
+			sourceMapMap: {
+				'1': {
+					mappings: ';AAAA,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA',
+					names: [],
+					sources: [
+						'../../examples/script01.ts',
+					],
+					version: 3,
+				},
+				'2': {
+					mappings: ';AAAA,KAAK,IAAI,CAAC,GAAG,CAAC,EAAE,CAAC,GAAG,CAAC,EAAE,CAAC,EAAE,EAAE,CAAC;IAC5B,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA;AAC7B,CAAC',
+					names: [],
+					sources: [
+						'../../examples/script02.ts',
+					],
+					'version': 3,
+				},
+				'3': {
+					mappings: ';;AAAA,SAAwB,GAAG,CAAC,CAAS;IACpC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;QACZ,OAAO,CAAC,CAAA;IACT,CAAC;IACD,OAAO,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,GAAG,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,CAAA;AAC/B,CAAC;AALD,sBAKC',
+					names: [],
+					sources: [
+						'../../examples/script03.ts',
+					],
+					version: 3,
+				},
+			}
 		})
 	})
 })

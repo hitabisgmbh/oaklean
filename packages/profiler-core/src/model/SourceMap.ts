@@ -174,15 +174,6 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return Buffer.from(JSON.stringify(data)).toString('base64')
 	}
 
-	static fromCompiledJSFile (filePath: UnifiedPath): SourceMap | null {
-		if (!fs.existsSync(filePath.toPlatformString())) {
-			return null
-		}
-
-		const sourceCode = fs.readFileSync(filePath.toPlatformString(), { encoding: 'utf-8' })
-		return SourceMap.fromCompiledJSString(filePath, sourceCode)
-	}
-
 	asConsumer(): SourceMapConsumer {
 		if (!this._consumer) {
 			this._consumer = new SourceMapConsumer(this as unknown as RawSourceMap)

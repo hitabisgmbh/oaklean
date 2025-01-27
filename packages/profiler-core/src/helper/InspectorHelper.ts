@@ -5,11 +5,16 @@ import { LoggerHelper } from './LoggerHelper'
 import { PermissionHelper } from './PermissionHelper'
 import { TypescriptParser } from './TypescriptParser'
 
-import { SourceMap } from '../model/SourceMap'
+import { ISourceMap, SourceMap } from '../model/SourceMap'
 import { UnifiedPath } from '../system/UnifiedPath'
+import { NodeModule } from '../model/NodeModule'
+import { ProgramStructureTree } from '../model/ProgramStructureTree'
 // Types
-import { IInspectorHelper } from '../types/helper/InspectorHelper'
-import { UnifiedPath_string } from '../types'
+import {
+	IInspectorHelper,
+	INodeModule,
+	UnifiedPath_string,
+} from '../types'
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 
 export class InspectorHelper {
@@ -20,8 +25,11 @@ export class InspectorHelper {
 	private sourceMapMap: Map<string, SourceMap | null>
 
 	// loaded files from the file system
-	private loadedFiles: Map<UnifiedPath_string, string>
-	private loadedFilesSourceMapMap: Map<UnifiedPath_string, SourceMap | null>
+	private loadedFiles: Map<UnifiedPath_string, string | null> // null represents that the file was not found
+	private loadedFilesSourceMapMap: Map<UnifiedPath_string, SourceMap | null> // null represents that the file was not found or the file contains no sourcemap
+
+	// loaded node modules
+	private nodeModules: Map<UnifiedPath_string, NodeModule | null> // null represents that the node module was not found
 
 	constructor() {
 		this._session = new inspector.Session()
@@ -29,6 +37,7 @@ export class InspectorHelper {
 		this.sourceMapMap = new Map()
 		this.loadedFiles = new Map()
 		this.loadedFilesSourceMapMap = new Map()
+		this.nodeModules = new Map()
 	}
 
 	get scriptIds() {
@@ -85,9 +94,29 @@ export class InspectorHelper {
 	}
 
 	toJSON(): IInspectorHelper {
+		const nodeModuleJSON: Record<UnifiedPath_string, INodeModule | null> = {}
+		for (const [key, value] of this.nodeModules.entries()) {
+			if (value === null) {
+				nodeModuleJSON[key] = null
+				continue
+			}
+			nodeModuleJSON[key] = value.toJSON()
+		}
+
+		const sourceMapMapJson: Record<string, ISourceMap | null> = {}
+		for (const [key, value] of this.sourceMapMap.entries()) {
+			if (value === null) {
+				sourceMapMapJson[key] = null
+				continue
+			}
+			sourceMapMapJson[key] = value.toJSON()
+		}
+
 		return {
 			sourceCodeMap: Object.fromEntries(this.sourceCodeMap),
-			loadedFiles: Object.fromEntries(this.loadedFiles)
+			sourceMapMap: sourceMapMapJson,
+			loadedFiles: Object.fromEntries(this.loadedFiles),
+			nodeModules: nodeModuleJSON
 		}
 	}
 
@@ -107,6 +136,14 @@ export class InspectorHelper {
 
 		for (const [key, value] of Object.entries(data.loadedFiles)) {
 			result.loadedFiles.set(key as UnifiedPath_string, value)
+		}
+
+		for (const [key, value] of Object.entries(data.nodeModules)) {
+			result.nodeModules.set(key as UnifiedPath_string, value !== null ? NodeModule.fromJSON(value) : null)
+		}
+
+		for (const [key, value] of Object.entries(data.sourceMapMap)) {
+			result.sourceMapMap.set(key as UnifiedPath_string, value !== null ? SourceMap.fromJSON(value) : null)
 		}
 
 		return result
@@ -155,7 +192,12 @@ export class InspectorHelper {
 		if (source !== undefined) {
 			return source
 		}
-		source = fs.readFileSync(filePath.toPlatformString()).toString()
+		if (fs.existsSync(filePath.toPlatformString())) {
+			source = fs.readFileSync(filePath.toPlatformString()).toString()
+		} else {
+			source = null
+		}
+		
 		this.loadedFiles.set(relativePath.toString(), source)
 		return source
 	}
@@ -169,13 +211,20 @@ export class InspectorHelper {
 			return sourceMap
 		}
 		const source = this.loadFile(relativePath, filePath)
-		sourceMap = SourceMap.fromCompiledJSString(filePath, source)
+		if (source !== null) {
+			sourceMap = SourceMap.fromCompiledJSString(filePath, source)
+		} else {
+			sourceMap = null
+		}
 		this.loadedFilesSourceMapMap.set(relativePath.toString(), sourceMap)
 		return sourceMap
 	}
 
-	parseFile(relativePath: UnifiedPath, filePath: UnifiedPath) {
+	parseFile(relativePath: UnifiedPath, filePath: UnifiedPath): ProgramStructureTree | null {
 		const source = this.loadFile(relativePath, filePath)
+		if (source === null) {
+			return null
+		}
 		return TypescriptParser.parseSource(filePath, source)
 	}
 
@@ -232,6 +281,19 @@ export class InspectorHelper {
 		sourceMap = SourceMap.fromCompiledJSString(filePath, sourceCode)
 		this.sourceMapMap.set(scriptId, sourceMap)
 		return sourceMap
+	}
+
+	nodeModuleFromPath(
+		relativeNodeModulePath: UnifiedPath,
+		nodeModulePath: UnifiedPath
+	): NodeModule | null {
+		let nodeModule = this.nodeModules.get(relativeNodeModulePath.toString())
+		if (nodeModule !== undefined) {
+			return nodeModule
+		}
+		nodeModule = NodeModule.fromNodeModulePath(nodeModulePath) || null
+		this.nodeModules.set(relativeNodeModulePath.toString(), nodeModule)
+		return nodeModule
 	}
 
 	async replaceSourceMapById(
