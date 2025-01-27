@@ -1,12 +1,31 @@
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { WebpackHelper } from '../../src/helper/WebpackHelper'
+import { UrlProtocolHelper } from '../../src/helper/UrlProtocolHelper'
+import { LoggerHelper } from '../../src/helper/LoggerHelper'
 
-describe('WebpackHelper', () => {
+describe('UrlProtocolHelper', () => {
+	describe('extractProtocol', () => {
+		test('unknown protocol', () => {
+			const loggerWarnSpy = jest.spyOn(LoggerHelper, 'warn').mockImplementation(() => undefined)
+			expect(UrlProtocolHelper.extractProtocol('unknown://')).toBe('unknown')
+			expect(loggerWarnSpy).toHaveBeenCalledTimes(1)
+			loggerWarnSpy.mockRestore()
+		})
+
+		test('known protocols', () => {
+			const loggerWarnSpy = jest.spyOn(LoggerHelper, 'warn')
+			expect(UrlProtocolHelper.extractProtocol('file://')).toBe('file')
+			expect(UrlProtocolHelper.extractProtocol('webpack://next/dist/compiled/react-dom/cjs/react-dom-server.edge.development.js')).toBe('webpack')
+			expect(UrlProtocolHelper.extractProtocol('webpack-internal:///(rsc)/./src/app/layout.tsx')).toBe('webpack-internal')
+			expect(loggerWarnSpy).not.toHaveBeenCalled()
+			loggerWarnSpy.mockRestore()
+		})
+	})
+
 	describe('parseWebpackInternalSourceUrl', () => {
 		test('webpack with minimal viable example', () => {
 			const url = 'webpack:///'
 
-			const result = WebpackHelper.parseWebpackSourceUrl(url)
+			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
 				type: 'webpack',
@@ -19,7 +38,7 @@ describe('WebpackHelper', () => {
 		test('webpack', () => {
 			const url = 'webpack://next/dist/compiled/react-dom/cjs/react-dom-server.edge.development.js'
 
-			const result = WebpackHelper.parseWebpackSourceUrl(url)
+			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
 				type: 'webpack',
@@ -32,11 +51,11 @@ describe('WebpackHelper', () => {
 		test('webpack-internal', () => {
 			const url = 'webpack-internal:///(rsc)/./src/app/layout.tsx'
 
-			const result = WebpackHelper.parseWebpackSourceUrl(url)
+			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
 				type: 'webpack-internal',
-				namespace: '/(rsc)',
+				namespace: '(rsc)',
 				filePath: './src/app/layout.tsx',
 				options: ''
 			})
@@ -45,7 +64,7 @@ describe('WebpackHelper', () => {
 		test('webpack-internal with options', () => {
 			const url = 'webpack://_N_E/node_modules/next/dist/esm/server/web/adapter.js?4fab'
 
-			const result = WebpackHelper.parseWebpackSourceUrl(url)
+			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
 				type: 'webpack',
@@ -58,7 +77,7 @@ describe('WebpackHelper', () => {
 		test('not a webpack url', () => {
 			const url = './src/app/layout.tsx'
 
-			const result = WebpackHelper.parseWebpackSourceUrl(url)
+			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toBeNull()
 		})
@@ -69,8 +88,8 @@ describe('WebpackHelper', () => {
 		const rootDir = new UnifiedPath('/Users/user/project')
 		const originalSource = 'webpack://_N_E/node_modules/next/dist/esm/server/web/adapter.js?4fab'
 
-		const result = WebpackHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
+		const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
 
 		expect(result.toString()).toBe('/Users/user/project/node_modules/next/dist/esm/server/web/adapter.js')
 	})
-})	
+})
