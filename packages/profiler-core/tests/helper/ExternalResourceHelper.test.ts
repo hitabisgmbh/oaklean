@@ -150,7 +150,8 @@ describe('ExternalResourceHelper', () => {
 				},
 				fileInfoPerPath: {
 					[ROOT_DIR.pathTo(SCRIPT_01_PATH).toString()]: {
-						sourceCode: inspector.SCRIPT_SOURCES['1']
+						sourceCode: inspector.SCRIPT_SOURCES['1'],
+						cucc: true
 					},
 					[ROOT_DIR.pathTo(SCRIPT_02_PATH).toString()]: {
 						sourceCode: inspector.SCRIPT_SOURCES['2']
@@ -164,10 +165,7 @@ describe('ExternalResourceHelper', () => {
 						name: 'module',
 						version: '1.2.3'
 					}
-				},
-				uncommittedFiles: [
-					'./packages/profiler-core/tests/__mocks__/script01.js'
-				]
+				}
 			})
 		})
 

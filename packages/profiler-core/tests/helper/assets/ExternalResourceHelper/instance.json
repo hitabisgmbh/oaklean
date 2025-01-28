@@ -12,7 +12,8 @@
   },
   "fileInfoPerPath": {
     "./packages/profiler-core/tests/__mocks__/script01.js": {
-      "sourceCode": "\"use strict\";\nconsole.log('Hello, world!');\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2NyaXB0MDEuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9leGFtcGxlcy9zY3JpcHQwMS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsT0FBTyxDQUFDLEdBQUcsQ0FBQyxlQUFlLENBQUMsQ0FBQSJ9"
+      "sourceCode": "\"use strict\";\nconsole.log('Hello, world!');\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2NyaXB0MDEuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9leGFtcGxlcy9zY3JpcHQwMS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsT0FBTyxDQUFDLEdBQUcsQ0FBQyxlQUFlLENBQUMsQ0FBQSJ9",
+      "cucc": true
     },
     "./packages/profiler-core/tests/__mocks__/script02.js": {
       "sourceCode": "\"use strict\";\nfor (let i = 0; i < 3; i++) {\n    console.log('Hello, world!');\n}\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2NyaXB0MDIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9leGFtcGxlcy9zY3JpcHQwMi50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsS0FBSyxJQUFJLENBQUMsR0FBRyxDQUFDLEVBQUUsQ0FBQyxHQUFHLENBQUMsRUFBRSxDQUFDLEVBQUUsRUFBRSxDQUFDO0lBQzVCLE9BQU8sQ0FBQyxHQUFHLENBQUMsZUFBZSxDQUFDLENBQUE7QUFDN0IsQ0FBQyJ9"
@@ -26,8 +27,5 @@
       "name": "module",
       "version": "1.2.3"
     }
-  },
-  "uncommittedFiles": [
-    "./packages/profiler-core/tests/__mocks__/script01.js"
-  ]
+  }
 }
