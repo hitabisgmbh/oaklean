@@ -176,6 +176,8 @@ describe('ExternalResourceHelper', () => {
 		test('fromJSON()', () => {
 			const json = instance.toJSON()
 			const newInstance = ExternalResourceHelper.fromJSON(ROOT_DIR, json)
+			
+			expect(instance.uncommittedFiles).toEqual(newInstance.uncommittedFiles)
 
 			expect(newInstance.toJSON()).toEqual(json)
 		})

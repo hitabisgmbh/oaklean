@@ -11,7 +11,6 @@ import { MetricsDataCollection } from './interfaces/MetricsDataCollection'
 import { GlobalIndex } from './index/GlobalIndex'
 import { ModuleIndex } from './index/ModuleIndex'
 
-import { GitHelper } from '../helper/GitHelper'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'

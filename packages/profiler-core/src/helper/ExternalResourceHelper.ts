@@ -81,15 +81,16 @@ export class ExternalResourceHelper {
 			if (uncommittedFiles === null) {
 				this._uncommittedFiles = null
 			} else {
-				this._uncommittedFiles = []
-				for (const file of uncommittedFiles) {
-					const relativePath = rootDir.pathTo(new UnifiedPath(file)).toString()
-					const fileInfo = this.fileInfoPerPath.get(relativePath)
-					if (fileInfo !== undefined && fileInfo !== null) {
-						fileInfo.cucc = true
-					}
-
-					this._uncommittedFiles.push(relativePath)
+				this._uncommittedFiles = uncommittedFiles.map(
+					(file) => rootDir.pathTo(new UnifiedPath(file)).toString()
+				)
+			}
+		}
+		if (this._uncommittedFiles !== null) {
+			for (const file of this._uncommittedFiles) {
+				const fileInfo = this.fileInfoPerPath.get(file)
+				if (fileInfo !== undefined && fileInfo !== null) {
+					fileInfo.cucc = true
 				}
 			}
 		}
@@ -223,6 +224,12 @@ export class ExternalResourceHelper {
 				}
 				if (value.cucc !== undefined) {
 					fileInfo.cucc = value.cucc
+					if (value.cucc === true) {
+						if (!result._uncommittedFiles) {
+							result._uncommittedFiles = []
+						}
+						result._uncommittedFiles.push(key as UnifiedPath_string)
+					}
 				}
 			}
 

@@ -281,7 +281,7 @@ const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001 = CURRENT_DIR.join('assets',
 const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002 = CURRENT_DIR.join('assets', 'ExternalResourceHelper', 'example002.resources.json')
 
 /**
- * Preprocess the inspector helper files to ensure that source maps are relative and do not contain absolute paths.
+ * Preprocess the external resource files to ensure that source maps are relative and do not contain absolute paths.
  * So the tests can be run on different machines.
  */
 async function preprocess() {

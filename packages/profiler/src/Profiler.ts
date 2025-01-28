@@ -359,6 +359,10 @@ export class Profiler {
 		)
 		performance.stop('Profiler.finish.insertCPUProfile')
 
+		performance.start('Profiler.finish.trackUncommittedFiles')
+		report.trackUncommittedFiles(rootDir, this._externalResourceHelper)
+		performance.stop('Profiler.finish.trackUncommittedFiles')
+
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportExternalResourceHelper')
 			// create parent directories if they do not exist
@@ -372,10 +376,6 @@ export class Profiler {
 			)
 			performance.stop('Profiler.finish.exportExternalResourceHelper')
 		}
-
-		performance.start('Profiler.finish.trackUncommittedFiles')
-		report.trackUncommittedFiles(rootDir, this._externalResourceHelper)
-		performance.stop('Profiler.finish.trackUncommittedFiles')
 
 		if (this.config.shouldExportReport()) {
 			performance.start('Profiler.finish.exportReport')
