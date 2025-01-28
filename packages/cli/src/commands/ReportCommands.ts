@@ -184,10 +184,15 @@ export default class ReportCommand {
 				continue
 			}
 			const nodeModule = NodeModule.fromIdentifier(nodeModuleIdentifier)
+			if (nodeModule.name === '{wasm}') {
+				continue
+			}
+
 			for (const pathIndex of moduleIndex.reversePathMap.values()) {
-				const filePath = nodeModulePath.join(nodeModule.name, pathIndex.identifier).toPlatformString()
+				const relativeNodeModulePath = new UnifiedPath(nodeModule.name, pathIndex.identifier)
+				const filePath = nodeModulePath.join(relativeNodeModulePath).toPlatformString()
 				if (!fs.existsSync(filePath)) {
-					LoggerHelper.error(`Could not find file ${filePath}`)
+					LoggerHelper.error(`Could not find file ${relativeNodeModulePath}`)
 				}
 			}
 		}

@@ -331,15 +331,6 @@ async function preprocess() {
 }
 
 preprocess()
-
-function setProfilesContext(profile: ICpuProfileRaw) {
-	for (const node of profile.nodes) {
-		if (node.callFrame.url !== '' && !node.callFrame.url.startsWith('node:')) {
-			node.callFrame.url = CURRENT_DIR.join('..', '..', '..', '..', node.callFrame.url).toString()
-		}
-	}
-}
-
 function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport) {
 	describe(title, () => {
 		let instance: ProjectReport
@@ -902,7 +893,6 @@ describe('ProjectReport', () => {
 			)!
 
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
-			setProfilesContext(profile)
 			const projectReport = new ProjectReport({
 				origin: ProjectReportOrigin.pure,
 				commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
@@ -971,10 +961,12 @@ describe('ProjectReport', () => {
 
 		test('test case example002', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example002.cpuprofile').toString()
-			const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE002)!
+			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
+				ROOT_DIR,
+				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002
+			)!
 
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
-			setProfilesContext(profile)
 			const projectReport = new ProjectReport({
 				origin: ProjectReportOrigin.pure,
 				commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
@@ -1005,7 +997,7 @@ describe('ProjectReport', () => {
 					}
 				}
 			}, ReportKind.measurement)
-			await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile, inspectorHelper)
+			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
 			projectReport.normalize()
 			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
@@ -1014,7 +1006,7 @@ describe('ProjectReport', () => {
 				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
 			}
-			
+
 			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
 			if (expectedJson) {
 				expectedJson.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
@@ -1042,8 +1034,11 @@ describe('ProjectReport', () => {
 
 		test('not existing Sourcefile', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
-			const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE001)!
-			
+			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
+				ROOT_DIR,
+				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001
+			)!
+
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 			const projectReport = new ProjectReport({
 				origin: ProjectReportOrigin.pure,
@@ -1075,17 +1070,19 @@ describe('ProjectReport', () => {
 					}
 				}
 			}, ReportKind.measurement)
-			await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile, inspectorHelper)
 
-			const notFoundModuleIndex = projectReport.globalIndex.getModuleIndex('get', NOT_FOUND_NODE_MODULE.identifier)
-			const missingFilePathIndex = notFoundModuleIndex?.getFilePathIndex('get', './packages/profiler/src/Profiler.ts' as UnifiedPath_string)
+			// change the source file path to a not existing one
+			profile['nodes'][3]['callFrame']['url'] = 'not/found/sourcefile.ts'
+			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
+
+			// a not existing source file should still be added to the project report
+			const notFoundModuleIndex = projectReport.globalIndex.getModuleIndex('get')
+			const missingFilePathIndex = notFoundModuleIndex?.getFilePathIndex('get', './not/found/sourcefile.ts' as UnifiedPath_string)
 
 			expect(notFoundModuleIndex).toBeDefined()
 			expect(missingFilePathIndex).toBeDefined()
 
-			const sourceFileMetaData = projectReport.extern.
-				get(notFoundModuleIndex?.id as ModuleID_number)?.
-				intern.
+			const sourceFileMetaData = projectReport.intern.
 				get(missingFilePathIndex?.id as PathID_number)
 
 			expect(sourceFileMetaData).toBeDefined()
