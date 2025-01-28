@@ -1,5 +1,6 @@
 import { NodeModuleUtils } from './NodeModuleUtils'
 import { CPUModel } from './CPUModel'
+import { UrlProtocolHelper } from './UrlProtocolHelper'
 import { ExternalResourceHelper } from './ExternalResourceHelper'
 
 import { LangInternalSourceNodeRegExpRegexString } from '../constants/SourceNodeRegex'
@@ -39,11 +40,12 @@ export class CPUNode {
 	private _isEmpty?: boolean
 	private _isLangInternal?: boolean
 	private _isWASM?: boolean
+	private _isWebpack?: boolean
 	private _isExtern?: boolean
 
-	private _scriptId?: ScriptID_string
+	private _scriptID?: ScriptID_string
 	private _rawUrl?: string
-	private _url?: UnifiedPath
+	private _absoluteUrl?: UnifiedPath
 	private _relativeUrl?: UnifiedPath
 	private _nodeModulePath?: UnifiedPath | null
 	private _nodeModule?: NodeModule | null
@@ -148,14 +150,6 @@ export class CPUNode {
 		return this._isLangInternal
 	}
 
-	get isWASM() {
-		if (this._isWASM === undefined) {
-			const sourceLocation = this.ISourceLocation
-			this._isWASM = sourceLocation.callFrame.url.startsWith('wasm://')
-		}
-		return this._isWASM
-	}
-
 	get isEmpty() {
 		if (this._isEmpty === undefined) {
 			this._isEmpty = this.ISourceLocation.callFrame.url === ''
@@ -163,11 +157,33 @@ export class CPUNode {
 		return this._isEmpty
 	}
 
-	get scriptId() {
-		if (this._scriptId === undefined) {
-			this._scriptId = this.ISourceLocation.callFrame.scriptId.toString() as ScriptID_string
+	get isExtern() {
+		if (this._isExtern === undefined) {
+			this._isExtern = (this.nodeModulePath !== null)
 		}
-		return this._scriptId
+		return this._isExtern
+	}
+
+	get isWASM() {
+		if (this._isWASM === undefined) {
+			this._isWASM = this.ISourceLocation.callFrame.url.startsWith('wasm://')
+		}
+		return this._isWASM
+	}
+
+	get isWebpack() {
+		if (this._isWebpack === undefined) {
+			this._isWebpack = this.ISourceLocation.callFrame.url.startsWith('webpack://') ||
+				this.ISourceLocation.callFrame.url.startsWith('webpack-internal://')
+		}
+		return this._isWebpack
+	}
+
+	get scriptID() {
+		if (this._scriptID === undefined) {
+			this._scriptID = this.ISourceLocation.callFrame.scriptId.toString() as ScriptID_string
+		}
+		return this._scriptID
 	}
 
 	get rawUrl() {
@@ -177,21 +193,39 @@ export class CPUNode {
 		return this._rawUrl
 	}
 
-	get url() {
-		if (this._url === undefined) {
-			this._url = new UnifiedPath(this.rawUrl)
+	get absoluteUrl() {
+		if (this._absoluteUrl === undefined) {
+			let url: UnifiedPath
+			if (
+				this.rawUrl.startsWith('file://')
+			) {
+				// remove the 'file://' prefix
+				url = new UnifiedPath(this.rawUrl.slice(7))
+			} else if (
+				this.isWebpack
+			) {
+				// extract the file path from a webpack-internal url
+				const result = UrlProtocolHelper.parseWebpackSourceUrl(this.rawUrl)
+				if (result !== null) {
+					url = new UnifiedPath(result.filePath)
+				} else {
+					throw new Error('Could not parse webpack-internal url: ' + this.rawUrl)
+				}
+			} else {
+				url = new UnifiedPath(this.rawUrl)
+			}
+			if (url.isRelative()) {
+				this._absoluteUrl = this.rootDir.join(url)
+			} else {
+				this._absoluteUrl = url
+			}
 		}
-		return this._url
+		return this._absoluteUrl
 	}
 
 	get relativeUrl() {
 		if (this._relativeUrl === undefined) {
-			if (this.url.isRelative()) {
-				this._relativeUrl = this.url.copy()
-			} else {
-				this._relativeUrl = this.rootDir.pathTo(this.url)
-			}
-			
+			this._relativeUrl = this.rootDir.pathTo(this.absoluteUrl)
 		}
 		return this._relativeUrl
 	}
@@ -210,7 +244,10 @@ export class CPUNode {
 
 	get nodeModule() {
 		if (this._nodeModule === undefined) {
-			this._nodeModule = this.nodeModulePath ? NodeModule.fromNodeModulePath(this.nodeModulePath) : null
+			this._nodeModule = this.nodeModulePath ? this.externalResourceHelper.nodeModuleFromPath(
+				this.rootDir.pathTo(this.nodeModulePath),
+				this.nodeModulePath
+			) : null
 			if (this.nodeModulePath && !this._nodeModule) {
 				throw new Error('Module could not be found: ' + this.nodeModulePath.toString())
 			}
@@ -218,6 +255,10 @@ export class CPUNode {
 		return this._nodeModule
 	}
 
+	/**
+	 * Returns the relative source file path of the cpu node.
+	 * The path is relative to its parent scope (a node module or the root directory)
+	 */
 	get relativeSourceFilePath() {
 		if (this._relativeSourceFilePath === undefined) {
 			if (this.isWASM) {
@@ -226,32 +267,11 @@ export class CPUNode {
 				if (!this.nodeModulePath || !this.nodeModule) {
 					this._relativeSourceFilePath = this.relativeUrl
 				} else {
-					if (this.url.isRelative()) {
-						this._relativeSourceFilePath = this.nodeModulePath.pathTo(this.rootDir.join(this.url))
-					} else {
-						this._relativeSourceFilePath = this.nodeModulePath.pathTo(this.url)
-					}
+					this._relativeSourceFilePath = this.nodeModulePath.pathTo(this.absoluteUrl)
 				}
 			}
 		}
 		return this._relativeSourceFilePath
-	}
-
-	get isExtern() {
-		if (this._isExtern === undefined) {
-			this._isExtern = (this.nodeModulePath !== null)
-		}
-		return this._isExtern
-	}
-
-	get type(): CPUNodeType {
-		if (this.isLangInternal) {
-			return CPUNodeType.langInternal
-		}
-		if (this.isExtern) {
-			return CPUNodeType.extern
-		}
-		return CPUNodeType.intern
 	}
 
 	private functionNameToSourceNodeIdentifier(functionName: string) {
@@ -287,20 +307,6 @@ export class CPUNode {
 			}
 		}
 		return this._sourceNodeIdentifier
-	}
-
-	get relativeJavascriptUrl() {
-		if (this._relativeJavascriptUrl === undefined) {
-			this._relativeJavascriptUrl = new UnifiedPath(this.relativeUrl.toString().slice(0, -3) + '.js')
-		}
-		return this._relativeJavascriptUrl
-	}
-
-	get javascriptUrl() {
-		if (this._javascriptUrl === undefined) {
-			this._javascriptUrl = new UnifiedPath(this.url.toString().slice(0, -3) + '.js')
-		}
-		return this._javascriptUrl
 	}
 
 	*children() {

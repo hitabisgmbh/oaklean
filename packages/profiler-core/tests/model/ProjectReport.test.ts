@@ -4,8 +4,7 @@ import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { ProjectReport } from '../../src/model/ProjectReport'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import {
-	NodeModule,
-	NOT_FOUND_NODE_MODULE
+	NodeModule
 } from '../../src/model/NodeModule'
 import { VERSION } from '../../src/constants/app'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'

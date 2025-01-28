@@ -1,5 +1,3 @@
-import * as fs from 'fs'
-
 import { SourceMapConsumer, RawSourceMap, MappedPosition } from 'source-map'
 
 import { BaseModel } from './BaseModel'
@@ -138,7 +136,10 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return null
 	}
 
-	static fromCompiledJSString(filePath: UnifiedPath, sourceCode: string): SourceMap | null | SourceMapRedirect{
+	static fromCompiledJSString(
+		filePath: UnifiedPath,
+		sourceCode: string
+	): SourceMap | null | SourceMapRedirect{
 		const result = SourceMap.base64StringCompiledJSString(sourceCode)
 
 		if (result === null) {

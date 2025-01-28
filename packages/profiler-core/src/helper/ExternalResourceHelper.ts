@@ -305,7 +305,10 @@ export class ExternalResourceHelper {
 				'Tried to access: ' + relativePathString
 			)
 		}
-		if (fs.existsSync(filePathPlatformString)) {
+		if (
+			fs.existsSync(filePathPlatformString) &&
+			fs.statSync(filePathPlatformString).isFile()
+		) {
 			fileInfo = {
 				sourceCode: fs.readFileSync(filePathPlatformString).toString()
 			}

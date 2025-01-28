@@ -28,7 +28,7 @@ describe('UrlProtocolHelper', () => {
 			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
-				type: 'webpack',
+				protocol: 'webpack',
 				namespace: '',
 				filePath: '',
 				options: ''
@@ -41,7 +41,7 @@ describe('UrlProtocolHelper', () => {
 			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
-				type: 'webpack',
+				protocol: 'webpack',
 				namespace: 'next',
 				filePath: 'dist/compiled/react-dom/cjs/react-dom-server.edge.development.js',
 				options: ''
@@ -54,7 +54,7 @@ describe('UrlProtocolHelper', () => {
 			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
-				type: 'webpack-internal',
+				protocol: 'webpack-internal',
 				namespace: '(rsc)',
 				filePath: './src/app/layout.tsx',
 				options: ''
@@ -67,7 +67,7 @@ describe('UrlProtocolHelper', () => {
 			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
-				type: 'webpack',
+				protocol: 'webpack',
 				namespace: '_N_E',
 				filePath: 'node_modules/next/dist/esm/server/web/adapter.js',
 				options: '4fab'
@@ -90,6 +90,9 @@ describe('UrlProtocolHelper', () => {
 
 		const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
 
-		expect(result.toString()).toBe('/Users/user/project/node_modules/next/dist/esm/server/web/adapter.js')
+		expect(result).toEqual({
+			url: new UnifiedPath('/Users/user/project/node_modules/next/dist/esm/server/web/adapter.js'),
+			protocol: 'webpack'
+		})
 	})
 })

@@ -57,13 +57,22 @@ export class UrlProtocolHelper {
 	static webpackSourceMapUrlToOriginalUrl(
 		rootDir: UnifiedPath,
 		originalSource: string
-	) {
+	): {
+			url: UnifiedPath,
+			protocol: string | null
+		} {
 		const result = UrlProtocolHelper.parseWebpackSourceUrl(originalSource)
 		if (result === null) {
-			return new UnifiedPath(originalSource)
+			return {
+				url: new UnifiedPath(originalSource),
+				protocol: null
+			}
 		}
 
-		return rootDir.join(result.filePath)
+		return {
+			url: rootDir.join(result.filePath),
+			protocol: result.protocol
+		}
 	}
 
 	/**
@@ -85,12 +94,12 @@ export class UrlProtocolHelper {
 		const matches = WEBPACK_URL_REGEX.exec(url)
 
 		if (matches && matches.length > 3) {
-			const type = matches[1] === 'webpack://' ? 'webpack' : 'webpack-internal'
+			const protocol = matches[1] === 'webpack://' ? 'webpack' : 'webpack-internal'
 			const namespace = matches[2] || ''
 			const filePath = matches[3] || ''
 			const options = matches[4] || ''
 			return {
-				type,
+				protocol,
 				namespace,
 				filePath,
 				options

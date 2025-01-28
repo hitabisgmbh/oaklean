@@ -3,6 +3,7 @@ import { ModelMap } from './ModelMap'
 import {
 	SourceNodeMetaData
 } from './SourceNodeMetaData'
+import { WASM_NODE_MODULE } from './NodeModule'
 import { SensorValues } from './SensorValues'
 import { PathIndex } from './index/PathIndex'
 import { GlobalIndex } from './index/GlobalIndex'
@@ -26,8 +27,7 @@ import {
 	SourceNodeIndexType,
 	SourceNodeMetaDataType,
 	ISourceFileMetaData,
-	IAggregatedSourceNodeMetaData,
-	MicroSeconds_number
+	IAggregatedSourceNodeMetaData
 } from '../types'
 
 export class AggregatedSourceNodeMetaData extends BaseModel {
@@ -214,24 +214,27 @@ export class SourceFileMetaData extends BaseModel {
 			}
 
 			const identifier = sourceNodeIndex?.identifier as SourceNodeIdentifier_string
-			if (
-				sourceNodeMetaData.type === SourceNodeMetaDataType.LangInternalSourceNode
-			) {
-				if (!LangInternalSourceNodeIdentifierRegex.test(identifier)) {
-					throw new Error(
-						'SourceFileMetaData.validate: invalid LangInternalSourceNodeIdentifier_string:'
-						+ identifier + '\n' +
-						LangInternalSourceNodeIdentifierRegexString
-					)
-				}
-			} else {
-				if (!SourceNodeIdentifierRegex.test(identifier)) {
-					throw new Error(
-						`SourceFileMetaData.validate: invalid sourceNodeIdentifier: ${identifier}\n` +
-						SourceNodeIdentifierRegexString
-					)
+			if (!(sourceNodeIndex.pathIndex.moduleIndex.identifier === WASM_NODE_MODULE.identifier)) {
+				if (
+					sourceNodeMetaData.type === SourceNodeMetaDataType.LangInternalSourceNode
+				) {
+					if (!LangInternalSourceNodeIdentifierRegex.test(identifier)) {
+						throw new Error(
+							'SourceFileMetaData.validate: invalid LangInternalSourceNodeIdentifier_string:'
+							+ identifier + '\n' +
+							LangInternalSourceNodeIdentifierRegexString
+						)
+					}
+				} else {
+					if (!SourceNodeIdentifierRegex.test(identifier)) {
+						throw new Error(
+							`SourceFileMetaData.validate: invalid sourceNodeIdentifier: ${identifier}\n` +
+							SourceNodeIdentifierRegexString
+						)
+					}
 				}
 			}
+			
 
 			sourceNodeMetaData.validate(
 				this.path,
