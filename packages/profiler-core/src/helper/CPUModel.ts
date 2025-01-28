@@ -46,7 +46,9 @@ export class CPUModel {
 		if (externalResourceHelper !== undefined) {
 			this._externalResourceHelper = externalResourceHelper
 		} else {
-			this._externalResourceHelper = new ExternalResourceHelper()
+			this._externalResourceHelper = new ExternalResourceHelper(
+				this.rootDir
+			)
 		}
 	}
 

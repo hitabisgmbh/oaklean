@@ -54,7 +54,9 @@ export class Profiler {
 		this.subOutputDir = subOutputDir
 		this.config = ProfilerConfig.autoResolve()
 		this.loadSensorInterface()
-		this._externalResourceHelper = new ExternalResourceHelper()
+		this._externalResourceHelper = new ExternalResourceHelper(
+			this.config.getRootDir()
+		)
 	}
 
 	static getSensorInterface(config: ProfilerConfig) {

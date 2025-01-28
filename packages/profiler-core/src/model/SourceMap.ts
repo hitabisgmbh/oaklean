@@ -4,19 +4,17 @@ import { SourceMapConsumer, RawSourceMap, MappedPosition } from 'source-map'
 
 import { BaseModel } from './BaseModel'
 
+import { ISourceMap } from '../types'
 import { DataUrlUtils } from '../helper/DataUrlUtils'
 import { UnifiedPath } from '../system/UnifiedPath'
 
 const SOURCE_MAPPING_URL_REGEX = /^\/\/# sourceMappingURL=(.*)$/m
 const SOURCE_MAP_ATTRIBUTE_NAMES = ['version', 'sources', 'names', 'mappings']
 
-export interface ISourceMap {
-	version: number
-	sources: string[]
-	names: string[]
-	mappings: string
+export type SourceMapRedirect = {
+	type: 'redirect',
+	sourceMapLocation: UnifiedPath
 }
-
 export class SourceMap extends BaseModel implements ISourceMap {
 	private _consumer: SourceMapConsumer | undefined
 	private _numberOfLinesInCompiledFile: number | undefined
@@ -140,7 +138,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return null
 	}
 
-	static fromCompiledJSString(filePath: UnifiedPath, sourceCode: string): SourceMap | null {
+	static fromCompiledJSString(filePath: UnifiedPath, sourceCode: string): SourceMap | null | SourceMapRedirect{
 		const result = SourceMap.base64StringCompiledJSString(sourceCode)
 
 		if (result === null) {
@@ -156,12 +154,11 @@ export class SourceMap extends BaseModel implements ISourceMap {
 			// source map file
 			const directoryPath = filePath.dirName()
 			const sourceMapLocation = directoryPath.join(result.sourceMapUrl)
-			if (fs.existsSync(sourceMapLocation.toString())) {
-				const data = fs.readFileSync(sourceMapLocation.toString(), { encoding: 'utf-8' })
-				return SourceMap.fromJsonString(data, sourceMapLocation)
+			return {
+				type: 'redirect',
+				sourceMapLocation
 			}
 		}
-		return null
 	}
 
 	toBase64String(): string {

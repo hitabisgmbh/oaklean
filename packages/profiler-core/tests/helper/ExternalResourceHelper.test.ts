@@ -21,7 +21,7 @@ describe('ExternalResourceHelper', () => {
 		let instance: ExternalResourceHelper
 
 		beforeEach(async () => {
-			instance = new ExternalResourceHelper()
+			instance = new ExternalResourceHelper(ROOT_DIR)
 			await instance.connect()
 			await instance.listen()
 
@@ -135,6 +135,10 @@ describe('ExternalResourceHelper', () => {
 			])
 		})
 
+		test('getter rootDir', () => {
+			expect(instance.rootDir.toString()).toEqual(ROOT_DIR.toString())
+		})
+
 		test('toJSON()', () => {
 			expect(instance.toJSON()).toEqual({
 				fileInfoPerScriptID: {
@@ -171,7 +175,7 @@ describe('ExternalResourceHelper', () => {
 
 		test('fromJSON()', () => {
 			const json = instance.toJSON()
-			const newInstance = ExternalResourceHelper.fromJSON(json)
+			const newInstance = ExternalResourceHelper.fromJSON(ROOT_DIR, json)
 
 			expect(newInstance.toJSON()).toEqual(json)
 		})
@@ -213,7 +217,7 @@ describe('ExternalResourceHelper', () => {
 				)
 			}
 
-			const loadedInstance = ExternalResourceHelper.loadFromFile(filePath)
+			const loadedInstance = ExternalResourceHelper.loadFromFile(ROOT_DIR, filePath)
 			expect(loadedInstance).toBeDefined()
 			if (loadedInstance) {
 				expect(loadedInstance.toJSON()).toEqual(instance.toJSON())
@@ -229,16 +233,16 @@ describe('ExternalResourceHelper', () => {
 			expect((await instance.sourceMapFromScriptID(
 				'1' as ScriptID_string,
 				SCRIPT_01_PATH
-			))?.toJSON()).toEqual(SourceMap.fromCompiledJSString(
+			))?.toJSON()).toEqual((SourceMap.fromCompiledJSString(
 				SCRIPT_01_PATH,
 				inspector.SCRIPT_SOURCES['1']
-			)?.toJSON())
+			) as SourceMap)?.toJSON())
 		})
 	})
 
 	describe('debug connection', () => {
 		test('not enabled debugger', async () => {
-			const instance = new ExternalResourceHelper()
+			const instance = new ExternalResourceHelper(ROOT_DIR)
 
 			await expect(async () => {
 				await instance.listen()
@@ -246,7 +250,7 @@ describe('ExternalResourceHelper', () => {
 		})
 
 		test('disabled debugger', async () => {
-			const instance = new ExternalResourceHelper()
+			const instance = new ExternalResourceHelper(ROOT_DIR)
 
 			await instance.connect()
 			await instance.disconnect()
@@ -257,7 +261,7 @@ describe('ExternalResourceHelper', () => {
 		})
 
 		test('enabled debugger', async () => {
-			const instance = new ExternalResourceHelper()
+			const instance = new ExternalResourceHelper(ROOT_DIR)
 
 			const fileInfoFromScriptIDSpy = jest.spyOn(instance, 'fileInfoFromScriptID')
 			await instance.connect()
@@ -314,7 +318,7 @@ describe('ExternalResourceHelper', () => {
 			endTime: 100
 		}
 
-		const instance = new ExternalResourceHelper()
+		const instance = new ExternalResourceHelper(ROOT_DIR)
 		instance.connect()
 
 		await instance.fillSourceMapsFromCPUProfile(profile)

@@ -80,7 +80,7 @@ import {
 import {
 	SensorValues
 } from './model/SensorValues'
-import { SourceMap, ISourceMap } from './model/SourceMap'
+import { SourceMap } from './model/SourceMap'
 import { NodeModule } from './model/NodeModule'
 import { BaseModel } from './model/BaseModel'
 import { ModelMap, ModelMapKeyType } from './model/ModelMap'
@@ -135,7 +135,6 @@ export {
 	SensorValues,
 	AggregatedSourceNodeMetaData,
 	SourceMap,
-	ISourceMap,
 	NodeModule,
 	Crypto,
 	IPowerMetricsSensorInterfaceOptions,

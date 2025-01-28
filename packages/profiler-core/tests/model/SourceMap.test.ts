@@ -1,7 +1,9 @@
 import * as fs from 'fs'
 
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { SourceMap, ISourceMap } from '../../src/model/SourceMap'
+import { SourceMap, SourceMapRedirect } from '../../src/model/SourceMap'
+// Types
+import { ISourceMap } from '../../src/types'
 
 describe('SourceMap', () => {
 	describe('instance related', () => {
@@ -71,7 +73,7 @@ describe('SourceMap', () => {
 			const base64String = instance.toBase64String()
 			const compiledJSString = '//# sourceMappingURL=data:application/json;base64,' + base64String
 
-			const sourceMap = SourceMap.fromCompiledJSString(new UnifiedPath('abc.js'), compiledJSString)
+			const sourceMap = SourceMap.fromCompiledJSString(new UnifiedPath('abc.js'), compiledJSString) as SourceMap
 			expect(sourceMap?.toJSON()).toEqual(instance.toJSON())
 		})
 	})
@@ -101,7 +103,7 @@ describe('SourceMap', () => {
 		it('extracts the inline source map', () => {
 			const sourceMapFilePath = new UnifiedPath(__dirname).join('assets', 'SourceMap', 'inline.js')
 			const source = fs.readFileSync(sourceMapFilePath.toPlatformString()).toString()
-			const sourceMap = SourceMap.fromCompiledJSString(sourceMapFilePath, source)
+			const sourceMap = SourceMap.fromCompiledJSString(sourceMapFilePath, source) as SourceMap
 
 			expect(sourceMap).toBeDefined()
 			expect(SourceMap.isSourceMap(sourceMap)).toBe(true)
@@ -124,7 +126,20 @@ describe('SourceMap', () => {
 		it('extracts the extern source map', () => {
 			const sourceMapFilePath = new UnifiedPath(__dirname).join('assets', 'SourceMap', 'extern.js')
 			const source = fs.readFileSync(sourceMapFilePath.toPlatformString()).toString()
-			const sourceMap = SourceMap.fromCompiledJSString(sourceMapFilePath, source)
+			const sourceMapRedirect = SourceMap.fromCompiledJSString(sourceMapFilePath, source)
+
+			expect(SourceMap.isSourceMap(sourceMapRedirect)).toBe(false)
+			expect((sourceMapRedirect as SourceMapRedirect).type).toBe('redirect')
+			expect((sourceMapRedirect as SourceMapRedirect).sourceMapLocation.toString()).toEqual(
+				new UnifiedPath(__dirname).join('assets', 'SourceMap', 'extern.js.map').toString()
+			)
+
+			const sourceRedirect = fs.readFileSync(
+				(sourceMapRedirect as SourceMapRedirect).sourceMapLocation.toPlatformString()
+			).toString()
+			const sourceMap = SourceMap.fromJSON(
+				sourceRedirect
+			) as SourceMap
 
 			expect(SourceMap.isSourceMap(sourceMap)).toBe(true)
 

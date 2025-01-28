@@ -6,7 +6,7 @@ import { PermissionHelper } from './PermissionHelper'
 import { TypescriptParser } from './TypescriptParser'
 import { GitHelper } from './GitHelper'
 
-import { SourceMap } from '../model/SourceMap'
+import { SourceMap, SourceMapRedirect } from '../model/SourceMap'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { NodeModule } from '../model/NodeModule'
 import { ProgramStructureTree } from '../model/ProgramStructureTree'
@@ -29,6 +29,8 @@ export type ExternalResourceFileInfo = {
 export class ExternalResourceHelper {
 	private _frozen: boolean
 
+	private _rootDir: UnifiedPath
+
 	private _session: inspector.Session
 	// maps scriptId to source code
 	private fileInfoPerScriptID: Map<ScriptID_string, ExternalResourceFileInfo | null>
@@ -43,12 +45,17 @@ export class ExternalResourceHelper {
 	// null represents that the uncommitted files could not be determined
 	private _uncommittedFiles: UnifiedPath_string[] | undefined | null
 
-	constructor() {
+	constructor(rootDir: UnifiedPath) {
+		this._rootDir = rootDir
 		this._frozen = false
 		this._session = new inspector.Session()
 		this.fileInfoPerScriptID = new Map()
 		this.fileInfoPerPath = new Map()
 		this.nodeModules = new Map()
+	}
+
+	get rootDir() {
+		return this._rootDir
 	}
 
 	get isFrozen() {
@@ -124,12 +131,14 @@ export class ExternalResourceHelper {
 	}
 
 	static loadFromFile(
+		rootDir: UnifiedPath,
 		filePath: UnifiedPath
 	): ExternalResourceHelper | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
 		return ExternalResourceHelper.fromJSON(
+			rootDir,
 			fs.readFileSync(filePath.toPlatformString()).toString()
 		)
 	}
@@ -182,6 +191,7 @@ export class ExternalResourceHelper {
 	}
 
 	static fromJSON(
+		rootDir: UnifiedPath,
 		json: string | IExternalResourceHelper
 	) {
 		let data: IExternalResourceHelper
@@ -190,7 +200,7 @@ export class ExternalResourceHelper {
 		} else {
 			data = json
 		}
-		const result = new ExternalResourceHelper()
+		const result = new ExternalResourceHelper(rootDir)
 		for (const [key, value] of Object.entries(data.fileInfoPerScriptID)) {
 			let fileInfo: ExternalResourceFileInfo | null = null
 			if (value !== null) {
@@ -322,7 +332,16 @@ export class ExternalResourceHelper {
 		if (fileInfo.sourceMap !== undefined) {
 			return fileInfo.sourceMap
 		}
-		fileInfo.sourceMap = SourceMap.fromCompiledJSString(filePath, fileInfo.sourceCode)
+		let sourceMap = SourceMap.fromCompiledJSString(filePath, fileInfo.sourceCode)
+		if (sourceMap !== null) {
+			if ((sourceMap as SourceMapRedirect).type === 'redirect') {
+				sourceMap = await this.sourceMapFromPath(
+					this.rootDir.pathTo(sourceMap.sourceMapLocation),
+					sourceMap.sourceMapLocation
+				)
+			}
+		} 
+		fileInfo.sourceMap = sourceMap as SourceMap | null
 		return fileInfo.sourceMap
 	}
 
@@ -400,7 +419,17 @@ export class ExternalResourceHelper {
 		if (fileInfo.sourceMap !== undefined) {
 			return fileInfo.sourceMap
 		}
-		fileInfo.sourceMap = SourceMap.fromCompiledJSString(filePath, fileInfo.sourceCode)
+		let sourceMap = SourceMap.fromCompiledJSString(filePath, fileInfo.sourceCode)
+		if (sourceMap !== null) {
+			if ((sourceMap as SourceMapRedirect).type === 'redirect') {
+				const sourceMapCode = await this.sourceCodeFromPath(
+					this.rootDir.pathTo(sourceMap.sourceMapLocation),
+					sourceMap.sourceMapLocation
+				)
+				sourceMap = sourceMapCode === null ? null : SourceMap.fromJSON(sourceMapCode)
+			}
+		}
+		fileInfo.sourceMap = sourceMap as SourceMap | null
 		return fileInfo.sourceMap
 	}
 

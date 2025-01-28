@@ -41,6 +41,7 @@ import {
 } from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
+const ROOT_DIR = CURRENT_DIR.join('..', '..', '..', '..')
 
 const EXAMPLE_SYSTEM_INFORMATION: ISystemInformation = JSON.parse(
 	fs.readFileSync(CURRENT_DIR.join('assets', 'SystemInformation', 'example.json').toString()).toString()
@@ -288,7 +289,7 @@ async function preprocess() {
 		EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001,
 		EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002
 	]) {
-		const externalResourceHelper = ExternalResourceHelper.loadFromFile(externalResourceHelperPath)
+		const externalResourceHelper = ExternalResourceHelper.loadFromFile(ROOT_DIR, externalResourceHelperPath)
 
 		if (externalResourceHelper === undefined) {
 			console.error('Failed to load ExternalResourceHelper')
@@ -604,7 +605,10 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 		describe('trackUncommittedFiles', () => {
 			test('no git repository', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(null)
-				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper())
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(undefined)
 
 				uncommittedFiles_mock.mockRestore()
@@ -612,7 +616,10 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 			test('no uncommitted changes exist', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([])
-				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper())
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
 				uncommittedFiles_mock.mockRestore()
@@ -620,7 +627,10 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 			test('uncommitted changes exist', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./dist/test.js'])
-				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper())
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(true)
 
 				uncommittedFiles_mock.mockRestore()
@@ -628,7 +638,10 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 			test('uncommitted changes exist in node modules has no effect', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./node_modules/@oaklean/profiler-core/test.js'])
-				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper())
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
 				uncommittedFiles_mock.mockRestore()
@@ -885,6 +898,7 @@ describe('ProjectReport', () => {
 		test('test case example001', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
 			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
+				ROOT_DIR,
 				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001
 			)!
 
@@ -920,7 +934,7 @@ describe('ProjectReport', () => {
 					}
 				}
 			}, ReportKind.measurement)
-			await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile, externalResourceHelper)
+			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
 			projectReport.normalize()
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
 
