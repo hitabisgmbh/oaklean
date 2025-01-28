@@ -14,7 +14,7 @@ import { ProfilerConfig } from '../../src/model/ProfilerConfig'
 import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { PermissionHelper } from '../../src/helper/PermissionHelper'
-import { InspectorHelper } from '../../src/helper/InspectorHelper'
+import { ExternalResourceHelper } from '../../src/helper/ExternalResourceHelper'
 import { LoggerHelper } from '../../src/helper/LoggerHelper'
 import {
 	UnifiedPath_string,
@@ -276,40 +276,43 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 const EXAMPLE_PROJECT_REPORT_BUFFER = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer').toString()).toString()
 const EXAMPLE_PROJECT_REPORT_HASH = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash').toString()).toString()
 
-const INSPECTOR_HELPER_FILE_PATH_EXAMPLE001 = CURRENT_DIR.join('assets', 'InspectorHelpers', 'example001.inspector.json')
-const INSPECTOR_HELPER_FILE_PATH_EXAMPLE002 = CURRENT_DIR.join('assets', 'InspectorHelpers', 'example002.inspector.json')
+const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001 = CURRENT_DIR.join('assets', 'ExternalResourceHelper', 'example001.resources.json')
+const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002 = CURRENT_DIR.join('assets', 'ExternalResourceHelper', 'example002.resources.json')
 
 /**
  * Preprocess the inspector helper files to ensure that source maps are relative and do not contain absolute paths.
  * So the tests can be run on different machines.
  */
 async function preprocess() {
-	for (const inspectorHelperPath of [
-		INSPECTOR_HELPER_FILE_PATH_EXAMPLE001,
-		INSPECTOR_HELPER_FILE_PATH_EXAMPLE002
+	for (const externalResourceHelperPath of [
+		EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001,
+		EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002
 	]) {
-		const inspectorHelper = InspectorHelper.loadFromFile(inspectorHelperPath)
+		const externalResourceHelper = ExternalResourceHelper.loadFromFile(externalResourceHelperPath)
 
-		if (inspectorHelper === undefined) {
-			console.error('Failed to load InspectorHelper')
+		if (externalResourceHelper === undefined) {
+			console.error('Failed to load ExternalResourceHelper')
 			return
 		}
 
-		for (const scriptId of inspectorHelper.scriptIds) {
-			const sourceMap = (await inspectorHelper.sourceMapFromId(inspectorHelperPath, scriptId))?.copy()
+		for (const scriptId of externalResourceHelper.scriptIDs) {
+			const sourceMap = (await externalResourceHelper.sourceMapFromScriptID(
+				scriptId,
+				externalResourceHelperPath,
+			))?.copy()
 
 			if (sourceMap !== undefined && sourceMap !== null) {
 				const newSources = sourceMap.sources.map((source) => {
 					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
 				})
 				sourceMap.sources = newSources
-				inspectorHelper.replaceSourceMapById(scriptId, sourceMap)
+				externalResourceHelper.replaceSourceMapByScriptID(scriptId, sourceMap)
 			}
 		}
 
-		for (const loadedFilePath of inspectorHelper.loadedFilePaths) {
+		for (const loadedFilePath of externalResourceHelper.loadedFilePaths) {
 			const filePath = new UnifiedPath(loadedFilePath)
-			const sourceMap = (await inspectorHelper.sourceMapFromLoadedFile(
+			const sourceMap = (await externalResourceHelper.sourceMapFromPath(
 				filePath,
 				filePath)
 			)?.copy()
@@ -319,11 +322,11 @@ async function preprocess() {
 					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
 				})
 				sourceMap.sources = newSources
-				inspectorHelper.replaceSourceMapByLoadedFile(filePath, sourceMap)
+				externalResourceHelper.replaceSourceMapByLoadedFile(filePath, sourceMap)
 			}
 		}
 
-		inspectorHelper.storeToFile(inspectorHelperPath, 'pretty-json')
+		externalResourceHelper.storeToFile(externalResourceHelperPath, 'pretty-json')
 	}
 }
 
@@ -600,8 +603,8 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 		describe('trackUncommittedFiles', () => {
 			test('no git repository', () => {
-				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(undefined)
-				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(null)
+				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper())
 				expect(instance.executionDetails.uncommittedChanges).toBe(undefined)
 
 				uncommittedFiles_mock.mockRestore()
@@ -609,7 +612,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 			test('no uncommitted changes exist', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([])
-				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper())
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
 				uncommittedFiles_mock.mockRestore()
@@ -617,7 +620,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 			test('uncommitted changes exist', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./dist/test.js'])
-				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper())
 				expect(instance.executionDetails.uncommittedChanges).toBe(true)
 
 				uncommittedFiles_mock.mockRestore()
@@ -625,7 +628,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 			test('uncommitted changes exist in node modules has no effect', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./node_modules/@oaklean/profiler-core/test.js'])
-				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper())
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
 				uncommittedFiles_mock.mockRestore()
@@ -881,7 +884,9 @@ describe('ProjectReport', () => {
 	describe('insertCPUProfile', () => {
 		test('test case example001', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
-			const inspectorHelper = InspectorHelper.loadFromFile(INSPECTOR_HELPER_FILE_PATH_EXAMPLE001)!
+			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
+				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001
+			)!
 
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 			setProfilesContext(profile)
@@ -915,7 +920,7 @@ describe('ProjectReport', () => {
 					}
 				}
 			}, ReportKind.measurement)
-			await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile, inspectorHelper)
+			await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile, externalResourceHelper)
 			projectReport.normalize()
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
 

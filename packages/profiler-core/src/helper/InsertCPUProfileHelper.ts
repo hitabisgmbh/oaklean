@@ -8,8 +8,8 @@ import { CPUNode } from './CPUNode'
 import { TypescriptParser } from './TypescriptParser'
 import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
-import { InspectorHelper } from './InspectorHelper'
-import { WebpackHelper } from './WebpackHelper'
+import { ExternalResourceHelper } from './ExternalResourceHelper'
+import { UrlProtocolHelper } from './UrlProtocolHelper'
 
 import { ProjectReport } from '../model/ProjectReport'
 import { ModuleReport } from '../model/ModuleReport'
@@ -682,11 +682,11 @@ export class InsertCPUProfileHelper {
 		if (programStructureTreeNodeScript === undefined) {
 			// request source code from the node engine
 			// (it is already transformed event if it is the original file path)
-			const sourceCode = await inspectorHelper.sourceCodeFromId(cpuNode.scriptId)
+			const sourceCode = await externalResourceHelper.sourceCodeFromScriptID(cpuNode.scriptID)
 			if (sourceCode === null) {
 				throw new Error(
 					'InsertCPUProfileHelper.resolveFunctionIdentifier: sourceCode should not be null' +
-					`scriptId: ${cpuNode.scriptId} (${cpuNode.url.toPlatformString()})`
+					`scriptID: ${cpuNode.scriptID} (${cpuNode.absoluteUrl.toPlatformString()})`
 				)
 			}
 			programStructureTreeNodeScript = TypescriptParser.parseSource(
@@ -701,7 +701,10 @@ export class InsertCPUProfileHelper {
 			{ line: lineNumber, column: columnNumber }
 		)
 
-		const sourceMap = await inspectorHelper.sourceMapFromId(cpuNode.url, cpuNode.scriptId)
+		const sourceMap = await externalResourceHelper.sourceMapFromScriptID(
+			cpuNode.scriptID,
+			cpuNode.absoluteUrl
+		)
 		const originalPosition = sourceMap !== null ? InsertCPUProfileHelper.resolveMappedLocationFromSourceMap(
 			programStructureTreeNodeScript,
 			sourceMap,
@@ -811,7 +814,7 @@ export class InsertCPUProfileHelper {
 		reportToApply: ProjectReport,
 		rootDir: UnifiedPath,
 		profile: ICpuProfileRaw,
-		inspectorHelper: InspectorHelper,
+		externalResourceHelper: ExternalResourceHelper,
 		metricsDataCollection?: MetricsDataCollection,
 	) {
 		if (reportToApply.executionDetails.highResolutionBeginTime === undefined) {

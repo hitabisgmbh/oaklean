@@ -16,7 +16,7 @@ import {
 	LoggerHelper,
 	ExecutionDetails,
 	PerformanceHelper,
-	InspectorHelper
+	ExternalResourceHelper
 } from '@oaklean/profiler-core'
 
 import { V8Profiler } from './model/V8Profiler'
@@ -43,7 +43,7 @@ export class Profiler {
 	config: ProfilerConfig
 	executionDetails?: IProjectReportExecutionDetails
 
-	private _inspectorHelper: InspectorHelper
+	private _externalResourceHelper: ExternalResourceHelper
 	private _sensorInterface: BaseSensorInterface | undefined
 	private _traceEventSession: Session | undefined
 	private _profilerStartTime: MicroSeconds_number | undefined
@@ -54,7 +54,7 @@ export class Profiler {
 		this.subOutputDir = subOutputDir
 		this.config = ProfilerConfig.autoResolve()
 		this.loadSensorInterface()
-		this._inspectorHelper = new InspectorHelper()
+		this._externalResourceHelper = new ExternalResourceHelper()
 	}
 
 	static getSensorInterface(config: ProfilerConfig) {
@@ -232,10 +232,10 @@ export class Profiler {
 		performance.start('Profiler.start.V8Profiler.startProfiling')
 		V8Profiler.startProfiling(title, true)
 		performance.stop('Profiler.start.V8Profiler.startProfiling')
-		performance.start('Profiler.start.inspectorHelper.connect')
-		await this._inspectorHelper.connect()
-		await this._inspectorHelper.listen()
-		performance.stop('Profiler.start.inspectorHelper.connect')
+		performance.start('Profiler.start.externalResourceHelper.connect')
+		await this._externalResourceHelper.connect()
+		await this._externalResourceHelper.listen()
+		performance.stop('Profiler.start.externalResourceHelper.connect')
 		performance.stop('Profiler.start')
 		performance.printReport('Profiler.start')
 		performance.exportAndSum(this.outputDir().join('performance.json'))
@@ -257,8 +257,8 @@ export class Profiler {
 		return this.outputDir().join(`${title}.cpuprofile`)
 	}
 
-	outputInspectorHelperPath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}.inspector.json`)
+	outputExternalResourceHelperPath(title: string): UnifiedPath {
+		return this.outputDir().join(`${title}.resources.json`)
 	}
 
 	async finish(title: string, highResolutionStopTime?: NanoSeconds_BigInt): Promise<ProjectReport> {
@@ -295,7 +295,7 @@ export class Profiler {
 			timeDeltas: profile.timeDeltas
 		}
 		const outFileCPUProfile = this.outputProfilePath(title)
-		const outFileInspectorHelper = this.outputInspectorHelperPath(title)
+		const outFileExternalResourceHelper = this.outputExternalResourceHelperPath(title)
 		const outFileReport = this.outputReportPath(title)
 		const outFileMetricCollection = this.outputMetricCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
@@ -326,39 +326,53 @@ export class Profiler {
 		}
 
 		// load all script sources from inspector
-		performance.start('Profiler.finish.inspectorHelper.fillSourceMapsFromCPUProfile')
-		await this._inspectorHelper.fillSourceMapsFromCPUProfile(profile)
-		performance.stop('Profiler.finish.inspectorHelper.fillSourceMapsFromCPUProfile')
+		performance.start('Profiler.finish.externalResourceHelper.fillSourceMapsFromCPUProfile')
+		await this._externalResourceHelper.fillSourceMapsFromCPUProfile(profile)
+		performance.stop('Profiler.finish.externalResourceHelper.fillSourceMapsFromCPUProfile')
 		
-		performance.start('Profiler.finish.inspectorHelper.disconnect')
-		await this._inspectorHelper.disconnect()
-		performance.stop('Profiler.finish.inspectorHelper.disconnect')
+		performance.start('Profiler.finish.externalResourceHelper.disconnect')
+		await this._externalResourceHelper.disconnect()
+		performance.stop('Profiler.finish.externalResourceHelper.disconnect')
 
 		if (this.config.shouldExportV8Profile()) {
-			performance.start('Profiler.finish.exportInspectorHelper')
+			performance.start('Profiler.finish.exportExternalResourceHelper')
 			// create parent directories if they do not exist
-			const dir = outFileInspectorHelper.dirName()
+			const dir = outFileExternalResourceHelper.dirName()
 			if (!fs.existsSync(dir.toPlatformString())) {
 				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
 			}
 			PermissionHelper.writeFileWithUserPermission(
-				outFileInspectorHelper.toPlatformString(),
-				JSON.stringify(this._inspectorHelper, null, 2),
+				outFileExternalResourceHelper.toPlatformString(),
+				JSON.stringify(this._externalResourceHelper, null, 2),
 			)
-			performance.stop('Profiler.finish.exportInspectorHelper')
+			performance.stop('Profiler.finish.exportExternalResourceHelper')
 		}
 
 		performance.start('Profiler.finish.insertCPUProfile')
 		await report.insertCPUProfile(
 			rootDir,
 			profile,
-			this._inspectorHelper,
+			this._externalResourceHelper,
 			metricsDataCollection
 		)
 		performance.stop('Profiler.finish.insertCPUProfile')
 
+		if (this.config.shouldExportV8Profile()) {
+			performance.start('Profiler.finish.exportExternalResourceHelper')
+			// create parent directories if they do not exist
+			const dir = outFileExternalResourceHelper.dirName()
+			if (!fs.existsSync(dir.toPlatformString())) {
+				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
+			}
+			PermissionHelper.writeFileWithUserPermission(
+				outFileExternalResourceHelper.toPlatformString(),
+				JSON.stringify(this._externalResourceHelper, null, 2),
+			)
+			performance.stop('Profiler.finish.exportExternalResourceHelper')
+		}
+
 		performance.start('Profiler.finish.trackUncommittedFiles')
-		await report.trackUncommittedFiles(rootDir)
+		report.trackUncommittedFiles(rootDir, this._externalResourceHelper)
 		performance.stop('Profiler.finish.trackUncommittedFiles')
 
 		if (this.config.shouldExportReport()) {

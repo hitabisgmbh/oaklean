@@ -1,10 +1,11 @@
 import * as inspector from '../__mocks__/inspector.mock'
-import { InspectorHelper } from '../../src/helper/InspectorHelper'
-import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { NodeModule } from '../../src/model/NodeModule'
-import { PermissionHelper } from '../../src/helper/PermissionHelper'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
+import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { SourceMap } from '../../src/model/SourceMap'
+import { NodeModule } from '../../src/model/NodeModule'
+import { ExternalResourceHelper } from '../../src/helper/ExternalResourceHelper'
+import { PermissionHelper } from '../../src/helper/PermissionHelper'
+import { GitHelper } from '../../src/helper/GitHelper'
 // Types
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { ScriptID_string } from '../../src/types'
@@ -15,16 +16,14 @@ const SCRIPT_01_PATH = ROOT_DIR.join('packages/profiler-core/tests/__mocks__/scr
 const SCRIPT_02_PATH = ROOT_DIR.join('packages/profiler-core/tests/__mocks__/script02.js')
 const SCRIPT_03_PATH = ROOT_DIR.join('packages/profiler-core/tests/__mocks__/script03.js')
 
-describe('InspectorHelper', () => {
+describe('ExternalResourceHelper', () => {
 	describe('instance related', () => {
-		let instance: InspectorHelper
+		let instance: ExternalResourceHelper
 
 		beforeEach(async () => {
-			instance = new InspectorHelper()
+			instance = new ExternalResourceHelper()
 			await instance.connect()
 			await instance.listen()
-
-			
 
 			instance.parseFile(
 				ROOT_DIR.pathTo(SCRIPT_01_PATH),
@@ -52,10 +51,16 @@ describe('InspectorHelper', () => {
 				nodeModulePath
 			)
 			nodeModuleSpy.mockRestore()
+
+			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
+				() => [SCRIPT_01_PATH.toString()]
+			)
+			instance.trackUncommittedFiles(ROOT_DIR)
+			uncommittedFilesMock.mockRestore()
 		})
 
-		it('instance should be an instanceof ProjectReport', () => {
-			expect(instance instanceof InspectorHelper).toBeTruthy()
+		it('instance should be an instanceof ExternalResourceHelper', () => {
+			expect(instance instanceof ExternalResourceHelper).toBeTruthy()
 		})
 
 		it('should have a method toJSON()', () => {
@@ -63,7 +68,7 @@ describe('InspectorHelper', () => {
 		})
 
 		it('should have a static method fromJSON()', () => {
-			expect(InspectorHelper.fromJSON).toBeTruthy()
+			expect(ExternalResourceHelper.fromJSON).toBeTruthy()
 		})
 
 		it('should have a method connect()', () => {
@@ -75,7 +80,7 @@ describe('InspectorHelper', () => {
 		})
 
 		it('should have a static method loadFromFile()', () => {
-			expect(InspectorHelper.loadFromFile).toBeTruthy()
+			expect(ExternalResourceHelper.loadFromFile).toBeTruthy()
 		})
 
 		it('should have a method listen()', () => {
@@ -90,51 +95,92 @@ describe('InspectorHelper', () => {
 			expect(instance.fillSourceMapsFromCPUProfile).toBeTruthy()
 		})
 
-		it('should have a method loadFile()', () => {
-			expect(instance.loadFile).toBeTruthy()
+		it('should have a method fileInfoFromPath()', () => {
+			expect(instance.fileInfoFromPath).toBeTruthy()
+		})
+
+		it('should have a method sourceCodeFromPath()', () => {
+			expect(instance.sourceCodeFromPath).toBeTruthy()
+		})
+
+		it('should have a method sourceMapFromPath()', () => {
+			expect(instance.sourceMapFromPath).toBeTruthy()
 		})
 
 		it('should have a method parseFile()', () => {
 			expect(instance.parseFile).toBeTruthy()
 		})
 
-		it('should have a method sourceCodeFromId()', () => {
-			expect(instance.sourceCodeFromId).toBeTruthy()
+		it('should have a method fileInfoFromScriptID()', () => {
+			expect(instance.fileInfoFromScriptID).toBeTruthy()
 		})
 
-		it('should have a method sourceMapFromId()', () => {
-			expect(instance.sourceMapFromId).toBeTruthy()
+		it('should have a method sourceCodeFromScriptID()', () => {
+			expect(instance.sourceCodeFromScriptID).toBeTruthy()
+		})
+
+		it('should have a method sourceCodeFromScriptID()', () => {
+			expect(instance.sourceCodeFromScriptID).toBeTruthy()
+		})
+
+		it('should have a getter scriptIDs', () => {
+			expect(instance.scriptIDs).toEqual(['1', '2', '3'])
+		})
+
+		it('should have a getter loadedFilePaths', () => {
+			expect(instance.loadedFilePaths).toEqual([
+				ROOT_DIR.pathTo(SCRIPT_01_PATH).toString(),
+				ROOT_DIR.pathTo(SCRIPT_02_PATH).toString(),
+				ROOT_DIR.pathTo(SCRIPT_03_PATH).toString()
+			])
 		})
 
 		test('toJSON()', () => {
 			expect(instance.toJSON()).toEqual({
-				sourceCodeMap: inspector.SCRIPT_SOURCES,
-				sourceMapMap: {},
-				loadedFiles: {
-					[ROOT_DIR.pathTo(SCRIPT_01_PATH).toString()]: inspector.SCRIPT_SOURCES['1'],
-					[ROOT_DIR.pathTo(SCRIPT_02_PATH).toString()]: inspector.SCRIPT_SOURCES['2'],
-					[ROOT_DIR.pathTo(SCRIPT_03_PATH).toString()]: inspector.SCRIPT_SOURCES['3']
+				fileInfoPerScriptID: {
+					'1': {
+						sourceCode: inspector.SCRIPT_SOURCES['1'],
+					},
+					'2': {
+						sourceCode: inspector.SCRIPT_SOURCES['2'],
+					},
+					'3': {
+						sourceCode: inspector.SCRIPT_SOURCES['3'],
+					}
 				},
-				loadedFilesSourceMapMap: {},
+				fileInfoPerPath: {
+					[ROOT_DIR.pathTo(SCRIPT_01_PATH).toString()]: {
+						sourceCode: inspector.SCRIPT_SOURCES['1']
+					},
+					[ROOT_DIR.pathTo(SCRIPT_02_PATH).toString()]: {
+						sourceCode: inspector.SCRIPT_SOURCES['2']
+					},
+					[ROOT_DIR.pathTo(SCRIPT_03_PATH).toString()]: {
+						sourceCode: inspector.SCRIPT_SOURCES['3']
+					}
+				},
 				nodeModules: {
 					'./node_modules/module': {
 						name: 'module',
 						version: '1.2.3'
 					}
-				}
+				},
+				uncommittedFiles: [
+					'./packages/profiler-core/tests/__mocks__/script01.js'
+				]
 			})
 		})
 
 		test('fromJSON()', () => {
 			const json = instance.toJSON()
-			const newInstance = InspectorHelper.fromJSON(json)
+			const newInstance = ExternalResourceHelper.fromJSON(json)
 
 			expect(newInstance.toJSON()).toEqual(json)
 		})
 
 		test('storeToFile()', async () => {
 			const writeFileWithUserPermissionSpy = jest.spyOn(PermissionHelper, 'writeFileWithUserPermission').mockImplementation(() => undefined)
-			const filePath = new UnifiedPath(__dirname + '/inspectorHelper.json')
+			const filePath = new UnifiedPath(__dirname + '/externalResourceHelper.json')
 			
 			await instance.storeToFile(filePath, 'json')
 
@@ -156,20 +202,20 @@ describe('InspectorHelper', () => {
 		})
 
 		test('sourceCodeFromId()', async () => {
-			expect(await instance.sourceCodeFromId('0' as ScriptID_string)).toBeNull()
+			expect(await instance.sourceCodeFromScriptID('0' as ScriptID_string)).toBeNull()
 		})
 
 		test('loadFromFile', async () => {
-			const filePath = new UnifiedPath(__dirname).join('assets', 'InspectorHelper', 'instance.json')
+			const filePath = new UnifiedPath(__dirname).join('assets', 'ExternalResourceHelper', 'instance.json')
 
 			if (UPDATE_TEST_REPORTS) {
 				PermissionHelper.writeFileWithUserPermission(
 					filePath.toPlatformString(),
-					JSON.stringify(instance)
+					JSON.stringify(instance, null, 2)
 				)
 			}
 
-			const loadedInstance = InspectorHelper.loadFromFile(filePath)
+			const loadedInstance = ExternalResourceHelper.loadFromFile(filePath)
 			expect(loadedInstance).toBeDefined()
 			if (loadedInstance) {
 				expect(loadedInstance.toJSON()).toEqual(instance.toJSON())
@@ -177,14 +223,14 @@ describe('InspectorHelper', () => {
 		})
 
 		test('sourceMapFromId()', async () => {
-			expect(await instance.sourceMapFromId(
-				SCRIPT_01_PATH,
-				'0' as ScriptID_string
+			expect(await instance.sourceMapFromScriptID(
+				'0' as ScriptID_string,
+				SCRIPT_01_PATH
 			)).toBeNull()
 
-			expect((await instance.sourceMapFromId(
-				SCRIPT_01_PATH,
-				'1' as ScriptID_string
+			expect((await instance.sourceMapFromScriptID(
+				'1' as ScriptID_string,
+				SCRIPT_01_PATH
 			))?.toJSON()).toEqual(SourceMap.fromCompiledJSString(
 				SCRIPT_01_PATH,
 				inspector.SCRIPT_SOURCES['1']
@@ -194,7 +240,7 @@ describe('InspectorHelper', () => {
 
 	describe('debug connection', () => {
 		test('not enabled debugger', async () => {
-			const instance = new InspectorHelper()
+			const instance = new ExternalResourceHelper()
 
 			await expect(async () => {
 				await instance.listen()
@@ -202,7 +248,7 @@ describe('InspectorHelper', () => {
 		})
 
 		test('disabled debugger', async () => {
-			const instance = new InspectorHelper()
+			const instance = new ExternalResourceHelper()
 
 			await instance.connect()
 			await instance.disconnect()
@@ -213,18 +259,18 @@ describe('InspectorHelper', () => {
 		})
 
 		test('enabled debugger', async () => {
-			const instance = new InspectorHelper()
+			const instance = new ExternalResourceHelper()
 
-			const sourceCodeFromIdSpy = jest.spyOn(instance, 'sourceCodeFromId')
+			const fileInfoFromScriptIDSpy = jest.spyOn(instance, 'fileInfoFromScriptID')
 			await instance.connect()
 			await instance.listen()
 
-			expect(sourceCodeFromIdSpy).toHaveBeenCalledTimes(3)
-			expect(sourceCodeFromIdSpy).toHaveBeenNthCalledWith(1, '1')
-			expect(sourceCodeFromIdSpy).toHaveBeenNthCalledWith(2, '2')
-			expect(sourceCodeFromIdSpy).toHaveBeenNthCalledWith(3, '3')
+			expect(fileInfoFromScriptIDSpy).toHaveBeenCalledTimes(3)
+			expect(fileInfoFromScriptIDSpy).toHaveBeenNthCalledWith(1, '1')
+			expect(fileInfoFromScriptIDSpy).toHaveBeenNthCalledWith(2, '2')
+			expect(fileInfoFromScriptIDSpy).toHaveBeenNthCalledWith(3, '3')
 
-			sourceCodeFromIdSpy.mockRestore()
+			fileInfoFromScriptIDSpy.mockRestore()
 		})
 	})
 
@@ -270,42 +316,38 @@ describe('InspectorHelper', () => {
 			endTime: 100
 		}
 
-		const instance = new InspectorHelper()
+		const instance = new ExternalResourceHelper()
 		instance.connect()
 
 		await instance.fillSourceMapsFromCPUProfile(profile)
 
-		expect(instance.toJSON()).toEqual({
-			sourceCodeMap: inspector.SCRIPT_SOURCES,
-			sourceMapMap: {
-				'1': {
-					mappings: ';AAAA,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA',
-					names: [],
-					sources: [
-						'../../examples/script01.ts',
-					],
-					version: 3,
-				},
-				'2': {
-					mappings: ';AAAA,KAAK,IAAI,CAAC,GAAG,CAAC,EAAE,CAAC,GAAG,CAAC,EAAE,CAAC,EAAE,EAAE,CAAC;IAC5B,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA;AAC7B,CAAC',
-					names: [],
-					sources: [
-						'../../examples/script02.ts',
-					],
-					'version': 3,
-				},
-				'3': {
-					mappings: ';;AAAA,SAAwB,GAAG,CAAC,CAAS;IACpC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;QACZ,OAAO,CAAC,CAAA;IACT,CAAC;IACD,OAAO,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,GAAG,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,CAAA;AAC/B,CAAC;AALD,sBAKC',
-					names: [],
-					sources: [
-						'../../examples/script03.ts',
-					],
-					version: 3,
-				},
-			},
-			loadedFiles: {},
-			loadedFilesSourceMapMap: {},
-			nodeModules: {}
+		expect(instance.scriptIDs).toEqual(['1', '2', '3'])
+
+		expect((await instance.sourceMapFromScriptID('1' as ScriptID_string, SCRIPT_01_PATH))?.toJSON()).toEqual({
+			mappings: ';AAAA,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA',
+			names: [],
+			sources: [
+				'../../examples/script01.ts',
+			],
+			version: 3,
+		})
+
+		expect((await instance.sourceMapFromScriptID('2' as ScriptID_string, SCRIPT_01_PATH))?.toJSON()).toEqual({
+			mappings: ';AAAA,KAAK,IAAI,CAAC,GAAG,CAAC,EAAE,CAAC,GAAG,CAAC,EAAE,CAAC,EAAE,EAAE,CAAC;IAC5B,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA;AAC7B,CAAC',
+			names: [],
+			sources: [
+				'../../examples/script02.ts',
+			],
+			'version': 3,
+		})
+
+		expect((await instance.sourceMapFromScriptID('3' as ScriptID_string, SCRIPT_01_PATH))?.toJSON()).toEqual({
+			mappings: ';;AAAA,SAAwB,GAAG,CAAC,CAAS;IACpC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;QACZ,OAAO,CAAC,CAAA;IACT,CAAC;IACD,OAAO,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,GAAG,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,CAAA;AAC/B,CAAC;AALD,sBAKC',
+			names: [],
+			sources: [
+				'../../examples/script03.ts',
+			],
+			version: 3,
 		})
 	})
 })

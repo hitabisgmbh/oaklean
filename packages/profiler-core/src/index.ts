@@ -8,7 +8,7 @@ import { GitHelper } from './helper/GitHelper'
 import { NodeModuleUtils } from './helper/NodeModuleUtils'
 import { PermissionHelper } from './helper/PermissionHelper'
 import { DataUrlUtils } from './helper/DataUrlUtils'
-import { InspectorHelper } from './helper/InspectorHelper'
+import { ExternalResourceHelper } from './helper/ExternalResourceHelper'
 import { SetHelper } from './helper/SetHelper'
 import {
 	TimeHelper
@@ -120,7 +120,7 @@ export {
 	TimeHelper,
 	PerformanceHelper,
 	DataUrlUtils,
-	InspectorHelper,
+	ExternalResourceHelper,
 	SetHelper,
 	DEFAULT_PROFILER_CONFIG,
 	ProfilerConfig,

@@ -1,5 +1,6 @@
 import { NodeModuleUtils } from './NodeModuleUtils'
 import { CPUModel } from './CPUModel'
+import { ExternalResourceHelper } from './ExternalResourceHelper'
 
 import { LangInternalSourceNodeRegExpRegexString } from '../constants/SourceNodeRegex'
 import { NodeModule } from '../model/NodeModule'
@@ -63,6 +64,10 @@ export class CPUNode {
 		this.cpuModel = cpuModel
 		this.rootDir = rootDir
 		this.cpuNode = node
+	}
+
+	get externalResourceHelper(): ExternalResourceHelper {
+		return this.cpuModel.externalResourceHelper
 	}
 
 	get profilerHits(): number {

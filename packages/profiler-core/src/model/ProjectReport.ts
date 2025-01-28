@@ -19,7 +19,7 @@ import { BufferHelper } from '../helper/BufferHelper'
 import { AuthenticationHelper } from '../helper/AuthenticationHelper'
 import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper'
 import { BIN_FILE_MAGIC } from '../constants/app'
-import { InspectorHelper } from '../helper/InspectorHelper'
+import { ExternalResourceHelper } from '../helper/ExternalResourceHelper'
 // Types
 import {
 	ReportKind,
@@ -194,20 +194,22 @@ export class ProjectReport extends Report {
 		
 	}
 
-	async trackUncommittedFiles(rootDir: UnifiedPath) {
+	trackUncommittedFiles(
+		rootDir: UnifiedPath,
+		externalResourceHelper: ExternalResourceHelper
+	) {
 		// if git is not available, set default value of uncommitted changes to undefined
 		this.executionDetails.uncommittedChanges = undefined
-		const uncommittedFiles = GitHelper.uncommittedFiles()
+		const uncommittedFiles = externalResourceHelper.trackUncommittedFiles(rootDir)
 
-		if (uncommittedFiles === undefined) {
+		if (uncommittedFiles === null) {
 			return
 		}
+
 		// git is available, set default value of uncommitted changes to false
 		this.executionDetails.uncommittedChanges = false
 		for (const uncommittedFile of uncommittedFiles) {
-			const pureRelativeOriginalSourcePath = rootDir.pathTo(new UnifiedPath(uncommittedFile))
-
-			const pathIndex = this.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', pureRelativeOriginalSourcePath.toString())
+			const pathIndex = this.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', uncommittedFile)
 			if (pathIndex === undefined) {
 				continue
 			}
@@ -220,14 +222,14 @@ export class ProjectReport extends Report {
 	async insertCPUProfile(
 		rootDir: UnifiedPath,
 		profile: ICpuProfileRaw,
-		inspectorHelper: InspectorHelper,
+		externalResourceHelper: ExternalResourceHelper,
 		metricsDataCollection?: MetricsDataCollection
 	) {
 		await InsertCPUProfileHelper.insertCPUProfile(
 			this,
 			rootDir,
 			profile,
-			inspectorHelper,
+			externalResourceHelper,
 			metricsDataCollection
 		)
 	}

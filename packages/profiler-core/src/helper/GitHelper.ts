@@ -39,7 +39,7 @@ export class GitHelper {
 		}
 	}
 
-	static uncommittedFiles(): string[] | undefined {
+	static uncommittedFiles(): string[] | null {
 		const command = 'git diff HEAD --name-only -z'
 		try {
 			const options: ExecSyncOptions = {
@@ -52,14 +52,14 @@ export class GitHelper {
 			const result = ChildProcess.execSync(command, options).toString().trim()
 			return result.split('\0')
 		} catch (error) {
-			return undefined
+			return null
 		}
 	}
 
-	static uncommittedChanges(): boolean | undefined {
+	static uncommittedChanges(): boolean | null {
 		const uncommittedFiles = GitHelper.uncommittedFiles()
 
-		if (uncommittedFiles === undefined) {
+		if (uncommittedFiles === null) {
 			return uncommittedFiles
 		}
 		if (uncommittedFiles.length === 1 && uncommittedFiles[0] === STATIC_CONFIG_FILENAME) {
