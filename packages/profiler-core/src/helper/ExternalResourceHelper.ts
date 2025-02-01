@@ -444,8 +444,7 @@ export class ExternalResourceHelper {
 	}
 
 	nodeModuleFromPath(
-		relativeNodeModulePath: UnifiedPath,
-		nodeModulePath: UnifiedPath
+		relativeNodeModulePath: UnifiedPath
 	): NodeModule | null {
 		let nodeModule = this.nodeModules.get(relativeNodeModulePath.toString())
 		if (nodeModule !== undefined) {
@@ -457,7 +456,7 @@ export class ExternalResourceHelper {
 				'Tried to access: ' + relativeNodeModulePath.toString()
 			)
 		}
-		nodeModule = NodeModule.fromNodeModulePath(nodeModulePath) || null
+		nodeModule = NodeModule.fromNodeModulePath(this.rootDir.join(relativeNodeModulePath)) || null
 		this.nodeModules.set(relativeNodeModulePath.toString(), nodeModule)
 		return nodeModule
 	}

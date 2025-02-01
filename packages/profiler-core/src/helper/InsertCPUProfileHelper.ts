@@ -1,4 +1,3 @@
-import * as fs from 'fs'
 import path from 'path'
 
 import { MappedPosition } from 'source-map'
@@ -10,6 +9,9 @@ import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
 import { ExternalResourceHelper } from './ExternalResourceHelper'
 import { UrlProtocolHelper } from './UrlProtocolHelper'
+import {
+	NodeModuleUtils
+} from './NodeModuleUtils'
 
 import { ProjectReport } from '../model/ProjectReport'
 import { ModuleReport } from '../model/ModuleReport'
@@ -640,7 +642,9 @@ export class InsertCPUProfileHelper {
 		externalResourceHelper: ExternalResourceHelper
 	): Promise<{
 			sourceNodeLocation: SourceNodeLocation,
-			functionIdentifierPresentInOriginalFile: boolean
+			functionIdentifierPresentInOriginalFile: boolean,
+			nodeModule: NodeModule | null
+			relativeNodeModulePath: UnifiedPath | null
 		}> {
 		/**
 		 * Resolve procedure:
@@ -681,6 +685,7 @@ export class InsertCPUProfileHelper {
 		const { lineNumber, columnNumber } = cpuNode.sourceLocation
 		let functionIdentifierPresentInOriginalFile = true
 		let sourceNodeLocation: SourceNodeLocation | undefined = undefined
+		let originalSourceFileNotFoundError: object | undefined = undefined
 
 		if (programStructureTreeNodeScript === undefined) {
 			// request source code from the node engine
@@ -727,23 +732,20 @@ export class InsertCPUProfileHelper {
 				path.resolve(path.join(path.dirname(cpuNode.absoluteUrl.toString()), originalPositionPath.toString()))
 			) : originalPositionPath
 
-			const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
-			const relativeOriginalSourcePath = (cpuNode.nodeModulePath && cpuNode.nodeModule)
-				? cpuNode.nodeModulePath.pathTo(absoluteOriginalSourcePath) :
-				pureRelativeOriginalSourcePath
+			const relativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
 
 			programStructureTreeOriginal = pstCache.perOriginalFile.get(
-				pureRelativeOriginalSourcePath.toString()
+				relativeOriginalSourcePath.toString()
 			)
 			if (programStructureTreeOriginal === undefined) {
 				try {
 					// found the original source file from the source map but it is not yet parsed
 					programStructureTreeOriginal = externalResourceHelper.parseFile(
-						pureRelativeOriginalSourcePath,
+						relativeOriginalSourcePath,
 						absoluteOriginalSourcePath
 					)
 					pstCache.perOriginalFile.set(
-						pureRelativeOriginalSourcePath.toString(),
+						relativeOriginalSourcePath.toString(),
 						programStructureTreeOriginal
 					)
 				} catch {
@@ -766,27 +768,12 @@ export class InsertCPUProfileHelper {
 					}
 				}
 			} else {
-				// The original source file does not exist, only print an error if:
-				// - the source file is NOT part of a node module,
-				//		since node modules often include source maps that point to non-existing files we ignore them
-				// - there is no special protocol in the url which could result in a non-existing file,
-				//		for example the webpack url protocol references internal webpack files
-				if (
-					(!cpuNode.nodeModulePath || !cpuNode.nodeModule) &&
-					urlProtocol === null
-				) {
-					LoggerHelper.error(
-						'InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
-							rootDir: rootDir.toString(),
-							originalPositionSource: originalPosition.source,
-							originalPositionPath,
-							absoluteOriginalSourcePath,
-							sources: sourceMap?.sources,
-							url: cpuNode.absoluteUrl.toString(),
-							lineNumber,
-							columnNumber
-						}
-					)
+				if (urlProtocol === null) {
+					originalSourceFileNotFoundError = {
+						originalPositionSource: originalPosition.source,
+						originalPositionPath,
+						absoluteOriginalSourcePath,
+					}
 				}
 			}
 		} else {
@@ -801,11 +788,44 @@ export class InsertCPUProfileHelper {
 			// or the source map does not contain the original source location
 
 			sourceNodeLocation = {
-				relativeFilePath: cpuNode.relativeSourceFilePath,
+				relativeFilePath: cpuNode.relativeUrl,
 				functionIdentifier
 			}
 		}
-		
+		// determine the node module of the source node location if there is one
+		const {
+			relativeNodeModulePath,
+			nodeModule
+		} = NodeModuleUtils.nodeModuleFromUrl(
+			externalResourceHelper,
+			sourceNodeLocation.relativeFilePath
+		)
+
+		if (relativeNodeModulePath && nodeModule) {
+			// since the source node location is within a node module
+			// adjust the relativeFilePath so its relative to that node module directory
+			sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(sourceNodeLocation.relativeFilePath)
+		}
+
+		if (
+			originalSourceFileNotFoundError !== undefined &&
+			(!relativeNodeModulePath || !nodeModule)
+		) {
+			// The original source file does not exist, only print an error if:
+			// - the source file is NOT part of a node module,
+			//		since node modules often include source maps that point to non-existing files we ignore them
+			LoggerHelper.error(
+				'InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
+					rootDir: rootDir.toString(),
+					sources: sourceMap?.sources,
+					url: cpuNode.absoluteUrl.toString(),
+					lineNumber,
+					columnNumber,
+					...originalSourceFileNotFoundError,
+				}
+			)
+		}
+
 		if (functionIdentifier === '') {
 			LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
 				url: cpuNode.absoluteUrl.toString(),
@@ -818,7 +838,9 @@ export class InsertCPUProfileHelper {
 
 		return {
 			sourceNodeLocation,
-			functionIdentifierPresentInOriginalFile
+			functionIdentifierPresentInOriginalFile,
+			relativeNodeModulePath,
+			nodeModule
 		}
 	}
 
@@ -877,14 +899,10 @@ export class InsertCPUProfileHelper {
 		async function beforeTraverse(
 			cpuNode: CPUNode,
 			originalReport: ProjectReport,
-			reportToCreditArg: ProjectReport | ModuleReport,
+			reportToCredit: ProjectReport | ModuleReport,
 			lastNodeCallInfo: LastNodeCallInfo | undefined,
 			accounted: AccountedTracker
 		) {
-			let reportToCredit = reportToCreditArg
-			if (!cpuNode.isExtern && !cpuNode.isLangInternal && !cpuNode.isWASM) {
-				reportToCredit = originalReport
-			}
 
 			let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
@@ -901,12 +919,14 @@ export class InsertCPUProfileHelper {
 				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
 			} else if (cpuNode.isWASM) {
+				const wasmPath = new UnifiedPath(cpuNode.rawUrl.substring(7)) // remove the 'wasm://' prefix
+
 				const result = await InsertCPUProfileHelper.accountToExtern(
 					reportToCredit,
 					cpuNode,
 					WASM_NODE_MODULE,
 					{
-						relativeFilePath: cpuNode.relativeSourceFilePath,
+						relativeFilePath: wasmPath,
 						functionIdentifier:
 							cpuNode.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
 					},
@@ -921,7 +941,9 @@ export class InsertCPUProfileHelper {
 			} else if (!cpuNode.isEmpty) {
 				const {
 					sourceNodeLocation,
-					functionIdentifierPresentInOriginalFile
+					functionIdentifierPresentInOriginalFile,
+					nodeModule,
+					relativeNodeModulePath
 				} = await InsertCPUProfileHelper.resolveFunctionIdentifier(
 					rootDir,
 					cpuNode,
@@ -929,18 +951,9 @@ export class InsertCPUProfileHelper {
 					externalResourceHelper
 				)
 
-				// add to intern if the source file is not part of a node module
-				// or the reportToCredit is the node module that source file belongs to
-				const addToIntern =
-					!((cpuNode.nodeModulePath && cpuNode.nodeModule))
-					|| (
-						reportToCredit instanceof ModuleReport
-						&& reportToCredit.nodeModule.identifier === cpuNode.nodeModule.identifier
-					)
-
 				// this happens for node modules like the jest-runner, that executes the own code
 				// the measurements will be credited to the original code rather than the node module that executes it
-				const ownCodeGetsExecutedByExternal = cpuNode.nodeModulePath === null &&
+				const ownCodeGetsExecutedByExternal = relativeNodeModulePath === null &&
 					lastNodeCallInfo &&
 					lastNodeCallInfo.sourceNode.sourceNodeIndex.pathIndex.moduleIndex.identifier !== '{self}'
 
@@ -957,9 +970,18 @@ export class InsertCPUProfileHelper {
 					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
 				} else {
-					if (addToIntern) {
+					// add to intern if the source file is not part of a node module
+					// or the reportToCredit is the node module that source file belongs to
+					if (
+						!((relativeNodeModulePath && nodeModule)) || (
+							reportToCredit instanceof ModuleReport
+							&& reportToCredit.nodeModule.identifier === nodeModule.identifier
+						)
+					) {
+						// add to intern
 						const result = await InsertCPUProfileHelper.accountToIntern(
-							reportToCredit,
+							// currently in a node module scope, so add it to the node module report as an intern node
+							nodeModule !== null ? reportToCredit : originalReport,
 							cpuNode,
 							sourceNodeLocation,
 							lastNodeCallInfo,
@@ -974,7 +996,7 @@ export class InsertCPUProfileHelper {
 						const result = await InsertCPUProfileHelper.accountToExtern(
 							reportToCredit,
 							cpuNode,
-							cpuNode.nodeModule,
+							nodeModule,
 							sourceNodeLocation,
 							lastNodeCallInfo,
 							accounted

@@ -41,13 +41,13 @@ describe('ExternalResourceHelper', () => {
 			)
 
 			const nodeModulePath = new UnifiedPath('./node_modules/module')
+			const absoluteNodeModulePath = ROOT_DIR.join(nodeModulePath)
 			const nodeModuleSpy = jest.spyOn(NodeModule, 'fromNodeModulePath').mockImplementation((path: UnifiedPath) => {
-				if (path.toString() === nodeModulePath.toString()) {
+				if (path.toString() === absoluteNodeModulePath.toString()) {
 					return new NodeModule('module', '1.2.3')
 				}
 			})
 			instance.nodeModuleFromPath(
-				nodeModulePath,
 				nodeModulePath
 			)
 			nodeModuleSpy.mockRestore()

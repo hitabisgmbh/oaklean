@@ -106,25 +106,6 @@ describe('CPUNode', () => {
 		expect(instance.relativeUrl.toString()).toBe('./node_modules/v8-profiler-next/dispatch.js')
 	})
 
-	test('nodeModulePath', () => {
-		expect(instance.nodeModulePath?.toString()).toBe(ROOT_DIR.join('node_modules/v8-profiler-next').toString())
-	})
-
-	test('nodeModule', () => {
-		expect(instance.nodeModule).toEqual({
-			name: 'v8-profiler-next',
-			version: '1.10.0'
-		})
-	})
-
-	test('relativeSourceFilePath', () => {
-		expect(instance.relativeSourceFilePath.toString()).toBe('./dispatch.js')
-	})
-
-	test('isExtern', () => {
-		expect(instance.isExtern).toBe(true)
-	})
-
 	test('sourceNodeIdentifier', () => {
 		expect(instance.sourceNodeIdentifier).toBe('{startProfiling}')
 	})

@@ -47,9 +47,6 @@ export class CPUNode {
 	private _rawUrl?: string
 	private _absoluteUrl?: UnifiedPath
 	private _relativeUrl?: UnifiedPath
-	private _nodeModulePath?: UnifiedPath | null
-	private _nodeModule?: NodeModule | null
-	private _relativeSourceFilePath?: UnifiedPath
 
 	private _sourceNodeIdentifier?: SourceNodeIdentifier_string
 
@@ -157,13 +154,6 @@ export class CPUNode {
 		return this._isEmpty
 	}
 
-	get isExtern() {
-		if (this._isExtern === undefined) {
-			this._isExtern = (this.nodeModulePath !== null)
-		}
-		return this._isExtern
-	}
-
 	get isWASM() {
 		if (this._isWASM === undefined) {
 			this._isWASM = this.ISourceLocation.callFrame.url.startsWith('wasm://')
@@ -228,50 +218,6 @@ export class CPUNode {
 			this._relativeUrl = this.rootDir.pathTo(this.absoluteUrl)
 		}
 		return this._relativeUrl
-	}
-
-	get nodeModulePath() {
-		if (this._nodeModulePath === undefined) {
-			const modulePath = NodeModuleUtils.getParentModuleFromPath(this.relativeUrl)
-			if (modulePath) {
-				this._nodeModulePath = this.rootDir.join(modulePath)
-			} else {
-				this._nodeModulePath = null
-			}
-		}
-		return this._nodeModulePath
-	}
-
-	get nodeModule() {
-		if (this._nodeModule === undefined) {
-			this._nodeModule = this.nodeModulePath ? this.externalResourceHelper.nodeModuleFromPath(
-				this.rootDir.pathTo(this.nodeModulePath),
-				this.nodeModulePath
-			) : null
-			if (this.nodeModulePath && !this._nodeModule) {
-				throw new Error('Module could not be found: ' + this.nodeModulePath.toString())
-			}
-		}
-		return this._nodeModule
-	}
-
-	/**
-	 * Returns the relative source file path of the cpu node.
-	 * The path is relative to its parent scope (a node module or the root directory)
-	 */
-	get relativeSourceFilePath() {
-		if (this._relativeSourceFilePath === undefined) {
-			if (this.isWASM) {
-				this._relativeSourceFilePath = new UnifiedPath(this.rawUrl.substring(7)) // remove the 'wasm://' prefix
-			} else {
-				if (!this.nodeModulePath || !this.nodeModule) {
-					this._relativeSourceFilePath = this.relativeUrl
-				} else {
-					this._relativeSourceFilePath = this.nodeModulePath.pathTo(this.absoluteUrl)
-				}
-			}
-		}
-		return this._relativeSourceFilePath
 	}
 
 	private functionNameToSourceNodeIdentifier(functionName: string) {
