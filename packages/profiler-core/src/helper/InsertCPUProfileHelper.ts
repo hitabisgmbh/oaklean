@@ -263,7 +263,7 @@ export class InsertCPUProfileHelper {
 		cpuNode: CPUNode,
 		originalReport: ProjectReport,
 		sourceNodeLocation: SourceNodeLocation,
-		lastNodeCallInfo: LastNodeCallInfo,
+		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		accounted: AccountedTracker
 	) {
 		const cpuTime = cpuNode.cpuTime
@@ -302,44 +302,51 @@ export class InsertCPUProfileHelper {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
 		}
 
-		// remove aggregated time from last intern source node
-		parentSourceNode_CallIdentifier = {
-			reportID: lastNodeCallInfo.report.internID,
-			sourceNodeID: lastNodeCallInfo.sourceNode.id
+		// if lastNodeCallInfo === undefined
+		// the last call was from a lang internal source node (but within a node module report)
+		// this is often a node:vm call within a node module to execute some script of the users code
+		if (lastNodeCallInfo !== undefined) {
+			// remove aggregated time from last intern source node
+			parentSourceNode_CallIdentifier = {
+				reportID: lastNodeCallInfo.report.internID,
+				sourceNodeID: lastNodeCallInfo.sourceNode.id
+			}
+			// parent caller was already accounted once, so don't subtract the cpu time from it again
+			const sensorValuesCorrected = InsertCPUProfileHelper.sensorValuesForVisitedNode(
+				cpuTime,
+				cpuEnergyConsumption,
+				ramEnergyConsumption,
+				accounted.map.has(InsertCPUProfileHelper.callIdentifierToString(parentSourceNode_CallIdentifier)) &&
+				accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
+					parentSourceNode_CallIdentifier))!.length > 0
+			)
+
+			// IMPORTANT to change when new measurement type gets added
+			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime =
+				lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime -
+				(sensorValuesCorrected.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
+			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption =
+				lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption -
+				(sensorValuesCorrected.
+					cpuEnergyConsumption.
+					aggregatedCPUEnergyConsumption
+					|| 0) as MilliJoule_number
+			lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption =
+				lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption -
+				(sensorValuesCorrected.
+					ramEnergyConsumption.
+					aggregatedRAMEnergyConsumption
+					|| 0) as MilliJoule_number
+
+			// set call as accounted
+			InsertCPUProfileHelper.markAsAccounted(
+				accounted,
+				currentCallIdentifier,
+				parentSourceNode_CallIdentifier
+			)
 		}
-		// parent caller was already accounted once, so don't subtract the cpu time from it again
-		const sensorValuesCorrected = InsertCPUProfileHelper.sensorValuesForVisitedNode(
-			cpuTime,
-			cpuEnergyConsumption,
-			ramEnergyConsumption,
-			accounted.map.has(InsertCPUProfileHelper.callIdentifierToString(parentSourceNode_CallIdentifier)) &&
-			accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
-				parentSourceNode_CallIdentifier))!.length > 0
-		)
 
-		// IMPORTANT to change when new measurement type gets added
-		lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime =
-			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime -
-			(sensorValuesCorrected.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
-		lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption =
-			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption -
-			(sensorValuesCorrected.
-				cpuEnergyConsumption.
-				aggregatedCPUEnergyConsumption
-				|| 0) as MilliJoule_number
-		lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption =
-			lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption -
-			(sensorValuesCorrected.
-				ramEnergyConsumption.
-				aggregatedRAMEnergyConsumption
-				|| 0) as MilliJoule_number
-
-		// set call as accounted
-		InsertCPUProfileHelper.markAsAccounted(
-			accounted,
-			currentCallIdentifier,
-			parentSourceNode_CallIdentifier
-		)
+		
 
 		return {
 			newReportToCredit: originalReport,
@@ -903,7 +910,6 @@ export class InsertCPUProfileHelper {
 			lastNodeCallInfo: LastNodeCallInfo | undefined,
 			accounted: AccountedTracker
 		) {
-
 			let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let isAwaiterSourceNode = false
@@ -953,9 +959,19 @@ export class InsertCPUProfileHelper {
 
 				// this happens for node modules like the jest-runner, that executes the own code
 				// the measurements will be credited to the original code rather than the node module that executes it
-				const ownCodeGetsExecutedByExternal = relativeNodeModulePath === null &&
-					lastNodeCallInfo &&
-					lastNodeCallInfo.sourceNode.sourceNodeIndex.pathIndex.moduleIndex.identifier !== '{self}'
+				const ownCodeGetsExecutedByExternal =
+					relativeNodeModulePath === null && // the currently executed file is not part of a node module
+					(
+						(
+							lastNodeCallInfo !== undefined &&
+							lastNodeCallInfo.sourceNode.sourceNodeIndex.pathIndex.moduleIndex.identifier !== '{self}'
+						) // last internal node call originates from a node module
+						||
+						(
+							lastNodeCallInfo === undefined &&
+							reportToCredit !== originalReport
+						) // the last call originates from the node engine (like node:vm), but the last recorded report was from a node module
+					)
 
 				if (ownCodeGetsExecutedByExternal) {
 					const result = await InsertCPUProfileHelper.accountOwnCodeGetsExecutedByExternal(
@@ -978,10 +994,11 @@ export class InsertCPUProfileHelper {
 							&& reportToCredit.nodeModule.identifier === nodeModule.identifier
 						)
 					) {
+						// currently in a node module scope, so add it to the node module report as an intern node
+						newReportToCredit = nodeModule !== null ? reportToCredit : originalReport
 						// add to intern
 						const result = await InsertCPUProfileHelper.accountToIntern(
-							// currently in a node module scope, so add it to the node module report as an intern node
-							nodeModule !== null ? reportToCredit : originalReport,
+							newReportToCredit,
 							cpuNode,
 							sourceNodeLocation,
 							lastNodeCallInfo,
