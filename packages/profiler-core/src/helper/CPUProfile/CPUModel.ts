@@ -1,9 +1,9 @@
 import { CPUNode } from './CPUNode'
+import { CPUProfileSourceLocation } from './CPUProfileSourceLocation'
 
 import { ExternalResourceHelper } from '../ExternalResourceHelper'
 import {
 	IComputedNode,
-	ILocation,
 	IProfileModel,
 	buildModel
 } from '../../../lib/vscode-js-profile-core/src/cpu/model'
@@ -21,6 +21,7 @@ import {
 export class CPUModel {
 	private rootDir: UnifiedPath
 	private cpuModel: IProfileModel
+	private sourceLocations: CPUProfileSourceLocation[]
 
 	private _cpuProfilerBeginTime: NanoSeconds_BigInt
 	private _startTime: number
@@ -42,6 +43,11 @@ export class CPUModel {
 		this._startTime = profile.startTime
 		this._endTime = profile.endTime
 		this.cpuModel = buildModel(profile)
+		this.sourceLocations = this.cpuModel.locations.map((
+			location
+		) => new CPUProfileSourceLocation(this.rootDir, location))
+
+
 		this._cpuProfilerBeginTime = highResolutionBeginTime
 		this._cpuNodes = new Map<number, CPUNode>()
 		this._profilerHitsPerNode = new Array(this.INodes.length).fill(0)
@@ -82,8 +88,8 @@ export class CPUModel {
 		return this._energyValuesPerNode
 	}
 
-	get ILocations(): readonly ILocation[] {
-		return this.cpuModel.locations
+	get CPUProfileSourceLocations(): readonly CPUProfileSourceLocation[] {
+		return this.sourceLocations
 	}
 
 	get INodes(): readonly IComputedNode[] {
@@ -204,7 +210,6 @@ export class CPUModel {
 			node = new CPUNode(
 				index,
 				this,
-				this.rootDir,
 				this.cpuModel.nodes[index]
 			)
 		}

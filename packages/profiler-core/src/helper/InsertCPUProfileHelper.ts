@@ -180,8 +180,9 @@ export class InsertCPUProfileHelper {
 		let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 		let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 
-		const sourceNodeIdentifier = cpuNode.sourceNodeIdentifier as LangInternalSourceNodeIdentifier_string
-		const langInternalPath = cpuNode.rawUrl as LangInternalPath_string
+		const sourceNodeIdentifier = cpuNode.sourceLocation.sourceNodeIdentifier as
+			LangInternalSourceNodeIdentifier_string
+		const langInternalPath = cpuNode.sourceLocation.rawUrl as LangInternalPath_string
 
 		const sourceNode = reportToCredit.addToLangInternal(
 			langInternalPath,
@@ -687,9 +688,9 @@ export class InsertCPUProfileHelper {
 		 */
 
 		let programStructureTreeNodeScript: ProgramStructureTree | undefined =
-			pstCache.perNodeScript.get(cpuNode.scriptID)
+			pstCache.perNodeScript.get(cpuNode.sourceLocation.scriptID)
 		let programStructureTreeOriginal: ProgramStructureTree | undefined | null = undefined
-		const { lineNumber, columnNumber } = cpuNode.sourceLocation
+		const { lineNumber, columnNumber } = cpuNode.sourceLocation.sourceLocation
 		let functionIdentifierPresentInOriginalFile = true
 		let sourceNodeLocation: SourceNodeLocation | undefined = undefined
 		let originalSourceFileNotFoundError: object | undefined = undefined
@@ -697,18 +698,19 @@ export class InsertCPUProfileHelper {
 		if (programStructureTreeNodeScript === undefined) {
 			// request source code from the node engine
 			// (it is already transformed event if it is the original file path)
-			const sourceCode = await externalResourceHelper.sourceCodeFromScriptID(cpuNode.scriptID)
+			const sourceCode = await externalResourceHelper.sourceCodeFromScriptID(cpuNode.sourceLocation.scriptID)
 			if (sourceCode === null) {
 				throw new Error(
 					'InsertCPUProfileHelper.resolveFunctionIdentifier: sourceCode should not be null' +
-					`scriptID: ${cpuNode.scriptID} (${cpuNode.absoluteUrl.toPlatformString()})`
+					`scriptID: ${cpuNode.sourceLocation.scriptID}` +
+					` (${cpuNode.sourceLocation.absoluteUrl.toPlatformString()})`
 				)
 			}
 			programStructureTreeNodeScript = TypescriptParser.parseSource(
-				cpuNode.absoluteUrl,
+				cpuNode.sourceLocation.absoluteUrl,
 				sourceCode
 			)
-			pstCache.perNodeScript.set(cpuNode.scriptID, programStructureTreeNodeScript)
+			pstCache.perNodeScript.set(cpuNode.sourceLocation.scriptID, programStructureTreeNodeScript)
 		}
 
 		// function identifier of the executed source code
@@ -717,8 +719,8 @@ export class InsertCPUProfileHelper {
 		)
 
 		const sourceMap = await externalResourceHelper.sourceMapFromScriptID(
-			cpuNode.scriptID,
-			cpuNode.absoluteUrl
+			cpuNode.sourceLocation.scriptID,
+			cpuNode.sourceLocation.absoluteUrl
 		)
 		const originalPosition = sourceMap !== null ? InsertCPUProfileHelper.resolveMappedLocationFromSourceMap(
 			programStructureTreeNodeScript,
@@ -736,7 +738,9 @@ export class InsertCPUProfileHelper {
 				originalPosition.source
 			)
 			const absoluteOriginalSourcePath = originalPositionPath.isRelative() ? new UnifiedPath(
-				path.resolve(path.join(path.dirname(cpuNode.absoluteUrl.toString()), originalPositionPath.toString()))
+				path.resolve(path.join(path.dirname(
+					cpuNode.sourceLocation.absoluteUrl.toString()),
+				originalPositionPath.toString()))
 			) : originalPositionPath
 
 			const relativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
@@ -795,7 +799,7 @@ export class InsertCPUProfileHelper {
 			// or the source map does not contain the original source location
 
 			sourceNodeLocation = {
-				relativeFilePath: cpuNode.relativeUrl,
+				relativeFilePath: cpuNode.sourceLocation.relativeUrl,
 				functionIdentifier
 			}
 		}
@@ -825,7 +829,7 @@ export class InsertCPUProfileHelper {
 				'InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
 					rootDir: rootDir.toString(),
 					sources: sourceMap?.sources,
-					url: cpuNode.absoluteUrl.toString(),
+					url: cpuNode.sourceLocation.absoluteUrl.toString(),
 					lineNumber,
 					columnNumber,
 					...originalSourceFileNotFoundError,
@@ -835,7 +839,7 @@ export class InsertCPUProfileHelper {
 
 		if (functionIdentifier === '') {
 			LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
-				url: cpuNode.absoluteUrl.toString(),
+				url: cpuNode.sourceLocation.absoluteUrl.toString(),
 				lineNumber,
 				columnNumber
 			})
@@ -915,7 +919,7 @@ export class InsertCPUProfileHelper {
 			let isAwaiterSourceNode = false
 			let newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined = undefined
 			let newReportToCredit: ProjectReport | ModuleReport | undefined = reportToCredit
-			if (cpuNode.isLangInternal) {
+			if (cpuNode.sourceLocation.isLangInternal) {
 				const result = await InsertCPUProfileHelper.accountToLangInternal(
 					cpuNode,
 					reportToCredit,
@@ -924,8 +928,8 @@ export class InsertCPUProfileHelper {
 				)
 				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
-			} else if (cpuNode.isWASM) {
-				const wasmPath = new UnifiedPath(cpuNode.rawUrl.substring(7)) // remove the 'wasm://' prefix
+			} else if (cpuNode.sourceLocation.isWASM) {
+				const wasmPath = new UnifiedPath(cpuNode.sourceLocation.rawUrl.substring(7)) // remove the 'wasm://' prefix
 
 				const result = await InsertCPUProfileHelper.accountToExtern(
 					reportToCredit,
@@ -934,7 +938,7 @@ export class InsertCPUProfileHelper {
 					{
 						relativeFilePath: wasmPath,
 						functionIdentifier:
-							cpuNode.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
+							cpuNode.sourceLocation.rawFunctionName as SourceNodeIdentifier_string
 					},
 					lastNodeCallInfo,
 					accounted
@@ -944,7 +948,7 @@ export class InsertCPUProfileHelper {
 				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 				newLastInternSourceNode = result.newLastInternSourceNode
 				newReportToCredit = result.newReportToCredit
-			} else if (!cpuNode.isEmpty) {
+			} else if (!cpuNode.sourceLocation.isEmpty) {
 				const {
 					sourceNodeLocation,
 					functionIdentifierPresentInOriginalFile,

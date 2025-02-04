@@ -79,7 +79,7 @@ export default class CPUProfileCommands {
 		)
 
 		const nodeCount = cpuModel.INodes.length
-		const sourceNodeLocationCount = cpuModel.ILocations.length
+		const sourceNodeLocationCount = cpuModel.CPUProfileSourceLocations.length
 		const sampleCount = cpuModel.samples.length
 		let totalHits = 0
 		let totalCPUTime = 0

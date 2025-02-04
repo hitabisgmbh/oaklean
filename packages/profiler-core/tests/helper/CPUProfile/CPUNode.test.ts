@@ -12,13 +12,14 @@ const CURRENT_DIR = new UnifiedPath(__dirname)
 const ROOT_DIR = CURRENT_DIR.join('..', '..', '..', '..', '..')
 
 describe('CPUNode', () => {
+	let cpuModel: CPUModel
 	let instance: CPUNode
 
 	beforeEach(() => {
 		const cpuProfileFilePath = CURRENT_DIR.join('..', '..', 'model', 'assets', 'CPUProfiles', 'example001.cpunode.cpuprofile').toString()
 		const cpuProfile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 
-		const cpuModel = new CPUModel(
+		cpuModel = new CPUModel(
 			ROOT_DIR,
 			cpuProfile,
 			BigInt('2345442642551333') as NanoSeconds_BigInt
@@ -32,7 +33,6 @@ describe('CPUNode', () => {
 		instance = new CPUNode(
 			7,
 			cpuModel,
-			ROOT_DIR,
 			cpuModel.INodes[7]
 		)
 	})
@@ -52,62 +52,10 @@ describe('CPUNode', () => {
 		})
 	})
 
-	test('ISourceLocation', () => {
-		expect(instance.ISourceLocation).toEqual({
-			id: 4,
-			selfTime: 0,
-			aggregateTime: 83,
-			ticks: 0,
-			category: 2,
-			callFrame: {
-				functionName: 'startProfiling',
-				scriptId: 612,
-				bailoutReason: '',
-				url: 'node_modules/v8-profiler-next/dispatch.js',
-				lineNumber: 249,
-				columnNumber: 28
-			},
-			src: {
-				lineNumber: 250,
-				columnNumber: 29,
-				source: {
-					name: 'node_modules/v8-profiler-next/dispatch.js',
-					path: 'node_modules/v8-profiler-next/dispatch.js',
-					sourceReference: 0
-				}
-			}
-		})
-	})
-
 	test('sourceLocation', () => {
-		expect(instance.sourceLocation).toEqual({
-			lineNumber: 249,
-			columnNumber: 28
-		})
-	})
-
-	test('isLangInternal', () => {
-		expect(instance.isLangInternal).toEqual(false)
-	})
-
-	test('isEmpty', () => {
-		expect(instance.isEmpty).toEqual(false)
-	})
-
-	test('rawUrl', () => {
-		expect(instance.rawUrl).toEqual('node_modules/v8-profiler-next/dispatch.js')
-	})
-
-	test('absoluteUrl', () => {
-		expect(instance.absoluteUrl.toString()).toEqual(ROOT_DIR.join('./node_modules/v8-profiler-next/dispatch.js').toString())
-	})
-
-	test('relativeUrl', () => {
-		expect(instance.relativeUrl.toString()).toBe('./node_modules/v8-profiler-next/dispatch.js')
-	})
-
-	test('sourceNodeIdentifier', () => {
-		expect(instance.sourceNodeIdentifier).toBe('{startProfiling}')
+		expect(instance.sourceLocation).toBe(
+			cpuModel.CPUProfileSourceLocations[4]
+		)
 	})
 
 	test('selfCPUEnergyConsumption', () => {
