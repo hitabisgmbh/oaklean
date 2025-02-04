@@ -28,6 +28,7 @@ build:
       - ./packages/profiler/dist
       - ./packages/profiler-core/dist
       - ./packages/profiler-jest-environment/*.js
+      - ./packages/profiler-jest-environment/*.d.ts
       - ./packages/cli/dist
       - ./packages/windows-sensorinterface/dist
   script:

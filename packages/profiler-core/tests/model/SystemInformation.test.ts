@@ -175,7 +175,7 @@ describe('SystemInformation', () => {
 		})
 
 		afterEach(() => {
-			consoleError.mockReset()
+			consoleError.mockRestore()
 		})
 		test('empty input', () => {
 			const t = () => {

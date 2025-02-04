@@ -21,6 +21,8 @@ export const NodeModuleVersionRegexString =
 export const NodeModuleIdentifierRegexString = `${NodeModuleNameRegexString}@${NodeModuleVersionRegexString}`
 export const NodeModuleIdentifierRegex = new RegExp(NodeModuleIdentifierRegexString)
 
+export const WASM_NODE_MODULE_IDENTIFIER = '{wasm}'
+
 export class NodeModule extends BaseModel {
 	name: string
 	version: string
@@ -51,7 +53,10 @@ export class NodeModule extends BaseModel {
 		} else {
 			[name, version] = identifier.split('@')
 		}
-		if (!name || !version) {
+		if (
+			(!name || !version) &&
+			name !== WASM_NODE_MODULE_IDENTIFIER
+		) {
 			throw new Error('NodeModule.fromIdentifier: invalid format: ' + identifier)
 		}
 
@@ -118,3 +123,5 @@ export class NodeModule extends BaseModel {
 		}
 	}
 }
+
+export const WASM_NODE_MODULE = new NodeModule(WASM_NODE_MODULE_IDENTIFIER, '')

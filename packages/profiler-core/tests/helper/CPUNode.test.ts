@@ -9,7 +9,7 @@ import {
 } from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
-const rootDir = CURRENT_DIR.join('..', '..', '..', '..')
+const ROOT_DIR = CURRENT_DIR.join('..', '..', '..', '..')
 
 describe('CPUNode', () => {
 	let instance: CPUNode
@@ -19,7 +19,7 @@ describe('CPUNode', () => {
 		const cpuProfile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 
 		const cpuModel = new CPUModel(
-			rootDir,
+			ROOT_DIR,
 			cpuProfile,
 			BigInt('2345442642551333') as NanoSeconds_BigInt
 		)
@@ -32,7 +32,7 @@ describe('CPUNode', () => {
 		instance = new CPUNode(
 			7,
 			cpuModel,
-			rootDir,
+			ROOT_DIR,
 			cpuModel.INodes[7]
 		)
 	})
@@ -98,51 +98,16 @@ describe('CPUNode', () => {
 		expect(instance.rawUrl).toEqual('node_modules/v8-profiler-next/dispatch.js')
 	})
 
-	test('url', () => {
-		expect(instance.url.toString()).toEqual('./node_modules/v8-profiler-next/dispatch.js')
+	test('absoluteUrl', () => {
+		expect(instance.absoluteUrl.toString()).toEqual(ROOT_DIR.join('./node_modules/v8-profiler-next/dispatch.js').toString())
 	})
 
 	test('relativeUrl', () => {
 		expect(instance.relativeUrl.toString()).toBe('./node_modules/v8-profiler-next/dispatch.js')
 	})
 
-	test('nodeModulePath', () => {
-		expect(instance.nodeModulePath?.toString()).toBe(rootDir.join('node_modules/v8-profiler-next').toString())
-	})
-
-	test('nodeModule', () => {
-		expect(instance.nodeModule).toEqual({
-			name: 'v8-profiler-next',
-			version: '1.10.0'
-		})
-	})
-
-	test('relativeSourceFilePath', () => {
-		expect(instance.relativeSourceFilePath.toString()).toBe('./dispatch.js')
-	})
-
-	test('isExtern', () => {
-		expect(instance.isExtern).toBe(true)
-	})
-
-	test('type', () => {
-		expect(instance.type).toBe('extern')
-	})
-
 	test('sourceNodeIdentifier', () => {
 		expect(instance.sourceNodeIdentifier).toBe('{startProfiling}')
-	})
-
-	test('isWithinTypescriptFile', () => {
-		expect(instance.isWithinTypescriptFile).toBe(false)
-	})
-
-	test('relativeJavascriptUrl', () => {
-		expect(instance.relativeJavascriptUrl.toString()).toBe('./node_modules/v8-profiler-next/dispatch.js')
-	})
-
-	test('javascriptUrl', () => {
-		expect(instance.javascriptUrl.toString()).toBe('./node_modules/v8-profiler-next/dispatch.js')
 	})
 
 	test('selfCPUEnergyConsumption', () => {

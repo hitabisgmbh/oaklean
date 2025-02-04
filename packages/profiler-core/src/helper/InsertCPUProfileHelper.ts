@@ -1,29 +1,29 @@
-import * as fs from 'fs'
 import path from 'path'
+
+import { MappedPosition } from 'source-map'
 
 import { CPUModel } from './CPUModel'
 import { CPUNode } from './CPUNode'
-import { memoize } from './memoize'
 import { TypescriptParser } from './TypescriptParser'
 import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
+import { ExternalResourceHelper } from './ExternalResourceHelper'
+import { UrlProtocolHelper } from './UrlProtocolHelper'
+import {
+	NodeModuleUtils
+} from './NodeModuleUtils'
 
-import { Report } from '../model/Report'
 import { ProjectReport } from '../model/ProjectReport'
 import { ModuleReport } from '../model/ModuleReport'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
-import { BaseAdapter } from '../adapters/transformer/BaseAdapter'
 import { MetricsDataCollection } from '../model/interfaces/MetricsDataCollection'
-import { TypeScriptAdapter } from '../adapters/transformer/TypeScriptAdapter'
-import { ModelMap } from '../model/ModelMap'
 import { ProgramStructureTree } from '../model/ProgramStructureTree'
-import { SourceMap } from '../model/SourceMap'
 import {
 	SourceNodeMetaData
 } from '../model/SourceNodeMetaData'
 import { GlobalIdentifier } from '../system/GlobalIdentifier'
-import { NodeModule } from '../model/NodeModule'
+import { NodeModule, WASM_NODE_MODULE } from '../model/NodeModule'
 // Types
 import {
 	UnifiedPath_string,
@@ -39,6 +39,7 @@ import {
 	IPureRAMEnergyConsumption,
 	MicroSeconds_number
 } from '../types'
+import { SourceMap } from '../model/SourceMap'
 
 type AccountedTracker = {
 	map: Map<string, string[]>,
@@ -53,8 +54,23 @@ type CallIdentifier = {
 }
 
 type LastNodeCallInfo = {
-	report: Report,
+	report: ProjectReport | ModuleReport,
 	sourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+}
+
+type SourceNodeLocation = {
+	relativeFilePath: UnifiedPath,
+	functionIdentifier: SourceNodeIdentifier_string
+}
+
+type AwaiterStack = {
+	awaiter: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, // the last called __awaiter function
+	awaiterParent: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined // the last async function that called the __awaiter function
+}[]
+
+type ProgramStructureTreeCache = {
+	perNodeScript: Map<string, ProgramStructureTree>,
+	perOriginalFile: Map<UnifiedPath_string, ProgramStructureTree | null>,
 }
 
 export class InsertCPUProfileHelper {
@@ -153,7 +169,7 @@ export class InsertCPUProfileHelper {
 
 	static async accountToLangInternal(
 		cpuNode: CPUNode,
-		reportToCredit: Report,
+		reportToCredit: ProjectReport | ModuleReport,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		accounted: AccountedTracker
 	) {
@@ -163,7 +179,7 @@ export class InsertCPUProfileHelper {
 
 		let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 		let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
-		
+
 		const sourceNodeIdentifier = cpuNode.sourceNodeIdentifier as LangInternalSourceNodeIdentifier_string
 		const langInternalPath = cpuNode.rawUrl as LangInternalPath_string
 
@@ -177,7 +193,7 @@ export class InsertCPUProfileHelper {
 		}
 		const currentCallIdentifierString = InsertCPUProfileHelper.callIdentifierToString(currentCallIdentifier)
 		sourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		
+
 		if (accounted.internMap.size === 0 && accounted.externMap.size === 0) {
 			// if no extern or intern calls were accounted yet, add the time to the total of headless cpu time
 
@@ -245,23 +261,21 @@ export class InsertCPUProfileHelper {
 
 	static async accountOwnCodeGetsExecutedByExternal(
 		cpuNode: CPUNode,
-		originalReport: Report,
-		functionIdentifier: SourceNodeIdentifier_string,
-		relativeOriginalSourcePath: UnifiedPath | undefined,
-		lastNodeCallInfo: LastNodeCallInfo,
+		originalReport: ProjectReport,
+		sourceNodeLocation: SourceNodeLocation,
+		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		accounted: AccountedTracker
 	) {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
 		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
 
-		let newReportToCredit: Report | undefined = undefined
 		let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 		let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 
 		const newLastInternSourceNode = originalReport.addToIntern(
-			cpuNode.relativeSourceFilePath.toString(),
-			functionIdentifier,
+			sourceNodeLocation.relativeFilePath.toString(),
+			sourceNodeLocation.functionIdentifier,
 		)
 		const currentCallIdentifier = {
 			reportID: originalReport.internID,
@@ -288,55 +302,54 @@ export class InsertCPUProfileHelper {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
 		}
 
-		// remove aggregated time from last intern source node
-		parentSourceNode_CallIdentifier = {
-			reportID: lastNodeCallInfo.report.internID,
-			sourceNodeID: lastNodeCallInfo.sourceNode.id
-		}
-		// parent caller was already accounted once, so don't subtract the cpu time from it again
-		const sensorValuesCorrected = InsertCPUProfileHelper.sensorValuesForVisitedNode(
-			cpuTime,
-			cpuEnergyConsumption,
-			ramEnergyConsumption,
-			accounted.map.has(InsertCPUProfileHelper.callIdentifierToString(parentSourceNode_CallIdentifier)) &&
-			accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
-				parentSourceNode_CallIdentifier))!.length > 0
-		)
+		// if lastNodeCallInfo === undefined
+		// the last call was from a lang internal source node (but within a node module report)
+		// this is often a node:vm call within a node module to execute some script of the users code
+		if (lastNodeCallInfo !== undefined) {
+			// remove aggregated time from last intern source node
+			parentSourceNode_CallIdentifier = {
+				reportID: lastNodeCallInfo.report.internID,
+				sourceNodeID: lastNodeCallInfo.sourceNode.id
+			}
+			// parent caller was already accounted once, so don't subtract the cpu time from it again
+			const sensorValuesCorrected = InsertCPUProfileHelper.sensorValuesForVisitedNode(
+				cpuTime,
+				cpuEnergyConsumption,
+				ramEnergyConsumption,
+				accounted.map.has(InsertCPUProfileHelper.callIdentifierToString(parentSourceNode_CallIdentifier)) &&
+				accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
+					parentSourceNode_CallIdentifier))!.length > 0
+			)
 
-		// IMPORTANT to change when new measurement type gets added
-		lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime =
-			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime -
-			(sensorValuesCorrected.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
-		lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption =
-			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption -
-			(sensorValuesCorrected.
-				cpuEnergyConsumption.
-				aggregatedCPUEnergyConsumption
-				|| 0) as MilliJoule_number
-		lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption =
-			lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption -
-			(sensorValuesCorrected.
-				ramEnergyConsumption.
-				aggregatedRAMEnergyConsumption
-				|| 0) as MilliJoule_number
+			// IMPORTANT to change when new measurement type gets added
+			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime =
+				lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime -
+				(sensorValuesCorrected.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
+			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption =
+				lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption -
+				(sensorValuesCorrected.
+					cpuEnergyConsumption.
+					aggregatedCPUEnergyConsumption
+					|| 0) as MilliJoule_number
+			lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption =
+				lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption -
+				(sensorValuesCorrected.
+					ramEnergyConsumption.
+					aggregatedRAMEnergyConsumption
+					|| 0) as MilliJoule_number
 
-		// set call as accounted
-		InsertCPUProfileHelper.markAsAccounted(
-			accounted,
-			currentCallIdentifier,
-			parentSourceNode_CallIdentifier
-		)
-
-		if (relativeOriginalSourcePath) {
-			originalReport.addSourceFileMapLink(
-				cpuNode.relativeSourceFilePath,
-				relativeOriginalSourcePath
+			// set call as accounted
+			InsertCPUProfileHelper.markAsAccounted(
+				accounted,
+				currentCallIdentifier,
+				parentSourceNode_CallIdentifier
 			)
 		}
-		newReportToCredit = originalReport // reset report back to the orignal report
+
+		
 
 		return {
-			newReportToCredit,
+			newReportToCredit: originalReport,
 			newLastInternSourceNode,
 			firstTimeVisitedSourceNode_CallIdentifier,
 			parentSourceNode_CallIdentifier
@@ -344,12 +357,11 @@ export class InsertCPUProfileHelper {
 	}
 
 	static async accountToIntern(
-		reportToCredit: Report,
+		reportToCredit: ProjectReport | ModuleReport,
 		cpuNode: CPUNode,
-		functionIdentifier: SourceNodeIdentifier_string,
-		relativeOriginalSourcePath: UnifiedPath | undefined,
+		sourceNodeLocation: SourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
-		awaiterStack: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>[],
+		awaiterStack: AwaiterStack,
 		accounted: AccountedTracker
 	) {
 		const cpuTime = cpuNode.cpuTime
@@ -362,8 +374,8 @@ export class InsertCPUProfileHelper {
 
 		// intern
 		const newLastInternSourceNode = reportToCredit.addToIntern(
-			cpuNode.relativeSourceFilePath.toString(),
-			functionIdentifier
+			sourceNodeLocation.relativeFilePath.toString(),
+			sourceNodeLocation.functionIdentifier
 		)
 		const currentCallIdentifier = {
 			reportID: reportToCredit.internID,
@@ -388,24 +400,21 @@ export class InsertCPUProfileHelper {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
 		}
 
-		if (functionIdentifier === TypeScriptHelper.awaiterSourceNodeIdentifier()) {
+		if (sourceNodeLocation.functionIdentifier === TypeScriptHelper.awaiterSourceNodeIdentifier()) {
 			isAwaiterSourceNode = true
-			awaiterStack.push(newLastInternSourceNode)
-		}
 
-		const awaiterSourceNodeIndex = newLastInternSourceNode.getIndex()?.pathIndex.getSourceNodeIndex(
-			'get',
-			'{root}.{functionExpression:__awaiter}' as SourceNodeIdentifier_string,
-		)
+			// add the awaiter to the stack and the corresponding async function parent
+			// if the lastNodeCallInfo is undefined the awaiter is the first function in the call tree
+			// this could happen if the was called from node internal functions for example
+			awaiterStack.push({
+				awaiter: newLastInternSourceNode,
+				awaiterParent: lastNodeCallInfo?.sourceNode
+			})
+		}
 
 		if (
 			!isAwaiterSourceNode &&
-			awaiterSourceNodeIndex &&
-			accounted.map.has(
-				InsertCPUProfileHelper.callIdentifierToString({
-					reportID: reportToCredit.internID,
-					sourceNodeID: awaiterSourceNodeIndex.id
-				}))
+			awaiterStack.length > 0
 		) {
 			/*
 				The current source node is not an awaiter
@@ -417,9 +426,20 @@ export class InsertCPUProfileHelper {
 			if (lastAwaiterNode === undefined) {
 				throw new Error('InsertCPUProfileHelper.accountToIntern: expected an awaiter in awaiterStack')
 			}
-			if (lastAwaiterNode !== lastNodeCallInfo?.sourceNode) {
+			if (
+				accounted.map.has(
+					InsertCPUProfileHelper.callIdentifierToString({
+						reportID: reportToCredit.internID,
+						sourceNodeID: lastAwaiterNode.awaiter.id
+					}))
+				&& lastAwaiterNode.awaiterParent === newLastInternSourceNode
+			) {
+				// the async function resolved when the awaiter was called,
+				// the last function call was the child function of the awaiter (fulfilled, rejected or step)
+				// and the current source node is the async function that called the awaiter
+
 				const awaiterInternChild = newLastInternSourceNode.intern.get(
-					awaiterSourceNodeIndex.id
+					lastAwaiterNode.awaiter.id
 				)
 				if (awaiterInternChild !== undefined) {
 					// IMPORTANT to change when new measurement type gets added
@@ -456,13 +476,6 @@ export class InsertCPUProfileHelper {
 			}
 		}
 
-		if (relativeOriginalSourcePath) {
-			reportToCredit.addSourceFileMapLink(
-				cpuNode.relativeSourceFilePath,
-				relativeOriginalSourcePath
-			)
-		}
-
 		if (lastNodeCallInfo && lastNodeCallInfo.sourceNode !== newLastInternSourceNode) {
 			parentSourceNode_CallIdentifier = {
 				reportID: lastNodeCallInfo.report.internID,
@@ -495,11 +508,10 @@ export class InsertCPUProfileHelper {
 	}
 
 	static async accountToExtern(
-		reportToCredit: Report,
+		reportToCredit: ProjectReport | ModuleReport,
 		cpuNode: CPUNode,
 		nodeModule: NodeModule,
-		functionIdentifier: SourceNodeIdentifier_string,
-		relativeOriginalSourcePath: UnifiedPath | undefined,
+		sourceNodeLocation: SourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		accounted: AccountedTracker
 	) {
@@ -510,16 +522,16 @@ export class InsertCPUProfileHelper {
 		let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 
 		const globalIdentifier = new GlobalIdentifier(
-			cpuNode.relativeSourceFilePath.toString(),
-			functionIdentifier,
+			sourceNodeLocation.relativeFilePath.toString(),
+			sourceNodeLocation.functionIdentifier,
 			nodeModule
 		)
 
 		// extern
 		const { report, sourceNodeMetaData } = reportToCredit.addToExtern(
-			cpuNode.relativeSourceFilePath,
+			sourceNodeLocation.relativeFilePath,
 			nodeModule,
-			functionIdentifier
+			sourceNodeLocation.functionIdentifier
 		)
 		const newReportToCredit = report
 		const newLastInternSourceNode = sourceNodeMetaData
@@ -570,13 +582,6 @@ export class InsertCPUProfileHelper {
 			externSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
 		}
 
-		if (relativeOriginalSourcePath) {
-			newReportToCredit.addSourceFileMapLink(
-				cpuNode.relativeSourceFilePath,
-				relativeOriginalSourcePath
-			)
-		}
-
 		return {
 			parentSourceNode_CallIdentifier,
 			firstTimeVisitedSourceNode_CallIdentifier,
@@ -585,120 +590,264 @@ export class InsertCPUProfileHelper {
 		}
 	}
 
+	/**
+	 * Why does this function exists?
+	 * 
+	 * Example source code:
+	 * 1 methodABC(title, highResolutionStopTime) {
+	 * 2         var _a, _b, _c;
+	 * 3         return __awaiter(this, void 0, void 0, function* () {
+	 * 4         		// do something
+	 * 5         });
+	 * 6 }
+	 * 
+	 * If a source mapping exists for every line except line 2 and 3
+	 * and the function identifier is requested for line 2 or 3 the source map will return undefined.
+	 * 
+	 * So the ProgramStructureTree node has to be resolved for that location.
+	 * This will return the parent function (methodABC) and its corresponding scope for line 2 and 3,
+	 * since the ProgramStructureTree treats the __awaiter function as part of the methodABC function.
+	 * 
+	 * Then the sourcemap can be used to resolve the original source location of the function methodABC.
+	 * 
+	 * If the sourcemap still returns undefined,
+	 * the requested source code location is not part of the original source code.
+	 * 
+	 */
+	static resolveMappedLocationFromSourceMap(
+		programStructureTreeNodeScript: ProgramStructureTree,
+		sourceMap: SourceMap,
+		lineNumber: number,
+		columnNumber: number
+	): MappedPosition | undefined {
+		const originalPosition = sourceMap.getOriginalSourceLocation(lineNumber, columnNumber)
+
+		// check if position could be resolved
+		if (originalPosition && originalPosition.source) {
+			return originalPosition
+		} else {
+			// if position could not be resolved
+			// resolve function via ProgramStructureTree and try to resolve the original position again
+			const identifierNode = programStructureTreeNodeScript.identifierNodeBySourceLocation(
+				{ line: lineNumber, column: columnNumber }
+			)
+			if (identifierNode === undefined) {
+				return undefined
+			}
+			return sourceMap.getOriginalSourceLocation(
+				identifierNode.node.beginLoc.line,
+				identifierNode.node.beginLoc.column
+			)
+		}
+	}
+
 	static async resolveFunctionIdentifier(
 		rootDir: UnifiedPath,
 		cpuNode: CPUNode,
-		programStructureTreePerFile: ModelMap<UnifiedPath_string, ProgramStructureTree>,
-		programStructureTreePerOriginalFile: ModelMap<UnifiedPath_string, ProgramStructureTree>,
-		transformerAdapterToUse: BaseAdapter,
-		getSourceMapOfFile: (filePath: UnifiedPath) => SourceMap | undefined,
-		getSourceMapFromSourceCode: (filePath: UnifiedPath, sourceCode: string) => SourceMap | undefined,
-	) {
+		// script id -> ProgramStructureTree
+		pstCache: ProgramStructureTreeCache,
+		externalResourceHelper: ExternalResourceHelper
+	): Promise<{
+			sourceNodeLocation: SourceNodeLocation,
+			functionIdentifierPresentInOriginalFile: boolean,
+			nodeModule: NodeModule | null
+			relativeNodeModulePath: UnifiedPath | null
+		}> {
 		/**
 		 * Resolve procedure:
 		 * 
-		 * if file "dir/dir/file.ext" is transformable
-		 * 	- store transformed source code at programStructureTreePerFile["dir/dir/file.ext"]
-		 * 	- store original source code at
-		 * 		programStructureTreePerOriginalFile["_ORIGINAL_dir/dir/file.ext"]
-		 * else: (file is already transformed)
-		 * 	- store transformed source code at
-		 * 		programStructureTreePerFile["dir/dir/file.ext"]
-		 *  - get source map of transformed file
-		 * 	- store original source code at
-		 * 		programStructureTreePerOriginalFile[path.resolve("dir/dir/" + sourcemap.source)]
+		 * Variables to be set:
+		 * sourceNodeLocation.relativeFilePath
+		 * sourceNodeLocation.functionIdentifier
+		 * functionIdentifierPresentInOriginalFile = true (default)
+		 * 
+		 * if the executed script contains a sourcemap:
+		 * 		- get original source location from sourcemap
+		 * 		- if original source location is found:
+		 * 			- resolve source file path from original source location
+		 * 				- if the original source file exists
+		 * 					- parse the original source file
+		 * 						- if the function identifier is present in the original source file
+		 * 							- SET sourceNodeLocation.functionIdentifier =
+		 * 								resolved function identifier from original source location
+		 * 							- SET sourceNodeLocation.relativeFilePath =
+		 * 									relative path of the original source file
+		 * 									to the project root or relative to its parent node module
+		 * 						- else
+		 * 							- SET functionIdentifierPresentInOriginalFile =
+		 * 									wether the function identifier is present in the original source file
+		 * 				- else, log an error if the file is not part of a node module
+		 * 			- else if sourcemap exists
+		 * 				- SET functionIdentifierPresentInOriginalFile = false
+		 * 
+		 * if original source location is not found:
+		 * 		- SET sourceNodeLocation.functionIdentifier = function identifier from the executed scripts source code
+		 * 		- SET sourceNodeLocation.relativeFilePath =
+		 * 				relative path of the executed script to the project root or relative to its parent node module
 		 */
 
-		let sourceMap = undefined
-		let programStructureTree = undefined
-		let programStructureTreeOriginal = undefined
-		programStructureTree = programStructureTreePerFile.get(cpuNode.relativeUrl.toString())
-		const shouldBeTransformed = await transformerAdapterToUse.shouldProcess(cpuNode.url)
+		let programStructureTreeNodeScript: ProgramStructureTree | undefined =
+			pstCache.perNodeScript.get(cpuNode.scriptID)
+		let programStructureTreeOriginal: ProgramStructureTree | undefined | null = undefined
 		const { lineNumber, columnNumber } = cpuNode.sourceLocation
-		let relativeOriginalSourcePath = undefined
+		let functionIdentifierPresentInOriginalFile = true
+		let sourceNodeLocation: SourceNodeLocation | undefined = undefined
+		let originalSourceFileNotFoundError: object | undefined = undefined
 
-
-		if (shouldBeTransformed) {
-			relativeOriginalSourcePath = cpuNode.relativeUrl
-			const originalFilePath = '_ORIGINAL_' + cpuNode.relativeUrl.toString() as UnifiedPath_string
-			programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
-				originalFilePath
+		if (programStructureTreeNodeScript === undefined) {
+			// request source code from the node engine
+			// (it is already transformed event if it is the original file path)
+			const sourceCode = await externalResourceHelper.sourceCodeFromScriptID(cpuNode.scriptID)
+			if (sourceCode === null) {
+				throw new Error(
+					'InsertCPUProfileHelper.resolveFunctionIdentifier: sourceCode should not be null' +
+					`scriptID: ${cpuNode.scriptID} (${cpuNode.absoluteUrl.toPlatformString()})`
+				)
+			}
+			programStructureTreeNodeScript = TypescriptParser.parseSource(
+				cpuNode.absoluteUrl,
+				sourceCode
 			)
-			if (programStructureTree === undefined) {
-				const transformedSourceCode = await transformerAdapterToUse.process(cpuNode.url)
-				if (!transformedSourceCode) {
-					throw new Error('InsertCPUProfileHelper.resolveFunctionIdentifier Could not transform source code from: ' + cpuNode.url.toString())
-				}
-
-				programStructureTree = TypescriptParser.parseSource(
-					cpuNode.javascriptUrl,
-					transformedSourceCode
-				)
-				programStructureTreePerFile.set(cpuNode.relativeUrl.toString(), programStructureTree)
-				sourceMap = getSourceMapFromSourceCode(cpuNode.javascriptUrl, transformedSourceCode)
-			}
-			if (programStructureTreeOriginal === undefined) {
-				programStructureTreeOriginal = TypescriptParser.parseFile(cpuNode.url)
-				programStructureTreePerOriginalFile.set(
-					originalFilePath,
-					programStructureTreeOriginal
-				)
-			}
-		} else {
-			if (programStructureTree === undefined) {
-				programStructureTree = TypescriptParser.parseFile(cpuNode.url)
-				programStructureTreePerFile.set(cpuNode.relativeUrl.toString(), programStructureTree)
-			}
-
-			sourceMap = getSourceMapOfFile(cpuNode.url)
-
-			const originalPosition = sourceMap?.getOriginalSourceLocation(lineNumber, columnNumber)
-			if (originalPosition && originalPosition.source) {
-				const absoluteOriginalSourcePath = new UnifiedPath(
-					path.resolve(path.join(path.dirname(cpuNode.url.toString()), originalPosition.source))
-				)
-				if (fs.existsSync(absoluteOriginalSourcePath.toPlatformString())) {
-					const pureRelativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
-					relativeOriginalSourcePath = (cpuNode.nodeModulePath && cpuNode.nodeModule)
-						? cpuNode.nodeModulePath.pathTo(pureRelativeOriginalSourcePath) : pureRelativeOriginalSourcePath
-
-					programStructureTreeOriginal = programStructureTreePerOriginalFile.get(
-						pureRelativeOriginalSourcePath.toString()
-					)
-					if (programStructureTreeOriginal === undefined) {
-						programStructureTreeOriginal = TypescriptParser.parseFile(absoluteOriginalSourcePath)
-						programStructureTreePerOriginalFile.set(
-							pureRelativeOriginalSourcePath.toString(),
-							programStructureTreeOriginal
-						)
-					}
-				}
-			}
-			if (programStructureTreeOriginal === undefined) {
-				programStructureTreeOriginal = programStructureTree
-			}
+			pstCache.perNodeScript.set(cpuNode.scriptID, programStructureTreeNodeScript)
 		}
 
-		const functionIdentifier = programStructureTree.identifierBySourceLocation(
+		// function identifier of the executed source code
+		const functionIdentifier = programStructureTreeNodeScript.identifierBySourceLocation(
 			{ line: lineNumber, column: columnNumber }
 		)
 
-		const functionIdentifierPresentInOriginalFile = programStructureTree === programStructureTreeOriginal ?
-			true : (programStructureTreeOriginal.sourceLocationOfIdentifier(functionIdentifier) !== undefined)
+		const sourceMap = await externalResourceHelper.sourceMapFromScriptID(
+			cpuNode.scriptID,
+			cpuNode.absoluteUrl
+		)
+		const originalPosition = sourceMap !== null ? InsertCPUProfileHelper.resolveMappedLocationFromSourceMap(
+			programStructureTreeNodeScript,
+			sourceMap,
+			lineNumber,
+			columnNumber
+		) : undefined
+
+		if (originalPosition && originalPosition.source) {
+			const {
+				url: originalPositionPath,
+				protocol: urlProtocol
+			} = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(
+				rootDir,
+				originalPosition.source
+			)
+			const absoluteOriginalSourcePath = originalPositionPath.isRelative() ? new UnifiedPath(
+				path.resolve(path.join(path.dirname(cpuNode.absoluteUrl.toString()), originalPositionPath.toString()))
+			) : originalPositionPath
+
+			const relativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
+
+			programStructureTreeOriginal = pstCache.perOriginalFile.get(
+				relativeOriginalSourcePath.toString()
+			)
+			if (programStructureTreeOriginal === undefined) {
+				try {
+					// found the original source file from the source map but it is not yet parsed
+					programStructureTreeOriginal = externalResourceHelper.parseFile(
+						relativeOriginalSourcePath,
+						absoluteOriginalSourcePath
+					)
+					pstCache.perOriginalFile.set(
+						relativeOriginalSourcePath.toString(),
+						programStructureTreeOriginal
+					)
+				} catch {
+					// could not parse original source file,
+					// sometimes WebFrameworks include sourcemaps that point to e.g. .svg files
+					programStructureTreeOriginal = undefined
+				}
+			}
+			if (programStructureTreeOriginal !== null) {
+				if (programStructureTreeOriginal !== undefined) {
+					const originalFunctionIdentifier = programStructureTreeOriginal.identifierBySourceLocation(
+						{ line: originalPosition.line, column: originalPosition.column }
+					)
+					functionIdentifierPresentInOriginalFile = programStructureTreeOriginal.sourceLocationOfIdentifier(
+						functionIdentifier
+					) !== undefined
+					sourceNodeLocation = {
+						relativeFilePath: relativeOriginalSourcePath,
+						functionIdentifier: originalFunctionIdentifier
+					}
+				}
+			} else {
+				if (urlProtocol === null) {
+					originalSourceFileNotFoundError = {
+						originalPositionSource: originalPosition.source,
+						originalPositionPath,
+						absoluteOriginalSourcePath,
+					}
+				}
+			}
+		} else {
+			if (sourceMap) {
+				// there is a sourcemap but the original position could not be resolved
+				functionIdentifierPresentInOriginalFile = false
+			}
+		}
+
+		if (sourceNodeLocation === undefined) {
+			// if the executed source code is original, has no source map
+			// or the source map does not contain the original source location
+
+			sourceNodeLocation = {
+				relativeFilePath: cpuNode.relativeUrl,
+				functionIdentifier
+			}
+		}
+		// determine the node module of the source node location if there is one
+		const {
+			relativeNodeModulePath,
+			nodeModule
+		} = NodeModuleUtils.nodeModuleFromUrl(
+			externalResourceHelper,
+			sourceNodeLocation.relativeFilePath
+		)
+
+		if (relativeNodeModulePath && nodeModule) {
+			// since the source node location is within a node module
+			// adjust the relativeFilePath so its relative to that node module directory
+			sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(sourceNodeLocation.relativeFilePath)
+		}
+
+		if (
+			originalSourceFileNotFoundError !== undefined &&
+			(!relativeNodeModulePath || !nodeModule)
+		) {
+			// The original source file does not exist, only print an error if:
+			// - the source file is NOT part of a node module,
+			//		since node modules often include source maps that point to non-existing files we ignore them
+			LoggerHelper.error(
+				'InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
+					rootDir: rootDir.toString(),
+					sources: sourceMap?.sources,
+					url: cpuNode.absoluteUrl.toString(),
+					lineNumber,
+					columnNumber,
+					...originalSourceFileNotFoundError,
+				}
+			)
+		}
 
 		if (functionIdentifier === '') {
 			LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
-				url: cpuNode.url.toString(),
+				url: cpuNode.absoluteUrl.toString(),
 				lineNumber,
 				columnNumber
 			})
 			throw new Error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty')
 		}
 
+
 		return {
-			functionIdentifier,
-			relativeOriginalSourcePath,
-			functionIdentifierPresentInOriginalFile
+			sourceNodeLocation,
+			functionIdentifierPresentInOriginalFile,
+			relativeNodeModulePath,
+			nodeModule
 		}
 	}
 
@@ -706,8 +855,8 @@ export class InsertCPUProfileHelper {
 		reportToApply: ProjectReport,
 		rootDir: UnifiedPath,
 		profile: ICpuProfileRaw,
-		transformerAdapter?: BaseAdapter,
-		metricsDataCollection?: MetricsDataCollection
+		externalResourceHelper: ExternalResourceHelper,
+		metricsDataCollection?: MetricsDataCollection,
 	) {
 		if (reportToApply.executionDetails.highResolutionBeginTime === undefined) {
 			throw new Error('InsertCPUProfileHelper.insertCPUProfile: executionDetails.highResolutionBeginTime is undefined')
@@ -715,30 +864,21 @@ export class InsertCPUProfileHelper {
 		const cpuModel = new CPUModel(
 			rootDir,
 			profile,
-			BigInt(reportToApply.executionDetails.highResolutionBeginTime) as NanoSeconds_BigInt
+			BigInt(reportToApply.executionDetails.highResolutionBeginTime) as NanoSeconds_BigInt,
+			externalResourceHelper
 		)
 
-		let transformerAdapterToUse: BaseAdapter
-		if (transformerAdapter) {
-			transformerAdapterToUse = transformerAdapter
-		} else {
-			transformerAdapterToUse = new TypeScriptAdapter()
+		// script id -> ProgramStructureTree
+		const pstCache: ProgramStructureTreeCache = {
+			perNodeScript: new Map(),
+			perOriginalFile: new Map()
 		}
-
-		const getSourceMapOfFile = memoize(SourceMap.fromCompiledJSFile)
-		const getSourceMapFromSourceCode = memoize(SourceMap.fromCompiledJSString)
-
-		const programStructureTreePerFile: ModelMap<UnifiedPath_string, ProgramStructureTree> =
-			new ModelMap<UnifiedPath_string, ProgramStructureTree>('string')
-		
-		const programStructureTreePerOriginalFile: ModelMap<UnifiedPath_string, ProgramStructureTree> =
-			new ModelMap<UnifiedPath_string, ProgramStructureTree>('string')
 
 		if (metricsDataCollection && metricsDataCollection.items.length > 0) {
 			// fill the cpu model with energy values
 			cpuModel.energyValuesPerNode = cpuModel.energyValuesPerNodeByMetricsData(metricsDataCollection)
 		}
-		const awaiterStack: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>[] = []
+		const awaiterStack: AwaiterStack = []
 
 		function afterTraverse(
 			parentSourceNode_CallIdentifier: CallIdentifier | undefined,
@@ -765,27 +905,16 @@ export class InsertCPUProfileHelper {
 
 		async function beforeTraverse(
 			cpuNode: CPUNode,
-			originalReport: Report,
-			reportToCreditArg: Report,
+			originalReport: ProjectReport,
+			reportToCredit: ProjectReport | ModuleReport,
 			lastNodeCallInfo: LastNodeCallInfo | undefined,
 			accounted: AccountedTracker
 		) {
-			let reportToCredit = reportToCreditArg
-			if (!cpuNode.isExtern && !cpuNode.isLangInternal) {
-				reportToCredit = originalReport
-			}
-			const sourceFileExists =
-				fs.existsSync(cpuNode.url.toString()) && fs.statSync(cpuNode.url.toString()).isFile()
-
-			if (!cpuNode.isEmpty && !cpuNode.isLangInternal && !sourceFileExists) {
-				throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: Sourcefile does not exist: ' + cpuNode.url)
-			}
-
 			let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let isAwaiterSourceNode = false
 			let newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined = undefined
-			let newReportToCredit: Report | undefined = undefined
+			let newReportToCredit: ProjectReport | ModuleReport | undefined = reportToCredit
 			if (cpuNode.isLangInternal) {
 				const result = await InsertCPUProfileHelper.accountToLangInternal(
 					cpuNode,
@@ -795,42 +924,60 @@ export class InsertCPUProfileHelper {
 				)
 				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+			} else if (cpuNode.isWASM) {
+				const wasmPath = new UnifiedPath(cpuNode.rawUrl.substring(7)) // remove the 'wasm://' prefix
+
+				const result = await InsertCPUProfileHelper.accountToExtern(
+					reportToCredit,
+					cpuNode,
+					WASM_NODE_MODULE,
+					{
+						relativeFilePath: wasmPath,
+						functionIdentifier:
+							cpuNode.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
+					},
+					lastNodeCallInfo,
+					accounted
+				)
+
+				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
+				newLastInternSourceNode = result.newLastInternSourceNode
+				newReportToCredit = result.newReportToCredit
 			} else if (!cpuNode.isEmpty) {
 				const {
-					functionIdentifier,
-					relativeOriginalSourcePath,
-					functionIdentifierPresentInOriginalFile
+					sourceNodeLocation,
+					functionIdentifierPresentInOriginalFile,
+					nodeModule,
+					relativeNodeModulePath
 				} = await InsertCPUProfileHelper.resolveFunctionIdentifier(
 					rootDir,
 					cpuNode,
-					programStructureTreePerFile,
-					programStructureTreePerOriginalFile,
-					transformerAdapterToUse,
-					getSourceMapOfFile,
-					getSourceMapFromSourceCode
+					pstCache,
+					externalResourceHelper
 				)
-				
-				// add to intern if the source file is not part of a node module
-				// or the reportToCredit is the node module that source file belongs to
-				const addToIntern =
-					!((cpuNode.nodeModulePath && cpuNode.nodeModule))
-					|| (
-						reportToCredit instanceof ModuleReport
-						&& reportToCredit.nodeModule.identifier === cpuNode.nodeModule.identifier
-					)
 
 				// this happens for node modules like the jest-runner, that executes the own code
 				// the measurements will be credited to the original code rather than the node module that executes it
-				const ownCodeGetsExecutedByExternal = cpuNode.nodeModulePath === null &&
-					lastNodeCallInfo &&
-					lastNodeCallInfo.sourceNode.sourceNodeIndex.pathIndex.moduleIndex.identifier !== '{self}'
+				const ownCodeGetsExecutedByExternal =
+					relativeNodeModulePath === null && // the currently executed file is not part of a node module
+					(
+						(
+							lastNodeCallInfo !== undefined &&
+							lastNodeCallInfo.sourceNode.sourceNodeIndex.pathIndex.moduleIndex.identifier !== '{self}'
+						) // last internal node call originates from a node module
+						||
+						(
+							lastNodeCallInfo === undefined &&
+							reportToCredit !== originalReport
+						) // the last call originates from the node engine (like node:vm), but the last recorded report was from a node module
+					)
 
 				if (ownCodeGetsExecutedByExternal) {
 					const result = await InsertCPUProfileHelper.accountOwnCodeGetsExecutedByExternal(
 						cpuNode,
 						originalReport,
-						functionIdentifier,
-						relativeOriginalSourcePath,
+						sourceNodeLocation,
 						lastNodeCallInfo,
 						accounted
 					)
@@ -839,12 +986,21 @@ export class InsertCPUProfileHelper {
 					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
 				} else {
-					if (addToIntern) {
+					// add to intern if the source file is not part of a node module
+					// or the reportToCredit is the node module that source file belongs to
+					if (
+						!((relativeNodeModulePath && nodeModule)) || (
+							reportToCredit instanceof ModuleReport
+							&& reportToCredit.nodeModule.identifier === nodeModule.identifier
+						)
+					) {
+						// currently in a node module scope, so add it to the node module report as an intern node
+						newReportToCredit = nodeModule !== null ? reportToCredit : originalReport
+						// add to intern
 						const result = await InsertCPUProfileHelper.accountToIntern(
-							reportToCredit,
+							newReportToCredit,
 							cpuNode,
-							functionIdentifier,
-							relativeOriginalSourcePath,
+							sourceNodeLocation,
 							lastNodeCallInfo,
 							awaiterStack,
 							accounted
@@ -857,9 +1013,8 @@ export class InsertCPUProfileHelper {
 						const result = await InsertCPUProfileHelper.accountToExtern(
 							reportToCredit,
 							cpuNode,
-							cpuNode.nodeModule,
-							functionIdentifier,
-							relativeOriginalSourcePath,
+							nodeModule,
+							sourceNodeLocation,
 							lastNodeCallInfo,
 							accounted
 						)
@@ -887,13 +1042,10 @@ export class InsertCPUProfileHelper {
 		}
 
 		async function traverse(
-			originalReport: Report,
-			reportToCredit: Report,
+			originalReport: ProjectReport,
+			reportToCredit: ProjectReport | ModuleReport,
 			cpuNode: CPUNode,
-			lastNodeCallInfo: {
-				report: Report,
-				sourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
-			} | undefined,
+			lastNodeCallInfo: LastNodeCallInfo | undefined,
 			accounted: AccountedTracker
 		) {
 			const {
@@ -912,10 +1064,10 @@ export class InsertCPUProfileHelper {
 			for (const child of cpuNode.children()) {
 				await traverse(
 					originalReport,
-					newReportToCredit ? newReportToCredit : reportToCredit,
+					newReportToCredit,
 					child,
 					newLastInternSourceNode !== undefined ? {
-						report: reportToCredit,
+						report: newReportToCredit,
 						sourceNode: newLastInternSourceNode
 					} : undefined,
 					accounted
@@ -929,17 +1081,33 @@ export class InsertCPUProfileHelper {
 			)
 		}
 
+		const accounted: AccountedTracker = {
+			map: new Map<string, string[]>,
+			internMap: new Map<string, boolean>(),
+			externMap: new Map<string, boolean>(),
+			langInternalMap: new Map<string, boolean>()
+		}
+
 		await traverse(
 			reportToApply,
 			reportToApply,
 			cpuModel.getNode(0),
 			undefined,
-			{
-				map: new Map<string, string[]>,
-				internMap: new Map<string, boolean>(),
-				externMap: new Map<string, boolean>(),
-				langInternalMap: new Map<string, boolean>()
-			}
+			accounted
 		)
+
+		if (accounted.map.size !== 0 ||
+			accounted.internMap.size !== 0 ||
+			accounted.externMap.size !== 0 ||
+			accounted.langInternalMap.size !== 0) {
+			LoggerHelper.error('InsertCPUProfileHelper.insertCPUProfile: accounted tracker should be empty after traverse', {
+				mapSize: accounted.map.size,
+				internMapSize: accounted.internMap.size,
+				externMapSize: accounted.externMap.size,
+				langInternalMapSize: accounted.langInternalMap.size
+			}
+			)
+			throw new Error('InsertCPUProfileHelper.insertCPUProfile: accounted tracker should be empty after traverse')
+		}
 	}
 }

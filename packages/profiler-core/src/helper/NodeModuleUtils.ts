@@ -1,3 +1,5 @@
+import { ExternalResourceHelper } from './ExternalResourceHelper'
+
 import { UnifiedPath } from '../system/UnifiedPath'
 // Types
 import {
@@ -19,5 +21,20 @@ export class NodeModuleUtils {
 			return match.join(remainder.split()[0], remainder.split()[1])
 		}
 		return match.join(remainder.split()[0])
+	}
+
+	static nodeModuleFromUrl(
+		externalResourceHelper: ExternalResourceHelper,
+		relativeFilePathUrl: UnifiedPath
+	) {
+		const relativeNodeModulePath = NodeModuleUtils.getParentModuleFromPath(relativeFilePathUrl) || null
+		const nodeModule = relativeNodeModulePath !== null ? externalResourceHelper.nodeModuleFromPath(
+			relativeNodeModulePath
+		) : null
+
+		return {
+			relativeNodeModulePath,
+			nodeModule
+		}
 	}
 }

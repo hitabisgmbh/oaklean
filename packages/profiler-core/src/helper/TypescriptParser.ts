@@ -13,7 +13,8 @@ import {
 	SourceNodeIdentifier_string,
 	ProgramStructureTreeType,
 	NodeLocation,
-	IdentifierType
+	IdentifierType,
+	UnifiedPath_string
 } from '../types'
 
 type TraverseNodeInfo = {
@@ -104,7 +105,10 @@ export class TypescriptParser {
 		return TypescriptParser.parseSource(filePath, sourceCode)
 	}
 
-	static parseSource(filePath: UnifiedPath, sourceCode: string): ProgramStructureTree {
+	static parseSource(
+		filePath: UnifiedPath | UnifiedPath_string,
+		sourceCode: string
+	): ProgramStructureTree {
 		const sourceFile = ts.createSourceFile(
 			filePath.toString(),
 			sourceCode,

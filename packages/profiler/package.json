@@ -1,6 +1,6 @@
 {
 	"name": "@oaklean/profiler",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"author": "Hitabis GmbH",
 	"license": "MIT",
 	"description": "A library to measure the energy consumption of your javascript/typescript code",
@@ -44,7 +44,7 @@
 	},
 	"dependencies": {
 		"@jest/environment": "^29.4.3",
-		"@oaklean/profiler-core": "0.1.4",
+		"@oaklean/profiler-core": "0.1.5",
 		"@oaklean/windows-sensorinterface": "0.1.0",
 		"plist": "^3.1.0",
 		"seedrandom": "^3.0.5",

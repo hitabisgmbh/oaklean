@@ -11,8 +11,6 @@ import { MetricsDataCollection } from './interfaces/MetricsDataCollection'
 import { GlobalIndex } from './index/GlobalIndex'
 import { ModuleIndex } from './index/ModuleIndex'
 
-import { BaseAdapter } from '../adapters/transformer/BaseAdapter'
-import { GitHelper } from '../helper/GitHelper'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
@@ -20,6 +18,7 @@ import { BufferHelper } from '../helper/BufferHelper'
 import { AuthenticationHelper } from '../helper/AuthenticationHelper'
 import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper'
 import { BIN_FILE_MAGIC } from '../constants/app'
+import { ExternalResourceHelper } from '../helper/ExternalResourceHelper'
 // Types
 import {
 	ReportKind,
@@ -194,20 +193,22 @@ export class ProjectReport extends Report {
 		
 	}
 
-	async trackUncommittedFiles(rootDir: UnifiedPath) {
+	trackUncommittedFiles(
+		rootDir: UnifiedPath,
+		externalResourceHelper: ExternalResourceHelper
+	) {
 		// if git is not available, set default value of uncommitted changes to undefined
 		this.executionDetails.uncommittedChanges = undefined
-		const uncommittedFiles = GitHelper.uncommittedFiles()
+		const uncommittedFiles = externalResourceHelper.trackUncommittedFiles(rootDir)
 
-		if (uncommittedFiles === undefined) {
+		if (uncommittedFiles === null) {
 			return
 		}
+
 		// git is available, set default value of uncommitted changes to false
 		this.executionDetails.uncommittedChanges = false
 		for (const uncommittedFile of uncommittedFiles) {
-			const pureRelativeOriginalSourcePath = rootDir.pathTo(new UnifiedPath(uncommittedFile))
-
-			const pathIndex = this.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', pureRelativeOriginalSourcePath.toString())
+			const pathIndex = this.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', uncommittedFile)
 			if (pathIndex === undefined) {
 				continue
 			}
@@ -220,14 +221,14 @@ export class ProjectReport extends Report {
 	async insertCPUProfile(
 		rootDir: UnifiedPath,
 		profile: ICpuProfileRaw,
-		transformerAdapter?: BaseAdapter,
+		externalResourceHelper: ExternalResourceHelper,
 		metricsDataCollection?: MetricsDataCollection
 	) {
 		await InsertCPUProfileHelper.insertCPUProfile(
 			this,
 			rootDir,
 			profile,
-			transformerAdapter,
+			externalResourceHelper,
 			metricsDataCollection
 		)
 	}

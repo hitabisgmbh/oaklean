@@ -98,17 +98,26 @@ export class ProgramStructureTree extends BaseModel {
 		return false
 	}
 
-	identifierBySourceLocation(targetLoc: NodeLocation): SourceNodeIdentifier_string {
+	identifierNodeBySourceLocation(targetLoc: NodeLocation): {
+		identifier: SourceNodeIdentifier_string,
+		node: ProgramStructureTree
+	} | undefined {
 		const traverse = (
 			identifier: SourceNodeIdentifier_string,
 			currentNode: ProgramStructureTree
-		): SourceNodeIdentifier_string => {
+		): {
+			identifier:	SourceNodeIdentifier_string,
+			node: ProgramStructureTree
+		} => {
 			for (const [childIdentifier, child] of currentNode.children.entries()) {
 				if (child.containsLocation(targetLoc)) {
-					return traverse((identifier + '.' + childIdentifier) as SourceNodeIdentifier_string, child) as SourceNodeIdentifier_string
+					return traverse((identifier + '.' + childIdentifier) as SourceNodeIdentifier_string, child)
 				}
 			}
-			return identifier
+			return {
+				identifier,
+				node: currentNode
+			}
 		}
 
 		if (this.containsLocation(targetLoc)) {
@@ -116,10 +125,20 @@ export class ProgramStructureTree extends BaseModel {
 		}
 		if (this.type === ProgramStructureTreeType.Root) {
 			if (targetLoc.line <= this.beginLoc.line && targetLoc.line <= this.endLoc.line) {
-				return this.identifier // treat as root node if its before the root node
+				return {
+					identifier: this.identifier, // treat as root node if its before the root node
+					node: this
+				}
 			}
 		}
-		return '' as SourceNodeIdentifier_string
+		return undefined
+	}
+
+	identifierBySourceLocation(targetLoc: NodeLocation): SourceNodeIdentifier_string {
+		const { identifier } = this.identifierNodeBySourceLocation(targetLoc) || {
+			identifier: '' as SourceNodeIdentifier_string
+		}
+		return identifier
 	}
 
 	sourceLocationOfIdentifier(identifier: SourceNodeIdentifier_string): NodeLocationRange | undefined{

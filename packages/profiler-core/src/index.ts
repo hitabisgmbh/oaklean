@@ -7,6 +7,9 @@ import { CPUNode, CPUNodeType } from './helper/CPUNode'
 import { GitHelper } from './helper/GitHelper'
 import { NodeModuleUtils } from './helper/NodeModuleUtils'
 import { PermissionHelper } from './helper/PermissionHelper'
+import { DataUrlUtils } from './helper/DataUrlUtils'
+import { ExternalResourceHelper } from './helper/ExternalResourceHelper'
+import { SetHelper } from './helper/SetHelper'
 import {
 	TimeHelper
 } from './helper/TimeHelper'
@@ -38,9 +41,6 @@ import {
 import {
 	SystemInformation
 } from './model/SystemInformation'
-import { BaseAdapter } from './adapters/transformer/BaseAdapter'
-import { JestAdapter } from './adapters/transformer/JestAdapter'
-import { TypeScriptAdapter } from './adapters/transformer/TypeScriptAdapter'
 import { SourceFileMetaDataTree } from './model/SourceFileMetaDataTree'
 import { ModuleReport } from './model/ModuleReport'
 import { GlobalIdentifier } from './system/GlobalIdentifier'
@@ -80,7 +80,7 @@ import {
 import {
 	SensorValues
 } from './model/SensorValues'
-import { SourceMap, ISourceMap } from './model/SourceMap'
+import { SourceMap } from './model/SourceMap'
 import { NodeModule } from './model/NodeModule'
 import { BaseModel } from './model/BaseModel'
 import { ModelMap, ModelMapKeyType } from './model/ModelMap'
@@ -101,16 +101,12 @@ import { PerfMetricsData} from './model/interfaces/PerfMetricsData'
 import { WindowsSensorInterfaceMetricsData } from './model/interfaces/WindowsSensorInterfaceMetricsData'
 export * from './types'
 
-
 export {
 	APP_NAME,
 	BaseModel,
 	ModelMap,
 	ModelMapKeyType,
 	GlobalIdentifier,
-	BaseAdapter,
-	JestAdapter,
-	TypeScriptAdapter,
 	LoggerHelper,
 	PathUtils,
 	UnifiedPath,
@@ -123,6 +119,9 @@ export {
 	PermissionHelper,
 	TimeHelper,
 	PerformanceHelper,
+	DataUrlUtils,
+	ExternalResourceHelper,
+	SetHelper,
 	DEFAULT_PROFILER_CONFIG,
 	ProfilerConfig,
 	ExecutionDetails,
@@ -136,7 +135,6 @@ export {
 	SensorValues,
 	AggregatedSourceNodeMetaData,
 	SourceMap,
-	ISourceMap,
 	NodeModule,
 	Crypto,
 	IPowerMetricsSensorInterfaceOptions,

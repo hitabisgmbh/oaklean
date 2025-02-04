@@ -28,8 +28,8 @@ describe('AuthenticationHelper', () => {
 			})
 			expect(AuthenticationHelper.getAuthentication()).toBe(EXAMPLE_AUTH_KEY);
 
-			(fs.existsSync as jest.Mock).mockReset();
-			(fs.readFileSync as jest.Mock).mockReset()
+			(fs.existsSync as jest.Mock).mockRestore();
+			(fs.readFileSync as jest.Mock).mockRestore()
 		})
 
 		it('should return the authentication key from the environment variable', () => {

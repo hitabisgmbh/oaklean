@@ -51,7 +51,6 @@ export class Report extends BaseModel {
 	reportVersion: string
 	kind: ReportKind
 	relativeRootDir?: UnifiedPath
-	private _internMapping?: ModelMap<PathID_number, PathID_number>
 	private _lang_internalHeadlessSensorValues?: SensorValues
 	private _lang_internal?: ModelMap<PathID_number, SourceFileMetaData>
 	private _intern?: ModelMap<PathID_number, SourceFileMetaData>
@@ -102,29 +101,7 @@ export class Report extends BaseModel {
 			moduleReport.normalize(newGlobalIndex)
 			new_extern.set(moduleReport.moduleIndex.id, moduleReport)
 		}
-		const newInternMapping = new ModelMap<PathID_number, PathID_number>('number')
-		for (const PathID_source of Array.from(this.internMapping.keys()).sort()) {
-			const PathID_target = this.internMapping.get(PathID_source)!
-
-			const pathIndex_source = this.moduleIndex.globalIndex.getPathIndexByID(PathID_source)
-			const pathIndex_target = this.moduleIndex.globalIndex.getPathIndexByID(PathID_target)
-			if (pathIndex_source === undefined || pathIndex_target === undefined) {
-				throw new Error('Report.normalize(internMapping): could not resolve path index')
-			}
-			const newModuleIndex_source = newGlobalIndex.getModuleIndex('get')
-			const newModuleIndex_target = newGlobalIndex.getModuleIndex('get')
-			if (newModuleIndex_source === undefined || newModuleIndex_target === undefined) {
-				throw new Error('Report.normalize(internMapping): could not resolve new module index')
-			}
-			const newPathIndex_source_id = newModuleIndex_source.getFilePathIndex('upsert', pathIndex_source.identifier).id
-			const newPathIndex_target_id = newModuleIndex_target.getFilePathIndex('get', pathIndex_target.identifier)?.id
-			if (newPathIndex_source_id === undefined || newPathIndex_target_id === undefined) {
-				throw new Error('Report.normalize(internMapping): could not resolve new path index')
-			}
-			newInternMapping.set(newPathIndex_source_id, newPathIndex_target_id)
-		}
 		this.moduleIndex = newModuleIndex
-		this._internMapping = newInternMapping
 		this._lang_internal = new_lang_internal
 		this._intern = new_intern
 		this._extern = new_extern
@@ -139,13 +116,6 @@ export class Report extends BaseModel {
 
 	set lang_internalHeadlessSensorValues(value: SensorValues) {
 		this._lang_internalHeadlessSensorValues = value
-	}
-
-	get internMapping(): ModelMap<PathID_number, PathID_number> {
-		if (!this._internMapping) {
-			this._internMapping = new ModelMap<PathID_number, PathID_number>('number')
-		}
-		return this._internMapping
 	}
 
 	get lang_internal(): ModelMap<PathID_number, SourceFileMetaData> {
@@ -167,14 +137,6 @@ export class Report extends BaseModel {
 			this._extern = new ModelMap<ModuleID_number, ModuleReport>('number')
 		}
 		return this._extern
-	}
-
-	get reversedInternMapping(): ModelMap<PathID_number, PathID_number> {
-		const result = new ModelMap<PathID_number, PathID_number>('number')
-		for (const [key, value] of this.internMapping.entries()) {
-			result.set(value, key)
-		}
-		return result
 	}
 
 	getLangInternalPathIndex<
@@ -221,48 +183,6 @@ export class Report extends BaseModel {
 		return this.moduleIndex.getFilePathIndex(indexRequestType, filePath) as R
 	}
 
-	removeFromIntern(filePath: UnifiedPath_string | UnifiedPath_string[]) {
-		let filePaths: UnifiedPath_string[] = []
-		if (typeof filePath === 'string') {
-			filePaths = [filePath]
-		} else {
-			filePaths = filePath
-		}
-		for (const pathToRemove of filePaths) {
-			const pathIndex = this.getPathIndex('get', pathToRemove)
-			if (pathIndex === undefined) {
-				continue
-			}
-			const pathID = pathIndex.id as PathID_number
-			if (this.intern.has(pathID)) {
-				this.intern.delete(pathID)
-			}
-			if (this.internMapping.has(pathID)) {
-				this.internMapping.delete(pathID)
-			}
-		}
-		for (const sourceFileMetaData of this.intern.values()) {
-			sourceFileMetaData.removeFromIntern(filePaths)
-		}
-	}
-
-	addSourceFileMapLink(
-		compiledFilePath: UnifiedPath,
-		sourceFilePath: UnifiedPath,
-	) {
-		const compiledFilePathIndex = this.getPathIndex('get', compiledFilePath.toString())
-		const compiledFilePathID = compiledFilePathIndex?.id as PathID_number
-
-		if (compiledFilePathID === undefined || !this.intern.has(compiledFilePathID)) {
-			throw new Error(
-				`addSourceFileMapLink: The compiled file target does not exist (${compiledFilePath.toString()})`
-			)
-		}
-		const sourceFilePathIndex = this.getPathIndex('upsert', sourceFilePath.toString())
-		const sourceFilePathID = sourceFilePathIndex.id as PathID_number
-		this.internMapping.set(sourceFilePathID, compiledFilePathID)
-	}
-
 	addToLangInternal(
 		filePath: LangInternalPath_string,
 		functionIdentifier: LangInternalSourceNodeIdentifier_string,
@@ -270,7 +190,7 @@ export class Report extends BaseModel {
 		const pathIndex = this.getLangInternalPathIndex('upsert', filePath)
 		const filePathID = pathIndex.id as PathID_number
 
-		// check if filePath is in intern
+		// check if filePath is in lang_internal
 		let sourceFileMetaData = this.lang_internal.get(filePathID)
 		if (!sourceFileMetaData) {
 			sourceFileMetaData = new SourceFileMetaData(
@@ -303,7 +223,6 @@ export class Report extends BaseModel {
 			filePath,
 			functionIdentifier
 		)
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
 		return sourceNodeMetaData
 	}
@@ -348,7 +267,6 @@ export class Report extends BaseModel {
 			filePath,
 			functionIdentifier
 		)
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
 		return sourceNodeMetaData
 	}
@@ -402,7 +320,6 @@ export class Report extends BaseModel {
 			nodeModule,
 			functionIdentifier,
 		)
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
 		return {
 			report,
@@ -450,15 +367,7 @@ export class Report extends BaseModel {
 			}
 			const absoluteFilePathID = absoluteFilePathIndex?.id as PathID_number
 
-			const internResult = this.intern.get(absoluteFilePathID)
-			if (internResult) {
-				return internResult
-			}
-			const mappedabsoluteFilePathID = this.internMapping.get(absoluteFilePathID)
-			if (mappedabsoluteFilePathID) {
-				return this.intern.get(mappedabsoluteFilePathID)
-			}
-			return undefined
+			return this.intern.get(absoluteFilePathID)
 		}
 		const relativeFilePath =
 			projectReportFilePath.dirName().join(this.relativeRootDir).pathTo(
@@ -469,33 +378,55 @@ export class Report extends BaseModel {
 			return undefined
 		}
 		const relativeFilePathID = relativeFilePathIndex?.id as PathID_number
-		const internResult = this.intern.get(relativeFilePathID)
-		if (internResult) {
-			return internResult
-		}
-		const mappedRelativeFilePathID = this.internMapping.get(relativeFilePathID)
-		if (mappedRelativeFilePathID) {
-			return this.intern.get(mappedRelativeFilePathID)
-		}
-		return undefined
+
+		return this.intern.get(relativeFilePathID)
 	}
 
+	/**
+	 * @returns the total sensor values (sum) and the maximum (max) of all measurements in the report
+	 */
 	totalAndMaxMetaData(): AggregatedSourceNodeMetaData {
-		const totals: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>[] = []
-		const maxs: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>[] = []
+		function aggregate(report: Report) {
+			const result: SensorValues[] = []
 
-		for (const sourceFileMetaData of this.intern.values()) {
-			totals.push(sourceFileMetaData.totalSourceNodeMetaData().sum)
-			maxs.push(sourceFileMetaData.maxSourceNodeMetaData())
+			for (const file of report.intern.values()) {
+				for (const func of file.functions.values()) {
+					result.push(func.sensorValues)
+				}
+			}
+
+			for (const file of report.lang_internal.values()) {
+				for (const func of file.functions.values()) {
+					result.push(func.sensorValues)
+				}
+			}
+
+			for (const externReport of report.extern.values()) {
+				result.push(...aggregate(externReport))
+			}
+
+			return result
 		}
+		const allSensorValues = aggregate(this)
+
+		const totalSensorValues = SensorValues.sum(...allSensorValues).cloneAsIsolated()
+		const maxSensorValues = SensorValues.max(...allSensorValues)
 
 		return new AggregatedSourceNodeMetaData(
-			SourceNodeMetaData.sum(...totals),
-			SourceNodeMetaData.max(...maxs)
+			new SourceNodeMetaData(
+				SourceNodeMetaDataType.Aggregate,
+				undefined,
+				totalSensorValues,
+				undefined
+			),
+			new SourceNodeMetaData(
+				SourceNodeMetaDataType.Aggregate,
+				undefined,
+				maxSensorValues,
+				undefined
+			)
 		)
 	}
-
-
 
 	validate() {
 		for (const sourceFileMetaData of this.intern.values()) {
@@ -515,7 +446,6 @@ export class Report extends BaseModel {
 			kind: this.kind,
 			relativeRootDir: this.relativeRootDir?.toJSON(),
 			lang_internalHeadlessSensorValues: this.lang_internalHeadlessSensorValues.toJSON(),
-			internMapping: this.internMapping.toJSON(),
 			lang_internal: this.lang_internal.toJSON<ISourceFileMetaData>(),
 			intern: this.intern.toJSON<ISourceFileMetaData>(),
 			extern: this.extern.toJSON<IModuleReport>(),
@@ -533,16 +463,6 @@ export class Report extends BaseModel {
 			data = json
 		}
 		const result = new Report(moduleIndex, data.kind)
-
-		if (data.internMapping) {
-			for (const key of Object.keys(data.internMapping)) {
-				const keyNumber = parseInt(key)
-				result.internMapping.set(
-					keyNumber as PathID_number,
-					data.internMapping[keyNumber as PathID_number]
-				)
-			}
-		}
 
 		if (data.lang_internal) {
 			for (const key of Object.keys(data.lang_internal)) {
@@ -656,7 +576,7 @@ export class Report extends BaseModel {
 
 	static merge(
 		moduleIndex: ModuleIndex,
-		...args: Report[]
+		...args: (ProjectReport | ModuleReport)[]
 	): Report {
 		if (args.length === 0) {
 			throw new Error('Report.merge: no Reports were given')
@@ -682,35 +602,6 @@ export class Report extends BaseModel {
 				throw new Error('ProjectReport.merge: Project reports versions are not compatible')
 			}
 			lang_internalHeadlessSensorValues.push(currentProjectReport.lang_internalHeadlessSensorValues)
-			for (const [pathID, mappedPathID] of currentProjectReport.internMapping.entries()) {
-				// extract paths from the given IDs
-				const pathIndex = currentProjectReport.getPathIndexByID(pathID)
-				const mappedPathIndex = currentProjectReport.getPathIndexByID(mappedPathID)
-
-				if (pathIndex === undefined || mappedPathIndex === undefined) {
-					throw new Error('Report.merge: (internMapping) could not resolve paths from ids')
-				}
-				
-				// add old pathID to new index and get its newPathID
-				const newPathID = result.getPathIndex(
-					'upsert',
-					pathIndex.identifier as UnifiedPath_string
-				).id as PathID_number
-
-				const resultValue = result.internMapping.get(newPathID)
-				if (!resultValue) {
-					// add old MappedPathID to new index and get its newMappedPathID
-					const newMappedPathID = result.getPathIndex(
-						'upsert',
-						mappedPathIndex.identifier as UnifiedPath_string
-					).id as PathID_number
-					result.internMapping.set(newPathID, newMappedPathID)
-				} else {
-					if (result.getPathIndexByID(resultValue)?.identifier !== mappedPathIndex.identifier) {
-						throw new Error('ProjectReport.merge: the ProjectReports contain different path mapping')
-					}
-				}
-			}
 
 			for (const [langInternalPathID, sourceFileMetaData] of currentProjectReport.lang_internal.entries()) {
 				const langInternalPathIndex = currentProjectReport.getPathIndexByID(langInternalPathID)
@@ -811,7 +702,6 @@ export class Report extends BaseModel {
 		}
 
 		buffers.push(
-			this.internMapping.toBuffer(),
 			this.intern.toBuffer(),
 			this.lang_internal.toBuffer(),
 			this.extern.toBuffer()
@@ -871,15 +761,19 @@ export class Report extends BaseModel {
 			langInternalHeadLessSensorValues = langInternalHeadLessSensorValues_instance
 		}
 
-		const {
-			instance: internMapping,
-			remainingBuffer: newRemainingBuffer4
-		} = ModelMap.consumeFromBuffer<PathID_number, PathID_number>(
-			remainingBuffer,
-			'number',
-			'number'
-		)
-		remainingBuffer = newRemainingBuffer4
+		// if the version of the Report is less or equal to 0.1.4
+		// consume internMapping from the buffer and ignore it (since it is not used anymore)
+		if (VersionHelper.compare(reportVersion, '0.1.4') <= 0) {
+			const {
+				instance: internMapping,
+				remainingBuffer: newRemainingBuffer4
+			} = ModelMap.consumeFromBuffer<PathID_number, PathID_number>(
+				remainingBuffer,
+				'number',
+				'number'
+			)
+			remainingBuffer = newRemainingBuffer4
+		}
 
 		const consumeFromBuffer_SourceFileMetaData = (buffer: Buffer) => {
 			return SourceFileMetaData.consumeFromBuffer(buffer, moduleIndex.globalIndex)
@@ -922,7 +816,6 @@ export class Report extends BaseModel {
 		const result = new Report(moduleIndex, kind)
 		result.reportVersion = reportVersion
 		result.relativeRootDir = relativeRootDir !== undefined ? new UnifiedPath(relativeRootDir) : undefined
-		result._internMapping = internMapping
 		result._intern = intern
 		result._lang_internal = lang_internal
 		result._extern = extern
@@ -939,6 +832,8 @@ export class Report extends BaseModel {
 }
 // eslint-disable-next-line import/order
 import { ModuleReport } from './ModuleReport'
+// eslint-disable-next-line import/order
+import { ProjectReport } from './ProjectReport'
 // eslint-disable-next-line import/order
 import {
 	IModuleReport

@@ -393,42 +393,6 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		return result
 	}
 
-	removeFromIntern(filePath: UnifiedPath_string | UnifiedPath_string[]) {
-		let filePaths: UnifiedPath_string[] = []
-		if (typeof filePath === 'string') {
-			filePaths = [filePath]
-		} else {
-			filePaths = filePath
-		}
-		const filePathIDs: PathID_number[] = []
-		for (const filePath of filePaths) {
-			const pathIndex = this.getPathIndex('get', filePath)
-			if (pathIndex === undefined) {
-				throw new Error('SourceNodeMetaData.removeFromIntern: could not resolve pathIndex from id')
-			}
-			filePathIDs.push(pathIndex.id as PathID_number)
-		}
-
-		for (const [sourceNodeID, sourceNodeMetaData] of this.intern.entries()) {
-			const sourceNodeIndex = this.getSourceNodeIndexByID(sourceNodeID)
-			if (sourceNodeIndex === undefined) {
-				throw new Error('SourceNodeMetaData.removeFromIntern: could not resolve sourceNode from id')
-			}
-			
-			if (filePathIDs.includes(sourceNodeIndex.pathIndex.id as PathID_number)) {
-				this.sensorValues.internCPUTime = this.sensorValues.internCPUTime -
-					sourceNodeMetaData.sensorValues.aggregatedCPUTime as MicroSeconds_number
-				this.sensorValues.aggregatedCPUTime = this.sensorValues.aggregatedCPUTime -
-					sourceNodeMetaData.sensorValues.aggregatedCPUTime as MicroSeconds_number
-				this.sensorValues.internCPUEnergyConsumption = this.sensorValues.internCPUEnergyConsumption -
-					sourceNodeMetaData.sensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-				this.sensorValues.aggregatedCPUEnergyConsumption = this.sensorValues.aggregatedCPUEnergyConsumption -
-					sourceNodeMetaData.sensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-				this.intern.delete(sourceNodeIndex.id as SourceNodeID_number)
-			}
-		}
-	}
-
 	static max(
 		...args: SourceNodeMetaData<SourceNodeMetaDataType>[]
 	): SourceNodeMetaData<SourceNodeMetaDataType.Aggregate> {
@@ -566,7 +530,6 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			),
 			this.lang_internal.set(sourceNodeID, sourceNodeMetaData)
 		}
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({
 			cpuTime: values.cpuTime,
 			cpuEnergyConsumption: values.cpuEnergyConsumption,
@@ -610,7 +573,6 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			)
 			this.intern.set(sourceNodeID, sourceNodeMetaData)
 		}
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({
 			cpuTime: values.cpuTime,
 			cpuEnergyConsumption: values.cpuEnergyConsumption,
@@ -654,7 +616,6 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			)
 			this.extern.set(sourceNodeID, sourceNodeMetaData)	
 		}
-		sourceNodeMetaData.sensorValues.profilerHits += 1
 		sourceNodeMetaData.addToSensorValues({
 			cpuTime: values.cpuTime,
 			cpuEnergyConsumption: values.cpuEnergyConsumption,
@@ -892,7 +853,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		const buffers = [
 			BufferHelper.UIntToBuffer(self.id),
 			BufferHelper.UIntToBuffer(this.type),
-			this.sensorValues.toBuffer()
+			this.sensorValues.toBuffer(this.globalIdentifier()?.identifier)
 		]
 
 		if (this.lang_internal !== undefined) {

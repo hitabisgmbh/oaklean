@@ -1,7 +1,5 @@
-import * as fs from 'fs'
-
 import type { Protocol as Cdp } from 'devtools-protocol'
-import { MicroSeconds_number, UnifiedPath } from '@oaklean/profiler-core'
+import { MicroSeconds_number } from '@oaklean/profiler-core'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const v8Profiler = require('v8-profiler-next')
@@ -14,7 +12,6 @@ export class V8Profiler {
 	static stopProfiling(name?: string): Cdp.Profiler.Profile {
 		const profile = v8Profiler.stopProfiling(name)
 		V8Profiler.cleanUpProfile(profile)
-		V8Profiler.unifyProfile(profile)
 		return profile
 	}
 
@@ -24,23 +21,6 @@ export class V8Profiler {
 
 	static setSamplingInterval(num: MicroSeconds_number) {
 		v8Profiler.setSamplingInterval(num)
-	}
-
-	/**
-	 * Unifies the V8 Profile to ensure compatibility between linux / mac / windows
-	 * All filePaths are converted to unix paths
-	 * 
-	 * @param profile 
-	 */
-	static unifyProfile(profile: Cdp.Profiler.Profile) {
-		for (const node of profile.nodes) {
-			if (node.callFrame.url !== '' && !node.callFrame.url.startsWith('node:')) {
-				if (node.callFrame.url.startsWith('file://')) {
-					node.callFrame.url = node.callFrame.url.slice(7)
-				}
-				node.callFrame.url = new UnifiedPath(node.callFrame.url).toString()
-			}
-		}
 	}
 
 	// Method to fix accumulated errors in cpu profiles caused by negative timeDelta

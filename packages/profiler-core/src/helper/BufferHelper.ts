@@ -1,5 +1,7 @@
 import Zlib from 'zlib'
 
+import { LoggerHelper } from './LoggerHelper'
+
 // Types
 import {
 	BufferValueMapTypeMap,
@@ -19,10 +21,25 @@ export const PRIMITIVE_BUFFER_TYPES_BYTE_SIZES: PrimitiveBufferTypes_ByteSize_Ma
 const VALUE_MAP_HEADER_SIZE = 2 // in bytes
 
 export class BufferHelper {
+	static outOfDomainError(
+		value: number,
+		type: string,
+		error?: (
+			type: string,
+			value: number
+		) => void
+	) {
+		if (error) {
+			error(type, value)
+		}
+		throw new Error(`${type}: value out of domain: ${value}`)
+	}
+
 	static numberMapToBuffer(
 		typeMap: BufferValueMapTypeMap<Record<string, number>>,
 		values: Record<string, number>,
-		keyOffset?: number
+		keyOffset = 0,
+		tag?: string
 	): Buffer {
 		// first segmentSize * 8 - 1 bits are used to mark wether a value is present
 		// the (segmentSize * 8)th bit marks wether there comes a valueMap behind
@@ -30,14 +47,22 @@ export class BufferHelper {
 		const keys = Array.from(Object.keys(typeMap))
 		const valueBuffers: Buffer[] = []
 
-		const valueLen = Math.min(VALUE_MAP_HEADER_SIZE * 8 - 1, keys.length - (keyOffset || 0))
+		const valueLen = Math.min(VALUE_MAP_HEADER_SIZE * 8 - 1, keys.length - keyOffset)
 		for (let i = 0; i < valueLen; i++) {
-			const key = keys[i + (keyOffset || 0)]
+			const key = keys[i + keyOffset]
 			const byteSize = typeMap[key]
 			if (values[key] !== undefined && values[key] !== 0) {
 				switch (byteSize) {
 					case PrimitiveBufferTypes.UInt:
-						valueBuffers.push(BufferHelper.UIntToBuffer(values[key], key))
+						valueBuffers.push(BufferHelper.UIntToBuffer(
+							values[key],
+							(type, value) => {
+								LoggerHelper.error('NumberMapToBuffer value out of domain: ', {
+									type,
+									value,
+									origin: (tag !== undefined ? tag + '.' : '') + key
+								})
+							}))
 						break
 					case PrimitiveBufferTypes.Double:
 						valueBuffers.push(BufferHelper.DoubleToBuffer(values[key]))
@@ -48,11 +73,12 @@ export class BufferHelper {
 				BufferHelper.setBit(valueIsPresent_Buffer, i, 1)
 			}
 		}
-		if (keys.length - (keyOffset || 0) > VALUE_MAP_HEADER_SIZE *8 - 1) {
+		if (keys.length - keyOffset > VALUE_MAP_HEADER_SIZE *8 - 1) {
 			const nextBuffer = BufferHelper.numberMapToBuffer(
 				typeMap,
 				values,
-				(keyOffset || 0) + valueLen
+				keyOffset + valueLen,
+				tag
 			)
 			if (nextBuffer.subarray(0, VALUE_MAP_HEADER_SIZE).toString('hex') === '00'.repeat(VALUE_MAP_HEADER_SIZE)) {
 				return Buffer.concat([valueIsPresent_Buffer, ...valueBuffers])
@@ -147,9 +173,19 @@ export class BufferHelper {
 		}
 	}
 
-	static UInt8ToBuffer(tinyInt: number): Buffer {
+	static UInt8ToBuffer(
+		tinyInt: number,
+		error?: (
+			type: string,
+			value: number
+		) => void
+	): Buffer {
 		if (tinyInt < 0 || tinyInt > 2 ** (PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8] * 8) - 1) {
-			throw new Error(`BufferHelper.TIntToBuffer: value out of domain: ${tinyInt}`)
+			BufferHelper.outOfDomainError(
+				tinyInt,
+				'BufferHelper.UInt8ToBuffer',
+				error
+			)
 		}
 
 		const result = Buffer.alloc(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8])
@@ -191,9 +227,18 @@ export class BufferHelper {
 		}
 	}
 
-	static UIntToBuffer(int: number, message?: string): Buffer {
+	static UIntToBuffer(
+		int: number,
+		error?: (
+			type: string,
+			value: number
+		) => void): Buffer {
 		if (int < 0 || int > 2 ** (PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt] * 8) - 1) {
-			throw new Error(`BufferHelper.UIntToBuffer: value out of domain: ${int} : ${message}`)
+			BufferHelper.outOfDomainError(
+				int,
+				'BufferHelper.UIntToBuffer',
+				error
+			)
 		}
 		const result = Buffer.alloc(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt])
 		result.writeUInt32LE(int)

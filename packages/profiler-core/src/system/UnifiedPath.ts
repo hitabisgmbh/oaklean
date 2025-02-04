@@ -11,8 +11,12 @@ export class UnifiedPath {
 	private readonly _unifiedPath: string
 	private _parts: UnifiedPathPart_string[] | undefined
 
-	constructor(filePath: string) {
-		this._unifiedPath = PathUtils.unifyPath(filePath)
+	constructor(...args: string[]) {
+		if (args.length === 0 || args.length === 1) {
+			this._unifiedPath = PathUtils.unifyPath(args[0] || '')
+		} else {
+			this._unifiedPath = PathUtils.unifyPath(args.join('/'))
+		}
 	}
 
 	static fromPathParts(parts: string[]) {
@@ -62,10 +66,19 @@ export class UnifiedPath {
 	/**
 	 * Returns the basename name of a path
 	 * 
-	 * @returns 
+	 * @returns The basename of the path (path/to/index.coffee.md -> index.coffee.md)
 	 */
 	basename(): string {
 		return path.basename(this.toString())
+	}
+
+	/**
+	 * Returns the extension of a path
+	 * 
+	 * @returns The extension of the path (path/to/index.coffee.md -> .md)
+	 */
+	extname(): string {
+		return path.extname(this.basename())
 	}
 
 	isRelative(): boolean {

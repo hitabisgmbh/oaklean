@@ -8,7 +8,6 @@ import {
 	ProfilerConfig,
 	ProjectReport,
 	IProjectReportExecutionDetails,
-	JestAdapter,
 	TimeHelper,
 	NanoSeconds_BigInt,
 	MicroSeconds_number,
@@ -16,9 +15,9 @@ import {
 	PermissionHelper,
 	LoggerHelper,
 	ExecutionDetails,
-	PerformanceHelper
+	PerformanceHelper,
+	ExternalResourceHelper
 } from '@oaklean/profiler-core'
-import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 
 import { V8Profiler } from './model/V8Profiler'
 import { TraceEventHelper } from './helper/TraceEventHelper'
@@ -26,16 +25,6 @@ import { BaseSensorInterface } from './interfaces/BaseSensorInterface'
 import { PowerMetricsSensorInterface } from './interfaces/powermetrics/PowerMetricsSensorInterface'
 import { PerfSensorInterface } from './interfaces/perf/PerfSensorInterface'
 import { WindowsSensorInterface } from './interfaces/windows/WindowsSensorInterface'
-
-export type TransformerAdapter = 'ts-jest'
-
-export type ProfilerOptions = {
-	transformerAdapter?: TransformerAdapter
-	jestAdapter: {
-		config: JestEnvironmentConfig,
-		context: EnvironmentContext
-	}
-}
 
 interface TraceEventParams {
 	pid: number,
@@ -52,21 +41,22 @@ interface TraceEventParams {
 export class Profiler {
 	subOutputDir: string | undefined
 	config: ProfilerConfig
-	options?: ProfilerOptions
 	executionDetails?: IProjectReportExecutionDetails
 
+	private _externalResourceHelper: ExternalResourceHelper
 	private _sensorInterface: BaseSensorInterface | undefined
 	private _traceEventSession: Session | undefined
 	private _profilerStartTime: MicroSeconds_number | undefined
 
 	constructor(
-		subOutputDir?: string,
-		options?: ProfilerOptions
+		subOutputDir?: string
 	) {
 		this.subOutputDir = subOutputDir
 		this.config = ProfilerConfig.autoResolve()
-		this.options = options
 		this.loadSensorInterface()
+		this._externalResourceHelper = new ExternalResourceHelper(
+			this.config.getRootDir()
+		)
 	}
 
 	static getSensorInterface(config: ProfilerConfig) {
@@ -244,6 +234,10 @@ export class Profiler {
 		performance.start('Profiler.start.V8Profiler.startProfiling')
 		V8Profiler.startProfiling(title, true)
 		performance.stop('Profiler.start.V8Profiler.startProfiling')
+		performance.start('Profiler.start.externalResourceHelper.connect')
+		await this._externalResourceHelper.connect()
+		await this._externalResourceHelper.listen()
+		performance.stop('Profiler.start.externalResourceHelper.connect')
 		performance.stop('Profiler.start')
 		performance.printReport('Profiler.start')
 		performance.exportAndSum(this.outputDir().join('performance.json'))
@@ -263,6 +257,10 @@ export class Profiler {
 
 	outputProfilePath(title: string): UnifiedPath {
 		return this.outputDir().join(`${title}.cpuprofile`)
+	}
+
+	outputExternalResourceHelperPath(title: string): UnifiedPath {
+		return this.outputDir().join(`${title}.resources.json`)
 	}
 
 	async finish(title: string, highResolutionStopTime?: NanoSeconds_BigInt): Promise<ProjectReport> {
@@ -298,33 +296,17 @@ export class Profiler {
 			samples: profile.samples,
 			timeDeltas: profile.timeDeltas
 		}
-		let transformerAdapter = undefined
-		if (this.options?.transformerAdapter === 'ts-jest') {
-			if (!this.options.jestAdapter.config || !this.options.jestAdapter.context) {
-				throw new Error('Please provide the JestEnvironmentConfig and EnvironmentContext in the profiler options at options.jestAdapter')
-			}
-			transformerAdapter = new JestAdapter(
-				this.options.jestAdapter.config,
-				this.options.jestAdapter.context
-			)
-			if (!fs.existsSync(this.outputDir().toPlatformString())) {
-				PermissionHelper.mkdirRecursivelyWithUserPermission(this.outputDir())
-			}
-			performance.start('Profiler.finish.exportJestConfig')
-			PermissionHelper.writeFileWithUserPermission(
-				this.outputDir().join('jest.config').toPlatformString(),
-				JSON.stringify({
-					config: this.options.jestAdapter.config,
-					context: this.options.jestAdapter.context
-				})
-			)
-			performance.stop('Profiler.finish.exportJestConfig')
-		}
 		const outFileCPUProfile = this.outputProfilePath(title)
+		const outFileExternalResourceHelper = this.outputExternalResourceHelperPath(title)
 		const outFileReport = this.outputReportPath(title)
 		const outFileMetricCollection = this.outputMetricCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportV8Profile')
+			// create parent directories if they do not exist
+			const dir = outFileCPUProfile.dirName()
+			if (!fs.existsSync(dir.toPlatformString())) {
+				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
+			}
 			PermissionHelper.writeFileWithUserPermission(
 				outFileCPUProfile.toPlatformString(),
 				JSON.stringify(exportData, null, 2),
@@ -345,18 +327,55 @@ export class Profiler {
 			}
 		}
 
+		// load all script sources from inspector
+		performance.start('Profiler.finish.externalResourceHelper.fillSourceMapsFromCPUProfile')
+		await this._externalResourceHelper.fillSourceMapsFromCPUProfile(profile)
+		performance.stop('Profiler.finish.externalResourceHelper.fillSourceMapsFromCPUProfile')
+		
+		performance.start('Profiler.finish.externalResourceHelper.disconnect')
+		await this._externalResourceHelper.disconnect()
+		performance.stop('Profiler.finish.externalResourceHelper.disconnect')
+
+		if (this.config.shouldExportV8Profile()) {
+			performance.start('Profiler.finish.exportExternalResourceHelper')
+			// create parent directories if they do not exist
+			const dir = outFileExternalResourceHelper.dirName()
+			if (!fs.existsSync(dir.toPlatformString())) {
+				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
+			}
+			PermissionHelper.writeFileWithUserPermission(
+				outFileExternalResourceHelper.toPlatformString(),
+				JSON.stringify(this._externalResourceHelper, null, 2),
+			)
+			performance.stop('Profiler.finish.exportExternalResourceHelper')
+		}
+
 		performance.start('Profiler.finish.insertCPUProfile')
 		await report.insertCPUProfile(
 			rootDir,
 			profile,
-			transformerAdapter,
+			this._externalResourceHelper,
 			metricsDataCollection
 		)
 		performance.stop('Profiler.finish.insertCPUProfile')
 
 		performance.start('Profiler.finish.trackUncommittedFiles')
-		await report.trackUncommittedFiles(rootDir)
+		report.trackUncommittedFiles(rootDir, this._externalResourceHelper)
 		performance.stop('Profiler.finish.trackUncommittedFiles')
+
+		if (this.config.shouldExportV8Profile()) {
+			performance.start('Profiler.finish.exportExternalResourceHelper')
+			// create parent directories if they do not exist
+			const dir = outFileExternalResourceHelper.dirName()
+			if (!fs.existsSync(dir.toPlatformString())) {
+				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
+			}
+			PermissionHelper.writeFileWithUserPermission(
+				outFileExternalResourceHelper.toPlatformString(),
+				JSON.stringify(this._externalResourceHelper, null, 2),
+			)
+			performance.stop('Profiler.finish.exportExternalResourceHelper')
+		}
 
 		if (this.config.shouldExportReport()) {
 			performance.start('Profiler.finish.exportReport')

@@ -47,7 +47,10 @@ export class PathUtils {
 		return pathString
 	}
 
-	static findUp(filename: string, startDir: string): string | undefined {
+	static findUp(
+		filename: string,
+		startDir: string
+	): string | undefined {
 		const { root } = path.parse(startDir)
 
 		let tmpDir = startDir

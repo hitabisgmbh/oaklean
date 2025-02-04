@@ -1,5 +1,9 @@
+import * as fs from 'fs'
+
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { SourceMap, ISourceMap } from '../../src/model/SourceMap'
+import { SourceMap, SourceMapRedirect } from '../../src/model/SourceMap'
+// Types
+import { ISourceMap } from '../../src/types'
 
 describe('SourceMap', () => {
 	describe('instance related', () => {
@@ -8,10 +12,9 @@ describe('SourceMap', () => {
 		beforeEach(() => {
 			instance = new SourceMap(
 				new UnifiedPath('index.js'),
-				new UnifiedPath('index.js'),
 				3,
 				[
-					new UnifiedPath('../src/index.ts'),
+					'../src/index.ts'
 				],
 				[],
 				';;;;;AAAA,yEAAgD;AAEhD,kBAAQ,CAAC,MAAM,CAAC,SAAS,CAAC,CAAA;AAE1B,MAAM,OAAO,GAAG,IAAI,kBAAQ,CAAC,IAAI,EAAE,uBAAuB,CAAC,CAAA;AAE3D,SAAS,eAAe,CAAC,QAAgB,EAAE,UAAkB,CAAC;IAC5D,MAAM,KAAK,GAAG,IAAI,IAAI,EAAE,CAAC,OAAO,EAAE,CAAC,QAAQ,EAAE,CAAC;IAC9C,OAAO,CAAC,KAAK,CAAC,KAAK,CAAC,CAAA;IAEpB,UAAU,CAAC,GAAG,EAAE;QACd,OAAO,CAAC,MAAM,CAAC,KAAK,CAAC,CAAA;QACrB,eAAe,CAAC,QAAQ,EAAE,OAAO,EAAE,CAAC,CAAC;IACvC,CAAC,EAAE,QAAQ,CAAC,CAAC;AACf,CAAC;AAED,eAAe,CAAC,IAAI,CAAC,CAAA;AAIrB,SAAS,gBAAgB,CAAC,CAAS;IACjC,UAAU,CAAC,GAAG,EAAE;QACd,OAAO,CAAC,GAAG,CAAC,uBAAuB,EAAE,CAAC,CAAC,CAAC;QACxC,gBAAgB,CAAC,EAAE,CAAC,CAAC,CAAC;IACxB,CAAC,EAAE,IAAI,CAAC,CAAA;AACV,CAAC;AAED,gBAAgB,CAAC,CAAC,CAAC,CAAC;AAEpB,IAAI,CAAC,GAAG,CAAC,CAAC;AACV,WAAW,CAAC,GAAG,EAAE;IACf,OAAO,CAAC,GAAG,CAAC,gCAAgC,EAAE,CAAC,EAAE,CAAC,CAAC;AACrD,CAAC,EAAE,IAAI,CAAC,CAAA'
@@ -54,12 +57,24 @@ describe('SourceMap', () => {
 		})
 
 		test('getOriginalSourceLocation', () => {
-			expect(instance.getOriginalSourceLocation(1, 1)).toEqual({
+			// non existing location
+			expect(instance.getOriginalSourceLocation(1, 1)).toBeUndefined()
+
+			// existing location
+			expect(instance.getOriginalSourceLocation(6, 0)).toEqual({
 				column: 0,
 				line: 1,
 				name: null,
 				source: '../src/index.ts',
 			})
+		})
+
+		test('dataUrl', () => {
+			const base64String = instance.toBase64String()
+			const compiledJSString = '//# sourceMappingURL=data:application/json;base64,' + base64String
+
+			const sourceMap = SourceMap.fromCompiledJSString(new UnifiedPath('abc.js'), compiledJSString) as SourceMap
+			expect(sourceMap?.toJSON()).toEqual(instance.toJSON())
 		})
 	})
 
@@ -87,7 +102,8 @@ describe('SourceMap', () => {
 	describe('loading from File', () => {
 		it('extracts the inline source map', () => {
 			const sourceMapFilePath = new UnifiedPath(__dirname).join('assets', 'SourceMap', 'inline.js')
-			const sourceMap = SourceMap.fromCompiledJSFile(sourceMapFilePath)
+			const source = fs.readFileSync(sourceMapFilePath.toPlatformString()).toString()
+			const sourceMap = SourceMap.fromCompiledJSString(sourceMapFilePath, source) as SourceMap
 
 			expect(sourceMap).toBeDefined()
 			expect(SourceMap.isSourceMap(sourceMap)).toBe(true)
@@ -109,7 +125,21 @@ describe('SourceMap', () => {
 
 		it('extracts the extern source map', () => {
 			const sourceMapFilePath = new UnifiedPath(__dirname).join('assets', 'SourceMap', 'extern.js')
-			const sourceMap = SourceMap.fromCompiledJSFile(sourceMapFilePath)
+			const source = fs.readFileSync(sourceMapFilePath.toPlatformString()).toString()
+			const sourceMapRedirect = SourceMap.fromCompiledJSString(sourceMapFilePath, source)
+
+			expect(SourceMap.isSourceMap(sourceMapRedirect)).toBe(false)
+			expect((sourceMapRedirect as SourceMapRedirect).type).toBe('redirect')
+			expect((sourceMapRedirect as SourceMapRedirect).sourceMapLocation.toString()).toEqual(
+				new UnifiedPath(__dirname).join('assets', 'SourceMap', 'extern.js.map').toString()
+			)
+
+			const sourceRedirect = fs.readFileSync(
+				(sourceMapRedirect as SourceMapRedirect).sourceMapLocation.toPlatformString()
+			).toString()
+			const sourceMap = SourceMap.fromJSON(
+				sourceRedirect
+			) as SourceMap
 
 			expect(SourceMap.isSourceMap(sourceMap)).toBe(true)
 
@@ -126,13 +156,6 @@ describe('SourceMap', () => {
 			expect(sourceMap?.names).toEqual([])
 			expect(sourceMap?.mappings).toEqual(';;;;;AAAA,yEAAgD;AAEhD,kBAAQ,CAAC,MAAM,CAAC,SAAS,CAAC,CAAA;AAE1B,MAAM,OAAO,GAAG,IAAI,kBAAQ,CAAC,IAAI,EAAE,uBAAuB,CAAC,CAAA;AAE3D,SAAS,eAAe,CAAC,QAAgB,EAAE,UAAkB,CAAC;IAC5D,MAAM,KAAK,GAAG,IAAI,IAAI,EAAE,CAAC,OAAO,EAAE,CAAC,QAAQ,EAAE,CAAC;IAC9C,OAAO,CAAC,KAAK,CAAC,KAAK,CAAC,CAAA;IAEpB,UAAU,CAAC,GAAG,EAAE;QACd,OAAO,CAAC,MAAM,CAAC,KAAK,CAAC,CAAA;QACrB,eAAe,CAAC,QAAQ,EAAE,OAAO,EAAE,CAAC,CAAC;IACvC,CAAC,EAAE,QAAQ,CAAC,CAAC;AACf,CAAC;AAED,eAAe,CAAC,IAAI,CAAC,CAAA;AAIrB,SAAS,gBAAgB,CAAC,CAAS;IACjC,UAAU,CAAC,GAAG,EAAE;QACd,OAAO,CAAC,GAAG,CAAC,uBAAuB,EAAE,CAAC,CAAC,CAAC;QACxC,gBAAgB,CAAC,EAAE,CAAC,CAAC,CAAC;IACxB,CAAC,EAAE,IAAI,CAAC,CAAA;AACV,CAAC;AAED,gBAAgB,CAAC,CAAC,CAAC,CAAC;AAEpB,IAAI,CAAC,GAAG,CAAC,CAAC;AACV,WAAW,CAAC,GAAG,EAAE;IACf,OAAO,CAAC,GAAG,CAAC,gCAAgC,EAAE,CAAC,EAAE,CAAC,CAAC;AACrD,CAAC,EAAE,IAAI,CAAC,CAAA')
 			expect(sourceMap?.numberOfLinesInCompiledFile).toEqual(28)
-		})
-
-		it('returns undefined if the file path does not exist', () => {
-			const sourceMapFilePath = new UnifiedPath(__dirname).join('abc.js')
-			const sourceMap = SourceMap.fromCompiledJSFile(sourceMapFilePath)
-
-			expect(sourceMap).toBeUndefined()
 		})
 	})
 
@@ -157,7 +180,7 @@ describe('SourceMap', () => {
 
 			expect(SourceMap.isSourceMap(validFormat)).toBe(true)
 			expect(SourceMap.isSourceMap(inValidFormat)).toBe(false)
-			expect(SourceMap.isSourceMap(undefined)).toBe(false)
+			expect(SourceMap.isSourceMap(null)).toBe(false)
 		})
 	})
 })

@@ -44,8 +44,6 @@ export interface ISourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> {
 	aggregatedExternSourceMetaData?: IAggregatedSourceNodeMetaData
 	type: T
 	filePath: UnifiedPath_stringOnlyForPathNode<T>
-	compiledSourceFilePath?: UnifiedPath_string,
-	originalSourceFilePath?: UnifiedPath_string,
 	langInternalChildren?: Record<
 	LangInternalPath_string,
 	ISourceFileMetaDataTree<SourceFileMetaDataTreeType.File>>

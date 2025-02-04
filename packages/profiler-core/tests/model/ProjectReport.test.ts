@@ -3,7 +3,9 @@ import * as fs from 'fs'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { ProjectReport } from '../../src/model/ProjectReport'
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
-import { NodeModule } from '../../src/model/NodeModule'
+import {
+	NodeModule
+} from '../../src/model/NodeModule'
 import { VERSION } from '../../src/constants/app'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
 import { GitHelper } from '../../src/helper/GitHelper'
@@ -11,7 +13,8 @@ import { ProfilerConfig } from '../../src/model/ProfilerConfig'
 import { GlobalIndex } from '../../src/model/index/GlobalIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { PermissionHelper } from '../../src/helper/PermissionHelper'
-import { LoggerHelper } from '../../src'
+import { ExternalResourceHelper } from '../../src/helper/ExternalResourceHelper'
+import { LoggerHelper } from '../../src/helper/LoggerHelper'
 import {
 	UnifiedPath_string,
 	IProjectReport,
@@ -37,6 +40,7 @@ import {
 } from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
+const ROOT_DIR = CURRENT_DIR.join('..', '..', '..', '..')
 
 const EXAMPLE_SYSTEM_INFORMATION: ISystemInformation = JSON.parse(
 	fs.readFileSync(CURRENT_DIR.join('assets', 'SystemInformation', 'example.json').toString()).toString()
@@ -82,7 +86,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 	lang_internalHeadlessSensorValues: {},
 	executionDetails: EXAMPLE_EXECUTION_DETAILS,
 	globalIndex: {
-		currentId: 12,
+		currentId: 11,
 		moduleMap: {
 			['{self}' as NodeModuleIdentifier_string]: {
 				id: 0 as ModuleID_number,
@@ -113,13 +117,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 								}
 							}
 						}
-					},
-					src: {
-						children: {
-							'test.ts': {
-								id: 7 as PathID_number
-							}
-						}
 					}
 				}
 			},
@@ -137,20 +134,20 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 				}
 			},
 			['@oaklean/profiler-core@0.0.4' as NodeModuleIdentifier_string]: {
-				id: 8 as ModuleID_number,
+				id: 7 as ModuleID_number,
 				children: {
 					'test.js': {
-						id: 9 as PathID_number,
+						id: 8 as PathID_number,
 						file: {
 							'{root}': {
 								children: {
 									'{class:Package}': {
 										children: {
 											'{method:method}': {
-												id: 10 as SourceNodeID_number
+												id: 9 as SourceNodeID_number
 											},
 											'{method:method2}': {
-												id: 11 as SourceNodeID_number
+												id: 10 as SourceNodeID_number
 											}
 										}
 									} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>
@@ -162,9 +159,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 			}
 		}
 	},
-	internMapping: {
-		7: 1
-	} as Record<PathID_number, PathID_number>,
 	intern: {
 		[1 as PathID_number]: {
 			path: './dist/test.js' as UnifiedPath_string,
@@ -173,8 +167,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 					id: 2 as SourceNodeID_number,
 					type: SourceNodeMetaDataType.SourceNode,
 					sensorValues: {
-						profilerHits: 1,
-
 						selfCPUTime: 20,
 						aggregatedCPUTime: 30,
 						langInternalCPUTime: 10,
@@ -192,7 +184,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 							id: 5 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 							sensorValues: {
-								profilerHits: 1,
 								aggregatedCPUTime: 10,
 								aggregatedCPUEnergyConsumption: 20,
 
@@ -205,8 +196,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 					id: 6 as SourceNodeID_number,
 					type: SourceNodeMetaDataType.SourceNode,
 					sensorValues: {
-						profilerHits: 1,
-
 						selfCPUTime: 30,
 						aggregatedCPUTime: 60,
 						langInternalCPUTime: 30,
@@ -224,8 +213,6 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 							id: 5 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 							sensorValues: {
-								profilerHits: 1,
-
 								aggregatedCPUTime: 30,
 
 								aggregatedCPUEnergyConsumption: 60,
@@ -239,7 +226,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 		}
 	},
 	extern: {
-		[8 as ModuleID_number]: {
+		[7 as ModuleID_number]: {
 			reportVersion: VERSION,
 			kind: ReportKind.measurement,
 			nodeModule: {
@@ -248,15 +235,13 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 			},
 			lang_internalHeadlessSensorValues: {},
 			intern: {
-				[9 as PathID_number]: {
+				[8 as PathID_number]: {
 					path: './test.js' as UnifiedPath_string,
 					functions: {
-						[10 as SourceNodeID_number]: {
-							id: 10 as SourceNodeID_number,
+						[9 as SourceNodeID_number]: {
+							id: 9 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.SourceNode,
 							sensorValues: {
-								profilerHits: 1,
-
 								selfCPUTime: 10,
 								aggregatedCPUTime: 10,
 
@@ -267,12 +252,10 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 								aggregatedRAMEnergyConsumption: 20
 							} as ISensorValues
 						} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
-						[11 as SourceNodeID_number]: {
-							id: 11 as SourceNodeID_number,
+						[10 as SourceNodeID_number]: {
+							id: 10 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.SourceNode,
 							sensorValues: {
-								profilerHits: 1,
-
 								selfCPUTime: 80,
 								aggregatedCPUTime: 80,
 
@@ -293,15 +276,61 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 const EXAMPLE_PROJECT_REPORT_BUFFER = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer').toString()).toString()
 const EXAMPLE_PROJECT_REPORT_HASH = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash').toString()).toString()
 
+const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001 = CURRENT_DIR.join('assets', 'ExternalResourceHelper', 'example001.resources.json')
+const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002 = CURRENT_DIR.join('assets', 'ExternalResourceHelper', 'example002.resources.json')
 
-function setProfilesContext(profile: ICpuProfileRaw) {
-	for (const node of profile.nodes) {
-		if (node.callFrame.url !== '' && !node.callFrame.url.startsWith('node:')) {
-			node.callFrame.url = CURRENT_DIR.join('..', '..', '..', '..', node.callFrame.url).toString()
+/**
+ * Preprocess the external resource files to ensure that source maps are relative and do not contain absolute paths.
+ * So the tests can be run on different machines.
+ */
+async function preprocess() {
+	for (const externalResourceHelperPath of [
+		EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001,
+		EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002
+	]) {
+		const externalResourceHelper = ExternalResourceHelper.loadFromFile(ROOT_DIR, externalResourceHelperPath)
+
+		if (externalResourceHelper === undefined) {
+			console.error('Failed to load ExternalResourceHelper')
+			return
 		}
+
+		for (const scriptId of externalResourceHelper.scriptIDs) {
+			const sourceMap = (await externalResourceHelper.sourceMapFromScriptID(
+				scriptId,
+				externalResourceHelperPath,
+			))?.copy()
+
+			if (sourceMap !== undefined && sourceMap !== null) {
+				const newSources = sourceMap.sources.map((source) => {
+					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
+				})
+				sourceMap.sources = newSources
+				externalResourceHelper.replaceSourceMapByScriptID(scriptId, sourceMap)
+			}
+		}
+
+		for (const loadedFilePath of externalResourceHelper.loadedFilePaths) {
+			const filePath = new UnifiedPath(loadedFilePath)
+			const sourceMap = (await externalResourceHelper.sourceMapFromPath(
+				filePath,
+				filePath)
+			)?.copy()
+
+			if (sourceMap !== undefined && sourceMap !== null) {
+				const newSources = sourceMap.sources.map((source) => {
+					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
+				})
+				sourceMap.sources = newSources
+				externalResourceHelper.replaceSourceMapByLoadedFile(filePath, sourceMap)
+			}
+		}
+
+		externalResourceHelper.storeToFile(externalResourceHelperPath, 'pretty-json')
 	}
 }
 
+preprocess()
 function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport) {
 	describe(title, () => {
 		let instance: ProjectReport
@@ -312,10 +341,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 		it('instance should be an instanceof ProjectReport', () => {
 			expect(instance instanceof ProjectReport).toBeTruthy()
-		})
-
-		it('should have a method removeFromIntern()', () => {
-			expect(instance.removeFromIntern).toBeTruthy()
 		})
 
 		it('should have a method toJSON()', () => {
@@ -338,10 +363,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			expect(ProjectReport.loadFromFile).toBeTruthy()
 		})
 
-		it('should have a method addSourceFileMapLink()', () => {
-			expect(instance.addSourceFileMapLink).toBeTruthy()
-		})
-
 		it('should have a method addSensorValuesToIntern()', () => {
 			expect(instance.addSensorValuesToIntern).toBeTruthy()
 		})
@@ -358,30 +379,11 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			expect(instance.getMetaDataFromFile).toBeTruthy()
 		})
 
-		test('reversedInternMapping', () => {
-			expect(instance.reversedInternMapping.toJSON()).toEqual({
-				1: 7
-			})
-		})
-
 		test('engineModule', () => {
 			const engineModule = instance.engineModule
 			expect(engineModule.toJSON()).toEqual({
 				name: 'node',
 				version: '20.11.1'
-			})
-		})
-
-		describe('addSourceFileMapLink', () => {
-			test('non existing compiled file path', () => {
-				const t = () => {
-					instance.addSourceFileMapLink(
-						new UnifiedPath('abc'),
-						new UnifiedPath('xyz'),
-					)
-				}
-
-				expect(t).toThrowError('addSourceFileMapLink: The compiled file target does not exist (./abc)')
 			})
 		})
 
@@ -394,15 +396,15 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
 				{
 					cpuTime: {
-						selfCPUTime: 111 as MicroSeconds_number,
+						selfCPUTime: 222 as MicroSeconds_number,
 						aggregatedCPUTime: 222 as MicroSeconds_number
 					},
 					cpuEnergyConsumption: {
-						selfCPUEnergyConsumption: 222 as MilliJoule_number,
+						selfCPUEnergyConsumption: 444 as MilliJoule_number,
 						aggregatedCPUEnergyConsumption: 444 as MilliJoule_number
 					},
 					ramEnergyConsumption: {
-						selfRAMEnergyConsumption: 222 as MilliJoule_number,
+						selfRAMEnergyConsumption: 444 as MilliJoule_number,
 						aggregatedRAMEnergyConsumption: 444 as MilliJoule_number
 					}
 				}
@@ -413,19 +415,17 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				new UnifiedPath('./report.oak'),
 				new UnifiedPath('./file')
 			)?.functions.toJSON()).toEqual({
-				14: {
+				13: {
 					type: SourceNodeMetaDataType.SourceNode,
-					id: 14,
+					id: 13,
 					sensorValues: {
-						profilerHits: 1,
-
-						selfCPUTime: 111,
+						selfCPUTime: 222,
 						aggregatedCPUTime: 222,
 
-						selfCPUEnergyConsumption: 222,
+						selfCPUEnergyConsumption: 444,
 						aggregatedCPUEnergyConsumption: 444,
 
-						selfRAMEnergyConsumption: 222,
+						selfRAMEnergyConsumption: 444,
 						aggregatedRAMEnergyConsumption: 444,
 					}
 				} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
@@ -442,8 +442,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						id: 2 as SourceNodeID_number,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 1,
-
 							selfCPUTime: 20 as MicroSeconds_number,
 							aggregatedCPUTime: 30 as MicroSeconds_number,
 							langInternalCPUTime: 10 as MicroSeconds_number,
@@ -461,8 +459,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 								id: 5 as SourceNodeID_number,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
-									profilerHits: 1,
-
 									aggregatedCPUTime: 10,
 
 									aggregatedCPUEnergyConsumption: 20,
@@ -476,8 +472,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						id: 6 as SourceNodeID_number,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 1,
-
 							selfCPUTime: 30 as MicroSeconds_number,
 							aggregatedCPUTime: 60 as MicroSeconds_number,
 							langInternalCPUTime: 30 as MicroSeconds_number,
@@ -495,84 +489,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 								id: 5 as SourceNodeID_number,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
-									profilerHits: 1,
-
-									aggregatedCPUTime: 30,
-
-									aggregatedCPUEnergyConsumption: 60,
-
-									aggregatedRAMEnergyConsumption: 60
-								}
-							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
-				})
-			})
-
-			test('mapped paths', () => {
-				expect(instance.getMetaDataFromFile(
-					new UnifiedPath('./report.oak'),
-					new UnifiedPath('./src/test.ts')
-				)?.functions.toJSON()).toEqual({
-					2: {
-						id: 2 as SourceNodeID_number,
-						type: SourceNodeMetaDataType.SourceNode,
-						sensorValues: {
-							profilerHits: 1,
-
-							selfCPUTime: 20 as MicroSeconds_number,
-							aggregatedCPUTime: 30 as MicroSeconds_number,
-							langInternalCPUTime: 10 as MicroSeconds_number,
-
-							selfCPUEnergyConsumption: 40 as MilliJoule_number,
-							aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
-							langInternalCPUEnergyConsumption: 20 as MilliJoule_number,
-
-							selfRAMEnergyConsumption: 40 as MilliJoule_number,
-							aggregatedRAMEnergyConsumption: 60 as MilliJoule_number,
-							langInternalRAMEnergyConsumption: 20 as MilliJoule_number
-						},
-						lang_internal: {
-							5: {
-								id: 5 as SourceNodeID_number,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-
-									aggregatedCPUTime: 10,
-
-									aggregatedCPUEnergyConsumption: 20,
-
-									aggregatedRAMEnergyConsumption: 20,
-								}
-							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
-					6: {
-						id: 6 as SourceNodeID_number,
-						type: SourceNodeMetaDataType.SourceNode,
-						sensorValues: {
-							profilerHits: 1,
-
-							selfCPUTime: 30 as MicroSeconds_number,
-							aggregatedCPUTime: 60 as MicroSeconds_number,
-							langInternalCPUTime: 30 as MicroSeconds_number,
-
-							selfCPUEnergyConsumption: 60 as MilliJoule_number,
-							aggregatedCPUEnergyConsumption: 120 as MilliJoule_number,
-							langInternalCPUEnergyConsumption: 60 as MilliJoule_number,
-
-							selfRAMEnergyConsumption: 60 as MilliJoule_number,
-							aggregatedRAMEnergyConsumption: 120 as MilliJoule_number,
-							langInternalRAMEnergyConsumption: 60 as MilliJoule_number
-						},
-						lang_internal: {
-							5: {
-								id: 5 as SourceNodeID_number,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-
 									aggregatedCPUTime: 30,
 
 									aggregatedCPUEnergyConsumption: 60,
@@ -591,15 +507,15 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
 					{
 						cpuTime: {
-							selfCPUTime: 123 as MicroSeconds_number,
+							selfCPUTime: 456 as MicroSeconds_number,
 							aggregatedCPUTime: 456 as MicroSeconds_number
 						},
 						cpuEnergyConsumption: {
-							selfCPUEnergyConsumption: 246 as MilliJoule_number,
+							selfCPUEnergyConsumption: 912 as MilliJoule_number,
 							aggregatedCPUEnergyConsumption: 912 as MilliJoule_number
 						},
 						ramEnergyConsumption: {
-							selfRAMEnergyConsumption: 246 as MilliJoule_number,
+							selfRAMEnergyConsumption: 912 as MilliJoule_number,
 							aggregatedRAMEnergyConsumption: 912 as MilliJoule_number
 						}
 					}
@@ -609,67 +525,18 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 					new UnifiedPath('./report.oak'),
 					new UnifiedPath('/abs/path/to/file')
 				)?.functions.toJSON()).toEqual({
-					13: {
-						id: 13 as SourceNodeID_number,
+					12: {
+						id: 12 as SourceNodeID_number,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 1,
-
-							selfCPUTime: 123,
+							selfCPUTime: 456,
 							aggregatedCPUTime: 456,
 
-							selfCPUEnergyConsumption: 246,
+							selfCPUEnergyConsumption: 912,
 							aggregatedCPUEnergyConsumption: 912,
 
-							selfRAMEnergyConsumption: 246,
+							selfRAMEnergyConsumption: 912,
 							aggregatedRAMEnergyConsumption: 912,
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
-				})
-			})
-
-			test('mapped absolute paths', () => {
-				instance.addSensorValuesToIntern(
-					new UnifiedPath('/abs/path/to/file').toString(),
-					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
-					{
-						cpuTime: {
-							selfCPUTime: 123 as MicroSeconds_number,
-							aggregatedCPUTime: 456 as MicroSeconds_number
-						},
-						cpuEnergyConsumption: {
-							selfCPUEnergyConsumption: 246 as MilliJoule_number,
-							aggregatedCPUEnergyConsumption: 912 as MilliJoule_number
-						},
-						ramEnergyConsumption: {
-							selfRAMEnergyConsumption: 246 as MilliJoule_number,
-							aggregatedRAMEnergyConsumption: 912 as MilliJoule_number
-						}
-					}
-				)
-				instance.addSourceFileMapLink(
-					new UnifiedPath('/abs/path/to/file'),
-					new UnifiedPath('/abs/path/to/file.ts')
-				)
-				instance.relativeRootDir = undefined
-				expect(instance.getMetaDataFromFile(
-					new UnifiedPath('./report.oak'),
-					new UnifiedPath('/abs/path/to/file.ts')
-				)?.functions.toJSON()).toEqual({
-					13: {
-						id: 13 as SourceNodeID_number,
-						type: SourceNodeMetaDataType.SourceNode,
-						sensorValues: {
-							profilerHits: 1,
-
-							selfCPUTime: 123,
-							aggregatedCPUTime: 456,
-
-							selfCPUEnergyConsumption: 246,
-							aggregatedCPUEnergyConsumption: 912,
-
-							selfRAMEnergyConsumption: 246,
-							aggregatedRAMEnergyConsumption: 912
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
 				})
@@ -703,11 +570,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			expect(hashString).toBe(EXAMPLE_PROJECT_REPORT_HASH)
 		})
 
-		test('removeFromIntern', () => {
-			instance.removeFromIntern(new UnifiedPath('./dist/test.js').toString())
-			expect(instance.intern.toJSON()).toEqual(undefined)
-		})
-
 		test('storeToFile', () => {
 			const projectReportFilePath = CURRENT_DIR.join('..', '..', '..', '..', 'profiles', 'test-profile', 'test-report.oak')
 			if (fs.existsSync(projectReportFilePath.dirName().toPlatformString())) {
@@ -732,35 +594,47 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 		describe('trackUncommittedFiles', () => {
 			test('no git repository', () => {
-				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(undefined)
-				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(null)
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(undefined)
 
-				uncommittedFiles_mock.mockReset()
+				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('no uncommitted changes exist', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([])
-				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
-				uncommittedFiles_mock.mockReset()
+				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('uncommitted changes exist', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./dist/test.js'])
-				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(true)
 
-				uncommittedFiles_mock.mockReset()
+				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('uncommitted changes exist in node modules has no effect', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./node_modules/@oaklean/profiler-core/test.js'])
-				instance.trackUncommittedFiles(new UnifiedPath('./'))
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
-				uncommittedFiles_mock.mockReset()
+				uncommittedFiles_mock.mockRestore()
 			})
 		})
 	})
@@ -884,10 +758,7 @@ describe('ProjectReport', () => {
 				}
 			}
 		)
-		instance.addSourceFileMapLink(
-			new UnifiedPath('./dist/test.js'),
-			new UnifiedPath('./src/test.ts')
-		)
+
 		instance.addSensorValuesToExtern(
 			new UnifiedPath('./test.js'), // path does not exist in reality 
 			nodeModule, // points to the profiler core package itself
@@ -1016,8 +887,12 @@ describe('ProjectReport', () => {
 	describe('insertCPUProfile', () => {
 		test('test case example001', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
+			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
+				ROOT_DIR,
+				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001
+			)!
+
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
-			setProfilesContext(profile)
 			const projectReport = new ProjectReport({
 				origin: ProjectReportOrigin.pure,
 				commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
@@ -1048,13 +923,7 @@ describe('ProjectReport', () => {
 					}
 				}
 			}, ReportKind.measurement)
-			await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile)
-			projectReport.removeFromIntern([
-				new UnifiedPath('./packages/profiler/dist/src/Profiler.js').toString(),
-				new UnifiedPath('./packages/profiler/src/Profiler.ts').toString(),
-				new UnifiedPath('./packages/profiler/dist/src/model/V8Profiler.js').toString(),
-				new UnifiedPath('./packages/profiler/src/model/V8Profiler.ts').toString()
-			])
+			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
 			projectReport.normalize()
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
 
@@ -1092,8 +961,12 @@ describe('ProjectReport', () => {
 
 		test('test case example002', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example002.cpuprofile').toString()
+			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
+				ROOT_DIR,
+				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002
+			)!
+
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
-			setProfilesContext(profile)
 			const projectReport = new ProjectReport({
 				origin: ProjectReportOrigin.pure,
 				commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
@@ -1124,14 +997,8 @@ describe('ProjectReport', () => {
 					}
 				}
 			}, ReportKind.measurement)
-			await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile)
+			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
-			projectReport.removeFromIntern([
-				new UnifiedPath('./packages/profiler/dist/src/Profiler.js').toString(),
-				new UnifiedPath('./packages/profiler/src/Profiler.ts').toString(),
-				new UnifiedPath('./packages/profiler/dist/src/model/V8Profiler.js').toString(),
-				new UnifiedPath('./packages/profiler/src/model/V8Profiler.ts').toString()
-			])
 			projectReport.normalize()
 			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
 			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.bin')
@@ -1139,7 +1006,7 @@ describe('ProjectReport', () => {
 				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
 			}
-			
+
 			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
 			if (expectedJson) {
 				expectedJson.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
@@ -1167,6 +1034,11 @@ describe('ProjectReport', () => {
 
 		test('not existing Sourcefile', async () => {
 			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
+			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
+				ROOT_DIR,
+				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001
+			)!
+
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 			const projectReport = new ProjectReport({
 				origin: ProjectReportOrigin.pure,
@@ -1198,11 +1070,22 @@ describe('ProjectReport', () => {
 					}
 				}
 			}, ReportKind.measurement)
-			const t = async () => {
-				await projectReport.insertCPUProfile(CURRENT_DIR.join('..', '..', '..', '..'), profile)
-			}
 
-			await expect(t).rejects.toThrowError('Sourcefile does not exist: ./packages/profiler/dist/src/Profiler.js')
+			// change the source file path to a not existing one
+			profile['nodes'][3]['callFrame']['url'] = 'not/found/sourcefile.ts'
+			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
+
+			// a not existing source file should still be added to the project report
+			const notFoundModuleIndex = projectReport.globalIndex.getModuleIndex('get')
+			const missingFilePathIndex = notFoundModuleIndex?.getFilePathIndex('get', './not/found/sourcefile.ts' as UnifiedPath_string)
+
+			expect(notFoundModuleIndex).toBeDefined()
+			expect(missingFilePathIndex).toBeDefined()
+
+			const sourceFileMetaData = projectReport.intern.
+				get(missingFilePathIndex?.id as PathID_number)
+
+			expect(sourceFileMetaData).toBeDefined()
 		})
 	})
 
@@ -1256,20 +1139,6 @@ describe('ProjectReport', () => {
 			expect(t).toThrowError('ProjectReport.merge: Project reports commit hashs are not the same')
 		})
 
-		test('wrong path mappings', () => {
-			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const moduleIndex = globalIndex.getModuleIndex('upsert')
-			instancesToMerge[0].internMapping.set(
-				(instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('upsert', './packages/profiler/examples/example002.ts' as UnifiedPath_string)?.id || -1) as PathID_number,
-				(instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('upsert', './packages/profiler/src/examples/example002.js' as UnifiedPath_string)?.id || -1) as PathID_number)
-
-			const t = () => {
-				ProjectReport.merge(moduleIndex, ...instancesToMerge)
-			}
-
-			expect(t).toThrowError('ProjectReport.merge: the ProjectReports contain different path mapping')
-		})
-
 		test('merges correctly', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
@@ -1302,14 +1171,14 @@ describe('ProjectReport', () => {
 			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.bin')
 			
 			// add cucc changes
-			const sourceFileIndex_001 = instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example001.js').toString())
+			const sourceFileIndex_001 = instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
 			expect(sourceFileIndex_001).toBeDefined()
 			if (sourceFileIndex_001) {
 				sourceFileIndex_001.containsUncommittedChanges = true
 			}
 
 			// add cucc changes
-			const sourceFileIndex_002 = instancesToMerge[1].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example002.js').toString())
+			const sourceFileIndex_002 = instancesToMerge[1].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
 			expect(sourceFileIndex_002).toBeDefined()
 			if (sourceFileIndex_002) {
 				sourceFileIndex_002.containsUncommittedChanges = true
@@ -1326,24 +1195,24 @@ describe('ProjectReport', () => {
 			expect(expectedProjectReportBin).toBeDefined()
 			if (expectedProjectReportJson && expectedProjectReportBin) {
 				// add cucc changes to expected json report
-				const sourceFileIndex_001_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example001.js').toString())
+				const sourceFileIndex_001_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
 				expect(sourceFileIndex_001_Json).toBeDefined()
 				if (sourceFileIndex_001_Json) {
 					sourceFileIndex_001_Json.containsUncommittedChanges = true
 				}
-				const sourceFileIndex_002_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example002.js').toString())
+				const sourceFileIndex_002_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
 				expect(sourceFileIndex_002_Json).toBeDefined()
 				if (sourceFileIndex_002_Json) {
 					sourceFileIndex_002_Json.containsUncommittedChanges = true
 				}
 
 				// add cucc changes to expected bin report
-				const sourceFileIndex_001_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example001.js').toString())
+				const sourceFileIndex_001_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
 				expect(sourceFileIndex_001_Bin).toBeDefined()
 				if (sourceFileIndex_001_Bin) {
 					sourceFileIndex_001_Bin.containsUncommittedChanges = true
 				}
-				const sourceFileIndex_002_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/dist/examples/example002.js').toString())
+				const sourceFileIndex_002_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
 				expect(sourceFileIndex_002_Bin).toBeDefined()
 				if (sourceFileIndex_002_Bin) {
 					sourceFileIndex_002_Bin.containsUncommittedChanges = true
@@ -1406,7 +1275,7 @@ describe('ProjectReport', () => {
 			expect(t).toThrow('ProjectReport.merge: cannot merge ProjectReports from different systems')
 
 			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different cpus')
-			consoleError.mockReset()
+			consoleError.mockRestore()
 		})
 
 		describe('merges uncommitted changes correctly', () => {

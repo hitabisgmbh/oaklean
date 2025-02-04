@@ -1114,4 +1114,157 @@ describe('SourceFileMetaData', () => {
 			})
 		})
 	})
+
+	test('totalSourceNodeMetaData', () => {
+		/**
+			* // File: FileA
+			* ClassA:
+			* 		functionA:
+			* 				selfTime: 1
+			* 				aggregatedTime: 6
+			* 				intern:
+			* 					ClassA.functionB:
+			* 						aggregatedTime: 5
+			* 		functionB:
+			* 				selfTime: 2
+			* 				aggregatedTime: 5
+			* 				intern:
+			* 					ClassA.functionC:
+			* 						aggregatedTime: 3
+			* 		functionC:
+			* 				selfTime: 2
+			* 				aggregatedTime: 3
+			* 				intern:
+			* 					ClassB.functionA:
+			* 						aggregatedTime: 1
+			* 
+			* // File: FileB
+			* ClassB:
+			* 		functionD:
+			* 				selfTime: 1
+			* 				aggregatedTime: 1
+		 */
+		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+		const selfModuleIndex = globalIndex.getModuleIndex('upsert')
+		const filePathIndexA = selfModuleIndex.getFilePathIndex('upsert', './fileA.js' as UnifiedPath_string)
+		const filePathIndexB = selfModuleIndex.getFilePathIndex('upsert', './fileB.js' as UnifiedPath_string)
+
+		const sourceFileMetaDataA = new SourceFileMetaData(
+			'./fileA.js' as UnifiedPath_string,
+			filePathIndexA
+		)
+
+		const sourceFileMetaDataB = new SourceFileMetaData(
+			'./fileB.js' as UnifiedPath_string,
+			filePathIndexB
+		)
+
+		const methodA = sourceFileMetaDataA.createOrGetSourceNodeMetaData(
+			'{root}{class:ClassA}.{method:methodA}' as SourceNodeIdentifier_string,
+			SourceNodeMetaDataType.SourceNode
+		)
+
+		const methodB = sourceFileMetaDataA.createOrGetSourceNodeMetaData(
+			'{root}{class:ClassA}.{method:methodB}' as SourceNodeIdentifier_string,
+			SourceNodeMetaDataType.SourceNode
+		)
+
+		const methodC = sourceFileMetaDataA.createOrGetSourceNodeMetaData(
+			'{root}{class:ClassA}.{method:methodC}' as SourceNodeIdentifier_string,
+			SourceNodeMetaDataType.SourceNode
+		)
+
+		const methodD = sourceFileMetaDataB.createOrGetSourceNodeMetaData(
+			'{root}{class:ClassB}.{method:methodD}' as SourceNodeIdentifier_string,
+			SourceNodeMetaDataType.SourceNode
+		)
+
+		methodD.addToSensorValues({
+			cpuTime: {
+				selfCPUTime: 1 as MicroSeconds_number,
+				aggregatedCPUTime: 1 as MicroSeconds_number
+			},
+			cpuEnergyConsumption: {},
+			ramEnergyConsumption: {}
+		})
+
+		methodA.addToSensorValues({
+			cpuTime: {
+				selfCPUTime: 1 as MicroSeconds_number,
+				aggregatedCPUTime: 6 as MicroSeconds_number
+			},
+			cpuEnergyConsumption: {},
+			ramEnergyConsumption: {}
+		})
+		methodA.addSensorValuesToIntern(
+			methodB.globalIdentifier(),
+			{
+				cpuTime: {
+					aggregatedCPUTime: 5 as MicroSeconds_number
+				},
+				cpuEnergyConsumption: {},
+				ramEnergyConsumption: {}
+			}
+		)
+
+		methodB.addToSensorValues({
+			cpuTime: {
+				selfCPUTime: 2 as MicroSeconds_number,
+				aggregatedCPUTime: 5 as MicroSeconds_number
+			},
+			cpuEnergyConsumption: {},
+			ramEnergyConsumption: {}
+		})
+		methodB.addSensorValuesToIntern(
+			methodC.globalIdentifier(),
+			{
+				cpuTime: {
+					aggregatedCPUTime: 3 as MicroSeconds_number
+				},
+				cpuEnergyConsumption: {},
+				ramEnergyConsumption: {}
+			}
+		)
+
+		methodC.addToSensorValues({
+			cpuTime: {
+				selfCPUTime: 2 as MicroSeconds_number,
+				aggregatedCPUTime: 3 as MicroSeconds_number
+			},
+			cpuEnergyConsumption: {},
+			ramEnergyConsumption: {}
+		})
+
+		methodC.addSensorValuesToIntern(
+			methodD.globalIdentifier(),
+			{
+				cpuTime: {
+					aggregatedCPUTime: 1 as MicroSeconds_number
+				},
+				cpuEnergyConsumption: {},
+				ramEnergyConsumption: {}
+			}
+		)
+
+		const result = sourceFileMetaDataA.totalSourceNodeMetaData()
+
+		expect(result.sum.toJSON()).toEqual({
+			type: 5,
+			sensorValues: {
+				selfCPUTime: 5,
+				aggregatedCPUTime: 6,
+				internCPUTime: 1
+			}
+		})
+
+		expect(result.intern.toJSON()).toEqual({
+			2: {
+				aggregatedCPUTime: 1
+			}
+		})
+
+		expect(result.extern.toJSON()).toBeUndefined()
+
+		expect(result.langInternal.toJSON()).toBeUndefined()
+	})
 })

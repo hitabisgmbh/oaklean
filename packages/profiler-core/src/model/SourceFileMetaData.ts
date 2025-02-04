@@ -3,6 +3,7 @@ import { ModelMap } from './ModelMap'
 import {
 	SourceNodeMetaData
 } from './SourceNodeMetaData'
+import { WASM_NODE_MODULE } from './NodeModule'
 import { SensorValues } from './SensorValues'
 import { PathIndex } from './index/PathIndex'
 import { GlobalIndex } from './index/GlobalIndex'
@@ -26,8 +27,7 @@ import {
 	SourceNodeIndexType,
 	SourceNodeMetaDataType,
 	ISourceFileMetaData,
-	IAggregatedSourceNodeMetaData,
-	MicroSeconds_number
+	IAggregatedSourceNodeMetaData
 } from '../types'
 
 export class AggregatedSourceNodeMetaData extends BaseModel {
@@ -205,19 +205,6 @@ export class SourceFileMetaData extends BaseModel {
 			pathIndex.getSourceNodeIndex<T>(indexRequestType, sourceNodeIdentifier)
 	}
 
-	removeFromIntern(filePath: UnifiedPath_string | UnifiedPath_string[]) {
-		let filePaths: UnifiedPath_string[] = []
-		if (typeof filePath === 'string') {
-			filePaths = [filePath]
-		} else {
-			filePaths = filePath
-		}
-
-		for (const sourceNodeMetaData of this.functions.values()) {
-			sourceNodeMetaData.removeFromIntern(filePaths)			
-		}
-	}
-
 	validate() {
 		for (const [sourceNodeID, sourceNodeMetaData] of this.functions.entries()) {
 			const sourceNodeIndex = this.getSourceNodeIndexByID(sourceNodeID)
@@ -227,24 +214,27 @@ export class SourceFileMetaData extends BaseModel {
 			}
 
 			const identifier = sourceNodeIndex?.identifier as SourceNodeIdentifier_string
-			if (
-				sourceNodeMetaData.type === SourceNodeMetaDataType.LangInternalSourceNode
-			) {
-				if (!LangInternalSourceNodeIdentifierRegex.test(identifier)) {
-					throw new Error(
-						'SourceFileMetaData.validate: invalid LangInternalSourceNodeIdentifier_string:'
-						+ identifier + '\n' +
-						LangInternalSourceNodeIdentifierRegexString
-					)
-				}
-			} else {
-				if (!SourceNodeIdentifierRegex.test(identifier)) {
-					throw new Error(
-						`SourceFileMetaData.validate: invalid sourceNodeIdentifier: ${identifier}\n` +
-						SourceNodeIdentifierRegexString
-					)
+			if (!(sourceNodeIndex.pathIndex.moduleIndex.identifier === WASM_NODE_MODULE.identifier)) {
+				if (
+					sourceNodeMetaData.type === SourceNodeMetaDataType.LangInternalSourceNode
+				) {
+					if (!LangInternalSourceNodeIdentifierRegex.test(identifier)) {
+						throw new Error(
+							'SourceFileMetaData.validate: invalid LangInternalSourceNodeIdentifier_string:'
+							+ identifier + '\n' +
+							LangInternalSourceNodeIdentifierRegexString
+						)
+					}
+				} else {
+					if (!SourceNodeIdentifierRegex.test(identifier)) {
+						throw new Error(
+							`SourceFileMetaData.validate: invalid sourceNodeIdentifier: ${identifier}\n` +
+							SourceNodeIdentifierRegexString
+						)
+					}
 				}
 			}
+			
 
 			sourceNodeMetaData.validate(
 				this.path,
@@ -314,13 +304,64 @@ export class SourceFileMetaData extends BaseModel {
 	}
 
 	/**
-	 * Calculates the total SourceNodeMetaData for the SourceFile
+	 * Calculates the total SourceNodeMetaData of the SourceFile (the sum of all functions)
+	 * as well as the intern, extern and langInternal references.
 	 * 
-	 * hits, selfTime, aggregatedTime, langInternalTime, externTime and internTime are added up
+	 * TLDR:
+	 * Returns the total sum of the measurements of the file and each external reference (not included in that file)
+	 * with their own sum of measurements.
 	 * 
-	 * intern self references are removed
 	 * 
-	 * @returns number
+	 * Example:
+	 * 
+	 * // File: FileA
+	 * ClassA:
+	 * 		functionA:
+	 * 				selfTime: 1
+	 * 				aggregatedTime: 6
+	 * 				intern:
+	 * 					ClassA.functionB:
+	 * 						aggregatedTime: 5
+	 * 		functionB:
+	 * 				selfTime: 2
+	 * 				aggregatedTime: 5
+	 * 				intern:
+	 * 					ClassA.functionC:
+	 * 						aggregatedTime: 3
+	 * 		functionC:
+	 * 				selfTime: 2
+	 * 				aggregatedTime: 3
+	 * 				intern:
+	 * 					ClassB.functionD:
+	 * 						aggregatedTime: 1
+	 * 
+	 * // File: FileB
+	 * ClassB:
+	 * 		functionD:
+	 * 				selfTime: 1
+	 * 				aggregatedTime: 1
+	 * 
+	 * 
+	 * Would return:
+	 * 
+	 * sum: { selfTime: 5, aggregatedTime: 6, internCPUTime: 1 }
+	 * intern:
+	 * 		ClassB.functionD:
+	 * 			aggregatedCPUTime: 1
+	 * extern: empty
+	 * langInternal: empty
+	 * 
+	 * For each function in the file the sum is calculated by adding up:
+	 * hits, selfTime, aggregatedTime, langInternalTime, externTime and internTime
+	 * 
+	 * Then intern self references within the same file are removed from the sum
+	 * 
+	 * @returns {
+	 * 		sum // the sum of all functions in the file
+	 * 		intern // the sum of all intern references of each function in the file
+	 * 		extern // the sum of all extern references of each function in the file
+	 * 		langInternal // the sum of all langInternal references of each function in the file
+	 * }
 	 */
 	totalSourceNodeMetaData(): {
 		sum: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,

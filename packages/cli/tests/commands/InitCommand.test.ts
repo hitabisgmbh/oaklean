@@ -81,8 +81,8 @@ describe('InitCommands', () => {
 			})
 
 			afterEach(() => {
-				selectSensorInterface_spy.mockReset()
-				uniqueID_spy.mockReset()
+				selectSensorInterface_spy.mockRestore()
+				uniqueID_spy.mockRestore()
 			})
 
 			test('with none', async () => {
@@ -132,8 +132,8 @@ describe('InitCommands', () => {
 			})
 
 			afterEach(() => {
-				confirmConfigFileContent_spy.mockReset()
-				configStoreToFile_spy.mockReset()
+				confirmConfigFileContent_spy.mockRestore()
+				configStoreToFile_spy.mockRestore()
 			})
 
 			test('returns true with perf', async () => {
