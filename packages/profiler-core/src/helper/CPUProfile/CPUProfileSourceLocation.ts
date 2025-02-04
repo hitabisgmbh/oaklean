@@ -5,26 +5,21 @@ import { ILocation } from '../../../lib/vscode-js-profile-core/src/cpu/model'
 // Types
 import {
 	ScriptID_string,
-	SourceNodeIdentifier_string
+	SourceNodeIdentifier_string,
+	CPUProfileSourceLocationType
 } from '../../types'
 
 export const RegExpTestRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
 
-export enum SourceLocationType {
-	DEFAULT = 0,
-	EMPTY = 1,
-	LANG_INTERNAL = 2,
-	WASM = 3,
-	WEBPACK = 4
-}
-
 export class CPUProfileSourceLocation {
+	private _index: number
+
 	private _sourceLocation: ILocation
 
 	// extended fields
 	private _rootDir: UnifiedPath
 
-	private _type: SourceLocationType
+	private _type: CPUProfileSourceLocationType
 	private _scriptID: ScriptID_string
 	private _rawUrl: string
 	private _absoluteUrl?: UnifiedPath
@@ -35,6 +30,7 @@ export class CPUProfileSourceLocation {
 		rootDir: UnifiedPath,
 		sourceLocation: ILocation
 	) {
+		this._index = sourceLocation.id
 		this._sourceLocation = sourceLocation
 		this._rootDir = rootDir
 
@@ -43,19 +39,19 @@ export class CPUProfileSourceLocation {
 			sourceLocation.callFrame.url.startsWith('node:') ||
 			(sourceLocation.callFrame.url === '' && sourceLocation.callFrame.functionName.length > 0)
 		) {
-			this._type = SourceLocationType.LANG_INTERNAL
+			this._type = CPUProfileSourceLocationType.LANG_INTERNAL
 		} else if (sourceLocation.callFrame.url.startsWith('wasm://')) {
-			this._type = SourceLocationType.WASM
+			this._type = CPUProfileSourceLocationType.WASM
 		} else if (
 			sourceLocation.callFrame.url.startsWith('webpack://') ||
 			sourceLocation.callFrame.url.startsWith('webpack-internal://')
 		) {
-			this._type = SourceLocationType.WEBPACK
+			this._type = CPUProfileSourceLocationType.WEBPACK
 		} else if (sourceLocation.callFrame.url === '') {
 			// important that this the last check, since node internal urls are also sometimes empty
-			this._type = SourceLocationType.EMPTY
+			this._type = CPUProfileSourceLocationType.EMPTY
 		} else {
-			this._type = SourceLocationType.DEFAULT
+			this._type = CPUProfileSourceLocationType.DEFAULT
 		}
 		
 		// determine the script id
@@ -73,6 +69,10 @@ export class CPUProfileSourceLocation {
 		return this._sourceLocation
 	}
 
+	get index() {
+		return this._index
+	}
+
 	get sourceLocation() {
 		const { lineNumber, columnNumber } = this.ISourceLocation.callFrame
 		return {
@@ -82,19 +82,19 @@ export class CPUProfileSourceLocation {
 	}
 
 	get isLangInternal() {
-		return this._type === SourceLocationType.LANG_INTERNAL
+		return this._type === CPUProfileSourceLocationType.LANG_INTERNAL
 	}
 
 	get isEmpty() {
-		return this._type === SourceLocationType.EMPTY
+		return this._type === CPUProfileSourceLocationType.EMPTY
 	}
 
 	get isWASM() {
-		return this._type === SourceLocationType.WASM
+		return this._type === CPUProfileSourceLocationType.WASM
 	}
 
 	get isWebpack() {
-		return this._type === SourceLocationType.WEBPACK
+		return this._type === CPUProfileSourceLocationType.WEBPACK
 	}
 
 	get scriptID() {
