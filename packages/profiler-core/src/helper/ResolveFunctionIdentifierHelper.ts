@@ -25,6 +25,14 @@ export type ResolveFunctionIdentifierResult = {
 	relativeNodeModulePath: UnifiedPath | null
 }
 
+/**
+ * This helper resolves a function identifier from a CPU profile's source location.
+ * It does so by requesting the executed code from the Node engine and parsing it.
+ * If the requested code contains a source map, it attempts to resolve the original source location.
+ * 
+ * Additionally, it checks whether the executed code is part of a Node module.
+ * If so, it determines the associated Node module.
+ */
 export class ResolveFunctionIdentifierHelper {
 	private rootDir: UnifiedPath
 	private externalResourceHelper: ExternalResourceHelper
