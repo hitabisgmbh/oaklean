@@ -1,12 +1,10 @@
-import { NodeModuleUtils } from './NodeModuleUtils'
 import { CPUModel } from './CPUModel'
-import { UrlProtocolHelper } from './UrlProtocolHelper'
-import { ExternalResourceHelper } from './ExternalResourceHelper'
 
-import { LangInternalSourceNodeRegExpRegexString } from '../constants/SourceNodeRegex'
-import { NodeModule } from '../model/NodeModule'
-import { IComputedNode, ILocation } from '../../lib/vscode-js-profile-core/src/cpu/model'
-import { UnifiedPath } from '../system/UnifiedPath'
+import { UrlProtocolHelper } from '../UrlProtocolHelper'
+import { ExternalResourceHelper } from '../ExternalResourceHelper'
+import { LangInternalSourceNodeRegExpRegexString } from '../../constants/SourceNodeRegex'
+import { IComputedNode, ILocation } from '../../../lib/vscode-js-profile-core/src/cpu/model'
+import { UnifiedPath } from '../../system/UnifiedPath'
 // Types
 import {
 	MilliJoule_number,
@@ -17,7 +15,7 @@ import {
 	EnergyValuesType,
 	MicroSeconds_number,
 	ScriptID_string
-} from '../types'
+} from '../../types'
 
 export const RegExpTestRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
 

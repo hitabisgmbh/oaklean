@@ -1,21 +1,21 @@
 import * as fs from 'fs'
 
-import { CPUModel } from '../../src/helper/CPUModel'
-import { CPUNode } from '../../src/helper/CPUNode'
-import { UnifiedPath } from '../../src/system/UnifiedPath'
+import { CPUModel } from '../../../src/helper/CPUProfile/CPUModel'
+import { CPUNode } from '../../../src/helper/CPUProfile/CPUNode'
+import { UnifiedPath } from '../../../src/system/UnifiedPath'
 import {
 	NanoSeconds_BigInt,
 	MilliJoule_number
-} from '../../src/types'
+} from '../../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
-const ROOT_DIR = CURRENT_DIR.join('..', '..', '..', '..')
+const ROOT_DIR = CURRENT_DIR.join('..', '..', '..', '..', '..')
 
 describe('CPUNode', () => {
 	let instance: CPUNode
 
 	beforeEach(() => {
-		const cpuProfileFilePath = CURRENT_DIR.join('..', 'model', 'assets', 'CPUProfiles', 'example001.cpunode.cpuprofile').toString()
+		const cpuProfileFilePath = CURRENT_DIR.join('..', '..', 'model', 'assets', 'CPUProfiles', 'example001.cpunode.cpuprofile').toString()
 		const cpuProfile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 
 		const cpuModel = new CPUModel(

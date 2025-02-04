@@ -1,6 +1,6 @@
+export * from './CPUProfile'
+
 export * from './BufferHelper'
-export * from './CPUModel'
-export * from './CPUNode'
 export * from './GitHelper'
 export * from './ExternalResourceHelper'
 export * from './PerformanceHelper'

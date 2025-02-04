@@ -1,17 +1,22 @@
 import { CPUNode } from './CPUNode'
-import { ExternalResourceHelper } from './ExternalResourceHelper'
 
-import { IComputedNode, ILocation, IProfileModel, buildModel } from '../../lib/vscode-js-profile-core/src/cpu/model'
-import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
-import { UnifiedPath } from '../system/UnifiedPath'
-import { MetricsDataCollection } from '../model/interfaces/MetricsDataCollection'
+import { ExternalResourceHelper } from '../ExternalResourceHelper'
+import {
+	IComputedNode,
+	ILocation,
+	IProfileModel,
+	buildModel
+} from '../../../lib/vscode-js-profile-core/src/cpu/model'
+import { ICpuProfileRaw } from '../../../lib/vscode-js-profile-core/src/cpu/types'
+import { UnifiedPath } from '../../system/UnifiedPath'
+import { MetricsDataCollection } from '../../model/interfaces/MetricsDataCollection'
 // Types
 import {
 	NanoSeconds_BigInt,
 	MicroSeconds_number,
 	MilliJoule_number,
 	EnergyValuesType
-} from '../types'
+} from '../../types'
 
 export class CPUModel {
 	private rootDir: UnifiedPath

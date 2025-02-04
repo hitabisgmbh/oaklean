@@ -2,58 +2,35 @@ import { LoggerHelper } from './helper/LoggerHelper'
 import { PathUtils } from './helper/PathUtils'
 import { UnifiedPath } from './system/UnifiedPath'
 import { TypescriptParser } from './helper/TypescriptParser'
-import { CPUModel } from './helper/CPUModel'
-import { CPUNode, CPUNodeType } from './helper/CPUNode'
+import { CPUModel } from './helper/CPUProfile/CPUModel'
+import {
+	CPUNode,
+	CPUNodeType
+} from './helper/CPUProfile/CPUNode'
 import { GitHelper } from './helper/GitHelper'
 import { NodeModuleUtils } from './helper/NodeModuleUtils'
 import { PermissionHelper } from './helper/PermissionHelper'
 import { DataUrlUtils } from './helper/DataUrlUtils'
 import { ExternalResourceHelper } from './helper/ExternalResourceHelper'
 import { SetHelper } from './helper/SetHelper'
-import {
-	TimeHelper
-} from './helper/TimeHelper'
-import {
-	PerformanceHelper
-} from './helper/PerformanceHelper'
-import {
-	BufferHelper
-} from './helper/BufferHelper'
-import {
-	AuthenticationHelper
-} from './helper/AuthenticationHelper'
-import {
-	VersionHelper
-} from './helper/VersionHelper'
-import {
-	UnitHelper
-} from './helper/UnitHelper'
+import { TimeHelper } from './helper/TimeHelper'
+import { PerformanceHelper } from './helper/PerformanceHelper'
+import { BufferHelper } from './helper/BufferHelper'
+import { AuthenticationHelper } from './helper/AuthenticationHelper'
+import { VersionHelper } from './helper/VersionHelper'
+import { UnitHelper } from './helper/UnitHelper'
 import { DEFAULT_PROFILER_CONFIG } from './constants/config'
-import {
-	ProfilerConfig,
-} from './model/ProfilerConfig'
-import {
-	ExecutionDetails,
-} from './model/ExecutionDetails'
-import {
-	ProgramStructureTree
-} from './model/ProgramStructureTree'
-import {
-	SystemInformation
-} from './model/SystemInformation'
+import { ProfilerConfig } from './model/ProfilerConfig'
+import { ExecutionDetails } from './model/ExecutionDetails'
+import { ProgramStructureTree } from './model/ProgramStructureTree'
+import { SystemInformation } from './model/SystemInformation'
 import { SourceFileMetaDataTree } from './model/SourceFileMetaDataTree'
 import { ModuleReport } from './model/ModuleReport'
 import { GlobalIdentifier } from './system/GlobalIdentifier'
 import { Crypto } from './system/Crypto'
-import {
-	Report
-} from './model/Report'
-import {
-	ProjectReport
-} from './model/ProjectReport'
-import {
-	SourceNodeMetaData
-} from './model/SourceNodeMetaData'
+import { Report } from './model/Report'
+import { ProjectReport } from './model/ProjectReport'
+import { SourceNodeMetaData } from './model/SourceNodeMetaData'
 import {
 	SourceNodeNameRegexString,
 	SourceNodeNameExpressionRegex,
@@ -77,9 +54,7 @@ import {
 	SourceFileMetaData,
 	AggregatedSourceNodeMetaData,
 } from './model/SourceFileMetaData'
-import {
-	SensorValues
-} from './model/SensorValues'
+import { SensorValues } from './model/SensorValues'
 import { SourceMap } from './model/SourceMap'
 import { NodeModule } from './model/NodeModule'
 import { BaseModel } from './model/BaseModel'
@@ -87,14 +62,10 @@ import { ModelMap, ModelMapKeyType } from './model/ModelMap'
 import { GlobalIndex } from './model/index/GlobalIndex'
 import { ModuleIndex } from './model/index/ModuleIndex'
 import { PathIndex } from './model/index/PathIndex'
-import {
-	SourceNodeIndex
-} from './model/index/SourceNodeIndex'
+import { SourceNodeIndex } from './model/index/SourceNodeIndex'
 import { IPowerMetricsSensorInterfaceOptions } from './types/interfaces/powermetrics/types'
 import { IPerfSensorInterfaceOptions } from './types/interfaces/perf/types'
-import {
-	MetricsDataCollection
-} from './model/interfaces/MetricsDataCollection'
+import { MetricsDataCollection } from './model/interfaces/MetricsDataCollection'
 import { BaseMetricsData } from './model/interfaces/BaseMetricsData'
 import { PowerMetricsData } from './model/interfaces/PowerMetricsData'
 import { PerfMetricsData} from './model/interfaces/PerfMetricsData'

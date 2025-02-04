@@ -2,8 +2,8 @@ import path from 'path'
 
 import { MappedPosition } from 'source-map'
 
-import { CPUModel } from './CPUModel'
-import { CPUNode } from './CPUNode'
+import { CPUModel } from './CPUProfile/CPUModel'
+import { CPUNode } from './CPUProfile/CPUNode'
 import { TypescriptParser } from './TypescriptParser'
 import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
