@@ -23,7 +23,7 @@ export class NodeModuleUtils {
 		return match.join(remainder.split()[0])
 	}
 
-	static nodeModuleFromUrl(
+	static nodeModuleFromFilePath(
 		externalResourceHelper: ExternalResourceHelper,
 		relativeFilePathUrl: UnifiedPath
 	) {

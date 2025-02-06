@@ -18,12 +18,14 @@ import {
 	ResolvedSourceNodeLocation
 } from '../types'
 
-export type ResolveFunctionIdentifierResult = {
+type ResolveFunctionIdentifierResult = {
 	sourceNodeLocation: ResolvedSourceNodeLocation,
 	functionIdentifierPresentInOriginalFile: boolean,
 	nodeModule: NodeModule | null
 	relativeNodeModulePath: UnifiedPath | null
 }
+
+type NodeModulePerFilePathCacheResult = ReturnType<typeof NodeModuleUtils.nodeModuleFromFilePath>
 
 /**
  * This helper resolves a function identifier from a CPU profile's source location.
@@ -44,6 +46,8 @@ export class ResolveFunctionIdentifierHelper {
 	// cpu profile source location id -> cached ResolveFunctionIdentifierResult
 	private functionIdentifierCache: Map<number, ResolveFunctionIdentifierResult>
 	
+	private _nodeModulePerFileCache: Map<UnifiedPath_string, NodeModulePerFilePathCacheResult>
+
 	constructor(
 		rootDir: UnifiedPath,
 		externalResourceHelper: ExternalResourceHelper
@@ -53,6 +57,27 @@ export class ResolveFunctionIdentifierHelper {
 		this.PSTperNodeScript = new Map()
 		this.PSTperOriginalFile = new Map()
 		this.functionIdentifierCache = new Map()
+		this._nodeModulePerFileCache = new Map()
+	}
+
+	/**
+	 * Adds a caching layer to the NodeModuleUtils.nodeModuleFromFilePath function
+	 */
+	private nodeModuleFromFilePath(
+		relativeFilePath: UnifiedPath
+	): NodeModulePerFilePathCacheResult {
+		let cacheEntry = this._nodeModulePerFileCache.get(relativeFilePath.toString())
+		if (cacheEntry !== undefined) {
+			return cacheEntry
+		}
+
+		cacheEntry = NodeModuleUtils.nodeModuleFromFilePath(
+			this.externalResourceHelper,
+			relativeFilePath
+		)
+		this._nodeModulePerFileCache.set(relativeFilePath.toString(), cacheEntry)
+
+		return cacheEntry
 	}
 
 	async resolveFunctionIdentifier(
@@ -185,10 +210,7 @@ export class ResolveFunctionIdentifierHelper {
 		const {
 			relativeNodeModulePath,
 			nodeModule
-		} = NodeModuleUtils.nodeModuleFromUrl(
-			this.externalResourceHelper,
-			sourceNodeLocation.relativeFilePath
-		)
+		} = this.nodeModuleFromFilePath(sourceNodeLocation.relativeFilePath)
 
 		if (relativeNodeModulePath && nodeModule) {
 			// since the source node location is within a node module
