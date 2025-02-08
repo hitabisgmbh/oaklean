@@ -34,6 +34,8 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 	private _startTime: NanoSeconds_BigInt | undefined
 	private _stopTime: NanoSeconds_BigInt | undefined
 
+	private _captureCount = 0
+
 	private cleanExit: ((...args: any[]) => void) | undefined
 
 	constructor(options: IPowerMetricsSensorInterfaceOptions, debugOptions?: {
@@ -184,11 +186,25 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 			}
 		}
 
+		this._childProcess.stderr?.on('data', async () => {
+			this._captureCount++
+		})
+
 		process.on('exit', this.cleanExit) // add event listener to close powermetrics if the parent process exits
 
 		// detach from current node.js process
 		this._childProcess.unref()
-		await TimeHelper.sleep(1000 + this._options.sampleInterval) // wait to ensure measurements started, since the measurements only starts at full seconds
+		
+		// wait for first data capture to ensure measurements started
+		// since the measurements only starts at full seconds
+		return new Promise<void>((resolve) => {
+			const interval = setInterval(async () => {
+				if (this._captureCount > 0) {
+					clearInterval(interval)
+					resolve()
+				}
+			}, 100)
+		})
 	}
 
 	async stopProfiling() {
@@ -198,7 +214,17 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		if (this._childProcess === undefined) {
 			return
 		}
-		await TimeHelper.sleep(1000 + this._options.sampleInterval) // wait to capture last measurement
+		// wait to capture last measurement
+		const currentCaptureCount = this._captureCount
+		await new Promise<void>((resolve) => {
+			const interval = setInterval(async () => {
+				if (this._captureCount > currentCaptureCount) {
+					clearInterval(interval)
+					resolve()
+				}
+			}, 100)
+		})
+
 		this._childProcess.kill('SIGIO') // flush all buffered output
 		this._stopTime = TimeHelper.getCurrentHighResolutionTime()
 		this._childProcess.kill('SIGTERM')
