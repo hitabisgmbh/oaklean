@@ -927,23 +927,47 @@ export class InsertCPUProfileHelper {
 			} else if (cpuNode.isWASM) {
 				const wasmPath = new UnifiedPath(cpuNode.rawUrl.substring(7)) // remove the 'wasm://' prefix
 
-				const result = await InsertCPUProfileHelper.accountToExtern(
-					reportToCredit,
-					cpuNode,
-					WASM_NODE_MODULE,
-					{
-						relativeFilePath: wasmPath,
-						functionIdentifier:
-							cpuNode.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
-					},
-					lastNodeCallInfo,
-					accounted
-				)
+				if (
+					reportToCredit instanceof ModuleReport &&
+					reportToCredit.nodeModule === WASM_NODE_MODULE
+				) {
+					// is part of the wasm node module
+					const result = await InsertCPUProfileHelper.accountToIntern(
+						reportToCredit,
+						cpuNode,
+						{
+							relativeFilePath: wasmPath,
+							functionIdentifier: 
+								cpuNode.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
+						},
+						lastNodeCallInfo,
+						awaiterStack,
+						accounted
+					)
+					isAwaiterSourceNode = result.isAwaiterSourceNode
+					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
+					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+					newLastInternSourceNode = result.newLastInternSourceNode
+				} else {
+					// is not part of the wasm node module
+					const result = await InsertCPUProfileHelper.accountToExtern(
+						reportToCredit,
+						cpuNode,
+						WASM_NODE_MODULE,
+						{
+							relativeFilePath: wasmPath,
+							functionIdentifier:
+								cpuNode.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
+						},
+						lastNodeCallInfo,
+						accounted
+					)
 
-				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
-				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
-				newLastInternSourceNode = result.newLastInternSourceNode
-				newReportToCredit = result.newReportToCredit
+					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
+					newLastInternSourceNode = result.newLastInternSourceNode
+					newReportToCredit = result.newReportToCredit
+				}
 			} else if (!cpuNode.isEmpty) {
 				const {
 					sourceNodeLocation,
