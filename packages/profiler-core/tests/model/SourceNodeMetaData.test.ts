@@ -4,7 +4,7 @@ import { SensorValues } from '../../src/model/SensorValues'
 import {
 	SourceNodeMetaData
 } from '../../src/model/SourceNodeMetaData'
-import { GlobalIndex } from '../../src/model/index/GlobalIndex'
+import { GlobalIndex } from '../../src/model/indices/GlobalIndex'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
 
 import {

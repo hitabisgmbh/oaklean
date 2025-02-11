@@ -1,7 +1,7 @@
 import { NodeModule } from './NodeModule'
 import { Report } from './Report'
-import { GlobalIndex } from './index/GlobalIndex'
-import { ModuleIndex } from './index/ModuleIndex'
+import { GlobalIndex } from './indices/GlobalIndex'
+import { ModuleIndex } from './indices/ModuleIndex'
 
 // Types
 import {

@@ -8,7 +8,7 @@ import { ProjectReport } from '../../src/model/ProjectReport'
 import { SourceFileMetaData, AggregatedSourceNodeMetaData } from '../../src/model/SourceFileMetaData'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { SensorValues } from '../../src/model/SensorValues'
-import { GlobalIndex } from '../../src/model/index/GlobalIndex'
+import { GlobalIndex } from '../../src/model/indices/GlobalIndex'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import {
