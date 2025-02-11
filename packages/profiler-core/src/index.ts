@@ -10,6 +10,7 @@ import { PermissionHelper } from './helper/PermissionHelper'
 import { DataUrlUtils } from './helper/DataUrlUtils'
 import { ExternalResourceHelper } from './helper/ExternalResourceHelper'
 import { SetHelper } from './helper/SetHelper'
+import { EventHandler } from './helper/EventHandler'
 import {
 	TimeHelper
 } from './helper/TimeHelper'
@@ -122,6 +123,7 @@ export {
 	DataUrlUtils,
 	ExternalResourceHelper,
 	SetHelper,
+	EventHandler,
 	DEFAULT_PROFILER_CONFIG,
 	ProfilerConfig,
 	ExecutionDetails,
