@@ -11,20 +11,23 @@ import {
 	NanoSeconds_BigInt,
 	MetricsDataCollectionType,
 	SensorInterfaceType,
-	LoggerHelper
+	LoggerHelper,
+	EventHandler
 } from '@oaklean/profiler-core'
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
 
+type EventMap = { 
+	measurementCaptured: [];
+}
+
 /**
  * This SensorInterface uses the data provided by the powermetrics command line tool.
- * This Provider can only be used on Mac OS
+ * This SensorInterface can only be used on Mac OS
  * 
  * Man Page to powermetrics:
  * https://www.unix.com/man-page/osx/1/powermetrics/
  */
-
-
 export class PowerMetricsSensorInterface extends BaseSensorInterface {
 	private _executable: string
 	private _options: IPowerMetricsSensorInterfaceOptions
@@ -34,7 +37,7 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 	private _startTime: NanoSeconds_BigInt | undefined
 	private _stopTime: NanoSeconds_BigInt | undefined
 
-	private _captureCount = 0
+	private _eventHandler: EventHandler<EventMap>
 
 	private cleanExit: ((...args: any[]) => void) | undefined
 
@@ -59,6 +62,7 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 			this._stopTime = debugOptions.stopTime
 			this._couldBeExecuted = true
 		}
+		this._eventHandler = new EventHandler()
 	}
 
 	type(): SensorInterfaceType {
@@ -74,21 +78,21 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 				})
 				let isExecutable = false
 
-				childProcess.on('error', () => {
+				childProcess.once('error', () => {
 					resolve(false)
 				})
 
-				childProcess.stderr.on('data', () => {
+				childProcess.stderr.once('data', () => {
 					childProcess.kill('SIGTERM')
 					isExecutable = false
 				})
 
-				childProcess.stdout.on('data', () => {
+				childProcess.stdout.once('data', () => {
 					childProcess.kill('SIGTERM')
 					isExecutable = true
 				})
 
-				childProcess.on('exit', () => {
+				childProcess.once('exit', () => {
 					resolve(isExecutable)
 				})
 			} catch {
@@ -187,24 +191,20 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		}
 
 		this._childProcess.stderr?.on('data', async () => {
-			this._captureCount++
+			this._eventHandler.fire('measurementCaptured')
 		})
 
 		process.on('exit', this.cleanExit) // add event listener to close powermetrics if the parent process exits
 
 		// detach from current node.js process
 		this._childProcess.unref()
-		
-		// wait for first data capture to ensure measurements started
-		// since the measurements only starts at full seconds
-		return new Promise<void>((resolve) => {
-			const interval = setInterval(async () => {
-				if (this._captureCount > 0) {
-					clearInterval(interval)
-					resolve()
-				}
-			}, 100)
-		})
+	}
+
+	/*
+		Blocks until the first measurements started
+	*/
+	async measurementStarted(): Promise<void> {
+		await this._eventHandler.waitForFirstEventCall('measurementCaptured')
 	}
 
 	async stopProfiling() {
@@ -215,15 +215,7 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 			return
 		}
 		// wait to capture last measurement
-		const currentCaptureCount = this._captureCount
-		await new Promise<void>((resolve) => {
-			const interval = setInterval(async () => {
-				if (this._captureCount > currentCaptureCount) {
-					clearInterval(interval)
-					resolve()
-				}
-			}, 100)
-		})
+		await this._eventHandler.awaitEventCall('measurementCaptured')
 
 		this._childProcess.kill('SIGIO') // flush all buffered output
 		this._stopTime = TimeHelper.getCurrentHighResolutionTime()
