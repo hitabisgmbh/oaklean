@@ -139,8 +139,10 @@ export default class CPUProfileCommands {
 				return cli.xterm(57)
 			} else if (cpuNode.isWebpack) {
 				return cli.xterm(39)
+			} else if (cpuNode.relativeUrl.toString().includes('/node_modules/')) {
+				return cli.xterm(11)
 			}
-			return cli.white
+			return (arg: string) => arg
 		}
 
 		const cpuProfile = JSON.parse(fs.readFileSync(inputPath.toPlatformString()).toString())
@@ -155,7 +157,7 @@ export default class CPUProfileCommands {
 
 		function traverse(
 			cpuNode: CPUNode,
-			parentsPaint: cli.Format[] = [],
+			parentsPaint: ((arg: string) => string)[] = [],
 			last: boolean[] = [] // specifies wether the parents are the last children
 		) {
 			if (cpuNode.index === 0) {
@@ -200,6 +202,7 @@ export default class CPUProfileCommands {
 			'\nLegend:\n' +
 			' ■ ' + ' Node (own code)\n' +
 			cli.xterm(9)(' ■ ') + ' Node (node internal)\n' +
+			cli.xterm(11)(' ■ ') + ' Node (node module)\n' +
 			cli.xterm(57)(' ■ ') + ' Node (WebAssembly)\n' + 
 			cli.xterm(39)(' ■ ') + ' Node (Webpack)\n'
 		)
