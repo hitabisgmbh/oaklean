@@ -12,9 +12,9 @@ import {
 } from './SourceNodeMetaData'
 import { ProfilerConfig } from './ProfilerConfig'
 import { SensorValues } from './SensorValues'
-import { ModuleIndex } from './index/ModuleIndex'
-import { GlobalIndex } from './index/GlobalIndex'
-import { PathIndex } from './index/PathIndex'
+import { ModuleIndex } from './indices/ModuleIndex'
+import { GlobalIndex } from './indices/GlobalIndex'
+import { PathIndex } from './indices/PathIndex'
 
 import { PermissionHelper } from '../helper/PermissionHelper'
 import { VERSION } from '../constants/app'

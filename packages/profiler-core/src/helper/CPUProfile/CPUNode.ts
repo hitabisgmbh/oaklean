@@ -1,7 +1,6 @@
 import { CPUModel } from './CPUModel'
 
 import { ExternalResourceHelper } from '../ExternalResourceHelper'
-import { LangInternalSourceNodeRegExpRegexString } from '../../constants/SourceNodeRegex'
 import { IComputedNode } from '../../../lib/vscode-js-profile-core/src/cpu/model'
 // Types
 import {
@@ -12,8 +11,6 @@ import {
 	EnergyValuesType,
 	MicroSeconds_number
 } from '../../types'
-
-export const RegExpTestRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
 
 export enum CPUNodeType {
 	extern = 'extern',

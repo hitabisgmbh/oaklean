@@ -3,8 +3,8 @@ import { SourceNodeMetaData } from '../../src/model/SourceNodeMetaData'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
 import { SensorValues } from '../../src/model/SensorValues'
-import { GlobalIndex } from '../../src/model/index/GlobalIndex'
-import { PathIndex } from '../../src/model/index/PathIndex'
+import { GlobalIndex } from '../../src/model/indices/GlobalIndex'
+import { PathIndex } from '../../src/model/indices/PathIndex'
 import { NodeModule } from '../../src/model/NodeModule'
 import {
 	ISourceFileMetaData,
