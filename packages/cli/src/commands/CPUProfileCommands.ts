@@ -133,13 +133,13 @@ export default class CPUProfileCommands {
 		}
 
 		function colorByType(cpuNode: CPUNode) {
-			if (cpuNode.isLangInternal) {
+			if (cpuNode.sourceLocation.isLangInternal) {
 				return cli.xterm(9)
-			} else if (cpuNode.isWASM) {
+			} else if (cpuNode.sourceLocation.isWASM) {
 				return cli.xterm(57)
-			} else if (cpuNode.isWebpack) {
+			} else if (cpuNode.sourceLocation.isWebpack) {
 				return cli.xterm(39)
-			} else if (cpuNode.relativeUrl.toString().includes('/node_modules/')) {
+			} else if (cpuNode.sourceLocation.relativeUrl.toString().includes('/node_modules/')) {
 				return cli.xterm(11)
 			}
 			return (arg: string) => arg
@@ -181,8 +181,8 @@ export default class CPUProfileCommands {
 					prefix +
 					indent +
 					lastIndent +
-					cpuNode.relativeUrl.toString() +
-					cli.green(` (${cpuNode.ISourceLocation.callFrame.functionName})`),
+					cpuNode.sourceLocation.relativeUrl.toString() +
+					cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`),
 					`- ${cpuNode.cpuTime.selfCPUTime} µs | ${cpuNode.cpuTime.aggregatedCPUTime} µs`
 				)
 			}
