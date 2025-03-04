@@ -224,23 +224,47 @@ export default class ReportCommand {
 			{
 				type: 'Node modules count',
 				value: node_modules.length
+			}
+		],['type', 'value', 'unit'])
+
+		LoggerHelper.table([
+			{
+				'category': 'headless',
+				'description': 'Headless measurements have no parent, so they originate from node internal operations like timers, events, etc.'
 			},
 			{
-				type: 'Total cpu time',
-				value: total.sensorValues.aggregatedCPUTime,
+				'category': 'non-headless',
+				'description': 'Non-headless measurements have a parent, so they originate from user code.'
+			},
+			{
+				'category': 'total',
+				'description': 'Total measurements are the sum of headless and non-headless measurements, so the total consumption of the process.'
+			}
+		], ['category', 'description'])
+
+		LoggerHelper.table([
+			{
+				type: 'cpu time',
+				headless: report.lang_internalHeadlessSensorValues.selfCPUTime,
+				'non-headless': total.sensorValues.aggregatedCPUTime - report.lang_internalHeadlessSensorValues.selfCPUTime,
+				total: total.sensorValues.aggregatedCPUTime,
 				unit: 'µs'
 			},
 			{
-				type: 'Total cpu energy',
-				value: total.sensorValues.aggregatedCPUEnergyConsumption,
+				type: 'cpu energy',
+				headless: report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption,
+				'non-headless': total.sensorValues.aggregatedCPUEnergyConsumption - report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption,
+				total: total.sensorValues.aggregatedCPUEnergyConsumption,
 				unit: 'mJ'
 			},
 			{
-				type: 'Total ram energy',
-				value: total.sensorValues.aggregatedRAMEnergyConsumption,
+				type: 'ram energy',
+				headless: report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption,
+				'non-headless': total.sensorValues.aggregatedRAMEnergyConsumption - report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption,
+				total: total.sensorValues.aggregatedRAMEnergyConsumption,
 				unit: 'mJ'
-			}
-		], ['type', 'value', 'unit'])
+			},
+		], ['type', 'headless', 'non-headless', 'total', 'unit'])
 
 		if (options.listModules) {
 			LoggerHelper.log('Node modules:')

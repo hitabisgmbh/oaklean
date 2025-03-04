@@ -22,17 +22,18 @@ Commands:
      - toSourceFileTree Converts a profiler format that is given in binary format to a SourceFileMetaDataTree
      - check Checks wether all files in the profiler format are present
      - inspect Displays an overview of the reports stats
-
+  
   profile         commands to convert or inspect the cpu profile's format
      - toCPUModel Converts a cpu profile format that is given to a cpu model format
      - inspect Displays an overview of the cpu profile stats
-
+     - trace Displays the trace of the cpu profile
+  
   parse           commands to parse javascript or typescript files
      - toPST Converts a given javascript/typescript file and extracts the ProgramStructureTree from it and stores it into a file
-
+  
   backend         commands to interact with the backend
      - send Sends a given .oak report to a backend specified in the .oaklean config
-
+  
   help [command]  display help for command
 ```
 
