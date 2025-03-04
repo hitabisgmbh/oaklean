@@ -236,7 +236,9 @@ export class Profiler {
 		performance.stop('Profiler.start.externalResourceHelper.connect')
 
 		// wait for the first sensor interface measurement
-		await this._sensorInterface?.measurementStarted()
+		if (this._sensorInterface !== undefined && await this._sensorInterface.couldBeExecuted()) {
+			await this._sensorInterface?.measurementStarted()
+		}
 
 		// title - handle to stop profile again
 		// recsampels(boolean) - record samples, if false no cpu times will be captured
