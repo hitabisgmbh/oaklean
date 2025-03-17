@@ -137,7 +137,10 @@ describe('InitCommands', () => {
 			})
 
 			test('returns true with perf', async () => {
-				const demoConfig = ProfilerConfig.fromJSON(GENERATED_PERF_CONFIG_JSON)
+				const demoConfig = new ProfilerConfig(
+					new UnifiedPath(process.cwd()).join('.oaklean'),
+					ProfilerConfig.intermediateFromJSON(GENERATED_PERF_CONFIG_JSON) as IProfilerConfig
+				)
 				configureConfig_spy.mockResolvedValue(demoConfig)
 				confirmConfigFileContent_spy.mockResolvedValue(true)
 
@@ -149,7 +152,10 @@ describe('InitCommands', () => {
 			})
 
 			test('returns true with powermetrics', async () => {
-				const demoConfig = ProfilerConfig.fromJSON(GENERATED_POWERMETRICS_CONFIG_JSON)
+				const demoConfig = new ProfilerConfig(
+					new UnifiedPath(process.cwd()).join('.oaklean'),
+					ProfilerConfig.intermediateFromJSON(GENERATED_POWERMETRICS_CONFIG_JSON) as IProfilerConfig
+				)
 				configureConfig_spy.mockResolvedValue(demoConfig)
 				confirmConfigFileContent_spy.mockResolvedValue(true)
 
@@ -160,7 +166,10 @@ describe('InitCommands', () => {
 			})
 
 			test('returns true with none', async () => {
-				const demoConfig = ProfilerConfig.fromJSON(GENERATED_NONE_CONFIG_JSON)
+				const demoConfig = new ProfilerConfig(
+					new UnifiedPath(process.cwd()).join('.oaklean'),
+					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
+				)
 				configureConfig_spy.mockResolvedValue(demoConfig)
 				confirmConfigFileContent_spy.mockResolvedValue(true)
 
@@ -171,7 +180,10 @@ describe('InitCommands', () => {
 			})
 
 			test('returns false', async () => {
-				const demoConfig = ProfilerConfig.fromJSON(GENERATED_NONE_CONFIG_JSON)
+				const demoConfig = new ProfilerConfig(
+					new UnifiedPath(process.cwd()).join('.oaklean'),
+					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
+				)
 				configureConfig_spy.mockResolvedValue(demoConfig)
 				confirmConfigFileContent_spy.mockResolvedValue(false)
 
