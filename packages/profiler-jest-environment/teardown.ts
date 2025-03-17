@@ -50,7 +50,7 @@ export default async function () {
 
 		const accumulatedProjectReportPath = profilerConfig.getOutDir().join(
 			'jest',
-			`accumulated-${accumulatedProjectReport.executionDetails.timestamp}.oak`
+			'accumulated.oak'
 		)
 
 		performance.start('jestEnv.teardown.exportReport')
