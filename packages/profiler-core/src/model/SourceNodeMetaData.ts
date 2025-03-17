@@ -1,9 +1,9 @@
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 import { SensorValues } from './SensorValues'
-import { SourceNodeIndex } from './index/SourceNodeIndex'
-import { GlobalIndex } from './index/GlobalIndex'
-import { PathIndex } from './index/PathIndex'
+import { SourceNodeIndex } from './indices/SourceNodeIndex'
+import { GlobalIndex } from './indices/GlobalIndex'
+import { PathIndex } from './indices/PathIndex'
 
 import { GlobalIdentifier } from '../system/GlobalIdentifier'
 import { BufferHelper } from '../helper/BufferHelper'

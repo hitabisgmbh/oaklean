@@ -204,17 +204,6 @@ export class Profiler {
 			this.executionDetails = await ExecutionDetails.resolveExecutionDetails()
 			performance.stop('Profiler.start.resolveExecutionDetails')
 		}
-		performance.start('Profiler.start.V8Profiler.setGenerateType')
-		V8Profiler.setGenerateType(1) // must be set to generate new cpuprofile format
-		performance.stop('Profiler.start.V8Profiler.setGenerateType')
-
-		performance.start('Profiler.start.getV8CPUSamplingInterval')
-		V8Profiler.setSamplingInterval(this.config.getV8CPUSamplingInterval()) // sets the sampling interval in microseconds
-		performance.stop('Profiler.start.getV8CPUSamplingInterval')
-
-		performance.start('Profiler.start.startCapturingProfilerTracingEvents')
-		await this.startCapturingProfilerTracingEvents()
-		performance.stop('Profiler.start.startCapturingProfilerTracingEvents')
 
 		performance.start('Profiler.start.sensorInterface.couldBeExecuted')
 		if (this._sensorInterface !== undefined && !await this._sensorInterface.couldBeExecuted()) {
@@ -229,15 +218,33 @@ export class Profiler {
 		await this._sensorInterface?.startProfiling()
 		performance.stop('Profiler.start.sensorInterface.startProfiling')
 
+		performance.start('Profiler.start.V8Profiler.setGenerateType')
+		V8Profiler.setGenerateType(1) // must be set to generate new cpuprofile format
+		performance.stop('Profiler.start.V8Profiler.setGenerateType')
+
+		performance.start('Profiler.start.getV8CPUSamplingInterval')
+		V8Profiler.setSamplingInterval(this.config.getV8CPUSamplingInterval()) // sets the sampling interval in microseconds
+		performance.stop('Profiler.start.getV8CPUSamplingInterval')
+
+		performance.start('Profiler.start.startCapturingProfilerTracingEvents')
+		await this.startCapturingProfilerTracingEvents()
+		performance.stop('Profiler.start.startCapturingProfilerTracingEvents')
+
+		performance.start('Profiler.start.externalResourceHelper.connect')
+		await this._externalResourceHelper.connect()
+		await this._externalResourceHelper.listen()
+		performance.stop('Profiler.start.externalResourceHelper.connect')
+
+		// wait for the first sensor interface measurement
+		if (this._sensorInterface !== undefined && await this._sensorInterface.couldBeExecuted()) {
+			await this._sensorInterface?.measurementStarted()
+		}
+
 		// title - handle to stop profile again
 		// recsampels(boolean) - record samples, if false no cpu times will be captured
 		performance.start('Profiler.start.V8Profiler.startProfiling')
 		V8Profiler.startProfiling(title, true)
 		performance.stop('Profiler.start.V8Profiler.startProfiling')
-		performance.start('Profiler.start.externalResourceHelper.connect')
-		await this._externalResourceHelper.connect()
-		await this._externalResourceHelper.listen()
-		performance.stop('Profiler.start.externalResourceHelper.connect')
 		performance.stop('Profiler.start')
 		performance.printReport('Profiler.start')
 		performance.exportAndSum(this.outputDir().join('performance.json'))

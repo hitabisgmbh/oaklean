@@ -14,9 +14,9 @@ import { ProjectReport } from './ProjectReport'
 import { ModuleReport } from './ModuleReport'
 import { NodeModule } from './NodeModule'
 import { SensorValues } from './SensorValues'
-import { PathIndex } from './index/PathIndex'
-import { GlobalIndex } from './index/GlobalIndex'
-import { ModuleIndex } from './index/ModuleIndex'
+import { PathIndex } from './indices/PathIndex'
+import { GlobalIndex } from './indices/GlobalIndex'
+import { ModuleIndex } from './indices/ModuleIndex'
 
 import { UnifiedPath } from '../system/UnifiedPath'
 import { PermissionHelper } from '../helper/PermissionHelper'
@@ -312,27 +312,22 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			)
 		}
 
-		if (total.sensorValues.aggregatedCPUTime !== 
+		if (total.sensorValues.aggregatedCPUTime > 
 			total.sensorValues.selfCPUTime +
 			total.sensorValues.internCPUTime +
 			total.sensorValues.externCPUTime +
 			total.sensorValues.langInternalCPUTime
 		||
-			!areNumbersClose(
-				total.sensorValues.aggregatedCPUEnergyConsumption,
+			(total.sensorValues.aggregatedCPUEnergyConsumption >
 				total.sensorValues.selfCPUEnergyConsumption +
 				total.sensorValues.internCPUEnergyConsumption +
 				total.sensorValues.externCPUEnergyConsumption +
 				total.sensorValues.langInternalCPUEnergyConsumption
-			)
-			||
-			!areNumbersClose(
-				total.sensorValues.aggregatedRAMEnergyConsumption,
+			) || (total.sensorValues.aggregatedRAMEnergyConsumption >
 				total.sensorValues.selfRAMEnergyConsumption +
 				total.sensorValues.internRAMEnergyConsumption +
 				total.sensorValues.externRAMEnergyConsumption +
-				total.sensorValues.langInternalRAMEnergyConsumption
-			)
+				total.sensorValues.langInternalRAMEnergyConsumption)
 		) {
 			LoggerHelper.error(
 				total.sensorValues,

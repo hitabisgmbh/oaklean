@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 
 import { UnifiedPath } from '../../../src/system/UnifiedPath' 
-import { GlobalIndex } from '../../../src/model/index/GlobalIndex'
+import { GlobalIndex } from '../../../src/model/indices/GlobalIndex'
 import { GlobalIdentifier} from '../../../src/system/GlobalIdentifier'
 import { NodeModule } from '../../../src/model/NodeModule'
 import {

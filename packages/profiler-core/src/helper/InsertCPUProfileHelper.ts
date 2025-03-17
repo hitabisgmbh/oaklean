@@ -1,24 +1,15 @@
-import path from 'path'
-
-import { MappedPosition } from 'source-map'
-
-import { CPUModel } from './CPUModel'
-import { CPUNode } from './CPUNode'
-import { TypescriptParser } from './TypescriptParser'
+import { CPUModel } from './CPUProfile/CPUModel'
+import { CPUNode } from './CPUProfile/CPUNode'
 import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
 import { ExternalResourceHelper } from './ExternalResourceHelper'
-import { UrlProtocolHelper } from './UrlProtocolHelper'
-import {
-	NodeModuleUtils
-} from './NodeModuleUtils'
+import { ResolveFunctionIdentifierHelper } from './ResolveFunctionIdentifierHelper'
 
 import { ProjectReport } from '../model/ProjectReport'
 import { ModuleReport } from '../model/ModuleReport'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { MetricsDataCollection } from '../model/interfaces/MetricsDataCollection'
-import { ProgramStructureTree } from '../model/ProgramStructureTree'
 import {
 	SourceNodeMetaData
 } from '../model/SourceNodeMetaData'
@@ -26,7 +17,6 @@ import { GlobalIdentifier } from '../system/GlobalIdentifier'
 import { NodeModule, WASM_NODE_MODULE } from '../model/NodeModule'
 // Types
 import {
-	UnifiedPath_string,
 	SourceNodeID_number,
 	SourceNodeMetaDataType,
 	LangInternalPath_string,
@@ -37,9 +27,9 @@ import {
 	IPureCPUTime,
 	IPureCPUEnergyConsumption,
 	IPureRAMEnergyConsumption,
-	MicroSeconds_number
+	MicroSeconds_number,
+	ResolvedSourceNodeLocation
 } from '../types'
-import { SourceMap } from '../model/SourceMap'
 
 type AccountedTracker = {
 	map: Map<string, string[]>,
@@ -58,20 +48,10 @@ type LastNodeCallInfo = {
 	sourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
 }
 
-type SourceNodeLocation = {
-	relativeFilePath: UnifiedPath,
-	functionIdentifier: SourceNodeIdentifier_string
-}
-
 type AwaiterStack = {
 	awaiter: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, // the last called __awaiter function
 	awaiterParent: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined // the last async function that called the __awaiter function
 }[]
-
-type ProgramStructureTreeCache = {
-	perNodeScript: Map<string, ProgramStructureTree>,
-	perOriginalFile: Map<UnifiedPath_string, ProgramStructureTree | null>,
-}
 
 export class InsertCPUProfileHelper {
 	static callIdentifierToString(identifier: CallIdentifier) {
@@ -180,8 +160,9 @@ export class InsertCPUProfileHelper {
 		let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 		let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 
-		const sourceNodeIdentifier = cpuNode.sourceNodeIdentifier as LangInternalSourceNodeIdentifier_string
-		const langInternalPath = cpuNode.rawUrl as LangInternalPath_string
+		const sourceNodeIdentifier = cpuNode.sourceLocation.sourceNodeIdentifier as
+			LangInternalSourceNodeIdentifier_string
+		const langInternalPath = cpuNode.sourceLocation.rawUrl as LangInternalPath_string
 
 		const sourceNode = reportToCredit.addToLangInternal(
 			langInternalPath,
@@ -262,7 +243,7 @@ export class InsertCPUProfileHelper {
 	static async accountOwnCodeGetsExecutedByExternal(
 		cpuNode: CPUNode,
 		originalReport: ProjectReport,
-		sourceNodeLocation: SourceNodeLocation,
+		sourceNodeLocation: ResolvedSourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		accounted: AccountedTracker
 	) {
@@ -359,7 +340,7 @@ export class InsertCPUProfileHelper {
 	static async accountToIntern(
 		reportToCredit: ProjectReport | ModuleReport,
 		cpuNode: CPUNode,
-		sourceNodeLocation: SourceNodeLocation,
+		sourceNodeLocation: ResolvedSourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		awaiterStack: AwaiterStack,
 		accounted: AccountedTracker
@@ -511,7 +492,7 @@ export class InsertCPUProfileHelper {
 		reportToCredit: ProjectReport | ModuleReport,
 		cpuNode: CPUNode,
 		nodeModule: NodeModule,
-		sourceNodeLocation: SourceNodeLocation,
+		sourceNodeLocation: ResolvedSourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		accounted: AccountedTracker
 	) {
@@ -590,267 +571,6 @@ export class InsertCPUProfileHelper {
 		}
 	}
 
-	/**
-	 * Why does this function exists?
-	 * 
-	 * Example source code:
-	 * 1 methodABC(title, highResolutionStopTime) {
-	 * 2         var _a, _b, _c;
-	 * 3         return __awaiter(this, void 0, void 0, function* () {
-	 * 4         		// do something
-	 * 5         });
-	 * 6 }
-	 * 
-	 * If a source mapping exists for every line except line 2 and 3
-	 * and the function identifier is requested for line 2 or 3 the source map will return undefined.
-	 * 
-	 * So the ProgramStructureTree node has to be resolved for that location.
-	 * This will return the parent function (methodABC) and its corresponding scope for line 2 and 3,
-	 * since the ProgramStructureTree treats the __awaiter function as part of the methodABC function.
-	 * 
-	 * Then the sourcemap can be used to resolve the original source location of the function methodABC.
-	 * 
-	 * If the sourcemap still returns undefined,
-	 * the requested source code location is not part of the original source code.
-	 * 
-	 */
-	static resolveMappedLocationFromSourceMap(
-		programStructureTreeNodeScript: ProgramStructureTree,
-		sourceMap: SourceMap,
-		lineNumber: number,
-		columnNumber: number
-	): MappedPosition | undefined {
-		const originalPosition = sourceMap.getOriginalSourceLocation(lineNumber, columnNumber)
-
-		// check if position could be resolved
-		if (originalPosition && originalPosition.source) {
-			return originalPosition
-		} else {
-			// if position could not be resolved
-			// resolve function via ProgramStructureTree and try to resolve the original position again
-			const identifierNode = programStructureTreeNodeScript.identifierNodeBySourceLocation(
-				{ line: lineNumber, column: columnNumber }
-			)
-			if (identifierNode === undefined) {
-				return undefined
-			}
-			return sourceMap.getOriginalSourceLocation(
-				identifierNode.node.beginLoc.line,
-				identifierNode.node.beginLoc.column
-			)
-		}
-	}
-
-	static async resolveFunctionIdentifier(
-		rootDir: UnifiedPath,
-		cpuNode: CPUNode,
-		// script id -> ProgramStructureTree
-		pstCache: ProgramStructureTreeCache,
-		externalResourceHelper: ExternalResourceHelper
-	): Promise<{
-			sourceNodeLocation: SourceNodeLocation,
-			functionIdentifierPresentInOriginalFile: boolean,
-			nodeModule: NodeModule | null
-			relativeNodeModulePath: UnifiedPath | null
-		}> {
-		/**
-		 * Resolve procedure:
-		 * 
-		 * Variables to be set:
-		 * sourceNodeLocation.relativeFilePath
-		 * sourceNodeLocation.functionIdentifier
-		 * functionIdentifierPresentInOriginalFile = true (default)
-		 * 
-		 * if the executed script contains a sourcemap:
-		 * 		- get original source location from sourcemap
-		 * 		- if original source location is found:
-		 * 			- resolve source file path from original source location
-		 * 				- if the original source file exists
-		 * 					- parse the original source file
-		 * 						- if the function identifier is present in the original source file
-		 * 							- SET sourceNodeLocation.functionIdentifier =
-		 * 								resolved function identifier from original source location
-		 * 							- SET sourceNodeLocation.relativeFilePath =
-		 * 									relative path of the original source file
-		 * 									to the project root or relative to its parent node module
-		 * 						- else
-		 * 							- SET functionIdentifierPresentInOriginalFile =
-		 * 									wether the function identifier is present in the original source file
-		 * 				- else, log an error if the file is not part of a node module
-		 * 			- else if sourcemap exists
-		 * 				- SET functionIdentifierPresentInOriginalFile = false
-		 * 
-		 * if original source location is not found:
-		 * 		- SET sourceNodeLocation.functionIdentifier = function identifier from the executed scripts source code
-		 * 		- SET sourceNodeLocation.relativeFilePath =
-		 * 				relative path of the executed script to the project root or relative to its parent node module
-		 */
-
-		let programStructureTreeNodeScript: ProgramStructureTree | undefined =
-			pstCache.perNodeScript.get(cpuNode.scriptID)
-		let programStructureTreeOriginal: ProgramStructureTree | undefined | null = undefined
-		const { lineNumber, columnNumber } = cpuNode.sourceLocation
-		let functionIdentifierPresentInOriginalFile = true
-		let sourceNodeLocation: SourceNodeLocation | undefined = undefined
-		let originalSourceFileNotFoundError: object | undefined = undefined
-
-		if (programStructureTreeNodeScript === undefined) {
-			// request source code from the node engine
-			// (it is already transformed event if it is the original file path)
-			const sourceCode = await externalResourceHelper.sourceCodeFromScriptID(cpuNode.scriptID)
-			if (sourceCode === null) {
-				throw new Error(
-					'InsertCPUProfileHelper.resolveFunctionIdentifier: sourceCode should not be null' +
-					`scriptID: ${cpuNode.scriptID} (${cpuNode.absoluteUrl.toPlatformString()})`
-				)
-			}
-			programStructureTreeNodeScript = TypescriptParser.parseSource(
-				cpuNode.absoluteUrl,
-				sourceCode
-			)
-			pstCache.perNodeScript.set(cpuNode.scriptID, programStructureTreeNodeScript)
-		}
-
-		// function identifier of the executed source code
-		const functionIdentifier = programStructureTreeNodeScript.identifierBySourceLocation(
-			{ line: lineNumber, column: columnNumber }
-		)
-
-		const sourceMap = await externalResourceHelper.sourceMapFromScriptID(
-			cpuNode.scriptID,
-			cpuNode.absoluteUrl
-		)
-		const originalPosition = sourceMap !== null ? InsertCPUProfileHelper.resolveMappedLocationFromSourceMap(
-			programStructureTreeNodeScript,
-			sourceMap,
-			lineNumber,
-			columnNumber
-		) : undefined
-
-		if (originalPosition && originalPosition.source) {
-			const {
-				url: originalPositionPath,
-				protocol: urlProtocol
-			} = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(
-				rootDir,
-				originalPosition.source
-			)
-			const absoluteOriginalSourcePath = originalPositionPath.isRelative() ? new UnifiedPath(
-				path.resolve(path.join(path.dirname(cpuNode.absoluteUrl.toString()), originalPositionPath.toString()))
-			) : originalPositionPath
-
-			const relativeOriginalSourcePath = rootDir.pathTo(absoluteOriginalSourcePath)
-
-			programStructureTreeOriginal = pstCache.perOriginalFile.get(
-				relativeOriginalSourcePath.toString()
-			)
-			if (programStructureTreeOriginal === undefined) {
-				try {
-					// found the original source file from the source map but it is not yet parsed
-					programStructureTreeOriginal = externalResourceHelper.parseFile(
-						relativeOriginalSourcePath,
-						absoluteOriginalSourcePath
-					)
-					pstCache.perOriginalFile.set(
-						relativeOriginalSourcePath.toString(),
-						programStructureTreeOriginal
-					)
-				} catch {
-					// could not parse original source file,
-					// sometimes WebFrameworks include sourcemaps that point to e.g. .svg files
-					programStructureTreeOriginal = undefined
-				}
-			}
-			if (programStructureTreeOriginal !== null) {
-				if (programStructureTreeOriginal !== undefined) {
-					const originalFunctionIdentifier = programStructureTreeOriginal.identifierBySourceLocation(
-						{ line: originalPosition.line, column: originalPosition.column }
-					)
-					functionIdentifierPresentInOriginalFile = programStructureTreeOriginal.sourceLocationOfIdentifier(
-						functionIdentifier
-					) !== undefined
-					sourceNodeLocation = {
-						relativeFilePath: relativeOriginalSourcePath,
-						functionIdentifier: originalFunctionIdentifier
-					}
-				}
-			} else {
-				if (urlProtocol === null) {
-					originalSourceFileNotFoundError = {
-						originalPositionSource: originalPosition.source,
-						originalPositionPath,
-						absoluteOriginalSourcePath,
-					}
-				}
-			}
-		} else {
-			if (sourceMap) {
-				// there is a sourcemap but the original position could not be resolved
-				functionIdentifierPresentInOriginalFile = false
-			}
-		}
-
-		if (sourceNodeLocation === undefined) {
-			// if the executed source code is original, has no source map
-			// or the source map does not contain the original source location
-
-			sourceNodeLocation = {
-				relativeFilePath: cpuNode.relativeUrl,
-				functionIdentifier
-			}
-		}
-		// determine the node module of the source node location if there is one
-		const {
-			relativeNodeModulePath,
-			nodeModule
-		} = NodeModuleUtils.nodeModuleFromUrl(
-			externalResourceHelper,
-			sourceNodeLocation.relativeFilePath
-		)
-
-		if (relativeNodeModulePath && nodeModule) {
-			// since the source node location is within a node module
-			// adjust the relativeFilePath so its relative to that node module directory
-			sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(sourceNodeLocation.relativeFilePath)
-		}
-
-		if (
-			originalSourceFileNotFoundError !== undefined &&
-			(!relativeNodeModulePath || !nodeModule)
-		) {
-			// The original source file does not exist, only print an error if:
-			// - the source file is NOT part of a node module,
-			//		since node modules often include source maps that point to non-existing files we ignore them
-			LoggerHelper.error(
-				'InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
-					rootDir: rootDir.toString(),
-					sources: sourceMap?.sources,
-					url: cpuNode.absoluteUrl.toString(),
-					lineNumber,
-					columnNumber,
-					...originalSourceFileNotFoundError,
-				}
-			)
-		}
-
-		if (functionIdentifier === '') {
-			LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
-				url: cpuNode.absoluteUrl.toString(),
-				lineNumber,
-				columnNumber
-			})
-			throw new Error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty')
-		}
-
-
-		return {
-			sourceNodeLocation,
-			functionIdentifierPresentInOriginalFile,
-			relativeNodeModulePath,
-			nodeModule
-		}
-	}
-
 	static async insertCPUProfile(
 		reportToApply: ProjectReport,
 		rootDir: UnifiedPath,
@@ -868,16 +588,15 @@ export class InsertCPUProfileHelper {
 			externalResourceHelper
 		)
 
-		// script id -> ProgramStructureTree
-		const pstCache: ProgramStructureTreeCache = {
-			perNodeScript: new Map(),
-			perOriginalFile: new Map()
-		}
-
 		if (metricsDataCollection && metricsDataCollection.items.length > 0) {
 			// fill the cpu model with energy values
 			cpuModel.energyValuesPerNode = cpuModel.energyValuesPerNodeByMetricsData(metricsDataCollection)
 		}
+		const resolveFunctionIdentifierHelper = new ResolveFunctionIdentifierHelper(
+			rootDir,
+			externalResourceHelper
+		)
+
 		const awaiterStack: AwaiterStack = []
 
 		function afterTraverse(
@@ -915,7 +634,7 @@ export class InsertCPUProfileHelper {
 			let isAwaiterSourceNode = false
 			let newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined = undefined
 			let newReportToCredit: ProjectReport | ModuleReport | undefined = reportToCredit
-			if (cpuNode.isLangInternal) {
+			if (cpuNode.sourceLocation.isLangInternal) {
 				const result = await InsertCPUProfileHelper.accountToLangInternal(
 					cpuNode,
 					reportToCredit,
@@ -924,37 +643,58 @@ export class InsertCPUProfileHelper {
 				)
 				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
-			} else if (cpuNode.isWASM) {
-				const wasmPath = new UnifiedPath(cpuNode.rawUrl.substring(7)) // remove the 'wasm://' prefix
+			} else if (cpuNode.sourceLocation.isWASM) {
+				const wasmPath = new UnifiedPath(cpuNode.sourceLocation.rawUrl.substring(7)) // remove the 'wasm://' prefix
 
-				const result = await InsertCPUProfileHelper.accountToExtern(
-					reportToCredit,
-					cpuNode,
-					WASM_NODE_MODULE,
-					{
-						relativeFilePath: wasmPath,
-						functionIdentifier:
-							cpuNode.ISourceLocation.callFrame.functionName as SourceNodeIdentifier_string
-					},
-					lastNodeCallInfo,
-					accounted
-				)
+				if (
+					reportToCredit instanceof ModuleReport &&
+					reportToCredit.nodeModule === WASM_NODE_MODULE
+				) {
+					// is part of the wasm node module
+					const result = await InsertCPUProfileHelper.accountToIntern(
+						reportToCredit,
+						cpuNode,
+						{
+							relativeFilePath: wasmPath,
+							functionIdentifier: 
+								cpuNode.sourceLocation.rawFunctionName as SourceNodeIdentifier_string
+						},
+						lastNodeCallInfo,
+						awaiterStack,
+						accounted
+					)
+					isAwaiterSourceNode = result.isAwaiterSourceNode
+					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
+					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+					newLastInternSourceNode = result.newLastInternSourceNode
+				} else {
+					// is not part of the wasm node module
+					const result = await InsertCPUProfileHelper.accountToExtern(
+						reportToCredit,
+						cpuNode,
+						WASM_NODE_MODULE,
+						{
+							relativeFilePath: wasmPath,
+							functionIdentifier:
+								cpuNode.sourceLocation.rawFunctionName as SourceNodeIdentifier_string
+						},
+						lastNodeCallInfo,
+						accounted
+					)
 
-				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
-				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
-				newLastInternSourceNode = result.newLastInternSourceNode
-				newReportToCredit = result.newReportToCredit
-			} else if (!cpuNode.isEmpty) {
+					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
+					newLastInternSourceNode = result.newLastInternSourceNode
+					newReportToCredit = result.newReportToCredit
+				}
+			} else if (!cpuNode.sourceLocation.isEmpty) {
 				const {
 					sourceNodeLocation,
 					functionIdentifierPresentInOriginalFile,
 					nodeModule,
 					relativeNodeModulePath
-				} = await InsertCPUProfileHelper.resolveFunctionIdentifier(
-					rootDir,
-					cpuNode,
-					pstCache,
-					externalResourceHelper
+				} = await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
+					cpuNode.sourceLocation
 				)
 
 				// this happens for node modules like the jest-runner, that executes the own code

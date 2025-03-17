@@ -1,6 +1,6 @@
 import { NodeModule } from '../../../src/model/NodeModule'
-import { GlobalIndex } from '../../../src/model/index/GlobalIndex'
-import { SourceNodeIndex } from '../../../src/model/index/SourceNodeIndex'
+import { GlobalIndex } from '../../../src/model/indices/GlobalIndex'
+import { SourceNodeIndex } from '../../../src/model/indices/SourceNodeIndex'
 import { GlobalIdentifier } from '../../../src/system/GlobalIdentifier'
 import {
 	LangInternalPath_string,

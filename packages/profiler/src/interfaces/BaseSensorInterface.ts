@@ -38,6 +38,10 @@ export class BaseSensorInterface {
 		throw new Error('BaseSensorInterface.startProfiling must be implemented')
 	}
 
+	async measurementStarted() {
+		throw new Error('BaseSensorInterface.measurementStarted must be implemented')
+	}
+
 	async stopProfiling() {
 		throw new Error('BaseSensorInterface.stopProfiling must be implemented')
 	}

@@ -1,6 +1,6 @@
-import { GlobalIndex } from '../../../src/model/index/GlobalIndex'
-import { PathIndex } from '../../../src/model/index/PathIndex'
-import { ModuleIndex } from '../../../src/model/index/ModuleIndex'
+import { GlobalIndex } from '../../../src/model/indices/GlobalIndex'
+import { PathIndex } from '../../../src/model/indices/PathIndex'
+import { ModuleIndex } from '../../../src/model/indices/ModuleIndex'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'
 import { NodeModule } from '../../../src/model/NodeModule'
 import {

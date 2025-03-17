@@ -1,11 +1,13 @@
 import * as fs from 'fs'
 
+import cli from 'cli-color'
 import {
 	UnifiedPath,
 	CPUModel,
 	NanoSeconds_BigInt,
 	LoggerHelper,
-	CPUNode
+	CPUNode,
+	ProfilerConfig
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
@@ -27,6 +29,12 @@ export default class CPUProfileCommands {
 			.description('Displays an overview of the cpu profile stats')
 			.argument('<input>', 'input file path')
 			.action(this.inspect.bind(this))
+		
+		baseCommand
+			.command('trace')
+			.description('Displays the trace of the cpu profile')
+			.argument('<input>', 'input file path')
+			.action(this.trace.bind(this))
 	}
 
 	static init() {
@@ -79,7 +87,7 @@ export default class CPUProfileCommands {
 		)
 
 		const nodeCount = cpuModel.INodes.length
-		const sourceNodeLocationCount = cpuModel.ILocations.length
+		const sourceNodeLocationCount = cpuModel.CPUProfileSourceLocations.length
 		const sampleCount = cpuModel.samples.length
 		let totalHits = 0
 		let totalCPUTime = 0
@@ -116,5 +124,89 @@ export default class CPUProfileCommands {
 			unit: 'µs'
 		}
 		], ['type', 'value', 'unit'])
+	}
+
+	async trace(input: string) {
+		let inputPath = new UnifiedPath(input)
+		if (inputPath.isRelative()) {
+			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
+		}
+
+		function colorByType(cpuNode: CPUNode) {
+			if (cpuNode.sourceLocation.isLangInternal) {
+				return cli.xterm(9)
+			} else if (cpuNode.sourceLocation.isWASM) {
+				return cli.xterm(57)
+			} else if (cpuNode.sourceLocation.isWebpack) {
+				return cli.xterm(39)
+			} else if (cpuNode.sourceLocation.relativeUrl.toString().includes('/node_modules/')) {
+				return cli.xterm(11)
+			}
+			return (arg: string) => arg
+		}
+
+		const cpuProfile = JSON.parse(fs.readFileSync(inputPath.toPlatformString()).toString())
+
+		const profilerConfig = ProfilerConfig.autoResolveFromPath(inputPath.dirName())
+
+		const cpuModel = new CPUModel(
+			profilerConfig.getRootDir(),
+			cpuProfile,
+			BigInt(0) as NanoSeconds_BigInt
+		)
+
+		function traverse(
+			cpuNode: CPUNode,
+			parentsPaint: ((arg: string) => string)[] = [],
+			last: boolean[] = [] // specifies wether the parents are the last children
+		) {
+			if (cpuNode.index === 0) {
+				LoggerHelper.log(cli.xterm(9)(' ■ ') + cli.green('({root})'))
+			} else {
+				let indent = ''
+				for (let i = 0; i < last.length - 1; i++) {
+					if (last[i]) {
+						indent += '    '
+					} else {
+						indent += parentsPaint[i]('│   ')
+					}
+				}
+				const selfPaint = colorByType(cpuNode)
+				const prefix = selfPaint(' ■ ')
+				const lastIndent = parentsPaint[parentsPaint.length - 1](
+					(last[last.length - 1] ? '└' : '├')
+				) + selfPaint('── ')
+
+				console.log(
+					prefix +
+					indent +
+					lastIndent +
+					cpuNode.sourceLocation.relativeUrl.toString() +
+					cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`),
+					`- ${cpuNode.cpuTime.selfCPUTime} µs | ${cpuNode.cpuTime.aggregatedCPUTime} µs`
+				)
+			}
+			
+			const nodes = Array.from(cpuNode.children())
+			for (let i = 0; i < nodes.length; i++) {
+				traverse(
+					nodes[i],
+					[...parentsPaint, colorByType(cpuNode)],
+					[...last, i === nodes.length - 1]
+				)
+			}
+		}
+
+		// vertical legend
+		console.log(
+			'\nLegend:\n' +
+			' ■ ' + ' Node (own code)\n' +
+			cli.xterm(9)(' ■ ') + ' Node (node internal)\n' +
+			cli.xterm(11)(' ■ ') + ' Node (node module)\n' +
+			cli.xterm(57)(' ■ ') + ' Node (WebAssembly)\n' + 
+			cli.xterm(39)(' ■ ') + ' Node (Webpack)\n'
+		)
+
+		traverse(cpuModel.getNode(0))
 	}
 }

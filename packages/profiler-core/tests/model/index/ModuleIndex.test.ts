@@ -1,6 +1,6 @@
 import { NodeModule } from '../../../src/model/NodeModule'
-import { GlobalIndex } from '../../../src/model/index/GlobalIndex'
-import { ModuleIndex } from '../../../src/model/index/ModuleIndex'
+import { GlobalIndex } from '../../../src/model/indices/GlobalIndex'
+import { ModuleIndex } from '../../../src/model/indices/ModuleIndex'
 import {
 	NodeModuleIdentifier_string,
 	UnifiedPath_string,

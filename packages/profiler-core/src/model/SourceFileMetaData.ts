@@ -5,9 +5,9 @@ import {
 } from './SourceNodeMetaData'
 import { WASM_NODE_MODULE } from './NodeModule'
 import { SensorValues } from './SensorValues'
-import { PathIndex } from './index/PathIndex'
-import { GlobalIndex } from './index/GlobalIndex'
-import { SourceNodeIndex } from './index/SourceNodeIndex'
+import { PathIndex } from './indices/PathIndex'
+import { GlobalIndex } from './indices/GlobalIndex'
+import { SourceNodeIndex } from './indices/SourceNodeIndex'
 
 import {
 	SourceNodeIdentifierRegex,

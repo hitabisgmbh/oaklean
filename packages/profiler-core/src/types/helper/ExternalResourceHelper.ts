@@ -1,4 +1,4 @@
-import { ScriptID_string } from './CPUNode'
+import { ScriptID_string } from './CPUProfile/CPUNode'
 
 import { UnifiedPath_string } from '../system'
 import { INodeModule } from '../model/NodeModule'
