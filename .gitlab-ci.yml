@@ -45,11 +45,11 @@ test:
     - npm run test
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   after_script:
-    - mv ./profiles/jest/accumulated-*.oak ./
+    - mv ./profiles/jest/accumulated.oak ./
   artifacts:
     expire_in: 1 week
     paths:
-      - ./accumulated-*.oak
+      - ./accumulated.oak
 
 generate-docs:
   stage: generate-docs
