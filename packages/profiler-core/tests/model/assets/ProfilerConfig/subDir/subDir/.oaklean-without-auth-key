@@ -1,0 +1,18 @@
+{
+	"extends": "../../.oaklean",
+	"exportOptions": {
+		"exportV8Profile": false,
+		"exportReport": true,
+		"exportSensorInterfaceData": false
+	},
+	"registryOptions": {
+		"url": "example.com/project-report"
+	},
+	"runtimeOptions": {
+		"v8": {
+			"cpu": {
+				"sampleInterval": 11
+			}
+		}
+	}
+}

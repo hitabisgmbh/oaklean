@@ -1,0 +1,6 @@
+{
+	"extends": "../../.empty-oaklean",
+	"projectOptions": {
+		"identifier": "52c89abd-3877-4039-99e8-c36d6dd74ddd"
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"runtimeOptions": {
+		"sensorInterface": {
+			"type": "powermetrics",
+			"options": {
+				"outputFilePath": "energy-measurements.plist",
+				"sampleInterval": 100
+			}
+		}
+	}
+}

@@ -4,7 +4,10 @@ import {
 	STATIC_CONFIG_FILENAME,
 	DEFAULT_PROFILER_CONFIG
 } from '../../src/constants/config'
-import { ProfilerConfig } from '../../src/model/ProfilerConfig'
+import {
+	ProfilerConfig,
+	IProfilerConfigIntermediate
+} from '../../src/model/ProfilerConfig'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { PathUtils } from '../../src/helper/PathUtils'
 import {
@@ -13,6 +16,7 @@ import {
 	ProjectIdentifier_string,
 	MicroSeconds_number
 } from '../../src/types'
+import { LoggerHelper } from '../../src'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
@@ -90,8 +94,8 @@ describe('ProfilerConfig', () => {
 			expect(instance.getSeedForMathRandom).toBeTruthy()
 		})
 
-		it('should have a static method fromJSON()', () => {
-			expect(ProfilerConfig.fromJSON).toBeTruthy()
+		it('should have a static method intermediateFromJSON()', () => {
+			expect(ProfilerConfig.intermediateFromJSON).toBeTruthy()
 		})
 
 		it('should have a method toJSON()', () => {
@@ -227,14 +231,20 @@ describe('ProfilerConfig', () => {
 			}
 		}
 
-		test('test deserialization from string', () => {
-			const configFromString = ProfilerConfig.fromJSON(JSON.stringify(expected))
-			expect(configFromString.toJSON()).toEqual(expected)
+		test('test deserialization of intermediate from string', () => {
+			const configFromString = ProfilerConfig.intermediateFromJSON(JSON.stringify(expected))
+			expect(configFromString).toEqual({
+				...expected,
+				filePath: new UnifiedPath('./')
+			} satisfies IProfilerConfigIntermediate)
 		})
 
-		test('test deserialization from object', () => {
-			const configFromObject = ProfilerConfig.fromJSON(expected)
-			expect(configFromObject.toJSON()).toEqual(expected)
+		test('test deserialization of intermediate from object', () => {
+			const configFromObject = ProfilerConfig.intermediateFromJSON(expected)
+			expect(configFromObject).toEqual({
+				...expected,
+				filePath: new UnifiedPath('./')
+			} satisfies IProfilerConfigIntermediate)
 		})
 	})
 	describe('loading from File', () => {
@@ -271,8 +281,8 @@ describe('ProfilerConfig', () => {
 			if (!config) {
 				expect(config).toBeDefined()
 			} else {
-				expect(config.filePath.toString()).toBe(configFilePath.toString())
-				expect(config.toJSON()).toEqual({
+				expect(config).toEqual({
+					filePath: configFilePath,
 					exportOptions: {
 						outDir: 'profile-path',
 						outHistoryDir: 'profiles-history-path',
@@ -304,26 +314,27 @@ describe('ProfilerConfig', () => {
 					registryOptions: {
 						url: 'domain/project-report'
 					}
-				} satisfies IProfilerConfig)
+				} satisfies IProfilerConfigIntermediate)
 			}
 		})
 		test('loadFromFile: empty file', () => {
 			const configFilePath = new UnifiedPath(__dirname).join('assets', 'ProfilerConfig', '.empty-oaklean')
-			const t = () => {
-				ProfilerConfig.loadFromFile(configFilePath)
-			}
+			const config = ProfilerConfig.loadFromFile(configFilePath)
 
-			expect(t).toThrow('ProfilerConfig: the project has no identifier yet')
+			expect(config).toEqual({
+				filePath: configFilePath
+			} satisfies IProfilerConfigIntermediate)
 		})
 		test('loadFromFile: minimal viable file', () => {
 			const configFilePath = new UnifiedPath(__dirname).join('assets', 'ProfilerConfig', '.min-oaklean')
 			const config = ProfilerConfig.loadFromFile(configFilePath)
 
-			expect(config?.toJSON()).toEqual({
+			expect(config).toEqual({
+				filePath: configFilePath,
 				projectOptions: {
 					identifier: '42c89abd-3877-4039-99e8-c36d6dd74ddd' as ProjectIdentifier_string
 				}
-			})
+			} satisfies IProfilerConfigIntermediate)
 		})
 		test('loadFromFile that gets extended', () => {
 			const configFilePath = new UnifiedPath(__dirname).join('assets', 'ProfilerConfig', 'subDir', 'subDir', '.oaklean')
@@ -332,8 +343,8 @@ describe('ProfilerConfig', () => {
 			if (!config) {
 				expect(config).toBeDefined()
 			} else {
-				expect(config.filePath.toString()).toBe(configFilePath.toString())
-				expect(config.toJSON()).toEqual({
+				expect(config).toEqual({
+					filePath: configFilePath,
 					exportOptions: {
 						outDir: '../../profile-path',
 						outHistoryDir: '../../profiles-history-path',
@@ -366,7 +377,7 @@ describe('ProfilerConfig', () => {
 					registryOptions: {
 						url: 'example.com/project-report'
 					}
-				} satisfies IProfilerConfig)
+				} satisfies IProfilerConfigIntermediate)
 			}
 		})
 	})
@@ -421,6 +432,80 @@ describe('ProfilerConfig', () => {
 			expect(config.shouldExportReport()).toBe(true)
 			expect(config.shouldExportSensorInterfaceData()).toBe(false)
 		})
+
+		test('ProfilerConfig.resolveFromFile that contains no auth key but extends from a file that has one', () => {
+			const expectedOutDirPath = CURRENT_DIR.join('assets', 'ProfilerConfig', 'profile-path')
+			const expectedRootDirPath = CURRENT_DIR.join('..', '..')
+			const profilerConfigPath = CURRENT_DIR.join('assets', 'ProfilerConfig', 'subDir', 'subDir', '.oaklean-without-auth-key')
+			const config = ProfilerConfig.resolveFromFile(profilerConfigPath)
+
+			expect(config.toJSON()).toEqual({
+				exportOptions: {
+					exportReport: true,
+					exportV8Profile: false,
+					exportSensorInterfaceData: false,
+					outDir: '../../profile-path',
+					outHistoryDir: '../../profiles-history-path',
+					rootDir: '../../../../../..'
+				},
+				extends: '../../.oaklean',
+				projectOptions: {
+					identifier: '42c89abd-3877-4039-99e8-c36d6dd74ddd' as ProjectIdentifier_string
+				},
+				registryOptions: {
+					url: 'example.com/project-report'
+				},
+				runtimeOptions: {
+					seeds: {
+						'Math.random': '<seed>'
+					},
+					sensorInterface: {
+						options: {
+							outputFilePath: './sensorData/powermetrics',
+							sampleInterval: 1000 as MicroSeconds_number
+						},
+						type: SensorInterfaceType.powermetrics
+					},
+					v8: {
+						cpu: {
+							sampleInterval: 11 as MicroSeconds_number
+						}
+					}
+				}
+			} satisfies IProfilerConfig)
+
+			expect(config.getRootDir().toString()).toBe(expectedRootDirPath.toString())
+			expect(config.getV8CPUSamplingInterval()).toBe(11)
+			expect(config.getProjectIdentifier()).toBe('42c89abd-3877-4039-99e8-c36d6dd74ddd')
+			expect(config.getOutDir().toString()).toBe(expectedOutDirPath.toString())
+			expect(config.shouldExportV8Profile()).toBe(false)
+			expect(config.shouldExportReport()).toBe(true)
+			expect(config.shouldExportSensorInterfaceData()).toBe(false)
+		})
+
+		test('ProfilerConfig.resolveFromFile that contains an auth key and extends from a file that has none', () => {
+			const profilerConfigPath = CURRENT_DIR.join('assets', 'ProfilerConfig', 'subDir', 'subDir', '.oaklean-with-auth-key')
+			const expectedOutDirPath = profilerConfigPath.dirName().join('profiles')
+			const expectedRootDirPath = profilerConfigPath.dirName()
+			const config = ProfilerConfig.resolveFromFile(profilerConfigPath)
+
+			expect(config.toJSON()).toEqual({
+				...DEFAULT_PROFILER_CONFIG,
+				extends: '../../.empty-oaklean',
+				projectOptions: {
+					identifier: '52c89abd-3877-4039-99e8-c36d6dd74ddd' as ProjectIdentifier_string
+				}
+			} satisfies IProfilerConfig)
+
+			expect(config.getRootDir().toString()).toBe(expectedRootDirPath.toString())
+			expect(config.getV8CPUSamplingInterval()).toBe(1)
+			expect(config.getProjectIdentifier()).toBe('52c89abd-3877-4039-99e8-c36d6dd74ddd')
+			expect(config.getOutDir().toString()).toBe(expectedOutDirPath.toString())
+			expect(config.shouldExportV8Profile()).toBe(false)
+			expect(config.shouldExportReport()).toBe(true)
+			expect(config.shouldExportSensorInterfaceData()).toBe(false)
+		})
+
 		it('ProfilerConfig.resolveFromFile returns the baseConfig if given config file is undefined', () => {
 			const config = ProfilerConfig.resolveFromFile(undefined)
 
@@ -441,6 +526,8 @@ describe('ProfilerConfig', () => {
 		})
 		test('ProfilerConfig.resolveFromFile: minimal viable file', () => {
 			const configFilePath = new UnifiedPath(__dirname).join('assets', 'ProfilerConfig', '.min-oaklean')
+			const expectedOutDirPath = configFilePath.dirName().join('profiles')
+			const expectedRootDirPath = configFilePath.dirName()
 			const config = ProfilerConfig.resolveFromFile(configFilePath)
 
 			expect(config?.toJSON()).toEqual({
@@ -449,7 +536,27 @@ describe('ProfilerConfig', () => {
 					identifier: '42c89abd-3877-4039-99e8-c36d6dd74ddd'
 				}
 			})
+
+			expect(config.getRootDir().toString()).toBe(expectedRootDirPath.toString())
+			expect(config.getV8CPUSamplingInterval()).toBe(1)
+			expect(config.getProjectIdentifier()).toBe('42c89abd-3877-4039-99e8-c36d6dd74ddd')
+			expect(config.getOutDir().toString()).toBe(expectedOutDirPath.toString())
+			expect(config.shouldExportV8Profile()).toBe(false)
+			expect(config.shouldExportReport()).toBe(true)
+			expect(config.shouldExportSensorInterfaceData()).toBe(false)
 		})
+		test('ProfilerConfig.resolveFromFile: invalid file', () => {
+			const configFilePath = new UnifiedPath(__dirname).join('assets', 'ProfilerConfig', '.invalid-oaklean')
+
+			const errorStub = jest.spyOn(LoggerHelper, 'error').mockImplementation(() => undefined)
+			const t = () => {
+				ProfilerConfig.resolveFromFile(configFilePath)
+			}
+			expect(t).toThrow('ProfilerConfig: Invalid .oaklean config file')
+			expect(errorStub).toHaveBeenCalled()
+			errorStub.mockRestore()
+		})
+
 		test('ProfilerConfig.autoResolve', () => {
 			const expectedOutDirPath = CURRENT_DIR.join('..', '..', '..', '..', 'profiles')
 			const config = ProfilerConfig.autoResolve()
@@ -469,6 +576,67 @@ describe('ProfilerConfig', () => {
 
 			expect(config.toJSON()).toEqual(expectedConfig.toJSON())
 			findUpMock.mockRestore()
+		})
+
+		test('ProfilerConfig.autoResolve: resolve from linux file', () => {
+			const testCases = [{
+				fileName: '.oaklean.extend-linux',
+				extends: '.oaklean.linux',
+				identifier: '12c89abd-3877-4039-99e8-c36d6dd74ddd',
+				sensorInterfaceType: SensorInterfaceType.perf,
+				outputFilePath: 'energy-measurements.txt',
+			}, {
+				fileName: '.oaklean.extend-mac',
+				extends: '.oaklean.mac',
+				identifier: '22c89abd-3877-4039-99e8-c36d6dd74ddd',
+				sensorInterfaceType: SensorInterfaceType.powermetrics,
+				outputFilePath: 'energy-measurements.plist',
+			}, {
+				fileName: '.oaklean.extend-windows',
+				extends: '.oaklean.windows',
+				identifier: '32c89abd-3877-4039-99e8-c36d6dd74ddd',
+				sensorInterfaceType: SensorInterfaceType.windows,
+				outputFilePath: 'energy-measurements.csv',
+			}]
+
+			for (const testCase of testCases) {
+				const configFilePath = new UnifiedPath(__dirname).join('assets', 'ProfilerConfig', 'platform', testCase.fileName)
+				const expectedOutDirPath = configFilePath.dirName().join('profiles')
+				const expectedRootDirPath = configFilePath.dirName()
+
+				const config = ProfilerConfig.resolveFromFile(configFilePath)
+				expect(config.toJSON()).toEqual({
+					...DEFAULT_PROFILER_CONFIG,
+					extends: testCase.extends,
+					projectOptions: {
+						identifier: testCase.identifier
+					},
+					runtimeOptions: {
+						seeds: DEFAULT_PROFILER_CONFIG.runtimeOptions.seeds,
+						v8: DEFAULT_PROFILER_CONFIG.runtimeOptions.v8,
+						sensorInterface: {
+							type: testCase.sensorInterfaceType,
+							options: {
+								outputFilePath: testCase.outputFilePath,
+								sampleInterval: 100 as MicroSeconds_number
+							}
+						}
+					}
+				} satisfies IProfilerConfig)
+
+				expect(config.getRootDir().toString()).toBe(expectedRootDirPath.toString())
+				expect(config.getV8CPUSamplingInterval()).toBe(1)
+				expect(config.getProjectIdentifier()).toBe(testCase.identifier)
+				expect(config.getOutDir().toString()).toBe(expectedOutDirPath.toString())
+				expect(config.shouldExportV8Profile()).toBe(false)
+				expect(config.shouldExportReport()).toBe(true)
+				expect(config.shouldExportSensorInterfaceData()).toBe(false)
+				expect(config.getSensorInterfaceType()).toBe(testCase.sensorInterfaceType)
+				expect(config.getSensorInterfaceOptions()).toEqual({
+					outputFilePath: testCase.outputFilePath,
+					sampleInterval: 100
+				})
+			}
 		})
 	})
 	describe('special cases', () => {

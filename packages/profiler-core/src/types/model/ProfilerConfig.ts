@@ -1,24 +1,43 @@
 import {
+	z as zod
+} from 'zod'
+
+import {
 	IPowerMetricsSensorInterfaceOptions,
+	IPowerMetricsSensorInterfaceOptions_schema
 } from '../interfaces/powermetrics/types'
 import {
 	IPerfSensorInterfaceOptions,
+	IPerfSensorInterfaceOptions_schema
 } from '../interfaces/perf/types'
 import {
-	IWindowsSensorInterfaceOptions
+	IWindowsSensorInterfaceOptions,
+	IWindowsSensorInterfaceOptions_schema
 } from '../interfaces/windows/types'
 import {
-	ProjectIdentifier_string
-} from '../model/ProjectReport'
-import {
-	MicroSeconds_number
-} from '../helper/TimeHelper'
+	DeepPartial
+} from '../shared'
 
 export enum SensorInterfaceType {
 	powermetrics = 'powermetrics',
 	perf = 'perf',
 	windows = 'windows'
 }
+
+export const SensorInterfaceOptions_schema = zod.union([
+	zod.object({
+		type: zod.literal(SensorInterfaceType.powermetrics),
+		options: IPowerMetricsSensorInterfaceOptions_schema
+	}),
+	zod.object({
+		type: zod.literal(SensorInterfaceType.perf),
+		options: IPerfSensorInterfaceOptions_schema
+	}),
+	zod.object({
+		type: zod.literal(SensorInterfaceType.windows),
+		options: IWindowsSensorInterfaceOptions_schema
+	})
+])
 
 export type SensorInterfaceOptions = {
 	type: SensorInterfaceType.powermetrics,
@@ -31,39 +50,56 @@ export type SensorInterfaceOptions = {
 	options: IWindowsSensorInterfaceOptions
 }
 
-export type ProjectOptions = {
-	identifier: ProjectIdentifier_string
-}
+export const ExportOptionsSchema = zod.object({
+	outDir: zod.string(),
+	outHistoryDir: zod.string(),
+	rootDir: zod.string(),
+	exportV8Profile: zod.boolean(),
+	exportReport: zod.boolean(),
+	exportSensorInterfaceData: zod.boolean()
+})
+export type ExportOptions = zod.infer<typeof ExportOptionsSchema>
 
-export type RegistryOptions = {
-	url: string
-}
+export const RegistryOptionsSchema = zod.object({
+	url: zod.string()
+})
 
-export type ExportOptions = {
-	outDir: string
-	outHistoryDir: string,
-	rootDir: string
-	exportV8Profile: boolean,
-	exportReport: boolean,
-	exportSensorInterfaceData: boolean
-}
+export type RegistryOptions = zod.infer<typeof RegistryOptionsSchema>
 
-export type RuntimeOptions = {
-	seeds: {
-		'Math.random'?: string
-	},
-	sensorInterface?: SensorInterfaceOptions,
-	v8: {
-		cpu: {
-			sampleInterval: MicroSeconds_number
-		}
-	}
-}
+export const ProjectOptionsSchema = zod.object({
+	identifier: zod.string()
+})
 
-export interface IProfilerConfig {
+export type ProjectOptions = zod.infer<typeof ProjectOptionsSchema>
+
+export const RuntimeOptionsSchema = zod.object({
+	seeds: zod.object({
+		'Math.random': zod.string().optional()
+	}),
+	sensorInterface: SensorInterfaceOptions_schema.optional(),
+	v8: zod.object({
+		cpu: zod.object({
+			sampleInterval: zod.number()
+		})
+	})
+})
+
+export type RuntimeOptions = zod.infer<typeof RuntimeOptionsSchema>
+
+export const IProfilerConfig_schema = zod.object({
+	extends: zod.string().optional(),
+	exportOptions: ExportOptionsSchema,
+	registryOptions: RegistryOptionsSchema,
+	projectOptions: ProjectOptionsSchema,
+	runtimeOptions: RuntimeOptionsSchema
+})
+
+export type IProfilerConfig = zod.infer<typeof IProfilerConfig_schema>
+
+export interface IProfilerConfigFileRepresentation {
 	extends?: string
-	exportOptions: ExportOptions
-	registryOptions: RegistryOptions
-	projectOptions: ProjectOptions
-	runtimeOptions: RuntimeOptions
+	exportOptions?: DeepPartial<ExportOptions>
+	registryOptions?: DeepPartial<RegistryOptions>
+	projectOptions?: DeepPartial<ProjectOptions>
+	runtimeOptions?: DeepPartial<RuntimeOptions>
 }
