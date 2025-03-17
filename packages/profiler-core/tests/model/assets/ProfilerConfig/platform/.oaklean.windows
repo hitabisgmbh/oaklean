@@ -1,0 +1,11 @@
+{
+	"runtimeOptions": {
+		"sensorInterface": {
+			"type": "windows",
+			"options": {
+				"outputFilePath": "energy-measurements.csv",
+				"sampleInterval": 100
+			}
+		}
+	}
+}

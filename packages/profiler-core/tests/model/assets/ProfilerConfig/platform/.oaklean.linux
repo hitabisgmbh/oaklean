@@ -1,0 +1,11 @@
+{
+	"runtimeOptions": {
+		"sensorInterface": {
+			"type": "perf",
+			"options": {
+				"outputFilePath": "energy-measurements.txt",
+				"sampleInterval": 100
+			}
+		}
+	}
+}

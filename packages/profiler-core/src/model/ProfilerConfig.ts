@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 
-import { BaseModel } from './BaseModel'
+import { z as zod } from 'zod'
 
 import {
 	STATIC_CONFIG_FILENAME,
@@ -18,14 +18,22 @@ import {
 	ProjectIdentifier_string,
 	MicroSeconds_number,
 	IProfilerConfig,
+	IProfilerConfigFileRepresentation,
 	RegistryOptions,
 	ExportOptions,
 	ProjectOptions,
 	RuntimeOptions,
-	SensorInterfaceType
+	SensorInterfaceType,
+	DeepPartial,
+	IProfilerConfig_schema
 } from '../types'
+import { LoggerHelper } from '../helper'
 
-export class ProfilerConfig extends BaseModel implements IProfilerConfig {
+export interface IProfilerConfigIntermediate extends IProfilerConfigFileRepresentation {
+	filePath: UnifiedPath
+}
+
+export class ProfilerConfig implements IProfilerConfig {
 	filePath: UnifiedPath
 	extends?: string
 	registryOptions: RegistryOptions
@@ -34,7 +42,6 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 	runtimeOptions: RuntimeOptions
 
 	constructor(filePath: UnifiedPath, config: IProfilerConfig) {
-		super()
 		this.filePath = filePath
 		this.extends = config.extends
 		this.registryOptions = config.registryOptions
@@ -48,6 +55,29 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 			new UnifiedPath(process.cwd()).join(STATIC_CONFIG_FILENAME),
 			DEFAULT_PROFILER_CONFIG
 		)
+	}
+
+	static defaultConfigAsIntermediate() {
+		return {
+			filePath: new UnifiedPath(process.cwd()).join(STATIC_CONFIG_FILENAME),
+			...DEFAULT_PROFILER_CONFIG
+		}
+	}
+
+	static verifyConfig(
+		config: DeepPartial<IProfilerConfig> | undefined
+	): config is IProfilerConfig {
+		IProfilerConfig_schema.parse(config)
+		return true
+	}
+
+	static printZodError(err: zod.ZodError) {
+		LoggerHelper.error('ProfilerConfig.verifyConfig: Invalid config')
+		for (const subError of err.errors) {
+			LoggerHelper.error(
+				`${subError.path.join('.')} - ${subError.message}`
+			)
+		}
 	}
 
 	getAnonymizedRuntimeOptions(): RuntimeOptions {
@@ -92,7 +122,7 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 	}
 
 	getV8CPUSamplingInterval(): MicroSeconds_number {
-		return this.runtimeOptions.v8.cpu.sampleInterval
+		return this.runtimeOptions.v8.cpu.sampleInterval as MicroSeconds_number
 	}
 
 	getRegistryUploadUrl(): string {
@@ -104,10 +134,12 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 	}
 
 	getProjectIdentifier(): ProjectIdentifier_string {
-		if (!Crypto.validateUniqueID(this.projectOptions.identifier)) {
+		if (!Crypto.validateUniqueID(
+			this.projectOptions.identifier as ProjectIdentifier_string
+		)) {
 			throw new Error('ProfilerConfig.getProjectIdentifier: identifier should be an uuid4')
 		}
-		return this.projectOptions.identifier
+		return this.projectOptions.identifier as ProjectIdentifier_string
 	}
 
 	getRootDir() : UnifiedPath {
@@ -140,7 +172,12 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 	IPerfSensorInterfaceOptions |
 	IWindowsSensorInterfaceOptions |
 	undefined {
-		return this.runtimeOptions.sensorInterface?.options
+		return this.runtimeOptions.sensorInterface?.options as (
+			IPowerMetricsSensorInterfaceOptions |
+			IPerfSensorInterfaceOptions |
+			IWindowsSensorInterfaceOptions |
+			undefined
+		)
 	}
 
 	shouldExportV8Profile(): boolean {
@@ -159,8 +196,11 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 		return this.runtimeOptions.seeds['Math.random']
 	}
 
-	private configAsExtended(pathDiff: UnifiedPath): IProfilerConfig {
-		const exportOptions = this.exportOptions
+	static configAsExtended(
+		config: IProfilerConfigIntermediate,
+		pathDiff: UnifiedPath
+	): IProfilerConfigFileRepresentation {
+		const exportOptions = config.exportOptions
 		if (exportOptions) {
 			if (exportOptions.outDir && !PathUtils.isAbsolute(exportOptions.outDir)) {
 				exportOptions.outDir = pathDiff.join(exportOptions.outDir).toString()
@@ -174,86 +214,76 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 		}
 		return {
 			exportOptions: exportOptions,
-			projectOptions: this.projectOptions,
-			runtimeOptions: this.runtimeOptions,
-			registryOptions: this.registryOptions
+			projectOptions: config.projectOptions,
+			runtimeOptions: config.runtimeOptions,
+			registryOptions: config.registryOptions
 		}
 	}
 
 	/**
-	 * Fills unspecified values of the config with values of the given config
+	 * Fills unspecified values of the config with values of the given config to extend from
 	 * 
 	 * example usage:
 	 * - every config that gets resolved inherits values of the default config (baseConfig)
 	 * 		to ensure that unspecified values are filled with the default value. This happens via:
-	 * 		config.implement(baseConfig):
+	 * 		ProfilerConfig.implement(config, baseConfig):
 	 * 
 	 * - if a config contains the extends keyword like this:
 	 * 		{
 	 * 	 		"extends": "<config that gets extended>"
 	 * 		}
 	 * 		the config gets extended via:
-	 * 		config.implement(<config that gets extended>):
+	 * 		ProfilerConfig.implement(config, <config mentioned in extends>):
 	 * 
 	 * it also adjusts the inherited path values values to make them relative to the config
 	 * 
 	 * 
 	 * @param config to inherit from
 	 */
-	private implement(config: ProfilerConfig) {
-		const pathDiff = this.filePath.dirName().pathTo(config.filePath.dirName())
-		const configToExtend = config.configAsExtended(pathDiff)
+	static implement(
+		config: IProfilerConfigIntermediate,
+		configToExtend: IProfilerConfigIntermediate
+	) {
+		const pathDiff = config.filePath.dirName().pathTo(configToExtend.filePath.dirName())
+		const configToExtendAsExtended = ProfilerConfig.configAsExtended(configToExtend, pathDiff)
 
-		const newExportOptions = { ...configToExtend.exportOptions, ...this.exportOptions }
-		const newProjectOptions = { ...configToExtend.projectOptions, ...this.projectOptions }
-		const newRuntimeOptions: RuntimeOptions = {
-			...configToExtend.runtimeOptions,
-			...this.runtimeOptions,
+		const newExportOptions = { ...configToExtendAsExtended.exportOptions, ...config.exportOptions }
+		const newProjectOptions = { ...configToExtendAsExtended.projectOptions, ...config.projectOptions }
+		const newRuntimeOptions: DeepPartial<RuntimeOptions> = {
+			...configToExtendAsExtended.runtimeOptions,
+			...config.runtimeOptions,
 			seeds: {
-				...(configToExtend?.runtimeOptions?.seeds || {}),
-				...(this.runtimeOptions?.seeds || {})
+				...(configToExtendAsExtended?.runtimeOptions?.seeds || {}),
+				...(config.runtimeOptions?.seeds || {})
 			},
 			v8: {
 				cpu: {
-					...(configToExtend.runtimeOptions?.v8?.cpu || {}),
-					...(this.runtimeOptions?.v8?.cpu || {}),
+					...(configToExtendAsExtended.runtimeOptions?.v8?.cpu || {}),
+					...(config.runtimeOptions?.v8?.cpu || {}),
 				}
 			},
 		}
-		const newRegistryOptions = { ...configToExtend.registryOptions, ...this.registryOptions }
+		const newRegistryOptions = { ...configToExtendAsExtended.registryOptions, ...config.registryOptions }
 
-		this.exportOptions = newExportOptions
-		this.projectOptions = newProjectOptions
-		this.runtimeOptions = newRuntimeOptions
-		this.registryOptions = newRegistryOptions
+		config.exportOptions = newExportOptions
+		config.projectOptions = newProjectOptions
+		config.runtimeOptions = newRuntimeOptions
+		config.registryOptions = newRegistryOptions
 	}
 
-	static fromJSON(json: string | IProfilerConfig): ProfilerConfig {
-		let data: IProfilerConfig
+	static intermediateFromJSON(json: string | IProfilerConfigFileRepresentation): IProfilerConfigIntermediate {
+		let data: IProfilerConfigIntermediate
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
+			data.filePath = new UnifiedPath('')
 		} else {
-			data = json
-		}
-		if (
-			data.projectOptions === undefined ||
-			data.projectOptions.identifier === undefined
-		) {
-			throw new Error('ProfilerConfig: the project has no identifier yet')
-		}
-		if (!Crypto.validateUniqueID(data.projectOptions.identifier)) {
-			throw new Error('ProfilerConfig.getProjectIdentifier: Loaded identifier from the config should be an uuid4')
+			data = {
+				...json,
+				filePath: new UnifiedPath('')
+			}
 		}
 
-		return new ProfilerConfig(
-			new UnifiedPath(''),
-			{
-				extends: data.extends,
-				exportOptions: data.exportOptions,
-				projectOptions: data.projectOptions,
-				runtimeOptions: data.runtimeOptions,
-				registryOptions: data.registryOptions
-			})
+		return data
 	}
 
 	toJSON(): IProfilerConfig {
@@ -278,12 +308,14 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 
 	// loads a config from a given file path and extends it
 	// this method is NOT used to ensure load a valid (complete) config, use resolveFromFile to achieve that
-	static loadFromFile(filePath: UnifiedPath): ProfilerConfig | undefined {
+	static loadFromFile(filePath: UnifiedPath): IProfilerConfigIntermediate | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
 
-		const loadedConfig = ProfilerConfig.fromJSON(fs.readFileSync(filePath.toPlatformString()).toString())
+		const loadedConfig = ProfilerConfig.intermediateFromJSON(
+			fs.readFileSync(filePath.toPlatformString()).toString()
+		)
 		loadedConfig.filePath = filePath
 
 		if (loadedConfig.extends) {
@@ -291,7 +323,7 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 			const configToExtend = ProfilerConfig.loadFromFile(configToExtendFilePath)
 
 			if (configToExtend) {
-				loadedConfig.implement(configToExtend)
+				ProfilerConfig.implement(loadedConfig, configToExtend)
 				return loadedConfig
 			}
 		}
@@ -300,18 +332,34 @@ export class ProfilerConfig extends BaseModel implements IProfilerConfig {
 
 	// loads a config from a given file path and fills all non defined values with the resp. default values
 	static resolveFromFile(filePath: UnifiedPath | undefined): ProfilerConfig {
-		const baseConfig = ProfilerConfig.getDefaultConfig()
 		if (!filePath) {
-			return baseConfig
+			return ProfilerConfig.getDefaultConfig()
 		}
+		const baseConfig = ProfilerConfig.defaultConfigAsIntermediate()
 
 		const config = this.loadFromFile(filePath)
 		if (config) {
 			baseConfig.filePath = config.filePath
-			config.implement(baseConfig)
-			return config
+			if (
+				config.projectOptions?.identifier === undefined
+			) {
+				throw new Error('ProfilerConfig: the project has no identifier yet')
+			}
+			ProfilerConfig.implement(config, baseConfig)
+			
+			try {
+				if (ProfilerConfig.verifyConfig(config)) {
+					return new ProfilerConfig(config.filePath, config)
+				}
+			} catch (err: any) {
+				if (err.name === 'ZodError') {
+					ProfilerConfig.printZodError(err)
+					throw new Error(`ProfilerConfig: Invalid ${STATIC_CONFIG_FILENAME} config file`)
+				}
+				throw err
+			}
 		}
-		return baseConfig
+		return new ProfilerConfig(baseConfig.filePath, baseConfig)
 	}
 
 	static autoResolveFromPath(startDir: UnifiedPath) : ProfilerConfig {

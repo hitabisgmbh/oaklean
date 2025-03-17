@@ -1,0 +1,33 @@
+{
+	"exportOptions": {
+		"outDir": 1,
+		"outHistoryDir": 2,
+		"rootDir": 3,
+		"exportV8Profile": 4,
+		"exportReport": 5,
+		"exportSensorInterfaceData": 6
+	},
+	"projectOptions": {
+		"identifier": 7
+	},
+	"runtimeOptions": {
+		"seeds": {
+			"Math.random": 8
+		},
+		"sensorInterface": {
+			"type": 9,
+			"options": {
+				"outputFilePath": 10,
+				"sampleInterval": "string 11"
+			}
+		},
+		"v8": {
+			"cpu": {
+				"sampleInterval": "string 12"
+			}
+		}
+	},
+	"registryOptions": {
+		"url": "string 13"
+	}
+}

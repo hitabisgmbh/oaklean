@@ -1,3 +1,4 @@
+export * from './shared'
 export * from './helper'
 export * from './interfaces'
 export * from './model'
