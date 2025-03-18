@@ -1,0 +1,91 @@
+stages:
+  - setup
+  - execute
+  - build
+  - test
+
+setup_environment:
+  stage: setup
+  tags:
+    - windows
+  script:
+    - |
+      # Check if NVM is installed
+      if (-Not (Get-Command nvm -ErrorAction SilentlyContinue)) {
+        Write-Host "NVM not found. Installing..."
+        $NvmZipUrl = "https://github.com/coreybutler/nvm-windows/releases/download/1.2.2/nvm-noinstall.zip"
+        $NvmExtractPath = "C:\nvm"
+        $NvmSymLinkPath = "C:\Program Files\nodejs"
+
+        # Download the portable version
+        Invoke-WebRequest -Uri $NvmZipUrl -OutFile "$env:TEMP\nvm.zip"
+
+        # Check the hash
+        $expectedHash = "D654C26A04E35A318D5939F8CEB09934"
+        $certutilOutput = certutil -hashfile "$env:TEMP\nvm.zip" MD5
+        # Extract the MD5 hash from the output
+        $fileHash = $certutilOutput[1].Trim()
+
+        if ($fileHash -eq $expectedHash) {
+          Write-Host "Hashes match!"
+        } else {
+          Write-Host "Hashes do not match. Exiting..."
+          exit 1
+        }
+
+        # Extract it
+        Expand-Archive -Path "$env:TEMP\nvm.zip" -DestinationPath $NvmExtractPath -Force
+
+        # Add NVM to system PATH
+        [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmExtractPath", [System.EnvironmentVariableTarget]::Machine)
+        [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmSymLinkPath", [System.EnvironmentVariableTarget]::Machine)
+        
+        # Set NVM_HOME and NVM_SYMLINK
+        [System.Environment]::SetEnvironmentVariable("NVM_HOME", "$NvmExtractPath", [System.EnvironmentVariableTarget]::Machine)
+        [System.Environment]::SetEnvironmentVariable("NVM_SYMLINK", "$NvmSymLinkPath", [System.EnvironmentVariableTarget]::Machine)
+
+        # Reload the PATH
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+        $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::Machine)
+        $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::Machine)
+
+        New-Item -Path "$env:NVM_HOME\settings.txt" -ItemType File
+        Set-Content -Path "$env:NVM_HOME\settings.txt" -Value "root: $env:NVM_HOME`npath: $env:NVM_SYMLINK"
+      } else {
+        Write-Host "NVM is already installed."
+      }
+    - |
+      $nodeVersion = "20.11.1"
+      # Ensure Node.js v20 is installed
+      $installedVersions = nvm list | Select-String "$nodeVersion" | Out-String
+      if ($installedVersions -match "$nodeVersion") {
+        Write-Host "Node.js v$nodeVersion is already installed."
+      } else {
+        Write-Host "Installing Node.js v20..."
+        nvm install $nodeVersion
+      }
+      nvm use $nodeVersion
+
+build:
+  stage: build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - ./packages/profiler/dist
+      - ./packages/profiler-core/dist
+      - ./packages/profiler-jest-environment/*.js
+      - ./packages/profiler-jest-environment/*.d.ts
+      - ./packages/cli/dist
+      - ./packages/windows-sensorinterface/dist
+  script:
+    - npm run build
+
+lint:
+  stage: build
+  script:
+    - npm run lint
+
+test:
+  stage: test
+  script:
+    - npm run test
