@@ -15,10 +15,18 @@ default:
     - npm ci
 
 stages:
+  - pipeline-windows
   - build
   - test
   - generate-docs
   - deploy
+
+pipeline-windows:
+  when: manual
+  stage: pipeline-windows
+  trigger:
+    include: 
+      - local: .gitlab/pipeline-windows.yml
 
 build:
   stage: build
