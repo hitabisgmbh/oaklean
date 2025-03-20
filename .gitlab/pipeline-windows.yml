@@ -53,7 +53,9 @@ setup_environment:
         $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::Machine)
         $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::Machine)
 
-        New-Item -Path "$env:NVM_HOME\settings.txt" -ItemType File
+        if (-not (Test-Path "$env:NVM_HOME\settings.txt")) {
+            New-Item -Path "$env:NVM_HOME\settings.txt" -ItemType File
+        }
         Set-Content -Path "$env:NVM_HOME\settings.txt" -Value "root: $env:NVM_HOME`npath: $env:NVM_SYMLINK"
       } else {
         Write-Host "NVM is already installed."
