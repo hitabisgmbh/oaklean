@@ -8,10 +8,19 @@ cache:
   paths:
     - node_modules/
 
+.common_setup:
+  before_script:
+    - $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+    - $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
+    - $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
+    - npm ci
+
 setup_environment:
   stage: setup
   tags:
     - windows
+  inherit:
+    default: false
   script:
     - |
       # Check if NVM is installed
@@ -50,7 +59,7 @@ setup_environment:
         [System.Environment]::SetEnvironmentVariable("NVM_SYMLINK", "$NvmSymLinkPath", [System.EnvironmentVariableTarget]::User)
 
         # Reload the PATH
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
         $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
         $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
 
@@ -73,16 +82,13 @@ setup_environment:
         nvm use $nodeVersion
       } else {
         Write-Host "NVM is already installed."
-        # Reload the PATH
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-        $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
-        $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
       }
 
 build:
   stage: build
   tags:
     - windows
+  extends: .common_setup
   artifacts:
     expire_in: 1 week
     paths:
@@ -93,27 +99,20 @@ build:
       - ./packages/cli/dist
       - ./packages/windows-sensorinterface/dist
   script:
-    - $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-    - $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
-    - $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
     - npm run build
 
 lint:
   stage: build
   tags:
     - windows
+  extends: .common_setup
   script:
-    - $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-    - $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
-    - $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
     - npm run lint
 
 test:
   stage: test
   tags:
     - windows
+  extends: .common_setup
   script:
-    - $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-    - $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
-    - $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
     - npm run test
