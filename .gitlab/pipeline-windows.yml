@@ -41,9 +41,8 @@ setup_environment:
         Expand-Archive -Path "$env:TEMP\nvm.zip" -DestinationPath $NvmExtractPath -Force
 
         # Add NVM to system PATH
-        [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmExtractPath", [System.EnvironmentVariableTarget]::User)
-        [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmSymLinkPath", [System.EnvironmentVariableTarget]::User)
-        
+        [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmExtractPath;$NvmSymLinkPath", [System.EnvironmentVariableTarget]::User)
+
         # Set NVM_HOME and NVM_SYMLINK
         [System.Environment]::SetEnvironmentVariable("NVM_HOME", "$NvmExtractPath", [System.EnvironmentVariableTarget]::User)
         [System.Environment]::SetEnvironmentVariable("NVM_SYMLINK", "$NvmSymLinkPath", [System.EnvironmentVariableTarget]::User)
