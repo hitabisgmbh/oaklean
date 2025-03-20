@@ -31,6 +31,18 @@ deploy:
     - job: pipeline-linux
       artifacts: true
   script:
+    - >
+      DOWN_STREAM_PIPELINE_NAME=pipeline-windows
+      ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE=build
+      HEADER="PRIVATE-TOKEN: $CI_JOB_TOKEN"
+
+      DOWNSTREAM_PIPELINE_ID=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/bridges" --header "$HEADER" | jq ".[] | select(.name == \"$DOWN_STREAM_PIPELINE_NAME\") | .downstream_pipeline.id")
+      ARTIFACT_JOB_ID=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$DOWNSTREAM_PIPELINE_ID/jobs" --header "$HEADER" | jq ".[] | select(.name == \"$ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE\") | .id")
+      ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$ARTIFACT_JOB_ID/artifacts"
+
+      curl --header "$HEADER" $ARTIFACT_URL -o downstream_artifacts.zip
+      unzip downstream_artifacts.zip
+
     - echo "Processing artifacts from pipeline-linux"
     - ls ./packages/profiler/dist
     - ls ./packages/profiler-core/dist
