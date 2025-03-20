@@ -6,16 +6,33 @@ workflow:
     - when: always # Run pipeline for all other cases
 
 stages:
-  - platform-tests
+  - platform-build-and-test
+  - deploy
 
 pipeline-windows:
-  stage: platform-tests
+  stage: platform-build-and-test
   trigger:
     include: 
       - local: .gitlab/pipeline-windows.yml
 
 pipeline-linux:
-  stage: platform-tests
+  stage: platform-build-and-test
   trigger:
     include: 
       - local: .gitlab/pipeline-linux.yml
+
+deploy:
+  image: node:20.11.1
+  stage: process-artifacts
+  needs:
+    - job: pipeline-windows
+    - job: pipeline-linux
+      artifacts: true
+  script:
+    - echo "Processing artifacts from pipeline-linux"
+    - ls ./packages/profiler/dist
+    - ls ./packages/profiler-core/dist
+    - ls ./packages/profiler-jest-environment/*.js
+    - ls ./packages/profiler-jest-environment/*.d.ts
+    - ls ./packages/cli/dist
+    - ls ./packages/windows-sensorinterface/dist
