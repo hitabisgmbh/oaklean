@@ -26,10 +26,6 @@ pipeline-linux:
 deploy:
   image: node:20.11.1
   stage: deploy
-  needs:
-    - job: pipeline-windows
-    - job: pipeline-linux
-      artifacts: true
   script:
     - >
       DOWN_STREAM_PIPELINE_NAME=pipeline-windows
