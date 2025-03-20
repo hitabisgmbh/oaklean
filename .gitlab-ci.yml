@@ -6,17 +6,16 @@ workflow:
     - when: always # Run pipeline for all other cases
 
 stages:
-  - pipeline-windows
-  - pipeline-linux
+  - platform-tests
 
 pipeline-windows:
-  stage: pipeline-windows
+  stage: platform-tests
   trigger:
     include: 
       - local: .gitlab/pipeline-windows.yml
 
 pipeline-linux:
-  stage: pipeline-linux
+  stage: platform-tests
   trigger:
     include: 
       - local: .gitlab/pipeline-linux.yml

@@ -41,17 +41,17 @@ setup_environment:
         Expand-Archive -Path "$env:TEMP\nvm.zip" -DestinationPath $NvmExtractPath -Force
 
         # Add NVM to system PATH
-        [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmExtractPath", [System.EnvironmentVariableTarget]::Machine)
-        [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmSymLinkPath", [System.EnvironmentVariableTarget]::Machine)
+        [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmExtractPath", [System.EnvironmentVariableTarget]::User)
+        [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmSymLinkPath", [System.EnvironmentVariableTarget]::User)
         
         # Set NVM_HOME and NVM_SYMLINK
-        [System.Environment]::SetEnvironmentVariable("NVM_HOME", "$NvmExtractPath", [System.EnvironmentVariableTarget]::Machine)
-        [System.Environment]::SetEnvironmentVariable("NVM_SYMLINK", "$NvmSymLinkPath", [System.EnvironmentVariableTarget]::Machine)
+        [System.Environment]::SetEnvironmentVariable("NVM_HOME", "$NvmExtractPath", [System.EnvironmentVariableTarget]::User)
+        [System.Environment]::SetEnvironmentVariable("NVM_SYMLINK", "$NvmSymLinkPath", [System.EnvironmentVariableTarget]::User)
 
         # Reload the PATH
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
-        $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::Machine)
-        $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::Machine)
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+        $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
+        $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
 
         if (-not (Test-Path "$env:NVM_HOME\settings.txt")) {
             New-Item -Path "$env:NVM_HOME\settings.txt" -ItemType File
@@ -61,6 +61,7 @@ setup_environment:
         Write-Host "NVM is already installed."
       }
     - |
+      $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
       $nodeVersion = "20.11.1"
       # Ensure Node.js v20 is installed
       $installedVersions = nvm list | Select-String "$nodeVersion" | Out-String
