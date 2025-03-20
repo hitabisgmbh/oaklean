@@ -81,6 +81,8 @@ setup_environment:
 
 build:
   stage: build
+  tags:
+    - windows
   artifacts:
     expire_in: 1 week
     paths:
@@ -95,10 +97,14 @@ build:
 
 lint:
   stage: build
+  tags:
+    - windows
   script:
     - npm run lint
 
 test:
   stage: test
+  tags:
+    - windows
   script:
     - npm run test
