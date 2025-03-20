@@ -23,7 +23,7 @@ pipeline-linux:
 
 deploy:
   image: node:20.11.1
-  stage: process-artifacts
+  stage: deploy
   needs:
     - job: pipeline-windows
     - job: pipeline-linux
