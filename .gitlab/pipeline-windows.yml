@@ -4,6 +4,10 @@ stages:
   - build
   - test
 
+cache:
+  paths:
+    - node_modules/
+
 setup_environment:
   stage: setup
   tags:

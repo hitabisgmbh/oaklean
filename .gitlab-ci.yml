@@ -5,21 +5,9 @@ workflow:
       when: never  # Prevent pipeline run for push event
     - when: always # Run pipeline for all other cases
 
-cache:
-  paths:
-    - node_modules/
-  
-default: 
-  image: node:20.11.1
-  before_script:
-    - npm ci
-
 stages:
   - pipeline-windows
-  - build
-  - test
-  - generate-docs
-  - deploy
+  - pipeline-linux
 
 pipeline-windows:
   stage: pipeline-windows
@@ -27,50 +15,8 @@ pipeline-windows:
     include: 
       - local: .gitlab/pipeline-windows.yml
 
-build:
-  stage: build
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - ./packages/profiler/dist
-      - ./packages/profiler-core/dist
-      - ./packages/profiler-jest-environment/*.js
-      - ./packages/profiler-jest-environment/*.d.ts
-      - ./packages/cli/dist
-      - ./packages/windows-sensorinterface/dist
-  script:
-    - npm run build
-
-lint:
-  stage: build
-  script:
-    - npm run lint
-
-test:
-  stage: test
-  script:
-    - npm run test
-  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
-  after_script:
-    - mv ./profiles/jest/accumulated.oak ./
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - ./accumulated.oak
-
-generate-docs:
-  stage: generate-docs
-  script:
-    - npm run generate-docs && [[ -z "$(git status -s)" ]]
-
-deploy:
-  stage: deploy
-  dependencies: 
-    - build
-  variables:
-    NODE_ENV: production
-  only: 
-    - /^release.*$/
-  script:
-    - echo -e "${PRIVATE_REGISTRY}${CI_JOB_TOKEN}">.npmrc
-    - npm run publish-registry
+pipeline-linux:
+  stage: pipeline-linux
+  trigger:
+    include: 
+      - local: .gitlab/pipeline-linux.yml
