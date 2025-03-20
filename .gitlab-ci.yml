@@ -22,7 +22,6 @@ stages:
   - deploy
 
 pipeline-windows:
-  when: manual
   stage: pipeline-windows
   trigger:
     include: 
