@@ -37,9 +37,11 @@ setup_environment:
           exit 1
         }
 
+        Write-Host "Extracting NVM..."
         # Extract it
         Expand-Archive -Path "$env:TEMP\nvm.zip" -DestinationPath $NvmExtractPath -Force
 
+        Write-Host "Creating NVM symlink..."
         # Add NVM to system PATH
         [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";$NvmExtractPath;$NvmSymLinkPath", [System.EnvironmentVariableTarget]::User)
 
@@ -56,21 +58,22 @@ setup_environment:
             New-Item -Path "$env:NVM_HOME\settings.txt" -ItemType File
         }
         Set-Content -Path "$env:NVM_HOME\settings.txt" -Value "root: $env:NVM_HOME`npath: $env:NVM_SYMLINK"
+        Write-Host "NVM installed successfully!"
+
+        $nodeVersion = "20.11.1"
+        # Ensure Node.js v20 is installed
+        $installedVersions = nvm list | Select-String "$nodeVersion" | Out-String
+        if ($installedVersions -match "$nodeVersion") {
+          Write-Host "Node.js v$nodeVersion is already installed."
+        } else {
+          Write-Host "Installing Node.js v20..."
+          nvm install $nodeVersion
+        }
+        # this might fail since its asking for admin rights
+        nvm use $nodeVersion
       } else {
         Write-Host "NVM is already installed."
       }
-    - |
-      $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-      $nodeVersion = "20.11.1"
-      # Ensure Node.js v20 is installed
-      $installedVersions = nvm list | Select-String "$nodeVersion" | Out-String
-      if ($installedVersions -match "$nodeVersion") {
-        Write-Host "Node.js v$nodeVersion is already installed."
-      } else {
-        Write-Host "Installing Node.js v20..."
-        nvm install $nodeVersion
-      }
-      nvm use $nodeVersion
 
 build:
   stage: build
