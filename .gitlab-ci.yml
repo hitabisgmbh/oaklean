@@ -24,7 +24,7 @@ pipeline-linux:
     strategy: depend
 
 deploy:
-  image: node:20.11.1
+  image: $BUILD_IMAGE
   stage: deploy
   script:
     - >
