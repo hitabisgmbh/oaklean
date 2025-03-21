@@ -27,7 +27,7 @@ deploy:
   image: $BUILD_IMAGE
   stage: deploy
   script:
-    - >
+    - |
       DOWN_STREAM_PIPELINE_NAME=pipeline-linux
       ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE=build
       HEADER="PRIVATE-TOKEN: $CI_JOB_TOKEN"
