@@ -9,7 +9,7 @@ cache:
     - node_modules/
 
 default: 
-  image: node:20.11.1
+  image: $BUILD_IMAGE
   before_script:
     - npm ci
 
