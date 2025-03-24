@@ -1,0 +1,49 @@
+stages:
+  - build
+  - test
+  - generate-docs
+
+cache:
+  paths:
+    - node_modules/
+
+default: 
+  image: $BUILD_IMAGE
+  before_script:
+    - npm ci
+
+build:
+  stage: build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - ./packages/profiler/dist
+      - ./packages/profiler-core/dist
+      - ./packages/profiler-jest-environment/*.js
+      - ./packages/profiler-jest-environment/*.d.ts
+      - ./packages/cli/dist
+      - ./packages/windows-sensorinterface/dist
+  script:
+    - npm run build
+
+lint:
+  stage: build
+  script:
+    - npm run lint
+
+test:
+  stage: test
+  script:
+    - npm run test
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  after_script:
+    - mv ./profiles/jest/accumulated.oak ./
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - ./accumulated.oak
+
+generate-docs:
+  stage: generate-docs
+  script:
+    - npm run generate-docs && [[ -z "$(git status -s)" ]]
