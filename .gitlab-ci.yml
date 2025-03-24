@@ -40,7 +40,7 @@ deploy:
     - ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$ARTIFACT_JOB_ID/artifacts"
     # Download the artifacts
     - curl --header "$HEADER" $ARTIFACT_URL -o downstream_artifacts.zip
-    - ls -la downstream_artifacts
+    - ls -la downstream_artifacts.zip
     # Unzip the artifacts
     - unzip downstream_artifacts.zip
     - echo "Processing artifacts from pipeline-linux"
