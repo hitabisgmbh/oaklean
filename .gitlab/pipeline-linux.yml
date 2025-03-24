@@ -2,7 +2,6 @@ stages:
   - build
   - test
   - generate-docs
-  - deploy
 
 cache:
   paths:
@@ -48,15 +47,3 @@ generate-docs:
   stage: generate-docs
   script:
     - npm run generate-docs && [[ -z "$(git status -s)" ]]
-
-deploy:
-  stage: deploy
-  dependencies: 
-    - build
-  variables:
-    NODE_ENV: production
-  only: 
-    - /^release.*$/
-  script:
-    - echo -e "${PRIVATE_REGISTRY}${CI_JOB_TOKEN}">.npmrc
-    - npm run publish-registry

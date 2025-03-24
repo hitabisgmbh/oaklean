@@ -9,12 +9,12 @@ stages:
   - platform-build-and-test
   - deploy
 
-# pipeline-windows:
-#   stage: platform-build-and-test
-#   trigger:
-#     include: 
-#       - local: .gitlab/pipeline-windows.yml
-#     strategy: depend
+pipeline-windows:
+  stage: platform-build-and-test
+  trigger:
+    include: 
+      - local: .gitlab/pipeline-windows.yml
+    strategy: depend
 
 pipeline-linux:
   stage: platform-build-and-test
@@ -26,10 +26,13 @@ pipeline-linux:
 deploy:
   image: $BUILD_IMAGE
   stage: deploy
+  only: 
+    - /^release.*$/
   variables:
     DOWN_STREAM_PIPELINE_NAME: pipeline-linux
     ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE: build
     HEADER: "PRIVATE-TOKEN: $GITLAB_API_TOKEN"
+    NODE_ENV: production
   script:
     - echo $DOWN_STREAM_PIPELINE_NAME $ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE $HEADER
     # Get the downstream pipeline id
@@ -40,13 +43,9 @@ deploy:
     - ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$ARTIFACT_JOB_ID/artifacts"
     # Download the artifacts
     - curl --header "$HEADER" $ARTIFACT_URL -o downstream_artifacts.zip
-    - ls -la downstream_artifacts.zip
     # Unzip the artifacts
     - unzip downstream_artifacts.zip
-    - echo "Processing artifacts from pipeline-linux"
-    - ls ./packages/profiler/dist
-    - ls ./packages/profiler-core/dist
-    - ls ./packages/profiler-jest-environment/*.js
-    - ls ./packages/profiler-jest-environment/*.d.ts
-    - ls ./packages/cli/dist
-    - ls ./packages/windows-sensorinterface/dist
+    - rm downstream_artifacts.zip
+    # Deploy the package to the private registry
+    - echo -e "${PRIVATE_REGISTRY}${CI_JOB_TOKEN}">.npmrc
+    - npm run publish-registry
