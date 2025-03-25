@@ -115,4 +115,4 @@ test:
     - windows
   extends: .common_setup
   script:
-    - npm run test
+    - npm run test-measure

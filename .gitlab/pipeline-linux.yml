@@ -34,7 +34,7 @@ lint:
 test:
   stage: test
   script:
-    - npm run test
+    - npm run test-measure
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   after_script:
     - mv ./profiles/jest/accumulated.oak ./
