@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 
-import { ProjectReport, UnifiedPath } from '@oaklean/profiler-core'
+import { RegistryHelper, UnifiedPath } from '@oaklean/profiler-core'
 
 import { Profiler } from '../src/index'
 import { buildModel } from '../../profiler-core/lib/vscode-js-profile-core/src/cpu/model'
@@ -22,7 +22,7 @@ const fibonacci = (n: number): number => {
 
 describe('testing index file', () => {
 	test('profile should be created', async () => {
-		const uploadMethod = jest.spyOn(ProjectReport.prototype, 'uploadToRegistry').mockResolvedValue(undefined)
+		const uploadMethod = jest.spyOn(RegistryHelper, 'uploadToRegistry').mockResolvedValue(undefined)
 		
 		const profile = new Profiler('test-profile')
 		await profile.start('latest')
