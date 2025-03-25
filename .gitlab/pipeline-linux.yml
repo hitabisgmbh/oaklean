@@ -48,4 +48,6 @@ test:
 generate-docs:
   stage: generate-docs
   script:
-    - npm run generate-docs && [[ -z "$(git status -s)" ]]
+    - npm run generate-docs
+    - git status -s
+    - [[ -z "$(git status -s)" ]]
