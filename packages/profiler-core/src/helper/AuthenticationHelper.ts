@@ -4,9 +4,11 @@ import fs from 'fs'
 import { PermissionHelper } from './PermissionHelper'
 
 import {
-	OAKLEAN_AUTH_KEY,
+	OAKLEAN_AUTH_KEY
+} from '../constants/env'
+import {
 	STATIC_GLOBAL_CONFIG_DIR
-} from '../constants'
+} from '../constants/config'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 // Types

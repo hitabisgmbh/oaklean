@@ -18,7 +18,7 @@ import { PathIndex } from './indices/PathIndex'
 import { GlobalIndex } from './indices/GlobalIndex'
 import { ModuleIndex } from './indices/ModuleIndex'
 
-import { NODE_ENV } from '../constants'
+import { NODE_ENV } from '../constants/env'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { LoggerHelper } from '../helper/LoggerHelper'
 import { SetHelper } from '../helper/SetHelper'

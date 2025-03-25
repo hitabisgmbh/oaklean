@@ -13,7 +13,7 @@ import {
 } from '../types/helper/PerformanceHelper'
 import {
 	OAKLEAN_ENABLE_PERFORMANCE_TRACKING
-} from '../constants'
+} from '../constants/env'
 
 export class PerformanceHelper {
 	private _measures: Map<string, IPerformanceInterval>

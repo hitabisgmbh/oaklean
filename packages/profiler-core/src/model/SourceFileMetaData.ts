@@ -10,12 +10,14 @@ import { GlobalIndex } from './indices/GlobalIndex'
 import { SourceNodeIndex } from './indices/SourceNodeIndex'
 
 import {
-	NODE_ENV,
+	NODE_ENV
+} from '../constants/env'
+import {
 	SourceNodeIdentifierRegex,
 	SourceNodeIdentifierRegexString,
 	LangInternalSourceNodeIdentifierRegex,
 	LangInternalSourceNodeIdentifierRegexString
-} from '../constants'
+} from '../constants/SourceNodeRegex'
 import { BufferHelper } from '../helper/BufferHelper'
 // Types
 import {

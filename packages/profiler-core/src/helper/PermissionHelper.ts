@@ -9,7 +9,7 @@ import {
 import {
 	SUDO_USER,
 	SYSTEM_DRIVE
-} from '../constants'
+} from '../constants/env'
 // Types
 import {
 	PermissionTypes

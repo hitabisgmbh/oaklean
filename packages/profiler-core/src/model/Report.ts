@@ -17,9 +17,11 @@ import { GlobalIndex } from './indices/GlobalIndex'
 import { PathIndex } from './indices/PathIndex'
 
 import {
-	NODE_ENV,
+	NODE_ENV
+} from '../constants/env'
+import {
 	VERSION
-} from '../constants'
+} from '../constants/app'
 import { PermissionHelper } from '../helper/PermissionHelper'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { BufferHelper } from '../helper/BufferHelper'

@@ -6,6 +6,7 @@ import {
 } from '../types'
 
 export const STATIC_CONFIG_FILENAME = '.oaklean'
+export const STATIC_GLOBAL_CONFIG_DIR = '.oaklean'
 
 export const DEFAULT_PROFILER_CONFIG: IProfilerConfig = {
 	exportOptions: {
