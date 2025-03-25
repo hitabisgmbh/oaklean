@@ -1,6 +1,6 @@
 stages:
   - setup
-  - execute
+  - lint
   - build
   - test
 
@@ -84,6 +84,14 @@ setup_environment:
         Write-Host "NVM is already installed."
       }
 
+lint:
+  stage: build
+  tags:
+    - windows
+  extends: .common_setup
+  script:
+    - npm run lint
+
 build:
   stage: build
   tags:
@@ -100,14 +108,6 @@ build:
       - ./packages/windows-sensorinterface/dist
   script:
     - npm run build
-
-lint:
-  stage: build
-  tags:
-    - windows
-  extends: .common_setup
-  script:
-    - npm run lint
 
 test:
   stage: test
