@@ -35,7 +35,8 @@ describe('CPUProfileSourceLocation', () => {
 
 		instance = new CPUProfileSourceLocation(
 			ROOT_DIR,
-			sourceLocation
+			sourceLocation.id,
+			sourceLocation.callFrame
 		)
 
 		

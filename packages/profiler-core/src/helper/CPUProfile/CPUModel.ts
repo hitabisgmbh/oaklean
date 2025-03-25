@@ -45,7 +45,11 @@ export class CPUModel {
 		this.cpuModel = buildModel(profile)
 		this.sourceLocations = this.cpuModel.locations.map((
 			location
-		) => new CPUProfileSourceLocation(this.rootDir, location))
+		) => new CPUProfileSourceLocation(
+			this.rootDir,
+			location.id,
+			location.callFrame
+		))
 
 
 		this._cpuProfilerBeginTime = highResolutionBeginTime
