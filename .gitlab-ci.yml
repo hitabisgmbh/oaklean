@@ -10,12 +10,12 @@ stages:
   - test-artifacts
   - deploy
 
-# pipeline-windows:
-#   stage: platform-build-and-test
-#   trigger:
-#     include: 
-#       - local: .gitlab/pipeline-windows.yml
-#     strategy: depend
+pipeline-windows:
+  stage: platform-build-and-test
+  trigger:
+    include: 
+      - local: .gitlab/pipeline-windows.yml
+    strategy: depend
 
 pipeline-linux:
   stage: platform-build-and-test
@@ -24,7 +24,7 @@ pipeline-linux:
       - local: .gitlab/pipeline-linux.yml
     strategy: depend
 
-test-measure-artifacts:
+test-measure-artifacts-linux:
   image: $BUILD_IMAGE
   stage: test-artifacts
   variables:
@@ -34,7 +34,7 @@ test-measure-artifacts:
   artifacts:
     expire_in: 1 week
     paths:
-      - test_measure_artifacts.zip
+      - test_measure_artifacts_linux.zip
   script:
     - echo $DOWN_STREAM_PIPELINE_NAME $ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE $HEADER
     # Get the downstream pipeline id
@@ -44,7 +44,29 @@ test-measure-artifacts:
     # Get the artifact url
     - ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$ARTIFACT_JOB_ID/artifacts"
     # Download the artifacts
-    - curl --header "$HEADER" $ARTIFACT_URL -o test_measure_artifacts.zip
+    - curl --header "$HEADER" $ARTIFACT_URL -o test_measure_artifacts_linux.zip
+
+test-measure-artifacts-windows:
+  image: $BUILD_IMAGE
+  stage: test-artifacts
+  variables:
+    DOWN_STREAM_PIPELINE_NAME: pipeline-windows
+    ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE: test
+    HEADER: "PRIVATE-TOKEN: $GITLAB_API_TOKEN"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - test_measure_artifacts_windows.zip
+  script:
+    - echo $DOWN_STREAM_PIPELINE_NAME $ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE $HEADER
+    # Get the downstream pipeline id
+    - DOWNSTREAM_PIPELINE_ID=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/bridges" --header "$HEADER" | jq ".[] | select(.name == \"$DOWN_STREAM_PIPELINE_NAME\") | .downstream_pipeline.id")
+    # Get the artifact job id in the downstream pipeline
+    - ARTIFACT_JOB_ID=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$DOWNSTREAM_PIPELINE_ID/jobs" --header "$HEADER" | jq ".[] | select(.name == \"$ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE\") | .id")
+    # Get the artifact url
+    - ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$ARTIFACT_JOB_ID/artifacts"
+    # Download the artifacts
+    - curl --header "$HEADER" $ARTIFACT_URL -o test_measure_artifacts_windows.zip
 
 deploy-artifacts:
   image: $BUILD_IMAGE
@@ -91,7 +113,7 @@ deploy-mandatory:
 deploy-optional:
   image: $BUILD_IMAGE
   stage: deploy
-  allow_failure: true
+  when: manual
   needs:
     - job: deploy-artifacts
       artifacts: true
