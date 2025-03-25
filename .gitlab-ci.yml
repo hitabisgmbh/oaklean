@@ -50,8 +50,9 @@ downstream-artifacts:
 deploy-mandatory:
   image: $BUILD_IMAGE
   stage: deploy
-  dependencies:
-    - downstream-artifacts
+  needs:
+    - job: downstream-artifacts
+      artifacts: true
   only:
     - /^release.*$/
   script:
@@ -66,8 +67,9 @@ deploy-optional:
   image: $BUILD_IMAGE
   stage: deploy
   allow_failure: true
-  dependencies:
-    - downstream-artifacts
+  needs:
+    - job: downstream-artifacts
+      artifacts: true
   only:
     - /^release.*$/
   script:
