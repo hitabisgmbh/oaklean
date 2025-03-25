@@ -20,13 +20,12 @@ const EXAMPLE_PROJECT_REPORT_BUFFER = Buffer.from(
 const EXAMPLE_PROJECT_REPORT = ProjectReport.consumeFromBuffer(EXAMPLE_PROJECT_REPORT_BUFFER).instance
 
 const MOCKED_ENV = jest.mocked(env)
-const OAKLEAN_DISABLE_REGISTRY_DEFAULT = MOCKED_ENV.OAKLEAN_DISABLE_REGISTRY
 
 describe('RegistryHelper', () => {
 	describe('uploadToRegistry', () => {
-		afterEach(() => {
+		beforeEach(() => {
 			jest.restoreAllMocks()
-			MOCKED_ENV.OAKLEAN_DISABLE_REGISTRY = OAKLEAN_DISABLE_REGISTRY_DEFAULT
+			MOCKED_ENV.OAKLEAN_DISABLE_REGISTRY = false
 		})
 
 		test('default behaviour', async () => {
@@ -67,10 +66,6 @@ describe('RegistryHelper', () => {
 			const result = await RegistryHelper.uploadToRegistry(EXAMPLE_PROJECT_REPORT)
 			expect(result).toBeUndefined()
 			expect(axiosPostSpy).not.toHaveBeenCalled()			
-		})
-
-		test('error', async () => {
-			expect(MOCKED_ENV.OAKLEAN_DISABLE_REGISTRY).toBe(OAKLEAN_DISABLE_REGISTRY_DEFAULT)
 		})
 	})
 })
