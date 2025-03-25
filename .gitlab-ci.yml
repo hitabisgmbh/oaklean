@@ -23,8 +23,7 @@ pipeline-linux:
       - local: .gitlab/pipeline-linux.yml
     strategy: depend
 
-deploy:
-  image: $BUILD_IMAGE
+downstream-artifacts:
   stage: deploy
   only: 
     - /^release.*$/
@@ -33,6 +32,10 @@ deploy:
     ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE: build
     HEADER: "PRIVATE-TOKEN: $GITLAB_API_TOKEN"
     NODE_ENV: production
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - downstream_artifacts.zip
   script:
     - echo $DOWN_STREAM_PIPELINE_NAME $ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE $HEADER
     # Get the downstream pipeline id
@@ -43,9 +46,34 @@ deploy:
     - ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$ARTIFACT_JOB_ID/artifacts"
     # Download the artifacts
     - curl --header "$HEADER" $ARTIFACT_URL -o downstream_artifacts.zip
+
+deploy-mandatory:
+  image: $BUILD_IMAGE
+  stage: deploy
+  dependencies:
+    - downstream-artifacts
+  only:
+    - /^release.*$/
+  script:
     # Unzip the artifacts
     - unzip downstream_artifacts.zip
     - rm downstream_artifacts.zip
     # Deploy the package to the private registry
     - echo -e "${PRIVATE_REGISTRY}${CI_JOB_TOKEN}">.npmrc
-    - npm run publish-registry
+    - npm run publish-registry-mandatory
+
+deploy-optional:
+  image: $BUILD_IMAGE
+  stage: deploy
+  allow_failure: true
+  dependencies:
+    - downstream-artifacts
+  only:
+    - /^release.*$/
+  script:
+    # Unzip the artifacts
+    - unzip downstream_artifacts.zip
+    - rm downstream_artifacts.zip
+    # Deploy the package to the private registry
+    - echo -e "${PRIVATE_REGISTRY}${CI_JOB_TOKEN}">.npmrc
+    - npm run publish-registry-optional
