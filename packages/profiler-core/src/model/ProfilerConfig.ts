@@ -6,10 +6,11 @@ import {
 	STATIC_CONFIG_FILENAME,
 	DEFAULT_PROFILER_CONFIG
 } from '../constants/config'
-import { PathUtils } from '../helper/PathUtils'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { PermissionHelper } from '../helper/PermissionHelper'
+import { LoggerHelper } from '../helper/LoggerHelper'
+import { PathUtils } from '../helper/PathUtils'
 // Types
 import {
 	IPowerMetricsSensorInterfaceOptions,
@@ -27,7 +28,6 @@ import {
 	DeepPartial,
 	IProfilerConfig_schema
 } from '../types'
-import { LoggerHelper } from '../helper'
 
 export interface IProfilerConfigIntermediate extends IProfilerConfigFileRepresentation {
 	filePath: UnifiedPath
