@@ -12,12 +12,15 @@ import { GlobalIndex } from './indices/GlobalIndex'
 import { ModuleIndex } from './indices/ModuleIndex'
 
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
+import {
+	NODE_ENV,
+	BIN_FILE_MAGIC
+} from '../constants'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
 import { AuthenticationHelper } from '../helper/AuthenticationHelper'
 import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper'
-import { BIN_FILE_MAGIC } from '../constants/app'
 import { ExternalResourceHelper } from '../helper/ExternalResourceHelper'
 // Types
 import {
@@ -127,7 +130,7 @@ export class ProjectReport extends Report {
 	}
 
 	toJSON(): IProjectReport {
-		if (process.env.NODE_ENV === 'test') {
+		if (NODE_ENV === 'test') {
 			this.validate()
 		}
 		const reportJSON = super.toJSON()

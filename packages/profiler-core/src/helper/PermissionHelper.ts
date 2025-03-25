@@ -3,7 +3,13 @@ import * as fs from 'fs'
 import path from 'path'
 import os from 'os'
 
-import { UnifiedPath } from '../system/UnifiedPath'
+import {
+	UnifiedPath
+} from '../system/UnifiedPath'
+import {
+	SUDO_USER,
+	SYSTEM_DRIVE
+} from '../constants'
 // Types
 import {
 	PermissionTypes
@@ -46,9 +52,7 @@ function createDirectoriesRecursively(targetDir: string) {
 
 export class PermissionHelper {
 	static changeFileOwnershipBackToUser(path: string) {
-		const sudoUser = process.env.SUDO_USER
-
-		if (sudoUser) {
+		if (SUDO_USER) {
 			// change ownership from file back to the user who executed the code with sudo
 			const options: ExecSyncOptions = {
 			}
@@ -56,7 +60,7 @@ export class PermissionHelper {
 				options.shell = 'powershell.exe'
 			}
 			try {
-				ChildProcess.execSync(`chown ${sudoUser} "${path}"`, options)
+				ChildProcess.execSync(`chown ${SUDO_USER} "${path}"`, options)
 			} catch {}
 		}
 	}
@@ -96,7 +100,7 @@ export class PermissionHelper {
 			if (platform !== 'win32') {
 				resolve(false)
 			}
-			ChildProcess.exec('fsutil dirty query ' + process.env.systemdrive, function (err, stdout, stderr) {
+			ChildProcess.exec('fsutil dirty query ' + SYSTEM_DRIVE, function (err, stdout, stderr) {
 				if (err) {
 					resolve(false)
 				} else {

@@ -11,8 +11,9 @@ import {
 	IPerformanceInterval,
 	IPerformanceHelper
 } from '../types/helper/PerformanceHelper'
-
-const ENABLE_PERFORMANCE_TRACKING = process.env.OAKLEAN_ENABLE_PERFORMANCE_TRACKING !== undefined
+import {
+	OAKLEAN_ENABLE_PERFORMANCE_TRACKING
+} from '../constants'
 
 export class PerformanceHelper {
 	private _measures: Map<string, IPerformanceInterval>
@@ -42,7 +43,7 @@ export class PerformanceHelper {
 	}
 
 	exportAndSum(path: UnifiedPath) {
-		if (!ENABLE_PERFORMANCE_TRACKING) {
+		if (!OAKLEAN_ENABLE_PERFORMANCE_TRACKING) {
 			return
 		}
 		const report = PerformanceHelper.loadFromFile(path)
@@ -57,7 +58,7 @@ export class PerformanceHelper {
 	}
 
 	start(name: string) {
-		if (!ENABLE_PERFORMANCE_TRACKING) {
+		if (!OAKLEAN_ENABLE_PERFORMANCE_TRACKING) {
 			return
 		}
 		const time = TimeHelper.getCurrentHighResolutionTime()
@@ -71,7 +72,7 @@ export class PerformanceHelper {
 	}
 
 	stop(name: string) {
-		if (!ENABLE_PERFORMANCE_TRACKING) {
+		if (!OAKLEAN_ENABLE_PERFORMANCE_TRACKING) {
 			return
 		}
 		const time = TimeHelper.getCurrentHighResolutionTime()
@@ -96,7 +97,7 @@ export class PerformanceHelper {
 	}
 
 	printReport(title: string) {
-		if (!ENABLE_PERFORMANCE_TRACKING) {
+		if (!OAKLEAN_ENABLE_PERFORMANCE_TRACKING) {
 			return
 		}
 		const report: { [key: string]: {

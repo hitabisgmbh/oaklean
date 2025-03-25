@@ -11,8 +11,12 @@ import {
 	PerformanceHelper
 } from '@oaklean/profiler-core'
 
+import {
+	ENABLE_MEASUREMENTS
+} from './constants'
+
 export default async function () {
-	if (!process.env.ENABLE_MEASUREMENTS) {
+	if (!ENABLE_MEASUREMENTS) {
 		return
 	}
 	const performance = new PerformanceHelper()

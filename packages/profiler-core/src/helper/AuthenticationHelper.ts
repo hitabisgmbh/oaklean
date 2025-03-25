@@ -3,6 +3,10 @@ import fs from 'fs'
 
 import { PermissionHelper } from './PermissionHelper'
 
+import {
+	OAKLEAN_AUTH_KEY,
+	STATIC_GLOBAL_CONFIG_DIR
+} from '../constants'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 // Types
@@ -11,15 +15,13 @@ import {
 	PermissionTypes
 } from '../types'
 
-export const STATIC_GLOBAL_CONFIG_DIR = '.oaklean'
-
 export class AuthenticationHelper {
 	static getAuthentication(): UUID_string {
-		if (process.env.OAKLEAN_AUTH_KEY !== undefined) {
-			if (!Crypto.validateUniqueID(process.env.OAKLEAN_AUTH_KEY as UUID_string)) {
+		if (OAKLEAN_AUTH_KEY !== undefined) {
+			if (!Crypto.validateUniqueID(OAKLEAN_AUTH_KEY as UUID_string)) {
 				throw new Error('AuthenticationHelper.getAuthentication: Env Variable OAKLEAN_AUTH_KEY is no uuid4')
 			}
-			return process.env.OAKLEAN_AUTH_KEY as UUID_string
+			return OAKLEAN_AUTH_KEY as UUID_string
 		}
 
 		const configDir = new UnifiedPath(os.homedir()).join(STATIC_GLOBAL_CONFIG_DIR)

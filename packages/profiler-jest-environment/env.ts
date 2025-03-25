@@ -19,6 +19,10 @@ import {
 import NodeEnvironment from 'jest-environment-node'
 import JSDOMEnvironment from 'jest-environment-jsdom'
 
+import {
+	ENABLE_MEASUREMENTS
+} from './constants'
+
 declare global {
 	interface globalThis {
 		jestConfig: JestEnvironmentConfig
@@ -72,7 +76,7 @@ class CustomEnvironment implements JestEnvironment {
 		this.testPath = rootDir.pathTo(new UnifiedPath(context.testPath))
 		this.global.jestConfig = config
 		this.global.jestContext = context
-		if (process.env.ENABLE_MEASUREMENTS) {
+		if (ENABLE_MEASUREMENTS) {
 			this.profiler = new Profiler('jest')
 		}
 		this.ranSuccessfully = true
@@ -92,7 +96,7 @@ class CustomEnvironment implements JestEnvironment {
 
 	async setup() {
 		await this.environment.setup()
-		if (process.env.ENABLE_MEASUREMENTS && this.profiler) {
+		if (ENABLE_MEASUREMENTS && this.profiler) {
 			const performance = new PerformanceHelper()
 			try {
 				performance.start('jestEnv.env.setup')
@@ -120,7 +124,7 @@ class CustomEnvironment implements JestEnvironment {
 	}
 
 	async teardown() {
-		if (process.env.ENABLE_MEASUREMENTS && this.profiler) {
+		if (ENABLE_MEASUREMENTS && this.profiler) {
 			const performance = new PerformanceHelper()
 			try {
 				performance.start('jestEnv.env.teardown')

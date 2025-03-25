@@ -16,8 +16,11 @@ import { ModuleIndex } from './indices/ModuleIndex'
 import { GlobalIndex } from './indices/GlobalIndex'
 import { PathIndex } from './indices/PathIndex'
 
+import {
+	NODE_ENV,
+	VERSION
+} from '../constants'
 import { PermissionHelper } from '../helper/PermissionHelper'
-import { VERSION } from '../constants/app'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { BufferHelper } from '../helper/BufferHelper'
 import { VersionHelper } from '../helper/VersionHelper'
@@ -438,7 +441,7 @@ export class Report extends BaseModel {
 	}
 
 	toJSON(): IReport {
-		if (process.env.NODE_ENV === 'test') {
+		if (NODE_ENV === 'test') {
 			this.validate()
 		}
 		return {
