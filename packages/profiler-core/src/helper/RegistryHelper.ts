@@ -1,9 +1,9 @@
 import axios from 'axios'
-import FormData from 'form-data'
 
 import { BufferHelper } from './BufferHelper'
 import { AuthenticationHelper } from './AuthenticationHelper'
 
+import { OAKLEAN_DISABLE_REGISTRY } from '../constants'
 import {
 	ProfilerConfig,
 	ProjectReport
@@ -14,6 +14,10 @@ export class RegistryHelper {
 		projectReport: ProjectReport,
 		config?: ProfilerConfig
 	) {
+		if (OAKLEAN_DISABLE_REGISTRY) {
+			return
+		}
+
 		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
 
 		if (!usedConfig.uploadEnabled()) {
@@ -23,7 +27,7 @@ export class RegistryHelper {
 		const compressedBuffer = await BufferHelper.compressBuffer(projectReport.toBuffer())
 
 		const formData = new FormData()
-		formData.append('file', compressedBuffer, 'filename.txt')
+		formData.append('file', new Blob([compressedBuffer]), 'filename.txt')
 		formData.append('auth', AuthenticationHelper.getAuthentication())
 
 		try {
@@ -33,7 +37,7 @@ export class RegistryHelper {
 					'Content-Type': 'multipart/form-data'
 				}
 			})
-			return result	
+			return result
 		} catch {}
 	}
 }
