@@ -33,8 +33,6 @@ lint:
 
 test:
   stage: test
-  script:
-    - npm run test
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   after_script:
     - mv ./profiles/jest/accumulated.oak ./
@@ -42,6 +40,10 @@ test:
     expire_in: 1 week
     paths:
       - ./accumulated.oak
+  variables:
+    OAKLEAN_DISABLE_REGISTRY: true
+  script:
+    - npm run test-measure
 
 generate-docs:
   stage: generate-docs

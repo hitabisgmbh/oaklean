@@ -114,5 +114,7 @@ test:
   tags:
     - windows
   extends: .common_setup
+  variables:
+    OAKLEAN_DISABLE_REGISTRY: true
   script:
-    - npm run test
+    - npm run test-measure
