@@ -1,7 +1,8 @@
 stages:
+  - generate-docs
+  - lint
   - build
   - test
-  - generate-docs
 
 cache:
   paths:
@@ -12,10 +13,20 @@ default:
   before_script:
     - npm ci
 
+generate-docs:
+  stage: generate-docs
+  script:
+    - npm run generate-docs && [[ -z "$(git status -s)" ]]
+
+lint:
+  stage: lint
+  script:
+    - npm run lint
+
 build:
   stage: build
   artifacts:
-    expire_in: 1 week
+    expire_in: 1 hrs
     paths:
       - ./packages/profiler/dist
       - ./packages/profiler-core/dist
@@ -26,28 +37,15 @@ build:
   script:
     - npm run build
 
-lint:
-  stage: build
-  script:
-    - npm run lint
-
 test:
   stage: test
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
-  after_script:
-    - mv ./profiles/jest/accumulated.oak ./
   artifacts:
-    expire_in: 1 week
+    expire_in: 1 hrs
     paths:
-      - ./accumulated.oak
+      - ./profiles/jest/accumulated.oak
+      - ./profiles/jest/performance.json
   variables:
     OAKLEAN_DISABLE_REGISTRY: true
   script:
     - npm run test-measure
-
-generate-docs:
-  stage: generate-docs
-  script:
-    - npm run generate-docs
-    - git status -s
-    - [[ -z "$(git status -s)" ]]

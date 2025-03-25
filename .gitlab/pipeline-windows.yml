@@ -90,7 +90,7 @@ build:
     - windows
   extends: .common_setup
   artifacts:
-    expire_in: 1 week
+    expire_in: 1 hrs
     paths:
       - ./packages/profiler/dist
       - ./packages/profiler-core/dist
