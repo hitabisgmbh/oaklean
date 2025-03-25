@@ -24,6 +24,7 @@ pipeline-linux:
     strategy: depend
 
 downstream-artifacts:
+  image: $BUILD_IMAGE
   stage: deploy
   only: 
     - /^release.*$/
