@@ -1,7 +1,8 @@
+import { Protocol as Cdp } from 'devtools-protocol'
+
 import { LangInternalSourceNodeRegExpRegexString } from '../../constants/SourceNodeRegex'
 import { UnifiedPath } from '../../system/UnifiedPath'
 import { UrlProtocolHelper } from '../UrlProtocolHelper'
-import { ILocation } from '../../../lib/vscode-js-profile-core/src/cpu/model'
 // Types
 import {
 	ScriptID_string,
@@ -14,7 +15,7 @@ export const RegExpTestRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexS
 export class CPUProfileSourceLocation {
 	private _index: number
 
-	private _sourceLocation: ILocation
+	private _callFrame: Cdp.Runtime.CallFrame
 
 	// extended fields
 	private _rootDir: UnifiedPath
@@ -28,26 +29,27 @@ export class CPUProfileSourceLocation {
 
 	constructor(
 		rootDir: UnifiedPath,
-		sourceLocation: ILocation
+		locationId: number,
+		callFrame: Cdp.Runtime.CallFrame
 	) {
-		this._index = sourceLocation.id
-		this._sourceLocation = sourceLocation
+		this._index = locationId
+		this._callFrame = callFrame
 		this._rootDir = rootDir
 
 		// determine the type of the source location
 		if (
-			sourceLocation.callFrame.url.startsWith('node:') ||
-			(sourceLocation.callFrame.url === '' && sourceLocation.callFrame.functionName.length > 0)
+			this.callFrame.url.startsWith('node:') ||
+			(this.callFrame.url === '' && this.callFrame.functionName.length > 0)
 		) {
 			this._type = CPUProfileSourceLocationType.LANG_INTERNAL
-		} else if (sourceLocation.callFrame.url.startsWith('wasm://')) {
+		} else if (this.callFrame.url.startsWith('wasm://')) {
 			this._type = CPUProfileSourceLocationType.WASM
 		} else if (
-			sourceLocation.callFrame.url.startsWith('webpack://') ||
-			sourceLocation.callFrame.url.startsWith('webpack-internal://')
+			this.callFrame.url.startsWith('webpack://') ||
+			this.callFrame.url.startsWith('webpack-internal://')
 		) {
 			this._type = CPUProfileSourceLocationType.WEBPACK
-		} else if (sourceLocation.callFrame.url === '') {
+		} else if (this.callFrame.url === '') {
 			// important that this the last check, since node internal urls are also sometimes empty
 			this._type = CPUProfileSourceLocationType.EMPTY
 		} else {
@@ -55,18 +57,18 @@ export class CPUProfileSourceLocation {
 		}
 		
 		// determine the script id
-		this._scriptID = this.ISourceLocation.callFrame.scriptId.toString() as ScriptID_string
+		this._scriptID = this.callFrame.scriptId.toString() as ScriptID_string
 
 		// determine the pure url
-		this._rawUrl = this.ISourceLocation.callFrame.url
+		this._rawUrl = this.callFrame.url
 	}
 
 	private get rootDir() {
 		return this._rootDir
 	}
 
-	private get ISourceLocation() {
-		return this._sourceLocation
+	private get callFrame() {
+		return this._callFrame
 	}
 
 	get index() {
@@ -74,7 +76,7 @@ export class CPUProfileSourceLocation {
 	}
 
 	get sourceLocation() {
-		const { lineNumber, columnNumber } = this.ISourceLocation.callFrame
+		const { lineNumber, columnNumber } = this.callFrame
 		return {
 			lineNumber,
 			columnNumber
@@ -106,7 +108,7 @@ export class CPUProfileSourceLocation {
 	}
 
 	get rawFunctionName() {
-		return this.ISourceLocation.callFrame.functionName
+		return this.callFrame.functionName
 	}
 
 	get absoluteUrl() {
