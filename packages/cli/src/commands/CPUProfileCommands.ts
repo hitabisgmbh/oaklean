@@ -7,7 +7,8 @@ import {
 	NanoSeconds_BigInt,
 	LoggerHelper,
 	CPUNode,
-	ProfilerConfig
+	ProfilerConfig,
+	CPUProfileHelper
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
@@ -35,6 +36,13 @@ export default class CPUProfileCommands {
 			.description('Displays the trace of the cpu profile')
 			.argument('<input>', 'input file path')
 			.action(this.trace.bind(this))
+
+		baseCommand
+			.command('anonymize')
+			.description('Converts all paths in the cpu profile to relative paths (relative to the rootDir mentioned in the .oaklean config) to remove all user related paths')
+			.argument('<input>', 'input file path')
+			.option('-o, --output <output>', 'output file path (default: input file path)')
+			.action(this.anonymize.bind(this))
 	}
 
 	static init() {
@@ -208,5 +216,33 @@ export default class CPUProfileCommands {
 		)
 
 		traverse(cpuModel.getNode(0))
+	}
+
+	async anonymize(
+		input: string,
+		options: { output?: string }
+	) {
+		let inputPath = new UnifiedPath(input)
+		if (inputPath.isRelative()) {
+			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
+		}
+
+		let outputPath
+		if (options.output === undefined) {
+			outputPath = inputPath.copy()
+		} else {
+			outputPath = new UnifiedPath(options.output)
+			if (outputPath.isRelative()) {
+				outputPath = new UnifiedPath(process.cwd()).join(outputPath)
+			}
+		}
+
+		const profilerConfig = ProfilerConfig.autoResolveFromPath(inputPath.dirName())
+
+		await CPUProfileHelper.anonymize(
+			profilerConfig.getRootDir(),
+			inputPath,
+			outputPath
+		)
 	}
 }

@@ -27,6 +27,7 @@ Commands:
      - toCPUModel Converts a cpu profile format that is given to a cpu model format
      - inspect Displays an overview of the cpu profile stats
      - trace Displays the trace of the cpu profile
+     - anonymize Converts all paths in the cpu profile to relative paths (relative to the rootDir mentioned in the .oaklean config) to remove all user related paths
   
   parse           commands to parse javascript or typescript files
      - toPST Converts a given javascript/typescript file and extracts the ProgramStructureTree from it and stores it into a file

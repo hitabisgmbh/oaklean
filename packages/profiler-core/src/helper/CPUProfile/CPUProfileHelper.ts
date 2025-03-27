@@ -9,7 +9,7 @@ import { PermissionHelper } from '../PermissionHelper'
 
 export class CPUProfileHelper {
 	/**
-	 * This function is used to convert a all paths in the CPU profile to relative paths.
+	 * This function is used to convert all paths in the CPU profile to relative paths.
 	 * (relative to the rootDir)
 	 * 
 	 * The CPU profile is then written to the given output path.
