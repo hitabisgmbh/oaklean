@@ -53,7 +53,7 @@ describe('ExternalResourceHelper', () => {
 			nodeModuleSpy.mockRestore()
 
 			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
-				() => [SCRIPT_01_PATH.toString()]
+				() => [SCRIPT_01_PATH]
 			)
 			instance.trackUncommittedFiles(ROOT_DIR)
 			uncommittedFilesMock.mockRestore()

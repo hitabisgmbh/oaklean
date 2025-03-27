@@ -82,7 +82,7 @@ export class ExternalResourceHelper {
 				this._uncommittedFiles = null
 			} else {
 				this._uncommittedFiles = uncommittedFiles.map(
-					(file) => rootDir.pathTo(new UnifiedPath(file)).toString()
+					(file) => rootDir.pathTo(file).toString()
 				)
 			}
 		}

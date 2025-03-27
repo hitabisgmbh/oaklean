@@ -1,6 +1,6 @@
 import ChildProcess, { ExecSyncOptions } from 'child_process'
 
-import { STATIC_CONFIG_FILENAME } from '../constants/config'
+import { UnifiedPath } from '../system/UnifiedPath'
 // Types
 import {
 	GitHash_string
@@ -39,7 +39,29 @@ export class GitHelper {
 		}
 	}
 
-	static uncommittedFiles(): string[] | null {
+	static getRepositoriesRootDir(): UnifiedPath | null {
+		const command = 'git rev-parse --show-toplevel'
+		try {
+			const options: ExecSyncOptions = {
+				stdio: 'pipe'
+			}
+			if (process.platform === 'win32') {
+				options.shell = 'powershell.exe'
+			}
+
+			const result = ChildProcess.execSync(command, options).toString().trim()
+			return new UnifiedPath(result)
+		} catch (error) {
+			return null
+		}
+	}
+
+	static uncommittedFiles(): UnifiedPath[] | null {
+		const repositoriesRootDir = GitHelper.getRepositoriesRootDir()
+		if (repositoriesRootDir === null) {
+			return null
+		}
+
 		const command = 'git diff HEAD --name-only -z'
 		try {
 			const options: ExecSyncOptions = {
@@ -50,21 +72,9 @@ export class GitHelper {
 			}
 
 			const result = ChildProcess.execSync(command, options).toString().trim()
-			return result.split('\0')
+			return result.split('\0').map((filePath) => repositoriesRootDir.join(filePath))
 		} catch (error) {
 			return null
 		}
-	}
-
-	static uncommittedChanges(): boolean | null {
-		const uncommittedFiles = GitHelper.uncommittedFiles()
-
-		if (uncommittedFiles === null) {
-			return uncommittedFiles
-		}
-		if (uncommittedFiles.length === 1 && uncommittedFiles[0] === STATIC_CONFIG_FILENAME) {
-			return false
-		}
-		return true
 	}
 }

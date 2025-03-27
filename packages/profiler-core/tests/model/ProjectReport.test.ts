@@ -615,18 +615,29 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			})
 
 			test('uncommitted changes exist', () => {
-				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./dist/test.js'])
+				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([
+					new UnifiedPath('./dist/test.js')
+				])
 				instance.trackUncommittedFiles(
 					new UnifiedPath('./'),
 					new ExternalResourceHelper(ROOT_DIR)
 				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(true)
+				// check if the uncommitted changes are correctly tracked
+				expect(
+					instance.globalIndex.getModuleIndex('get')
+						?.getFilePathIndex('get',
+							'./dist/test.js' as UnifiedPath_string
+						)?.containsUncommittedChanges
+				).toBe(true)
 
 				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('uncommitted changes exist in node modules has no effect', () => {
-				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(['./node_modules/@oaklean/profiler-core/test.js'])
+				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([
+					new UnifiedPath('./node_modules/@oaklean/profiler-core/test.js')
+				])
 				instance.trackUncommittedFiles(
 					new UnifiedPath('./'),
 					new ExternalResourceHelper(ROOT_DIR)

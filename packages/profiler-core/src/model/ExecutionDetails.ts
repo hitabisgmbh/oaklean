@@ -12,7 +12,9 @@ import { TimeHelper } from '../helper/TimeHelper'
 import { IProjectReportExecutionDetails, ProjectReportOrigin } from '../types'
 
 export class ExecutionDetails {
-	static async resolveExecutionDetails(config?: ProfilerConfig): Promise<IProjectReportExecutionDetails> {
+	static async resolveExecutionDetails(
+		config?: ProfilerConfig
+	): Promise<IProjectReportExecutionDetails> {
 		const commitHash = GitHelper.currentCommitHash()
 		const commitTimestamp = GitHelper.currentCommitTimestamp()
 		const timestamp = TimeHelper.getCurrentTimestamp()
