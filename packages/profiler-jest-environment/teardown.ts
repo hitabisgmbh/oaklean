@@ -8,11 +8,16 @@ import {
 	GlobalIndex,
 	NodeModule,
 	LoggerHelper,
-	PerformanceHelper
+	PerformanceHelper,
+	RegistryHelper
 } from '@oaklean/profiler-core'
 
+import {
+	ENABLE_MEASUREMENTS
+} from './constants'
+
 export default async function () {
-	if (!process.env.ENABLE_MEASUREMENTS) {
+	if (!ENABLE_MEASUREMENTS) {
 		return
 	}
 	const performance = new PerformanceHelper()
@@ -69,7 +74,7 @@ export default async function () {
 
 		if (await accumulatedProjectReport.shouldBeStoredInRegistry()) {
 			performance.start('jestEnv.teardown.uploadToRegistry')
-			await accumulatedProjectReport.uploadToRegistry()
+			await RegistryHelper.uploadToRegistry(accumulatedProjectReport)
 			performance.stop('jestEnv.teardown.uploadToRegistry')
 		}
 		performance.stop('jestEnv.teardown')

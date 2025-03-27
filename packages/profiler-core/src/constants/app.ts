@@ -15,4 +15,3 @@ const package_version = JSON.parse(fs.readFileSync(
 export const VERSION = package_version === '0.0.0' ? '0.1.5' : package_version
 
 export const APP_NAME = 'Oaklean'
-export const BIN_FILE_MAGIC = Buffer.from('894F414B', 'hex')

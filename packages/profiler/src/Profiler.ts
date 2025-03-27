@@ -16,7 +16,8 @@ import {
 	LoggerHelper,
 	ExecutionDetails,
 	PerformanceHelper,
-	ExternalResourceHelper
+	ExternalResourceHelper,
+	RegistryHelper
 } from '@oaklean/profiler-core'
 
 import { V8Profiler } from './model/V8Profiler'
@@ -391,7 +392,7 @@ export class Profiler {
 		}
 
 		if (await report.shouldBeStoredInRegistry()) {
-			await report.uploadToRegistry(this.config)
+			await RegistryHelper.uploadToRegistry(report, this.config)
 		}
 		performance.stop('Profiler.finish')
 		performance.printReport('Profiler.finish')

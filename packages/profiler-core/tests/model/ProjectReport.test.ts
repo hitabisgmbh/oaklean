@@ -2,7 +2,6 @@ import * as fs from 'fs'
 
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { ProjectReport } from '../../src/model/ProjectReport'
-import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import {
 	NodeModule
 } from '../../src/model/NodeModule'

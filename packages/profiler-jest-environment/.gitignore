@@ -4,3 +4,5 @@ setup.js
 setup.d.ts
 teardown.js
 teardown.d.ts
+constants.js
+constants.d.ts

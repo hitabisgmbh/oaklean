@@ -1,8 +1,5 @@
 import * as fs from 'fs'
 
-import axios from 'axios'
-import FormData from 'form-data'
-
 import { NodeModule } from './NodeModule'
 import { ProfilerConfig } from './ProfilerConfig'
 import { Report } from './Report'
@@ -12,12 +9,16 @@ import { GlobalIndex } from './indices/GlobalIndex'
 import { ModuleIndex } from './indices/ModuleIndex'
 
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
+import {
+	NODE_ENV
+} from '../constants/env'
+import {
+	BIN_FILE_MAGIC
+} from '../constants/binary'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
-import { AuthenticationHelper } from '../helper/AuthenticationHelper'
 import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper'
-import { BIN_FILE_MAGIC } from '../constants/app'
 import { ExternalResourceHelper } from '../helper/ExternalResourceHelper'
 // Types
 import {
@@ -127,7 +128,7 @@ export class ProjectReport extends Report {
 	}
 
 	toJSON(): IProjectReport {
-		if (process.env.NODE_ENV === 'test') {
+		if (NODE_ENV === 'test') {
 			this.validate()
 		}
 		const reportJSON = super.toJSON()
@@ -370,29 +371,5 @@ export class ProjectReport extends Report {
 			return undefined
 		}
 		return Crypto.hash(fs.readFileSync(filePath.toPlatformString()))
-	}
-
-	async uploadToRegistry(config?: ProfilerConfig) {
-		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
-
-		if (!usedConfig.uploadEnabled()) {
-			return
-		}
-
-		const compressedBuffer = await BufferHelper.compressBuffer(this.toBuffer())
-
-		const formData = new FormData()
-		formData.append('file', compressedBuffer, 'filename.txt')
-		formData.append('auth', AuthenticationHelper.getAuthentication())
-
-		try {
-			const result = await axios.post(usedConfig.getRegistryUploadUrl(), formData, {
-				timeout: 5000, // Set a timeout of 5 seconds
-				headers: {
-					'Content-Type': 'multipart/form-data'
-				}
-			})
-			return result	
-		} catch {}
 	}
 }

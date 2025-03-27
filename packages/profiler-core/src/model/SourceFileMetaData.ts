@@ -10,6 +10,9 @@ import { GlobalIndex } from './indices/GlobalIndex'
 import { SourceNodeIndex } from './indices/SourceNodeIndex'
 
 import {
+	NODE_ENV
+} from '../constants/env'
+import {
 	SourceNodeIdentifierRegex,
 	SourceNodeIdentifierRegexString,
 	LangInternalSourceNodeIdentifierRegex,
@@ -244,7 +247,7 @@ export class SourceFileMetaData extends BaseModel {
 	}
 
 	toJSON(): ISourceFileMetaData {
-		if (process.env.NODE_ENV === 'test') {
+		if (NODE_ENV === 'test') {
 			this.validate()
 		}
 		return {

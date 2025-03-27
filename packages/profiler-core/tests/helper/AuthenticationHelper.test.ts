@@ -1,12 +1,17 @@
 import * as fs from 'fs'
 import os from 'os'
 
-import { AuthenticationHelper, STATIC_GLOBAL_CONFIG_DIR } from '../../src/helper/AuthenticationHelper'
+import {
+	STATIC_GLOBAL_CONFIG_DIR
+} from '../../src/constants/config'
+import * as env from '../../src/constants/env'
+import { AuthenticationHelper } from '../../src/helper/AuthenticationHelper'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 
-jest.mock('fs')
-
 const EXAMPLE_AUTH_KEY = 'c7b3b435-bc17-48a4-bb36-b4fe7aabe046'
+
+jest.mock('fs')
+jest.mock('../../src/constants/env')
 
 describe('AuthenticationHelper', () => {
 	describe('getAuthentication', () => {
@@ -33,9 +38,11 @@ describe('AuthenticationHelper', () => {
 		})
 
 		it('should return the authentication key from the environment variable', () => {
-			process.env.OAKLEAN_AUTH_KEY = EXAMPLE_AUTH_KEY
+			const mockedEnv = jest.mocked(env)
+			const originalAuthKey = mockedEnv.OAKLEAN_AUTH_KEY
+			mockedEnv.OAKLEAN_AUTH_KEY = EXAMPLE_AUTH_KEY
 			expect(AuthenticationHelper.getAuthentication()).toBe(EXAMPLE_AUTH_KEY)	
-			process.env.OAKLEAN_AUTH_KEY = undefined
+			mockedEnv.OAKLEAN_AUTH_KEY = originalAuthKey
 		})
 	})
 })

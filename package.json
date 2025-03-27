@@ -39,7 +39,8 @@
 		"test-update": "npm run test-update -ws",
 		"test-measure": "npm run test-measure -ws",
 		"test-gen": "npx jest-test-gen",
-		"publish-registry": "npm run publish-registry -ws",
+		"publish-registry-mandatory": "sh ./.deploy/publish-mandatory.sh",
+		"publish-registry-optional": "sh ./.deploy/publish-optional.sh",
 		"generate-docs": "markdown-include md-configs/README.json && npm run generate-docs -ws"
 	},
 	"files": [],

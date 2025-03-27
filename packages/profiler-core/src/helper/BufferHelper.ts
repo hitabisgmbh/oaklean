@@ -357,7 +357,7 @@ export class BufferHelper {
 		}
 	}
 
-	static async compressBuffer(buffer: Buffer): Promise<Buffer | Error> {
+	static async compressBuffer(buffer: Buffer): Promise<Buffer> {
 		return new Promise((resolve, reject) => {
 			Zlib.deflate(buffer, (error: Error | null, result: Buffer) => {
 				if (error === null) {

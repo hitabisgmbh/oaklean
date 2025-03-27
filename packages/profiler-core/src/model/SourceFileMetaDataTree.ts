@@ -18,7 +18,11 @@ import { PathIndex } from './indices/PathIndex'
 import { GlobalIndex } from './indices/GlobalIndex'
 import { ModuleIndex } from './indices/ModuleIndex'
 
+import { NODE_ENV } from '../constants/env'
 import { UnifiedPath } from '../system/UnifiedPath'
+import { LoggerHelper } from '../helper/LoggerHelper'
+import { SetHelper } from '../helper/SetHelper'
+import { UnitHelper } from '../helper/UnitHelper'
 import { PermissionHelper } from '../helper/PermissionHelper'
 // Types
 import {
@@ -35,9 +39,6 @@ import {
 	UnifiedPath_string,
 	UnifiedPathPart_string
 } from '../types'
-import { LoggerHelper } from '../helper/LoggerHelper'
-import { SetHelper } from '../helper/SetHelper'
-import { UnitHelper } from '../helper/UnitHelper'
 
 type UnifiedPathOnlyForPathNode<T> =
 	T extends SourceFileMetaDataTreeType.File |
@@ -343,7 +344,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 	}
 
 	toJSON(): ISourceFileMetaDataTree<T> {
-		if (process.env.NODE_ENV === 'test') {
+		if (NODE_ENV === 'test') {
 			this.validate()
 		}
 		return {
