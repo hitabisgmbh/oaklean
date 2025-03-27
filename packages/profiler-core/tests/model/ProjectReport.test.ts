@@ -623,6 +623,13 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 					new ExternalResourceHelper(ROOT_DIR)
 				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(true)
+				// check if the uncommitted changes are correctly tracked
+				expect(
+					instance.globalIndex.getModuleIndex('get')
+						?.getFilePathIndex('get',
+							'./dist/test.js' as UnifiedPath_string
+						)?.containsUncommittedChanges
+				).toBe(true)
 
 				uncommittedFiles_mock.mockRestore()
 			})
