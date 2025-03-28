@@ -31,16 +31,173 @@ import {
 	ResolvedSourceNodeLocation
 } from '../types'
 
-type AccountedTracker = {
-	map: Map<string, string[]>,
-	internMap: Map<string, boolean>,
-	externMap: Map<string, boolean>,
-	langInternalMap: Map<string, boolean>,
+class CallIdentifier {
+	readonly reportID: number
+	readonly sourceNodeID: SourceNodeID_number
+	readonly sourceNodeIDString: string
+
+	constructor(reportID: number, sourceNodeID: SourceNodeID_number) {
+		this.reportID = reportID
+		this.sourceNodeID = sourceNodeID
+		this.sourceNodeIDString = `${reportID}:${sourceNodeID}`
+	}
+
+	toString() {
+		return this.sourceNodeIDString
+	}
 }
 
-type CallIdentifier = {
-	reportID: number,
-	sourceNodeID: SourceNodeID_number
+class CallRelationTracker {
+	private _map: Map<string, string[]>
+	private _internMap: Map<string, boolean>
+	private _externMap: Map<string, boolean>
+	private _langInternalMap: Map<string, boolean>
+
+	constructor() {
+		this._map = new Map<string, string[]>()
+		this._internMap = new Map<string, boolean>()
+		this._externMap = new Map<string, boolean>()
+		this._langInternalMap = new Map<string, boolean>()
+	}
+
+	/**
+	 * Check if the tracker is empty
+	 * 
+	 * @returns {boolean} true if the tracker is empty, false otherwise
+	 */
+	isEmpty() {
+		return this._map.size === 0 &&
+			this._internMap.size === 0 &&
+			this._externMap.size === 0 &&
+			this._langInternalMap.size === 0
+	}
+
+	/**
+	 * Check if the tracker is currently in a headless scope.
+	 * Meaning that no intern or extern calls were made yet.
+	 */
+	currentlyInHeadlessScope() {
+		return this._internMap.size === 0 && this._externMap.size === 0
+	}
+
+	/**
+	 * Returns debug information about the tracker.
+	 * 
+	 * @returns {object} debug information about the tracker
+	 */
+	debugInfo() {
+		return {
+			mapSize: this._map.size,
+			internMapSize: this._internMap.size,
+			externMapSize: this._externMap.size,
+			langInternalMapSize: this._langInternalMap.size
+		}
+	}
+
+	/**
+	 * Remove the last child record from a call.
+	 * Is used to remove the last child from a parent call after the child has been traversed.
+	 * 
+	 * @param {CallIdentifier} callIdentifier - The call identifier
+	 * @returns {boolean} true if the child was removed, false otherwise
+	 */
+	removeLastChildRecord(callIdentifier: CallIdentifier): boolean {
+		const childCalls = this._map.get(callIdentifier.toString())
+		if (childCalls === undefined) {
+			return false
+		}
+		childCalls.pop() // remove last child from parent
+		return true
+	}
+
+	/**
+	 * Checks if a function call has child calls recorded (used in recursion tracking).
+	 * 
+	 * @param {CallIdentifier} callIdentifier - The call identifier
+	 * @returns {boolean} true if the call identifier was already visited, false otherwise
+	 */
+	isCallRecorded(callIdentifier: CallIdentifier) {
+		return this._map.has(callIdentifier.toString())
+	}
+
+	/**
+	 * Checks if a function call has child calls recorded (used in recursion tracking).
+	 * 
+	 * @param {CallIdentifier} callIdentifier - The call identifier
+	 * @returns {boolean} true if the call has child calls recorded, false otherwise
+	 */
+	hasChildrenRecorded(callIdentifier: CallIdentifier) {
+		return (this._map.get(callIdentifier.toString())?.length || 0) >0
+	}
+
+	/**
+	 * Removes all references to a function call (for cleanup).
+	 * 
+	 * @param {CallIdentifier} callIdentifier - The call identifier
+	 */
+	removeCallRecord(callIdentifier: CallIdentifier) {
+		const callIdentifierString = callIdentifier.toString()
+		this._internMap.delete(callIdentifierString)
+		this._externMap.delete(callIdentifierString)
+		this._langInternalMap.delete(callIdentifierString)
+		this._map.delete(callIdentifierString)
+	}
+
+	/**
+	 * Ensures that a function call entry exists in the tracker.
+	 * 
+	 * @param {CallIdentifier} callIdentifier - The call identifier
+	 * @param {string} kind - The kind of the call (intern, extern, langInternal)
+	 * @returns {boolean} true if the call was initialized, false if it was already present
+	 */
+	initializeCallNodeIfAbsent(
+		callIdentifier: CallIdentifier,
+		kind: 'intern' | 'extern' | 'langInternal'
+	) {
+		if (!this.isCallRecorded(callIdentifier)) {
+			const callIdentifierString = callIdentifier.toString()
+			this._map.set(callIdentifierString, [])
+			switch (kind) {
+				case 'intern':
+					this._internMap.set(callIdentifierString, true)
+					break
+				case 'extern':
+					this._externMap.set(callIdentifierString, true)
+					break
+				case 'langInternal':
+					this._langInternalMap.set(callIdentifierString, true)
+					break
+			}
+			return true
+		}
+		return false
+	}
+
+	/**
+	 * Registers a function call as a child of another call.
+	 * 
+	 * @param {CallIdentifier} self - The call identifier of the child call
+	 * @param {CallIdentifier} parent - The call identifier of the parent call
+	 * @returns wether the link already existed
+	 */
+	linkCallToParent(
+		self: CallIdentifier,
+		parent: CallIdentifier
+	): boolean {
+		const selfCallIdentifierString = self.toString()
+		const parentCallIdentifierString = parent.toString()
+
+		let previousChildCalls = this._map.get(parentCallIdentifierString)
+		let alreadyLinked = false
+		if (previousChildCalls === undefined) {
+			previousChildCalls = []
+			this._map.set(parentCallIdentifierString, previousChildCalls)
+		} else {
+			alreadyLinked = previousChildCalls.includes(selfCallIdentifierString)
+		}
+		previousChildCalls.push(selfCallIdentifierString)
+		return alreadyLinked
+	}
 }
 
 type LastNodeCallInfo = {
@@ -54,64 +211,6 @@ type AwaiterStack = {
 }[]
 
 export class InsertCPUProfileHelper {
-	static callIdentifierToString(identifier: CallIdentifier) {
-		return `${identifier.reportID}:${identifier.sourceNodeID}`
-	}
-
-	static initAccountedIfNecessary(
-		accounted: AccountedTracker,
-		callIdentifierString: string,
-		kind: 'intern' | 'extern' | 'langInternal'
-	) {
-		if (!accounted.map.has(callIdentifierString)) {
-			accounted.map.set(callIdentifierString, [])
-			switch (kind) {
-				case 'intern':
-					accounted.internMap.set(callIdentifierString, true)
-					break
-				case 'extern':
-					accounted.externMap.set(callIdentifierString, true)
-					break
-				case 'langInternal':
-					accounted.langInternalMap.set(callIdentifierString, true)
-					break
-			}
-			return true
-		}
-		return false
-	}
-
-	static removeFromAccounted(
-		accounted: AccountedTracker,
-		callIdentifier: CallIdentifier
-	) {
-		const callIdentifierString = InsertCPUProfileHelper.callIdentifierToString(callIdentifier)
-
-		accounted.internMap.delete(callIdentifierString)
-		accounted.externMap.delete(callIdentifierString)
-		accounted.langInternalMap.delete(callIdentifierString)
-		accounted.map.delete(callIdentifierString)
-	}
-
-	static markAsAccounted(
-		accounted: AccountedTracker,
-		self: CallIdentifier,
-		parent: CallIdentifier
-	): boolean {
-		const selfCallIdentifierString = InsertCPUProfileHelper.callIdentifierToString(self)
-		const parentCallIdentifierString = InsertCPUProfileHelper.callIdentifierToString(parent)
-		let previousChildCalls = accounted.map.get(parentCallIdentifierString)
-		let alreadyAccounted = false
-		if (previousChildCalls === undefined) {
-			previousChildCalls = []
-			accounted.map.set(parentCallIdentifierString, previousChildCalls)
-		} else {
-			alreadyAccounted = previousChildCalls.includes(selfCallIdentifierString)
-		}
-		previousChildCalls.push(selfCallIdentifierString)
-		return alreadyAccounted
-	}
-
 	// IMPORTANT to change when new measurement type gets added
 	static sensorValuesForVisitedNode(
 		cpuTime: IPureCPUTime,
@@ -136,6 +235,9 @@ export class InsertCPUProfileHelper {
 			aggregatedRAMEnergyConsumption: ramEnergyConsumption.aggregatedRAMEnergyConsumption
 		}
 		if (visited) {
+			// if the source node was already visited in the call tree
+			// don't add the measurements to the aggregated values
+			// since they were already included during the first visit of the source node
 			cpuTimeResult.aggregatedCPUTime = 0 as MicroSeconds_number
 			cpuEnergyConsumptionResult.aggregatedCPUEnergyConsumption = 0 as MilliJoule_number
 			ramEnergyConsumptionResult.aggregatedRAMEnergyConsumption = 0 as MilliJoule_number
@@ -151,7 +253,7 @@ export class InsertCPUProfileHelper {
 		cpuNode: CPUNode,
 		reportToCredit: ProjectReport | ModuleReport,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
-		accounted: AccountedTracker
+		callRelationTracker: CallRelationTracker
 	) {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
@@ -168,16 +270,14 @@ export class InsertCPUProfileHelper {
 			langInternalPath,
 			sourceNodeIdentifier,
 		)
-		const currentCallIdentifier = {
-			reportID: reportToCredit.internID,
-			sourceNodeID: sourceNode.id
-		}
-		const currentCallIdentifierString = InsertCPUProfileHelper.callIdentifierToString(currentCallIdentifier)
+		const currentCallIdentifier = new CallIdentifier(
+			reportToCredit.internID,
+			sourceNode.id
+		)
 		sourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 
-		if (accounted.internMap.size === 0 && accounted.externMap.size === 0) {
-			// if no extern or intern calls were accounted yet, add the time to the total of headless cpu time
-
+		if (callRelationTracker.currentlyInHeadlessScope()) {
+			// if no extern or intern calls were tracked yet, add the time to the total of headless cpu time
 			// IMPORTANT to change when new measurement type gets added
 
 			reportToCredit.lang_internalHeadlessSensorValues.selfCPUTime =
@@ -197,29 +297,24 @@ export class InsertCPUProfileHelper {
 				cpuTime,
 				cpuEnergyConsumption,
 				ramEnergyConsumption,
-				accounted.map.has(currentCallIdentifierString)
+				callRelationTracker.isCallRecorded(currentCallIdentifier)
 			)
 		)
 
-		if (InsertCPUProfileHelper.initAccountedIfNecessary(
-			accounted,
-			currentCallIdentifierString,
+		if (callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
 			'langInternal')
 		) {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
 		}
 
 		if (lastNodeCallInfo) {
-			parentSourceNode_CallIdentifier = {
-				reportID: lastNodeCallInfo.report.internID,
-				sourceNodeID: lastNodeCallInfo.sourceNode.id
-			}
-			const alreadyAccounted = InsertCPUProfileHelper.markAsAccounted(
-				accounted,
-				{
-					reportID: reportToCredit.internID,
-					sourceNodeID: sourceNode.id
-				},
+			parentSourceNode_CallIdentifier = new CallIdentifier(
+				lastNodeCallInfo.report.internID,
+				lastNodeCallInfo.sourceNode.id
+			)
+			const alreadyLinked = callRelationTracker.linkCallToParent(
+				currentCallIdentifier,
 				parentSourceNode_CallIdentifier
 			)
 			const langInternalSourceNodeReference = lastNodeCallInfo.sourceNode.addSensorValuesToLangInternal(
@@ -228,7 +323,7 @@ export class InsertCPUProfileHelper {
 					cpuTime,
 					cpuEnergyConsumption,
 					ramEnergyConsumption,
-					alreadyAccounted
+					alreadyLinked
 				)
 			)
 			langInternalSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
@@ -245,7 +340,7 @@ export class InsertCPUProfileHelper {
 		originalReport: ProjectReport,
 		sourceNodeLocation: ResolvedSourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
-		accounted: AccountedTracker
+		callRelationTracker: CallRelationTracker
 	) {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
@@ -258,12 +353,11 @@ export class InsertCPUProfileHelper {
 			sourceNodeLocation.relativeFilePath.toString(),
 			sourceNodeLocation.functionIdentifier,
 		)
-		const currentCallIdentifier = {
-			reportID: originalReport.internID,
-			sourceNodeID: newLastInternSourceNode.id
-		}
-		const currentCallIdentifierString = InsertCPUProfileHelper.callIdentifierToString(
-			currentCallIdentifier)
+		const currentCallIdentifier = new CallIdentifier(
+			originalReport.internID,
+			newLastInternSourceNode.id
+		)
+
 		newLastInternSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		// add measurements to original source code
 		newLastInternSourceNode.addToSensorValues(
@@ -271,13 +365,12 @@ export class InsertCPUProfileHelper {
 				cpuTime,
 				cpuEnergyConsumption,
 				ramEnergyConsumption,
-				accounted.map.has(currentCallIdentifierString)
+				callRelationTracker.isCallRecorded(currentCallIdentifier)
 			)
 		)
 
-		if (InsertCPUProfileHelper.initAccountedIfNecessary(
-			accounted,
-			currentCallIdentifierString,
+		if (callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
 			'intern')
 		) {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
@@ -288,18 +381,16 @@ export class InsertCPUProfileHelper {
 		// this is often a node:vm call within a node module to execute some script of the users code
 		if (lastNodeCallInfo !== undefined) {
 			// remove aggregated time from last intern source node
-			parentSourceNode_CallIdentifier = {
-				reportID: lastNodeCallInfo.report.internID,
-				sourceNodeID: lastNodeCallInfo.sourceNode.id
-			}
-			// parent caller was already accounted once, so don't subtract the cpu time from it again
+			parentSourceNode_CallIdentifier = new CallIdentifier(
+				lastNodeCallInfo.report.internID,
+				lastNodeCallInfo.sourceNode.id
+			)
+			// if the parent caller was already recorded once, don't subtract the cpu time from it again
 			const sensorValuesCorrected = InsertCPUProfileHelper.sensorValuesForVisitedNode(
 				cpuTime,
 				cpuEnergyConsumption,
 				ramEnergyConsumption,
-				(accounted.map.get(
-					InsertCPUProfileHelper.callIdentifierToString(parentSourceNode_CallIdentifier)
-				)?.length || 0) >0
+				callRelationTracker.hasChildrenRecorded(parentSourceNode_CallIdentifier)
 			)
 
 			// IMPORTANT to change when new measurement type gets added
@@ -319,9 +410,8 @@ export class InsertCPUProfileHelper {
 					aggregatedRAMEnergyConsumption
 					|| 0) as MilliJoule_number
 
-			// set call as accounted
-			InsertCPUProfileHelper.markAsAccounted(
-				accounted,
+			// link call to the parent caller
+			callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
 				parentSourceNode_CallIdentifier
 			)
@@ -343,7 +433,7 @@ export class InsertCPUProfileHelper {
 		sourceNodeLocation: ResolvedSourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		awaiterStack: AwaiterStack,
-		accounted: AccountedTracker
+		callRelationTracker: CallRelationTracker
 	) {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
@@ -358,24 +448,22 @@ export class InsertCPUProfileHelper {
 			sourceNodeLocation.relativeFilePath.toString(),
 			sourceNodeLocation.functionIdentifier
 		)
-		const currentCallIdentifier = {
-			reportID: reportToCredit.internID,
-			sourceNodeID: newLastInternSourceNode.id
-		}
-		const currentCallIdentifierString = InsertCPUProfileHelper.callIdentifierToString(
-			currentCallIdentifier)
+		const currentCallIdentifier = new CallIdentifier(
+			reportToCredit.internID,
+			newLastInternSourceNode.id
+		)
 		newLastInternSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		newLastInternSourceNode.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
 				cpuTime,
 				cpuEnergyConsumption,
 				ramEnergyConsumption,
-				accounted.map.has(currentCallIdentifierString))
+				callRelationTracker.isCallRecorded(currentCallIdentifier)
+			)
 		)
 
-		if (InsertCPUProfileHelper.initAccountedIfNecessary(
-			accounted,
-			currentCallIdentifierString,
+		if (callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
 			'intern')
 		) {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
@@ -408,12 +496,11 @@ export class InsertCPUProfileHelper {
 				throw new Error('InsertCPUProfileHelper.accountToIntern: expected an awaiter in awaiterStack')
 			}
 			if (
-				accounted.map.has(
-					InsertCPUProfileHelper.callIdentifierToString({
-						reportID: reportToCredit.internID,
-						sourceNodeID: lastAwaiterNode.awaiter.id
-					}))
-				&& lastAwaiterNode.awaiterParent === newLastInternSourceNode
+				callRelationTracker.isCallRecorded(
+					new CallIdentifier(
+						reportToCredit.internID,
+						lastAwaiterNode.awaiter.id
+					)) && lastAwaiterNode.awaiterParent === newLastInternSourceNode
 			) {
 				// the async function resolved when the awaiter was called,
 				// the last function call was the child function of the awaiter (fulfilled, rejected or step)
@@ -458,12 +545,11 @@ export class InsertCPUProfileHelper {
 		}
 
 		if (lastNodeCallInfo && lastNodeCallInfo.sourceNode !== newLastInternSourceNode) {
-			parentSourceNode_CallIdentifier = {
-				reportID: lastNodeCallInfo.report.internID,
-				sourceNodeID: lastNodeCallInfo.sourceNode.id
-			}
-			const alreadyAccounted = InsertCPUProfileHelper.markAsAccounted(
-				accounted,
+			parentSourceNode_CallIdentifier = new CallIdentifier(
+				lastNodeCallInfo.report.internID,
+				lastNodeCallInfo.sourceNode.id
+			)
+			const alreadyLinked = callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
 				parentSourceNode_CallIdentifier
 			)
@@ -474,7 +560,7 @@ export class InsertCPUProfileHelper {
 					cpuTime,
 					cpuEnergyConsumption,
 					ramEnergyConsumption,
-					alreadyAccounted
+					alreadyLinked
 				)
 			)
 			internSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
@@ -494,7 +580,7 @@ export class InsertCPUProfileHelper {
 		nodeModule: NodeModule,
 		sourceNodeLocation: ResolvedSourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
-		accounted: AccountedTracker
+		callRelationTracker: CallRelationTracker
 	) {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
@@ -516,37 +602,33 @@ export class InsertCPUProfileHelper {
 		)
 		const newReportToCredit = report
 		const newLastInternSourceNode = sourceNodeMetaData
-		const currentCallIdentifier = {
-			reportID: report.internID,
-			sourceNodeID: sourceNodeMetaData.id
-		}
-		const currentCallIdentifierString = InsertCPUProfileHelper.callIdentifierToString(
-			currentCallIdentifier)
+		const currentCallIdentifier = new CallIdentifier(
+			report.internID,
+			sourceNodeMetaData.id
+		)
 		sourceNodeMetaData.sensorValues.profilerHits += cpuNode.profilerHits
 		sourceNodeMetaData.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
 				cpuTime,
 				cpuEnergyConsumption,
 				ramEnergyConsumption,
-				accounted.map.has(currentCallIdentifierString)
+				callRelationTracker.isCallRecorded(currentCallIdentifier)
 			)
 		)
 
-		if (InsertCPUProfileHelper.initAccountedIfNecessary(
-			accounted,
-			currentCallIdentifierString,
+		if (callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
 			'extern')
 		) {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
 		}
 
 		if (lastNodeCallInfo) {
-			parentSourceNode_CallIdentifier = {
-				reportID: lastNodeCallInfo.report.internID,
-				sourceNodeID: lastNodeCallInfo.sourceNode.id
-			}
-			const alreadyAccounted = InsertCPUProfileHelper.markAsAccounted(
-				accounted,
+			parentSourceNode_CallIdentifier = new CallIdentifier(
+				lastNodeCallInfo.report.internID,
+				lastNodeCallInfo.sourceNode.id
+			)
+			const alreadyLinked = callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
 				parentSourceNode_CallIdentifier
 			)
@@ -557,7 +639,7 @@ export class InsertCPUProfileHelper {
 					cpuTime,
 					cpuEnergyConsumption,
 					ramEnergyConsumption,
-					alreadyAccounted
+					alreadyLinked
 				)
 			)
 			externSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
@@ -603,19 +685,16 @@ export class InsertCPUProfileHelper {
 			parentSourceNode_CallIdentifier: CallIdentifier | undefined,
 			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
 			isAwaiterSourceNode: boolean,
-			accounted: AccountedTracker
+			callRelationTracker: CallRelationTracker
 		) {
 			// equivalent to leave node since after child traverse
 			if (parentSourceNode_CallIdentifier) {
-				const childCalls = accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
-					parentSourceNode_CallIdentifier))
-				if (childCalls === undefined) {
+				if (!callRelationTracker.removeLastChildRecord(parentSourceNode_CallIdentifier)) {
 					throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present')
 				}
-				childCalls.pop() // remove self from parent
 			}
 			if (firstTimeVisitedSourceNode_CallIdentifier !== undefined) {
-				InsertCPUProfileHelper.removeFromAccounted(accounted, firstTimeVisitedSourceNode_CallIdentifier)
+				callRelationTracker.removeCallRecord(firstTimeVisitedSourceNode_CallIdentifier)
 			}
 			if (isAwaiterSourceNode) {
 				awaiterStack.pop()
@@ -627,7 +706,7 @@ export class InsertCPUProfileHelper {
 			originalReport: ProjectReport,
 			reportToCredit: ProjectReport | ModuleReport,
 			lastNodeCallInfo: LastNodeCallInfo | undefined,
-			accounted: AccountedTracker
+			callRelationTracker: CallRelationTracker
 		) {
 			let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
@@ -639,7 +718,7 @@ export class InsertCPUProfileHelper {
 					cpuNode,
 					reportToCredit,
 					lastNodeCallInfo,
-					accounted
+					callRelationTracker
 				)
 				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
@@ -661,7 +740,7 @@ export class InsertCPUProfileHelper {
 						},
 						lastNodeCallInfo,
 						awaiterStack,
-						accounted
+						callRelationTracker
 					)
 					isAwaiterSourceNode = result.isAwaiterSourceNode
 					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
@@ -679,7 +758,7 @@ export class InsertCPUProfileHelper {
 								cpuNode.sourceLocation.rawFunctionName as SourceNodeIdentifier_string
 						},
 						lastNodeCallInfo,
-						accounted
+						callRelationTracker
 					)
 
 					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
@@ -719,7 +798,7 @@ export class InsertCPUProfileHelper {
 						originalReport,
 						sourceNodeLocation,
 						lastNodeCallInfo,
-						accounted
+						callRelationTracker
 					)
 					newReportToCredit = result.newReportToCredit
 					newLastInternSourceNode = result.newLastInternSourceNode
@@ -743,7 +822,7 @@ export class InsertCPUProfileHelper {
 							sourceNodeLocation,
 							lastNodeCallInfo,
 							awaiterStack,
-							accounted
+							callRelationTracker
 						)
 						isAwaiterSourceNode = result.isAwaiterSourceNode
 						firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
@@ -756,7 +835,7 @@ export class InsertCPUProfileHelper {
 							nodeModule,
 							sourceNodeLocation,
 							lastNodeCallInfo,
-							accounted
+							callRelationTracker
 						)
 
 						parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
@@ -777,7 +856,7 @@ export class InsertCPUProfileHelper {
 				parentSourceNode_CallIdentifier,
 				firstTimeVisitedSourceNode_CallIdentifier,
 				isAwaiterSourceNode,
-				accounted
+				callRelationTracker
 			}
 		}
 
@@ -786,7 +865,7 @@ export class InsertCPUProfileHelper {
 			reportToCredit: ProjectReport | ModuleReport,
 			cpuNode: CPUNode,
 			lastNodeCallInfo: LastNodeCallInfo | undefined,
-			accounted: AccountedTracker
+			callRelationTracker: CallRelationTracker
 		) {
 			const {
 				newReportToCredit,
@@ -799,7 +878,7 @@ export class InsertCPUProfileHelper {
 				originalReport,
 				reportToCredit,
 				lastNodeCallInfo,
-				accounted
+				callRelationTracker
 			)
 			for (const child of cpuNode.children()) {
 				await traverse(
@@ -810,44 +889,33 @@ export class InsertCPUProfileHelper {
 						report: newReportToCredit,
 						sourceNode: newLastInternSourceNode
 					} : undefined,
-					accounted
+					callRelationTracker
 				)
 			}
 			afterTraverse(
 				parentSourceNode_CallIdentifier,
 				firstTimeVisitedSourceNode_CallIdentifier,
 				isAwaiterSourceNode,
-				accounted
+				callRelationTracker
 			)
 		}
 
-		const accounted: AccountedTracker = {
-			map: new Map<string, string[]>,
-			internMap: new Map<string, boolean>(),
-			externMap: new Map<string, boolean>(),
-			langInternalMap: new Map<string, boolean>()
-		}
+		const callRelationTracker = new CallRelationTracker()
 
 		await traverse(
 			reportToApply,
 			reportToApply,
 			cpuModel.getNode(0),
 			undefined,
-			accounted
+			callRelationTracker
 		)
 
-		if (accounted.map.size !== 0 ||
-			accounted.internMap.size !== 0 ||
-			accounted.externMap.size !== 0 ||
-			accounted.langInternalMap.size !== 0) {
-			LoggerHelper.error('InsertCPUProfileHelper.insertCPUProfile: accounted tracker should be empty after traverse', {
-				mapSize: accounted.map.size,
-				internMapSize: accounted.internMap.size,
-				externMapSize: accounted.externMap.size,
-				langInternalMapSize: accounted.langInternalMap.size
-			}
+		if (!callRelationTracker.isEmpty()) {
+			LoggerHelper.error(
+				'InsertCPUProfileHelper.insertCPUProfile: call relation tracker should be empty after traverse',
+				callRelationTracker.debugInfo()
 			)
-			throw new Error('InsertCPUProfileHelper.insertCPUProfile: accounted tracker should be empty after traverse')
+			throw new Error('InsertCPUProfileHelper.insertCPUProfile: call relation tracker should be empty after traverse')
 		}
 	}
 }
