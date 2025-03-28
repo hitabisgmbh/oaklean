@@ -297,9 +297,9 @@ export class InsertCPUProfileHelper {
 				cpuTime,
 				cpuEnergyConsumption,
 				ramEnergyConsumption,
-				accounted.map.has(InsertCPUProfileHelper.callIdentifierToString(parentSourceNode_CallIdentifier)) &&
-				accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
-					parentSourceNode_CallIdentifier))!.length > 0
+				(accounted.map.get(
+					InsertCPUProfileHelper.callIdentifierToString(parentSourceNode_CallIdentifier)
+				)?.length || 0) >0
 			)
 
 			// IMPORTANT to change when new measurement type gets added
