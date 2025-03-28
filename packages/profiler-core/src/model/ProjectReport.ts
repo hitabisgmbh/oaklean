@@ -18,7 +18,7 @@ import {
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
-import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper'
+import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper/InsertCPUProfileHelper'
 import { ExternalResourceHelper } from '../helper/ExternalResourceHelper'
 // Types
 import {
