@@ -32,9 +32,12 @@ import {
 	ResolvedSourceNodeLocation
 } from '../../types'
 
-type LastNodeCallInfo = {
+type SourceNodeInfo = {
 	report: ProjectReport | ModuleReport,
-	sourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+	sourceNode: SourceNodeMetaData<
+	SourceNodeMetaDataType.SourceNode |
+	SourceNodeMetaDataType.LangInternalSourceNode
+	> | null
 }
 
 type AwaiterStack = {
@@ -83,10 +86,10 @@ export class InsertCPUProfileHelper {
 
 	static async accountToLangInternal(
 		cpuNode: CPUNode,
-		reportToCredit: ProjectReport | ModuleReport,
-		lastNodeCallInfo: LastNodeCallInfo | undefined,
+		parentNodeInfo: SourceNodeInfo,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
+			accountedSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNode>,
 			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
 			parentSourceNode_CallIdentifier: CallIdentifier | undefined
 		}> {
@@ -101,33 +104,33 @@ export class InsertCPUProfileHelper {
 			LangInternalSourceNodeIdentifier_string
 		const langInternalPath = cpuNode.sourceLocation.rawUrl as LangInternalPath_string
 
-		const sourceNode = reportToCredit.addToLangInternal(
+		const accountedSourceNode = parentNodeInfo.report.addToLangInternal(
 			langInternalPath,
 			sourceNodeIdentifier,
 		)
 		const currentCallIdentifier = new CallIdentifier(
-			reportToCredit.internID,
-			sourceNode.id
+			parentNodeInfo.report.internID,
+			accountedSourceNode.id
 		)
-		sourceNode.sensorValues.profilerHits += cpuNode.profilerHits
+		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 
 		if (callRelationTracker.currentlyInHeadlessScope()) {
 			// if no extern or intern calls were tracked yet, add the time to the total of headless cpu time
 			// IMPORTANT to change when new measurement type gets added
 
-			reportToCredit.lang_internalHeadlessSensorValues.selfCPUTime =
-				reportToCredit.lang_internalHeadlessSensorValues.selfCPUTime +
+			parentNodeInfo.report.lang_internalHeadlessSensorValues.selfCPUTime =
+				parentNodeInfo.report.lang_internalHeadlessSensorValues.selfCPUTime +
 				(cpuTime.selfCPUTime || 0) as MicroSeconds_number
 
-			reportToCredit.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption =
-				reportToCredit.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption +
+			parentNodeInfo.report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption =
+				parentNodeInfo.report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption +
 				(cpuEnergyConsumption.selfCPUEnergyConsumption || 0) as MilliJoule_number
 
-			reportToCredit.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption =
-				reportToCredit.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption +
+			parentNodeInfo.report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption =
+				parentNodeInfo.report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption +
 				(ramEnergyConsumption.selfRAMEnergyConsumption || 0) as MilliJoule_number
 		}
-		sourceNode.addToSensorValues(
+		accountedSourceNode.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
 				cpuTime,
 				cpuEnergyConsumption,
@@ -143,17 +146,20 @@ export class InsertCPUProfileHelper {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
 		}
 
-		if (lastNodeCallInfo) {
+		if (
+			// ensure its a source node of type internal
+			parentNodeInfo.sourceNode?.type === SourceNodeMetaDataType.SourceNode
+		) {
 			parentSourceNode_CallIdentifier = new CallIdentifier(
-				lastNodeCallInfo.report.internID,
-				lastNodeCallInfo.sourceNode.id
+				parentNodeInfo.report.internID,
+				parentNodeInfo.sourceNode.id
 			)
 			const alreadyLinked = callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
 				parentSourceNode_CallIdentifier
 			)
-			const langInternalSourceNodeReference = lastNodeCallInfo.sourceNode.addSensorValuesToLangInternal(
-				sourceNode.globalIdentifier(),
+			const langInternalSourceNodeReference = parentNodeInfo.sourceNode.addSensorValuesToLangInternal(
+				accountedSourceNode.globalIdentifier(),
 				InsertCPUProfileHelper.sensorValuesForVisitedNode(
 					cpuTime,
 					cpuEnergyConsumption,
@@ -165,6 +171,7 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
+			accountedSourceNode,
 			firstTimeVisitedSourceNode_CallIdentifier,
 			parentSourceNode_CallIdentifier
 		}
@@ -174,11 +181,11 @@ export class InsertCPUProfileHelper {
 		cpuNode: CPUNode,
 		originalReport: ProjectReport,
 		sourceNodeLocation: ResolvedSourceNodeLocation,
-		lastNodeCallInfo: LastNodeCallInfo | undefined,
+		parentNodeInfo: SourceNodeInfo,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
 			newReportToCredit: ProjectReport,
-			newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+			accountedSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
 			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
 			parentSourceNode_CallIdentifier: CallIdentifier | undefined
 		}> {
@@ -189,18 +196,18 @@ export class InsertCPUProfileHelper {
 		let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 		let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 
-		const newLastInternSourceNode = originalReport.addToIntern(
+		const accountedSourceNode = originalReport.addToIntern(
 			sourceNodeLocation.relativeFilePath.toString(),
 			sourceNodeLocation.functionIdentifier,
 		)
 		const currentCallIdentifier = new CallIdentifier(
 			originalReport.internID,
-			newLastInternSourceNode.id
+			accountedSourceNode.id
 		)
 
-		newLastInternSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
+		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		// add measurements to original source code
-		newLastInternSourceNode.addToSensorValues(
+		accountedSourceNode.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
 				cpuTime,
 				cpuEnergyConsumption,
@@ -216,14 +223,17 @@ export class InsertCPUProfileHelper {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
 		}
 
-		// if lastNodeCallInfo === undefined
+		// if parentNodeInfo.sourceNode.type !== SourceNodeMetaDataType.SourceNode
 		// the last call was from a lang internal source node (but within a node module report)
 		// this is often a node:vm call within a node module to execute some script of the users code
-		if (lastNodeCallInfo !== undefined) {
+		if (
+			// ensure its a source node of type internal
+			parentNodeInfo.sourceNode?.type === SourceNodeMetaDataType.SourceNode
+		) {
 			// remove aggregated time from last intern source node
 			parentSourceNode_CallIdentifier = new CallIdentifier(
-				lastNodeCallInfo.report.internID,
-				lastNodeCallInfo.sourceNode.id
+				parentNodeInfo.report.internID,
+				parentNodeInfo.sourceNode.id
 			)
 			// if the parent caller was already recorded once, don't subtract the cpu time from it again
 			const sensorValuesCorrected = InsertCPUProfileHelper.sensorValuesForVisitedNode(
@@ -234,17 +244,17 @@ export class InsertCPUProfileHelper {
 			)
 
 			// IMPORTANT to change when new measurement type gets added
-			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime =
-				lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUTime -
+			parentNodeInfo.sourceNode.sensorValues.aggregatedCPUTime =
+				parentNodeInfo.sourceNode.sensorValues.aggregatedCPUTime -
 				(sensorValuesCorrected.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
-			lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption =
-				lastNodeCallInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption -
+			parentNodeInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption =
+				parentNodeInfo.sourceNode.sensorValues.aggregatedCPUEnergyConsumption -
 				(sensorValuesCorrected.
 					cpuEnergyConsumption.
 					aggregatedCPUEnergyConsumption
 					|| 0) as MilliJoule_number
-			lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption =
-				lastNodeCallInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption -
+			parentNodeInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption =
+				parentNodeInfo.sourceNode.sensorValues.aggregatedRAMEnergyConsumption -
 				(sensorValuesCorrected.
 					ramEnergyConsumption.
 					aggregatedRAMEnergyConsumption
@@ -261,24 +271,23 @@ export class InsertCPUProfileHelper {
 
 		return {
 			newReportToCredit: originalReport,
-			newLastInternSourceNode,
+			accountedSourceNode,
 			firstTimeVisitedSourceNode_CallIdentifier,
 			parentSourceNode_CallIdentifier
 		}
 	}
 
 	static async accountToIntern(
-		reportToCredit: ProjectReport | ModuleReport,
 		cpuNode: CPUNode,
+		parentNodeInfo: SourceNodeInfo,
 		sourceNodeLocation: ResolvedSourceNodeLocation,
-		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		awaiterStack: AwaiterStack,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
 			isAwaiterSourceNode: boolean,
 			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
 			parentSourceNode_CallIdentifier: CallIdentifier | undefined,
-			newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
+			accountedSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
 		}> {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
@@ -289,16 +298,16 @@ export class InsertCPUProfileHelper {
 		let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 
 		// intern
-		const newLastInternSourceNode = reportToCredit.addToIntern(
+		const accountedSourceNode = parentNodeInfo.report.addToIntern(
 			sourceNodeLocation.relativeFilePath.toString(),
 			sourceNodeLocation.functionIdentifier
 		)
 		const currentCallIdentifier = new CallIdentifier(
-			reportToCredit.internID,
-			newLastInternSourceNode.id
+			parentNodeInfo.report.internID,
+			accountedSourceNode.id
 		)
-		newLastInternSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		newLastInternSourceNode.addToSensorValues(
+		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
+		accountedSourceNode.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
 				cpuTime,
 				cpuEnergyConsumption,
@@ -318,11 +327,14 @@ export class InsertCPUProfileHelper {
 			isAwaiterSourceNode = true
 
 			// add the awaiter to the stack and the corresponding async function parent
-			// if the lastNodeCallInfo is undefined the awaiter is the first function in the call tree
+			// if the parentNodeInfo.sourceNode is null or of type lang internal
+			// the awaiter is the first function in the call tree
 			// this could happen if the was called from node internal functions for example
 			awaiterStack.push({
-				awaiter: newLastInternSourceNode,
-				awaiterParent: lastNodeCallInfo?.sourceNode
+				awaiter: accountedSourceNode,
+				awaiterParent: parentNodeInfo.sourceNode?.type === SourceNodeMetaDataType.SourceNode ?
+					(parentNodeInfo.sourceNode as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>) :
+					undefined
 			})
 		}
 
@@ -343,15 +355,15 @@ export class InsertCPUProfileHelper {
 			if (
 				callRelationTracker.isCallRecorded(
 					new CallIdentifier(
-						reportToCredit.internID,
+						parentNodeInfo.report.internID,
 						lastAwaiterNode.awaiter.id
-					)) && lastAwaiterNode.awaiterParent === newLastInternSourceNode
+					)) && lastAwaiterNode.awaiterParent === accountedSourceNode
 			) {
 				// the async function resolved when the awaiter was called,
 				// the last function call was the child function of the awaiter (fulfilled, rejected or step)
 				// and the current source node is the async function that called the awaiter
 
-				const awaiterInternChild = newLastInternSourceNode.intern.get(
+				const awaiterInternChild = accountedSourceNode.intern.get(
 					lastAwaiterNode.awaiter.id
 				)
 				if (awaiterInternChild !== undefined) {
@@ -374,33 +386,37 @@ export class InsertCPUProfileHelper {
 					(ramEnergyConsumption.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 
 					// IMPORTANT to change when new measurement type gets added
-					newLastInternSourceNode.sensorValues.internCPUTime =
-						newLastInternSourceNode.sensorValues.internCPUTime -
+					accountedSourceNode.sensorValues.internCPUTime =
+						accountedSourceNode.sensorValues.internCPUTime -
 						(cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
 					
-					newLastInternSourceNode.sensorValues.internCPUEnergyConsumption =
-						newLastInternSourceNode.sensorValues.internCPUEnergyConsumption -
+					accountedSourceNode.sensorValues.internCPUEnergyConsumption =
+						accountedSourceNode.sensorValues.internCPUEnergyConsumption -
 						(cpuEnergyConsumption.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
 					
-					newLastInternSourceNode.sensorValues.internRAMEnergyConsumption =
-						newLastInternSourceNode.sensorValues.internRAMEnergyConsumption -
+					accountedSourceNode.sensorValues.internRAMEnergyConsumption =
+						accountedSourceNode.sensorValues.internRAMEnergyConsumption -
 						(ramEnergyConsumption.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 				}
 			}
 		}
 
-		if (lastNodeCallInfo && lastNodeCallInfo.sourceNode !== newLastInternSourceNode) {
+		if (
+			// ensure its a source node of type internal
+			parentNodeInfo.sourceNode?.type === SourceNodeMetaDataType.SourceNode &&
+			parentNodeInfo.sourceNode !== accountedSourceNode
+		) {
 			parentSourceNode_CallIdentifier = new CallIdentifier(
-				lastNodeCallInfo.report.internID,
-				lastNodeCallInfo.sourceNode.id
+				parentNodeInfo.report.internID,
+				parentNodeInfo.sourceNode.id
 			)
 			const alreadyLinked = callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
 				parentSourceNode_CallIdentifier
 			)
 
-			const internSourceNodeReference = lastNodeCallInfo.sourceNode.addSensorValuesToIntern(
-				newLastInternSourceNode.globalIdentifier(),
+			const internSourceNodeReference = parentNodeInfo.sourceNode.addSensorValuesToIntern(
+				accountedSourceNode.globalIdentifier(),
 				InsertCPUProfileHelper.sensorValuesForVisitedNode(
 					cpuTime,
 					cpuEnergyConsumption,
@@ -415,21 +431,20 @@ export class InsertCPUProfileHelper {
 			isAwaiterSourceNode,
 			firstTimeVisitedSourceNode_CallIdentifier,
 			parentSourceNode_CallIdentifier,
-			newLastInternSourceNode
+			accountedSourceNode
 		}
 	}
 
 	static async accountToExtern(
-		reportToCredit: ProjectReport | ModuleReport,
 		cpuNode: CPUNode,
+		parentNodeInfo: SourceNodeInfo,
 		nodeModule: NodeModule,
 		sourceNodeLocation: ResolvedSourceNodeLocation,
-		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
 			parentSourceNode_CallIdentifier: CallIdentifier | undefined,
 			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
-			newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+			accountedSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
 			newReportToCredit: ModuleReport
 		}> {
 		const cpuTime = cpuNode.cpuTime
@@ -445,19 +460,19 @@ export class InsertCPUProfileHelper {
 		)
 
 		// extern
-		const { report, sourceNodeMetaData } = reportToCredit.addToExtern(
+		const { report, sourceNodeMetaData } = parentNodeInfo.report.addToExtern(
 			sourceNodeLocation.relativeFilePath,
 			nodeModule,
 			sourceNodeLocation.functionIdentifier
 		)
 		const newReportToCredit = report
-		const newLastInternSourceNode = sourceNodeMetaData
+		const accountedSourceNode = sourceNodeMetaData
 		const currentCallIdentifier = new CallIdentifier(
 			report.internID,
-			sourceNodeMetaData.id
+			accountedSourceNode.id
 		)
-		sourceNodeMetaData.sensorValues.profilerHits += cpuNode.profilerHits
-		sourceNodeMetaData.addToSensorValues(
+		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
+		accountedSourceNode.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
 				cpuTime,
 				cpuEnergyConsumption,
@@ -473,17 +488,20 @@ export class InsertCPUProfileHelper {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
 		}
 
-		if (lastNodeCallInfo) {
+		if (
+			// ensure its a source node of type internal
+			parentNodeInfo.sourceNode?.type === SourceNodeMetaDataType.SourceNode
+		) {
 			parentSourceNode_CallIdentifier = new CallIdentifier(
-				lastNodeCallInfo.report.internID,
-				lastNodeCallInfo.sourceNode.id
+				parentNodeInfo.report.internID,
+				parentNodeInfo.sourceNode.id
 			)
 			const alreadyLinked = callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
 				parentSourceNode_CallIdentifier
 			)
 			// add to this source node as well
-			const externSourceNodeReference = lastNodeCallInfo.sourceNode.addSensorValuesToExtern(
+			const externSourceNodeReference = parentNodeInfo.sourceNode.addSensorValuesToExtern(
 				globalIdentifier,
 				InsertCPUProfileHelper.sensorValuesForVisitedNode(
 					cpuTime,
@@ -498,7 +516,7 @@ export class InsertCPUProfileHelper {
 		return {
 			parentSourceNode_CallIdentifier,
 			firstTimeVisitedSourceNode_CallIdentifier,
-			newLastInternSourceNode,
+			accountedSourceNode,
 			newReportToCredit
 		}
 	}
@@ -531,6 +549,8 @@ export class InsertCPUProfileHelper {
 
 		const awaiterStack: AwaiterStack = []
 
+		const originalReport = reportToApply
+
 		function afterTraverse(
 			parentSourceNode_CallIdentifier: CallIdentifier | undefined,
 			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
@@ -553,67 +573,67 @@ export class InsertCPUProfileHelper {
 
 		async function beforeTraverse(
 			cpuNode: CPUNode,
-			originalReport: ProjectReport,
-			reportToCredit: ProjectReport | ModuleReport,
-			lastNodeCallInfo: LastNodeCallInfo | undefined,
+			parentNodeInfo: SourceNodeInfo,
 			callRelationTracker: CallRelationTracker
 		) {
 			let firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let parentSourceNode_CallIdentifier: CallIdentifier | undefined = undefined
 			let isAwaiterSourceNode = false
-			let newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined = undefined
-			let newReportToCredit: ProjectReport | ModuleReport | undefined = reportToCredit
+			let lastAccountedSourceNode: SourceNodeMetaData<
+			SourceNodeMetaDataType.SourceNode |
+			SourceNodeMetaDataType.LangInternalSourceNode
+			> | null = null
+			let newReportToCredit: ProjectReport | ModuleReport | undefined = parentNodeInfo.report
+			
 			if (cpuNode.sourceLocation.isLangInternal) {
 				const result = await InsertCPUProfileHelper.accountToLangInternal(
 					cpuNode,
-					reportToCredit,
-					lastNodeCallInfo,
+					parentNodeInfo,
 					callRelationTracker
 				)
 				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
+				lastAccountedSourceNode = result.accountedSourceNode
 			} else if (cpuNode.sourceLocation.isWASM) {
 				const wasmPath = new UnifiedPath(cpuNode.sourceLocation.rawUrl.substring(7)) // remove the 'wasm://' prefix
 
 				if (
-					reportToCredit instanceof ModuleReport &&
-					reportToCredit.nodeModule === WASM_NODE_MODULE
+					parentNodeInfo.report instanceof ModuleReport &&
+					parentNodeInfo.report.nodeModule === WASM_NODE_MODULE
 				) {
 					// is part of the wasm node module
 					const result = await InsertCPUProfileHelper.accountToIntern(
-						reportToCredit,
 						cpuNode,
+						parentNodeInfo,
 						{
 							relativeFilePath: wasmPath,
 							functionIdentifier: 
 								cpuNode.sourceLocation.rawFunctionName as SourceNodeIdentifier_string
 						},
-						lastNodeCallInfo,
 						awaiterStack,
 						callRelationTracker
 					)
 					isAwaiterSourceNode = result.isAwaiterSourceNode
 					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
-					newLastInternSourceNode = result.newLastInternSourceNode
+					lastAccountedSourceNode = result.accountedSourceNode
 				} else {
 					// is not part of the wasm node module
 					const result = await InsertCPUProfileHelper.accountToExtern(
-						reportToCredit,
 						cpuNode,
+						parentNodeInfo,
 						WASM_NODE_MODULE,
 						{
 							relativeFilePath: wasmPath,
 							functionIdentifier:
 								cpuNode.sourceLocation.rawFunctionName as SourceNodeIdentifier_string
 						},
-						lastNodeCallInfo,
 						callRelationTracker
 					)
 
 					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
 					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
-					newLastInternSourceNode = result.newLastInternSourceNode
+					lastAccountedSourceNode = result.accountedSourceNode
 					newReportToCredit = result.newReportToCredit
 				}
 			} else if (!cpuNode.sourceLocation.isEmpty) {
@@ -631,15 +651,11 @@ export class InsertCPUProfileHelper {
 				const ownCodeGetsExecutedByExternal =
 					relativeNodeModulePath === null && // the currently executed file is not part of a node module
 					(
-						(
-							lastNodeCallInfo !== undefined &&
-							lastNodeCallInfo.sourceNode.sourceNodeIndex.pathIndex.moduleIndex.identifier !== '{self}'
-						) // last internal node call originates from a node module
-						||
-						(
-							lastNodeCallInfo === undefined &&
-							reportToCredit !== originalReport
-						) // the last call originates from the node engine (like node:vm), but the last recorded report was from a node module
+						// last internal node call originates from a node module
+						parentNodeInfo.sourceNode?.sourceNodeIndex.pathIndex.moduleIndex.identifier !== '{self}' ||
+						// the last call originates from the node engine (like node:vm)
+						// but the last recorded report was from a node module
+						parentNodeInfo.report !== originalReport
 					)
 
 				if (ownCodeGetsExecutedByExternal) {
@@ -647,11 +663,11 @@ export class InsertCPUProfileHelper {
 						cpuNode,
 						originalReport,
 						sourceNodeLocation,
-						lastNodeCallInfo,
+						parentNodeInfo,
 						callRelationTracker
 					)
 					newReportToCredit = result.newReportToCredit
-					newLastInternSourceNode = result.newLastInternSourceNode
+					lastAccountedSourceNode = result.accountedSourceNode
 					firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 					parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
 				} else {
@@ -659,86 +675,73 @@ export class InsertCPUProfileHelper {
 					// or the reportToCredit is the node module that source file belongs to
 					if (
 						!((relativeNodeModulePath && nodeModule)) || (
-							reportToCredit instanceof ModuleReport
-							&& reportToCredit.nodeModule.identifier === nodeModule.identifier
+							parentNodeInfo.report instanceof ModuleReport
+							&& parentNodeInfo.report.nodeModule.identifier === nodeModule.identifier
 						)
 					) {
-						// currently in a node module scope, so add it to the node module report as an intern node
-						newReportToCredit = nodeModule !== null ? reportToCredit : originalReport
 						// add to intern
 						const result = await InsertCPUProfileHelper.accountToIntern(
-							newReportToCredit,
 							cpuNode,
+							parentNodeInfo,
 							sourceNodeLocation,
-							lastNodeCallInfo,
 							awaiterStack,
 							callRelationTracker
 						)
 						isAwaiterSourceNode = result.isAwaiterSourceNode
 						firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 						parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
-						newLastInternSourceNode = result.newLastInternSourceNode
+						lastAccountedSourceNode = result.accountedSourceNode
 					} else {
+						// add to extern
 						const result = await InsertCPUProfileHelper.accountToExtern(
-							reportToCredit,
 							cpuNode,
+							parentNodeInfo,
 							nodeModule,
 							sourceNodeLocation,
-							lastNodeCallInfo,
 							callRelationTracker
 						)
 
 						parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
 						firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
-						newLastInternSourceNode = result.newLastInternSourceNode
+						lastAccountedSourceNode = result.accountedSourceNode
 						newReportToCredit = result.newReportToCredit
 					}
 				}
 
-				newLastInternSourceNode.presentInOriginalSourceCode = functionIdentifierPresentInOriginalFile
+				lastAccountedSourceNode.presentInOriginalSourceCode = functionIdentifierPresentInOriginalFile
 			}
 
 			return {
-				originalReport,
-				reportToCredit,
-				newReportToCredit,
-				newLastInternSourceNode,
+				newLastNodeCallInfo: {
+					report: newReportToCredit,
+					sourceNode: lastAccountedSourceNode
+				} satisfies SourceNodeInfo,
 				parentSourceNode_CallIdentifier,
 				firstTimeVisitedSourceNode_CallIdentifier,
-				isAwaiterSourceNode,
-				callRelationTracker
+				isAwaiterSourceNode
 			}
 		}
 
 		async function traverse(
-			originalReport: ProjectReport,
-			reportToCredit: ProjectReport | ModuleReport,
+			lastNodeCallInfo: SourceNodeInfo,
 			cpuNode: CPUNode,
-			lastNodeCallInfo: LastNodeCallInfo | undefined,
 			callRelationTracker: CallRelationTracker
 		) {
 			const {
-				newReportToCredit,
-				newLastInternSourceNode,
+				newLastNodeCallInfo,
 				parentSourceNode_CallIdentifier,
 				firstTimeVisitedSourceNode_CallIdentifier,
 				isAwaiterSourceNode,
 			} = await beforeTraverse(
 				cpuNode,
-				originalReport,
-				reportToCredit,
 				lastNodeCallInfo,
 				callRelationTracker
 			)
+
 			for (const child of cpuNode.children()) {
 				await traverse(
-					originalReport,
-					newReportToCredit,
+					newLastNodeCallInfo,
 					child,
-					newLastInternSourceNode !== undefined ? {
-						report: newReportToCredit,
-						sourceNode: newLastInternSourceNode
-					} : undefined,
 					callRelationTracker
 				)
 			}
@@ -753,10 +756,11 @@ export class InsertCPUProfileHelper {
 		const callRelationTracker = new CallRelationTracker()
 
 		await traverse(
-			reportToApply,
-			reportToApply,
+			{
+				report: reportToApply,
+				sourceNode: null
+			},
 			cpuModel.getNode(0),
-			undefined,
 			callRelationTracker
 		)
 
