@@ -1,16 +1,34 @@
+import { ProjectReport } from '../../model/ProjectReport'
+import { ModuleReport } from '../../model/ModuleReport'
 import {
-	SourceNodeID_number
+	SourceNodeMetaData
+} from '../../model/SourceNodeMetaData'
+import {
+	SourceNodeMetaDataType
 } from '../../types'
 
 export class CallIdentifier {
-	readonly reportID: number
-	readonly sourceNodeID: SourceNodeID_number
+	firstTimeVisited: boolean
+
+	readonly report: ProjectReport | ModuleReport
+	readonly sourceNode: SourceNodeMetaData<
+	SourceNodeMetaDataType.SourceNode |
+	SourceNodeMetaDataType.LangInternalSourceNode
+	> | null
 	readonly sourceNodeIDString: string
 
-	constructor(reportID: number, sourceNodeID: SourceNodeID_number) {
-		this.reportID = reportID
-		this.sourceNodeID = sourceNodeID
-		this.sourceNodeIDString = `${reportID}:${sourceNodeID}`
+	constructor(
+		report: ProjectReport | ModuleReport,
+		sourceNode: SourceNodeMetaData<
+		SourceNodeMetaDataType.SourceNode |
+		SourceNodeMetaDataType.LangInternalSourceNode
+		> | null,
+		firstTimeVisited = false
+	) {
+		this.report = report
+		this.sourceNode = sourceNode
+		this.sourceNodeIDString = `${report.internID}:${sourceNode?.id}`
+		this.firstTimeVisited = firstTimeVisited
 	}
 
 	toString() {
