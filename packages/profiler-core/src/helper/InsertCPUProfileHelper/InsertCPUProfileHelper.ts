@@ -86,7 +86,10 @@ export class InsertCPUProfileHelper {
 		reportToCredit: ProjectReport | ModuleReport,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		callRelationTracker: CallRelationTracker
-	) {
+	): Promise<{
+			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
+			parentSourceNode_CallIdentifier: CallIdentifier | undefined
+		}> {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
 		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
@@ -173,7 +176,12 @@ export class InsertCPUProfileHelper {
 		sourceNodeLocation: ResolvedSourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		callRelationTracker: CallRelationTracker
-	) {
+	): Promise<{
+			newReportToCredit: ProjectReport,
+			newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
+			parentSourceNode_CallIdentifier: CallIdentifier | undefined
+		}> {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
 		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
@@ -266,7 +274,12 @@ export class InsertCPUProfileHelper {
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		awaiterStack: AwaiterStack,
 		callRelationTracker: CallRelationTracker
-	) {
+	): Promise<{
+			isAwaiterSourceNode: boolean,
+			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
+			parentSourceNode_CallIdentifier: CallIdentifier | undefined,
+			newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
+		}> {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
 		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
@@ -413,7 +426,12 @@ export class InsertCPUProfileHelper {
 		sourceNodeLocation: ResolvedSourceNodeLocation,
 		lastNodeCallInfo: LastNodeCallInfo | undefined,
 		callRelationTracker: CallRelationTracker
-	) {
+	): Promise<{
+			parentSourceNode_CallIdentifier: CallIdentifier | undefined,
+			firstTimeVisitedSourceNode_CallIdentifier: CallIdentifier | undefined,
+			newLastInternSourceNode: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+			newReportToCredit: ModuleReport
+		}> {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
 		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
