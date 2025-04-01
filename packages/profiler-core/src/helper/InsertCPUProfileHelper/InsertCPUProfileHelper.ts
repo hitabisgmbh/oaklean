@@ -170,6 +170,7 @@ export class InsertCPUProfileHelper {
 		callRelationTracker: CallRelationTracker
 	): Promise<{
 			accountedCallIdentifier: CallIdentifier
+			accountedSourceNodeReference: null
 		}> {
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
@@ -241,7 +242,8 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
-			accountedCallIdentifier: currentCallIdentifier
+			accountedCallIdentifier: currentCallIdentifier,
+			accountedSourceNodeReference: null
 		}
 	}
 
@@ -252,7 +254,6 @@ export class InsertCPUProfileHelper {
 		awaiterStack: AwaiterStack,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
-			isAwaiterSourceNode: boolean,
 			accountedCallIdentifier: CallIdentifier,
 			accountedSourceNodeReference:
 			SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> | undefined,
@@ -261,7 +262,6 @@ export class InsertCPUProfileHelper {
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
 		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
 
-		let isAwaiterSourceNode = false
 		let currentSourceNodeReference:
 		SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> | undefined = undefined
 
@@ -289,7 +289,7 @@ export class InsertCPUProfileHelper {
 			'intern')
 
 		if (sourceNodeLocation.functionIdentifier === TypeScriptHelper.awaiterSourceNodeIdentifier()) {
-			isAwaiterSourceNode = true
+			currentCallIdentifier.isAwaiterSourceNode = true
 
 			// add the awaiter to the stack and the corresponding async function parent
 			// if the parentNodeInfo.sourceNode is null or of type lang internal
@@ -304,7 +304,7 @@ export class InsertCPUProfileHelper {
 		}
 
 		if (
-			!isAwaiterSourceNode &&
+			!currentCallIdentifier.isAwaiterSourceNode &&
 			awaiterStack.length > 0
 		) {
 			/*
@@ -389,7 +389,6 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
-			isAwaiterSourceNode,
 			accountedCallIdentifier: currentCallIdentifier,
 			accountedSourceNodeReference: currentSourceNodeReference
 		}
@@ -503,8 +502,7 @@ export class InsertCPUProfileHelper {
 		function afterTraverse(
 			parentCallIdentifier: CallIdentifier,
 			accountedCallIdentifier: CallIdentifier,
-			newLinkWasCreated: boolean,
-			isAwaiterSourceNode: boolean
+			newLinkWasCreated: boolean
 		) {
 			// equivalent to leave node since after child traverse
 			if (newLinkWasCreated) {
@@ -515,7 +513,7 @@ export class InsertCPUProfileHelper {
 			if (accountedCallIdentifier.firstTimeVisited) {
 				callRelationTracker.removeCallRecord(accountedCallIdentifier)
 			}
-			if (isAwaiterSourceNode) {
+			if (accountedCallIdentifier.isAwaiterSourceNode) {
 				awaiterStack.pop()
 			}
 		}
@@ -524,13 +522,12 @@ export class InsertCPUProfileHelper {
 			cpuNode: CPUNode,
 			parentCallIdentifier: CallIdentifier
 		) {
-			let isAwaiterSourceNode = false
 			let accountedCallIdentifier: CallIdentifier = parentCallIdentifier
 			let accountedSourceNodeReference: SourceNodeMetaData<
 			SourceNodeMetaDataType.ExternSourceNodeReference |
 			SourceNodeMetaDataType.InternSourceNodeReference |
 			SourceNodeMetaDataType.LangInternalSourceNodeReference
-			> | undefined = undefined
+			> | undefined | null = undefined
 			
 			if (cpuNode.sourceLocation.isLangInternal) {
 				const result = await InsertCPUProfileHelper.accountToLangInternal(
@@ -559,7 +556,6 @@ export class InsertCPUProfileHelper {
 						awaiterStack,
 						callRelationTracker
 					)
-					isAwaiterSourceNode = result.isAwaiterSourceNode
 					accountedCallIdentifier = result.accountedCallIdentifier
 					accountedSourceNodeReference = result.accountedSourceNodeReference
 				} else {
@@ -610,6 +606,7 @@ export class InsertCPUProfileHelper {
 						callRelationTracker
 					)
 					accountedCallIdentifier = result.accountedCallIdentifier
+					accountedSourceNodeReference = result.accountedSourceNodeReference
 				} else {
 					// add to intern if the source file is not part of a node module
 					// or the reportToCredit is the node module that source file belongs to
@@ -627,7 +624,6 @@ export class InsertCPUProfileHelper {
 							awaiterStack,
 							callRelationTracker
 						)
-						isAwaiterSourceNode = result.isAwaiterSourceNode
 						accountedCallIdentifier = result.accountedCallIdentifier
 						accountedSourceNodeReference = result.accountedSourceNodeReference
 					} else {
@@ -652,8 +648,7 @@ export class InsertCPUProfileHelper {
 
 			return {
 				accountedCallIdentifier,
-				accountedSourceNodeReference,
-				isAwaiterSourceNode
+				accountedSourceNodeReference
 			}
 		}
 
@@ -663,7 +658,7 @@ export class InsertCPUProfileHelper {
 		) {
 			const {
 				accountedCallIdentifier,
-				isAwaiterSourceNode,
+				accountedSourceNodeReference
 			} = await beforeTraverse(
 				cpuNode,
 				parentCallIdentifier
@@ -676,14 +671,13 @@ export class InsertCPUProfileHelper {
 				)
 			}
 			
-			// if the parentCallIdentifier is not null (which only happens for the root node)
+			// if the accountedSourceNodeReference is not undefined (which only happens for the root node)
 			// a link was created to the parent call identifier within the callRelationTracker
-			const newLinkWasCreated = parentCallIdentifier.sourceNode !== null
+			const newLinkWasCreated = accountedSourceNodeReference !== undefined
 			afterTraverse(
 				parentCallIdentifier,
 				accountedCallIdentifier,
-				newLinkWasCreated,
-				isAwaiterSourceNode
+				newLinkWasCreated
 			)
 		}
 

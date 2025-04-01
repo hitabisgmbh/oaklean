@@ -9,6 +9,7 @@ import {
 
 export class CallIdentifier {
 	firstTimeVisited: boolean
+	isAwaiterSourceNode: boolean
 
 	readonly report: ProjectReport | ModuleReport
 	readonly sourceNode: SourceNodeMetaData<
@@ -22,13 +23,13 @@ export class CallIdentifier {
 		sourceNode: SourceNodeMetaData<
 		SourceNodeMetaDataType.SourceNode |
 		SourceNodeMetaDataType.LangInternalSourceNode
-		> | null,
-		firstTimeVisited = false
+		> | null
 	) {
 		this.report = report
 		this.sourceNode = sourceNode
 		this.sourceNodeIDString = `${report.internID}:${sourceNode?.id}`
-		this.firstTimeVisited = firstTimeVisited
+		this.firstTimeVisited = false
+		this.isAwaiterSourceNode = false
 	}
 
 	toString() {
