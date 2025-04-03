@@ -32,6 +32,31 @@ import {
 	ResolvedSourceNodeLocation
 } from '../../types'
 
+type AccountingCategories = {
+	'intern': '' | 'awaiter' | 'wasm' | 'calledFromExtern',
+	'extern': '',
+	'langInternal': '',
+	'empty': ''
+}
+type AccountingType = {
+	[P in keyof AccountingCategories]: `${P}_${AccountingCategories[P]}`;
+}[keyof AccountingCategories]
+type accountToLangInternal_AccountType = Extract<AccountingType, `langInternal_${string}`>
+type accountOwnCodeGetsExecutedByExternal_AccountType = Extract<AccountingType, `${string}_calledFromExtern`>
+type accountToIntern_AccountType = Extract<AccountingType, `intern_${string}`>
+type accountToExtern_AccountType = Extract<AccountingType, `extern_${string}`>
+
+type AccountingResult = {
+	accountingType: AccountingType
+	accountedCallIdentifier: CallIdentifier,
+	accountedSourceNodeReference:
+	SourceNodeMetaData<
+	SourceNodeMetaDataType.ExternSourceNodeReference |
+	SourceNodeMetaDataType.InternSourceNodeReference |
+	SourceNodeMetaDataType.LangInternalSourceNodeReference
+	> | undefined | null
+}
+
 type AwaiterStack = {
 	awaiter: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, // the last called __awaiter function
 	awaiterParent: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined // the last async function that called the __awaiter function
@@ -81,6 +106,7 @@ export class InsertCPUProfileHelper {
 		parentCallIdentifier: CallIdentifier,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
+			accountingType: accountToLangInternal_AccountType,
 			accountedCallIdentifier: CallIdentifier,
 			accountedSourceNodeReference:
 			SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference> | undefined
@@ -157,6 +183,7 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
+			accountingType: 'langInternal_',
 			accountedCallIdentifier: currentCallIdentifier,
 			accountedSourceNodeReference: currentSourceNodeReference
 		}
@@ -169,6 +196,7 @@ export class InsertCPUProfileHelper {
 		parentCallIdentifier: CallIdentifier,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
+			accountingType: accountOwnCodeGetsExecutedByExternal_AccountType,
 			accountedCallIdentifier: CallIdentifier
 			accountedSourceNodeReference: null
 		}> {
@@ -242,6 +270,7 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
+			accountingType: 'intern_calledFromExtern',
 			accountedCallIdentifier: currentCallIdentifier,
 			accountedSourceNodeReference: null
 		}
@@ -254,10 +283,12 @@ export class InsertCPUProfileHelper {
 		awaiterStack: AwaiterStack,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
+			accountingType: accountToIntern_AccountType,
 			accountedCallIdentifier: CallIdentifier,
 			accountedSourceNodeReference:
 			SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> | undefined,
 		}> {
+		let accountingType: AccountingType = 'intern_'
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
 		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
@@ -289,6 +320,7 @@ export class InsertCPUProfileHelper {
 			'intern')
 
 		if (sourceNodeLocation.functionIdentifier === TypeScriptHelper.awaiterSourceNodeIdentifier()) {
+			accountingType = 'intern_awaiter'
 			currentCallIdentifier.isAwaiterSourceNode = true
 
 			// add the awaiter to the stack and the corresponding async function parent
@@ -389,6 +421,7 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
+			accountingType,
 			accountedCallIdentifier: currentCallIdentifier,
 			accountedSourceNodeReference: currentSourceNodeReference
 		}
@@ -401,6 +434,7 @@ export class InsertCPUProfileHelper {
 		sourceNodeLocation: ResolvedSourceNodeLocation,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
+			accountingType: accountToExtern_AccountType,
 			accountedCallIdentifier: CallIdentifier,
 			accountedSourceNodeReference:
 			SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> | undefined,
@@ -463,6 +497,7 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
+			accountingType: 'extern_',
 			accountedCallIdentifier: currentCallIdentifier,
 			accountedSourceNodeReference: currentSourceNodeReference
 		}
@@ -521,13 +556,8 @@ export class InsertCPUProfileHelper {
 		async function beforeTraverse(
 			cpuNode: CPUNode,
 			parentCallIdentifier: CallIdentifier
-		) {
-			let accountedCallIdentifier: CallIdentifier = parentCallIdentifier
-			let accountedSourceNodeReference: SourceNodeMetaData<
-			SourceNodeMetaDataType.ExternSourceNodeReference |
-			SourceNodeMetaDataType.InternSourceNodeReference |
-			SourceNodeMetaDataType.LangInternalSourceNodeReference
-			> | undefined | null = undefined
+		): Promise<AccountingResult> {
+			let accountingResult: AccountingResult | undefined
 			
 			if (cpuNode.sourceLocation.isLangInternal) {
 				const result = await InsertCPUProfileHelper.accountToLangInternal(
@@ -535,8 +565,7 @@ export class InsertCPUProfileHelper {
 					parentCallIdentifier,
 					callRelationTracker
 				)
-				accountedCallIdentifier = result.accountedCallIdentifier
-				accountedSourceNodeReference = result.accountedSourceNodeReference
+				accountingResult = result
 			} else if (cpuNode.sourceLocation.isWASM) {
 				const wasmPath = new UnifiedPath(cpuNode.sourceLocation.rawUrl.substring(7)) // remove the 'wasm://' prefix
 
@@ -556,8 +585,7 @@ export class InsertCPUProfileHelper {
 						awaiterStack,
 						callRelationTracker
 					)
-					accountedCallIdentifier = result.accountedCallIdentifier
-					accountedSourceNodeReference = result.accountedSourceNodeReference
+					accountingResult = result
 				} else {
 					// is not part of the wasm node module
 					const result = await InsertCPUProfileHelper.accountToExtern(
@@ -571,9 +599,7 @@ export class InsertCPUProfileHelper {
 						},
 						callRelationTracker
 					)
-
-					accountedCallIdentifier = result.accountedCallIdentifier
-					accountedSourceNodeReference = result.accountedSourceNodeReference
+					accountingResult = result
 				}
 			} else if (!cpuNode.sourceLocation.isEmpty) {
 				const {
@@ -605,8 +631,7 @@ export class InsertCPUProfileHelper {
 						parentCallIdentifier,
 						callRelationTracker
 					)
-					accountedCallIdentifier = result.accountedCallIdentifier
-					accountedSourceNodeReference = result.accountedSourceNodeReference
+					accountingResult = result
 				} else {
 					// add to intern if the source file is not part of a node module
 					// or the reportToCredit is the node module that source file belongs to
@@ -624,8 +649,7 @@ export class InsertCPUProfileHelper {
 							awaiterStack,
 							callRelationTracker
 						)
-						accountedCallIdentifier = result.accountedCallIdentifier
-						accountedSourceNodeReference = result.accountedSourceNodeReference
+						accountingResult = result
 					} else {
 						// add to extern
 						const result = await InsertCPUProfileHelper.accountToExtern(
@@ -635,21 +659,26 @@ export class InsertCPUProfileHelper {
 							sourceNodeLocation,
 							callRelationTracker
 						)
-						accountedCallIdentifier = result.accountedCallIdentifier
-						accountedSourceNodeReference = result.accountedSourceNodeReference
+						accountingResult = result
 					}
 				}
 
-				if (accountedCallIdentifier.sourceNode === null) {
+				if (accountingResult.accountedCallIdentifier.sourceNode === null) {
 					throw new Error('InsertCPUProfileHelper.insertCPUProfile: expected a source node')
 				}
-				accountedCallIdentifier.sourceNode.presentInOriginalSourceCode = functionIdentifierPresentInOriginalFile
+				accountingResult.accountedCallIdentifier.sourceNode.presentInOriginalSourceCode =
+				functionIdentifierPresentInOriginalFile
+			}
+			if (accountingResult === undefined) {
+				// default result
+				return {
+					accountingType: 'empty_',
+					accountedCallIdentifier: parentCallIdentifier,
+					accountedSourceNodeReference: undefined
+				}
 			}
 
-			return {
-				accountedCallIdentifier,
-				accountedSourceNodeReference
-			}
+			return accountingResult
 		}
 
 		async function traverse(
@@ -657,6 +686,7 @@ export class InsertCPUProfileHelper {
 			cpuNode: CPUNode
 		) {
 			const {
+				accountingType,
 				accountedCallIdentifier,
 				accountedSourceNodeReference
 			} = await beforeTraverse(
