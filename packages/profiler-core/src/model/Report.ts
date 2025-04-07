@@ -210,28 +210,6 @@ export class Report extends BaseModel {
 		)
 	}
 
-	// IMPORTANT to change when new measurement type gets added
-	addSensorValuesToLangInternal(
-		filePath: LangInternalPath_string,
-		functionIdentifier: LangInternalSourceNodeIdentifier_string,
-		{
-			cpuTime,
-			cpuEnergyConsumption,
-			ramEnergyConsumption
-		}: {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption,
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		}
-	): SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNode> {
-		const sourceNodeMetaData = this.addToLangInternal(
-			filePath,
-			functionIdentifier
-		)
-		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
-		return sourceNodeMetaData
-	}
-
 	addToIntern(
 		filePath: UnifiedPath_string,
 		functionIdentifier: SourceNodeIdentifier_string
@@ -252,28 +230,6 @@ export class Report extends BaseModel {
 			functionIdentifier,
 			SourceNodeMetaDataType.SourceNode
 		)
-	}
-
-	// IMPORTANT to change when new measurement type gets added
-	addSensorValuesToIntern(
-		filePath: UnifiedPath_string,
-		functionIdentifier: SourceNodeIdentifier_string,
-		{
-			cpuTime,
-			cpuEnergyConsumption,
-			ramEnergyConsumption
-		}: {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption,
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		}
-	): SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> {
-		const sourceNodeMetaData = this.addToIntern(
-			filePath,
-			functionIdentifier
-		)
-		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
-		return sourceNodeMetaData
 	}
 
 	addToExtern(
@@ -298,40 +254,6 @@ export class Report extends BaseModel {
 			sourceNodeMetaData: sourceNodeMetaData
 		}
 	}
-
-	// IMPORTANT to change when new measurement type gets added
-	addSensorValuesToExtern(
-		filePath: UnifiedPath,
-		nodeModule: NodeModule,
-		functionIdentifier: SourceNodeIdentifier_string,
-		{
-			cpuTime,
-			cpuEnergyConsumption,
-			ramEnergyConsumption
-		}: {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		}
-	): {
-			report: ModuleReport,
-			sourceNodeMetaData: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
-		} {
-		const {
-			report,
-			sourceNodeMetaData
-		} = this.addToExtern(
-			filePath,
-			nodeModule,
-			functionIdentifier,
-		)
-		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
-		return {
-			report,
-			sourceNodeMetaData
-		}
-	}
-
 	/**
 	 * Returns the meta data of a file
 	 * 

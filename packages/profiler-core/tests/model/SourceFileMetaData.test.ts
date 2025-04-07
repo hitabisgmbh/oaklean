@@ -342,18 +342,17 @@ describe('SourceFileMetaData', () => {
 			SourceNodeMetaDataType.SourceNode
 		)
 		node1.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 2 as MicroSeconds_number,
-				aggregatedCPUTime: 2 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {
-				selfCPUEnergyConsumption: 4 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 4 as MilliJoule_number
-			},
-			ramEnergyConsumption: {
-				selfRAMEnergyConsumption: 4 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 4 as MilliJoule_number
-			}
+			// cpu time
+			selfCPUTime: 2 as MicroSeconds_number,
+			aggregatedCPUTime: 2 as MicroSeconds_number,
+
+			// cpu energy
+			selfCPUEnergyConsumption: 4 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 4 as MilliJoule_number,
+
+			// ram energy
+			selfRAMEnergyConsumption: 4 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 4 as MilliJoule_number
 		})
 		node1.sensorValues.profilerHits += 1
 
@@ -362,18 +361,17 @@ describe('SourceFileMetaData', () => {
 			SourceNodeMetaDataType.SourceNode
 		)
 		node2.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 3 as MicroSeconds_number,
-				aggregatedCPUTime: 3 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {
-				selfCPUEnergyConsumption: 6 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 6 as MilliJoule_number
-			},
-			ramEnergyConsumption: {
-				selfRAMEnergyConsumption: 6 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 6 as MilliJoule_number
-			}
+			// cpu time
+			selfCPUTime: 3 as MicroSeconds_number,
+			aggregatedCPUTime: 3 as MicroSeconds_number,
+		
+			// cpu energy
+			selfCPUEnergyConsumption: 6 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 6 as MilliJoule_number,
+		
+			// ram energy
+			selfRAMEnergyConsumption: 6 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 6 as MilliJoule_number
 		})
 		node2.sensorValues.profilerHits += 1
 
@@ -382,18 +380,17 @@ describe('SourceFileMetaData', () => {
 			SourceNodeMetaDataType.SourceNode
 		)
 		node3.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 2 as MicroSeconds_number,
-				aggregatedCPUTime: 2 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {
-				selfCPUEnergyConsumption: 4 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 4 as MilliJoule_number
-			},
-			ramEnergyConsumption: {
-				selfRAMEnergyConsumption: 4 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 4 as MilliJoule_number
-			}
+			// cpu time
+			selfCPUTime: 2 as MicroSeconds_number,
+			aggregatedCPUTime: 2 as MicroSeconds_number,
+		
+			// cpu energy
+			selfCPUEnergyConsumption: 4 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 4 as MilliJoule_number,
+		
+			// ram energy
+			selfRAMEnergyConsumption: 4 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 4 as MilliJoule_number
 		})
 		node3.sensorValues.profilerHits += 1
 
@@ -1180,69 +1177,41 @@ describe('SourceFileMetaData', () => {
 		)
 
 		methodD.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 1 as MicroSeconds_number,
-				aggregatedCPUTime: 1 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {},
-			ramEnergyConsumption: {}
+			selfCPUTime: 1 as MicroSeconds_number,
+			aggregatedCPUTime: 1 as MicroSeconds_number
 		})
 
 		methodA.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 1 as MicroSeconds_number,
-				aggregatedCPUTime: 6 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {},
-			ramEnergyConsumption: {}
+			selfCPUTime: 1 as MicroSeconds_number,
+			aggregatedCPUTime: 6 as MicroSeconds_number
 		})
 		methodA.addSensorValuesToIntern(
 			methodB.globalIdentifier(),
 			{
-				cpuTime: {
-					aggregatedCPUTime: 5 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {},
-				ramEnergyConsumption: {}
+				aggregatedCPUTime: 5 as MicroSeconds_number
 			}
 		)
 
 		methodB.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 2 as MicroSeconds_number,
-				aggregatedCPUTime: 5 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {},
-			ramEnergyConsumption: {}
+			selfCPUTime: 2 as MicroSeconds_number,
+			aggregatedCPUTime: 5 as MicroSeconds_number
 		})
 		methodB.addSensorValuesToIntern(
 			methodC.globalIdentifier(),
 			{
-				cpuTime: {
-					aggregatedCPUTime: 3 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {},
-				ramEnergyConsumption: {}
+				aggregatedCPUTime: 3 as MicroSeconds_number
 			}
 		)
 
 		methodC.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 2 as MicroSeconds_number,
-				aggregatedCPUTime: 3 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {},
-			ramEnergyConsumption: {}
+			selfCPUTime: 2 as MicroSeconds_number,
+			aggregatedCPUTime: 3 as MicroSeconds_number
 		})
 
 		methodC.addSensorValuesToIntern(
 			methodD.globalIdentifier(),
 			{
-				cpuTime: {
-					aggregatedCPUTime: 1 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {},
-				ramEnergyConsumption: {}
+				aggregatedCPUTime: 1 as MicroSeconds_number
 			}
 		)
 

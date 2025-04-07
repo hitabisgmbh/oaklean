@@ -25,11 +25,9 @@ import {
 	SourceNodeIdentifier_string,
 	NanoSeconds_BigInt,
 	MilliJoule_number,
-	IPureCPUTime,
-	IPureCPUEnergyConsumption,
-	IPureRAMEnergyConsumption,
 	MicroSeconds_number,
-	ResolvedSourceNodeLocation
+	ResolvedSourceNodeLocation,
+	ISensorValues
 } from '../../types'
 
 type AccountingCategories = {
@@ -65,40 +63,20 @@ type AwaiterStack = {
 export class InsertCPUProfileHelper {
 	// IMPORTANT to change when new measurement type gets added
 	static sensorValuesForVisitedNode(
-		cpuTime: IPureCPUTime,
-		cpuEnergyConsumption: IPureCPUEnergyConsumption,
-		ramEnergyConsumption: IPureRAMEnergyConsumption,
+		sensorValues: ISensorValues,
 		visited: boolean,
-	): {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption,
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		} {
-		const cpuTimeResult: IPureCPUTime = {
-			selfCPUTime: cpuTime.selfCPUTime,
-			aggregatedCPUTime: cpuTime.aggregatedCPUTime
+	): ISensorValues {
+		const result = {
+			...sensorValues
 		}
-		const cpuEnergyConsumptionResult: IPureCPUEnergyConsumption = {
-			selfCPUEnergyConsumption: cpuEnergyConsumption.selfCPUEnergyConsumption,
-			aggregatedCPUEnergyConsumption: cpuEnergyConsumption.aggregatedCPUEnergyConsumption
-		}
-		const ramEnergyConsumptionResult: IPureRAMEnergyConsumption = {
-			selfRAMEnergyConsumption: ramEnergyConsumption.selfRAMEnergyConsumption,
-			aggregatedRAMEnergyConsumption: ramEnergyConsumption.aggregatedRAMEnergyConsumption
-		}
+
 		if (visited) {
-			// if the source node was already visited in the call tree
-			// don't add the measurements to the aggregated values
-			// since they were already included during the first visit of the source node
-			cpuTimeResult.aggregatedCPUTime = 0 as MicroSeconds_number
-			cpuEnergyConsumptionResult.aggregatedCPUEnergyConsumption = 0 as MilliJoule_number
-			ramEnergyConsumptionResult.aggregatedRAMEnergyConsumption = 0 as MilliJoule_number
+			result.aggregatedCPUTime = 0 as MicroSeconds_number
+			result.aggregatedCPUEnergyConsumption = 0 as MilliJoule_number
+			result.aggregatedRAMEnergyConsumption = 0 as MilliJoule_number
 		}
-		return {
-			cpuTime: cpuTimeResult,
-			cpuEnergyConsumption: cpuEnergyConsumptionResult,
-			ramEnergyConsumption: ramEnergyConsumptionResult
-		}
+
+		return result
 	}
 
 	static async accountToLangInternal(
@@ -111,9 +89,7 @@ export class InsertCPUProfileHelper {
 			accountedSourceNodeReference:
 			SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference> | undefined
 		}> {
-		const cpuTime = cpuNode.cpuTime
-		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
-		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
+		const sensorValues = cpuNode.sensorValues
 
 		let currentSourceNodeReference:
 		SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference> 
@@ -139,21 +115,19 @@ export class InsertCPUProfileHelper {
 
 			parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfCPUTime =
 				parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfCPUTime +
-				(cpuTime.selfCPUTime || 0) as MicroSeconds_number
+				(sensorValues.selfCPUTime || 0) as MicroSeconds_number
 
 			parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption =
 				parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption +
-				(cpuEnergyConsumption.selfCPUEnergyConsumption || 0) as MilliJoule_number
+				(sensorValues.selfCPUEnergyConsumption || 0) as MilliJoule_number
 
 			parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption =
 				parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption +
-				(ramEnergyConsumption.selfRAMEnergyConsumption || 0) as MilliJoule_number
+				(sensorValues.selfRAMEnergyConsumption || 0) as MilliJoule_number
 		}
 		accountedSourceNode.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
-				cpuTime,
-				cpuEnergyConsumption,
-				ramEnergyConsumption,
+				sensorValues,
 				callRelationTracker.isCallRecorded(currentCallIdentifier)
 			)
 		)
@@ -173,9 +147,7 @@ export class InsertCPUProfileHelper {
 			currentSourceNodeReference = parentCallIdentifier.sourceNode.addSensorValuesToLangInternal(
 				accountedSourceNode.globalIdentifier(),
 				InsertCPUProfileHelper.sensorValuesForVisitedNode(
-					cpuTime,
-					cpuEnergyConsumption,
-					ramEnergyConsumption,
+					sensorValues,
 					alreadyLinked
 				)
 			)
@@ -200,9 +172,7 @@ export class InsertCPUProfileHelper {
 			accountedCallIdentifier: CallIdentifier
 			accountedSourceNodeReference: null
 		}> {
-		const cpuTime = cpuNode.cpuTime
-		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
-		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
+		const sensorValues = cpuNode.sensorValues
 
 
 		const accountedSourceNode = originalReport.addToIntern(
@@ -218,9 +188,7 @@ export class InsertCPUProfileHelper {
 		// add measurements to original source code
 		accountedSourceNode.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
-				cpuTime,
-				cpuEnergyConsumption,
-				ramEnergyConsumption,
+				sensorValues,
 				callRelationTracker.isCallRecorded(currentCallIdentifier)
 			)
 		)
@@ -239,26 +207,22 @@ export class InsertCPUProfileHelper {
 			// remove aggregated time from last intern source node
 			// if the parent caller was already recorded once, don't subtract the cpu time from it again
 			const sensorValuesCorrected = InsertCPUProfileHelper.sensorValuesForVisitedNode(
-				cpuTime,
-				cpuEnergyConsumption,
-				ramEnergyConsumption,
+				sensorValues,
 				callRelationTracker.hasChildrenRecorded(parentCallIdentifier)
 			)
 
 			// IMPORTANT to change when new measurement type gets added
 			parentCallIdentifier.sourceNode.sensorValues.aggregatedCPUTime =
 				parentCallIdentifier.sourceNode.sensorValues.aggregatedCPUTime -
-				(sensorValuesCorrected.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
+				(sensorValuesCorrected.aggregatedCPUTime || 0) as MicroSeconds_number
 			parentCallIdentifier.sourceNode.sensorValues.aggregatedCPUEnergyConsumption =
 				parentCallIdentifier.sourceNode.sensorValues.aggregatedCPUEnergyConsumption -
 				(sensorValuesCorrected.
-					cpuEnergyConsumption.
 					aggregatedCPUEnergyConsumption
 					|| 0) as MilliJoule_number
 			parentCallIdentifier.sourceNode.sensorValues.aggregatedRAMEnergyConsumption =
 				parentCallIdentifier.sourceNode.sensorValues.aggregatedRAMEnergyConsumption -
 				(sensorValuesCorrected.
-					ramEnergyConsumption.
 					aggregatedRAMEnergyConsumption
 					|| 0) as MilliJoule_number
 
@@ -289,9 +253,7 @@ export class InsertCPUProfileHelper {
 			SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> | undefined,
 		}> {
 		let accountingType: AccountingType = 'intern_'
-		const cpuTime = cpuNode.cpuTime
-		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
-		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
+		const sensorValues = cpuNode.sensorValues
 
 		let currentSourceNodeReference:
 		SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> | undefined = undefined
@@ -308,9 +270,7 @@ export class InsertCPUProfileHelper {
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		accountedSourceNode.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
-				cpuTime,
-				cpuEnergyConsumption,
-				ramEnergyConsumption,
+				sensorValues,
 				callRelationTracker.isCallRecorded(currentCallIdentifier)
 			)
 		)
@@ -368,32 +328,32 @@ export class InsertCPUProfileHelper {
 					awaiterInternChild.
 						sensorValues.
 						aggregatedCPUTime = awaiterInternChild.sensorValues.aggregatedCPUTime -
-							(cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
+							(sensorValues.aggregatedCPUTime || 0) as MicroSeconds_number
 					awaiterInternChild.
 						sensorValues.
 						aggregatedCPUEnergyConsumption = awaiterInternChild.
 							sensorValues.
 							aggregatedCPUEnergyConsumption -
-							(cpuEnergyConsumption.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
+							(sensorValues.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
 					awaiterInternChild.
 						sensorValues.
 						aggregatedRAMEnergyConsumption = awaiterInternChild.
 							sensorValues.
 							aggregatedRAMEnergyConsumption -
-					(ramEnergyConsumption.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+					(sensorValues.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 
 					// IMPORTANT to change when new measurement type gets added
 					accountedSourceNode.sensorValues.internCPUTime =
 						accountedSourceNode.sensorValues.internCPUTime -
-						(cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
+						(sensorValues.aggregatedCPUTime || 0) as MicroSeconds_number
 					
 					accountedSourceNode.sensorValues.internCPUEnergyConsumption =
 						accountedSourceNode.sensorValues.internCPUEnergyConsumption -
-						(cpuEnergyConsumption.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
+						(sensorValues.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
 					
 					accountedSourceNode.sensorValues.internRAMEnergyConsumption =
 						accountedSourceNode.sensorValues.internRAMEnergyConsumption -
-						(ramEnergyConsumption.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+						(sensorValues.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 				}
 			}
 		}
@@ -411,9 +371,7 @@ export class InsertCPUProfileHelper {
 			currentSourceNodeReference = parentCallIdentifier.sourceNode.addSensorValuesToIntern(
 				accountedSourceNode.globalIdentifier(),
 				InsertCPUProfileHelper.sensorValuesForVisitedNode(
-					cpuTime,
-					cpuEnergyConsumption,
-					ramEnergyConsumption,
+					sensorValues,
 					alreadyLinked
 				)
 			)
@@ -439,6 +397,7 @@ export class InsertCPUProfileHelper {
 			accountedSourceNodeReference:
 			SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> | undefined,
 		}> {
+		const sensorValues = cpuNode.sensorValues
 		const cpuTime = cpuNode.cpuTime
 		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
 		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
@@ -464,9 +423,7 @@ export class InsertCPUProfileHelper {
 		sourceNodeMetaData.sensorValues.profilerHits += cpuNode.profilerHits
 		sourceNodeMetaData.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
-				cpuTime,
-				cpuEnergyConsumption,
-				ramEnergyConsumption,
+				sensorValues,
 				callRelationTracker.isCallRecorded(currentCallIdentifier)
 			)
 		)
@@ -487,9 +444,7 @@ export class InsertCPUProfileHelper {
 			currentSourceNodeReference = parentCallIdentifier.sourceNode.addSensorValuesToExtern(
 				globalIdentifier,
 				InsertCPUProfileHelper.sensorValuesForVisitedNode(
-					cpuTime,
-					cpuEnergyConsumption,
-					ramEnergyConsumption,
+					sensorValues,
 					alreadyLinked
 				)
 			)
