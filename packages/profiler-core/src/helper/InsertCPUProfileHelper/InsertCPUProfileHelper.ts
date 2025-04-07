@@ -398,9 +398,6 @@ export class InsertCPUProfileHelper {
 			SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> | undefined,
 		}> {
 		const sensorValues = cpuNode.sensorValues
-		const cpuTime = cpuNode.cpuTime
-		const cpuEnergyConsumption = cpuNode.cpuEnergyConsumption
-		const ramEnergyConsumption = cpuNode.ramEnergyConsumption
 		let currentSourceNodeReference:
 		SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> | undefined = undefined
 
