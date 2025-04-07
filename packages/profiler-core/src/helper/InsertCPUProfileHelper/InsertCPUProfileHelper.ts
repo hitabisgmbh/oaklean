@@ -111,19 +111,7 @@ export class InsertCPUProfileHelper {
 
 		if (callRelationTracker.currentlyInHeadlessScope()) {
 			// if no extern or intern calls were tracked yet, add the time to the total of headless cpu time
-			// IMPORTANT to change when new measurement type gets added
-
-			parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfCPUTime =
-				parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfCPUTime +
-				(sensorValues.selfCPUTime || 0) as MicroSeconds_number
-
-			parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption =
-				parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption +
-				(sensorValues.selfCPUEnergyConsumption || 0) as MilliJoule_number
-
-			parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption =
-				parentCallIdentifier.report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption +
-				(sensorValues.selfRAMEnergyConsumption || 0) as MilliJoule_number
+			parentCallIdentifier.report.lang_internalHeadlessSensorValues.addToSelf(sensorValues)
 		}
 		accountedSourceNode.addToSensorValues(
 			InsertCPUProfileHelper.sensorValuesForVisitedNode(
@@ -210,21 +198,7 @@ export class InsertCPUProfileHelper {
 				sensorValues,
 				callRelationTracker.hasChildrenRecorded(parentCallIdentifier)
 			)
-
-			// IMPORTANT to change when new measurement type gets added
-			parentCallIdentifier.sourceNode.sensorValues.aggregatedCPUTime =
-				parentCallIdentifier.sourceNode.sensorValues.aggregatedCPUTime -
-				(sensorValuesCorrected.aggregatedCPUTime || 0) as MicroSeconds_number
-			parentCallIdentifier.sourceNode.sensorValues.aggregatedCPUEnergyConsumption =
-				parentCallIdentifier.sourceNode.sensorValues.aggregatedCPUEnergyConsumption -
-				(sensorValuesCorrected.
-					aggregatedCPUEnergyConsumption
-					|| 0) as MilliJoule_number
-			parentCallIdentifier.sourceNode.sensorValues.aggregatedRAMEnergyConsumption =
-				parentCallIdentifier.sourceNode.sensorValues.aggregatedRAMEnergyConsumption -
-				(sensorValuesCorrected.
-					aggregatedRAMEnergyConsumption
-					|| 0) as MilliJoule_number
+			parentCallIdentifier.sourceNode.sensorValues.addToAggregated(sensorValuesCorrected, -1)
 
 			// link call to the parent caller
 			callRelationTracker.linkCallToParent(
@@ -324,36 +298,8 @@ export class InsertCPUProfileHelper {
 					lastAwaiterNode.awaiter.id
 				)
 				if (awaiterInternChild !== undefined) {
-					// IMPORTANT to change when new measurement type gets added
-					awaiterInternChild.
-						sensorValues.
-						aggregatedCPUTime = awaiterInternChild.sensorValues.aggregatedCPUTime -
-							(sensorValues.aggregatedCPUTime || 0) as MicroSeconds_number
-					awaiterInternChild.
-						sensorValues.
-						aggregatedCPUEnergyConsumption = awaiterInternChild.
-							sensorValues.
-							aggregatedCPUEnergyConsumption -
-							(sensorValues.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-					awaiterInternChild.
-						sensorValues.
-						aggregatedRAMEnergyConsumption = awaiterInternChild.
-							sensorValues.
-							aggregatedRAMEnergyConsumption -
-					(sensorValues.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
-
-					// IMPORTANT to change when new measurement type gets added
-					accountedSourceNode.sensorValues.internCPUTime =
-						accountedSourceNode.sensorValues.internCPUTime -
-						(sensorValues.aggregatedCPUTime || 0) as MicroSeconds_number
-					
-					accountedSourceNode.sensorValues.internCPUEnergyConsumption =
-						accountedSourceNode.sensorValues.internCPUEnergyConsumption -
-						(sensorValues.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-					
-					accountedSourceNode.sensorValues.internRAMEnergyConsumption =
-						accountedSourceNode.sensorValues.internRAMEnergyConsumption -
-						(sensorValues.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+					awaiterInternChild.sensorValues.addToAggregated(sensorValues, -1)
+					accountedSourceNode.sensorValues.addToIntern(sensorValues, -1)
 				}
 			}
 		}

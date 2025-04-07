@@ -474,14 +474,12 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		return this._extern as ExternMap<T>
 	}
 
-	// IMPORTANT to change when new measurement type gets added
 	addToSensorValues(values: SensorValues | Partial<ISensorValues>,): SourceNodeMetaData<T> {
 		this.sensorValues.addToSelf(values)
 		this.sensorValues.addToAggregated(values)
 		return this
 	}
 
-	// IMPORTANT to change when new measurement type gets added
 	addSensorValuesToLangInternal(
 		identifier: GlobalIdentifier,
 		values: SensorValues | Partial<ISensorValues>
@@ -503,21 +501,11 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			),
 			this.lang_internal.set(sourceNodeID, sourceNodeMetaData)
 		}
+		this.sensorValues.addToLangInternal(values)
 		sourceNodeMetaData.addToSensorValues(values)
-		this.sensorValues.langInternalCPUTime = this.sensorValues.langInternalCPUTime +
-			(values.aggregatedCPUTime || 0) as MicroSeconds_number
-
-		this.sensorValues.langInternalCPUEnergyConsumption =
-			this.sensorValues.langInternalCPUEnergyConsumption +
-		(values.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-
-		this.sensorValues.langInternalRAMEnergyConsumption =
-			this.sensorValues.langInternalRAMEnergyConsumption +
-			(values.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 		return sourceNodeMetaData
 	}
 
-	// IMPORTANT to change when new measurement type gets added
 	addSensorValuesToIntern(
 		identifier: GlobalIdentifier,
 		values: SensorValues | Partial<ISensorValues>,
@@ -538,21 +526,11 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			)
 			this.intern.set(sourceNodeID, sourceNodeMetaData)
 		}
+		this.sensorValues.addToIntern(values)
 		sourceNodeMetaData.addToSensorValues(values)
-		this.sensorValues.internCPUTime = this.sensorValues.internCPUTime +
-			(values.aggregatedCPUTime || 0) as MicroSeconds_number
-
-		this.sensorValues.internCPUEnergyConsumption =
-			this.sensorValues.internCPUEnergyConsumption +	
-		(values.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-		
-		this.sensorValues.internRAMEnergyConsumption =
-			this.sensorValues.internRAMEnergyConsumption +
-			(values.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 		return sourceNodeMetaData
 	}
 
-	// IMPORTANT to change when new measurement type gets added
 	addSensorValuesToExtern(
 		identifier: GlobalIdentifier,
 		values: SensorValues | Partial<ISensorValues>,
@@ -573,17 +551,8 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			)
 			this.extern.set(sourceNodeID, sourceNodeMetaData)	
 		}
+		this.sensorValues.addToExtern(values)
 		sourceNodeMetaData.addToSensorValues(values)
-		this.sensorValues.externCPUTime = this.sensorValues.externCPUTime +
-			(values.aggregatedCPUTime || 0) as MicroSeconds_number
-
-		this.sensorValues.externCPUEnergyConsumption =
-			this.sensorValues.externCPUEnergyConsumption +	
-		(values.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-	
-		this.sensorValues.externRAMEnergyConsumption =
-			this.sensorValues.externRAMEnergyConsumption +
-			(values.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
 		return sourceNodeMetaData
 	}
 

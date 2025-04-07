@@ -294,23 +294,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		const total = SourceNodeMetaData.sum(...totals)
 		const max = SourceNodeMetaData.max(...maxs)
 
-		// IMPORTANT to change when new measurement type gets added
 		if (this.type === SourceFileMetaDataTreeType.Root) {
-			total.sensorValues.aggregatedCPUTime = UnitHelper.sumMicroSeconds(
-				total.sensorValues.aggregatedCPUTime,
-				this.lang_internalHeadlessSensorValues.aggregatedCPUTime,
-				1
-			)
-			total.sensorValues.aggregatedCPUEnergyConsumption = UnitHelper.sumMilliJoule(
-				total.sensorValues.aggregatedCPUEnergyConsumption,
-				this.lang_internalHeadlessSensorValues.aggregatedCPUEnergyConsumption,
-				1
-			)
-			total.sensorValues.aggregatedRAMEnergyConsumption = UnitHelper.sumMilliJoule(
-				total.sensorValues.aggregatedRAMEnergyConsumption,
-				this.lang_internalHeadlessSensorValues.aggregatedRAMEnergyConsumption,
-				1
-			)
+			total.sensorValues.addToAggregated(this.lang_internalHeadlessSensorValues)
 		}
 
 		if (total.sensorValues.aggregatedCPUTime > 
