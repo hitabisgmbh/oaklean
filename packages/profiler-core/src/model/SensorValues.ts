@@ -269,6 +269,7 @@ export class SensorValues extends BaseModel {
 		}
 	}
 
+	// IMPORTANT to change when new measurement type gets added
 	public static sum(...args: SensorValues[]): SensorValues {
 		const result = new SensorValues({})
 
@@ -309,6 +310,7 @@ export class SensorValues extends BaseModel {
 		return result
 	}
 
+	// IMPORTANT to change when new measurement type gets added
 	public static max(...args: SensorValues[]): SensorValues {
 		const result = new SensorValues({})
 
@@ -384,6 +386,7 @@ export class SensorValues extends BaseModel {
 		return result
 	}
 
+	// IMPORTANT to change when new measurement type gets added
 	public static equals(...args: SensorValues[]) {
 		if (args.length === 0) {
 			return true
