@@ -8,7 +8,8 @@ import {
 	LoggerHelper,
 	CPUNode,
 	ProfilerConfig,
-	CPUProfileHelper
+	CPUProfileHelper,
+	STATIC_CONFIG_FILENAME
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
@@ -39,7 +40,9 @@ export default class CPUProfileCommands {
 
 		baseCommand
 			.command('anonymize')
-			.description('Converts all paths in the cpu profile to relative paths (relative to the rootDir mentioned in the .oaklean config) to remove all user related paths')
+			.description('Converts all paths in the cpu profile to relative paths ' + 
+				`(relative to the rootDir mentioned in the ${STATIC_CONFIG_FILENAME} config)` + 
+				' to remove all user related paths')
 			.argument('<input>', 'input file path')
 			.option('-o, --output <output>', 'output file path (default: input file path)')
 			.action(this.anonymize.bind(this))
@@ -191,6 +194,7 @@ export default class CPUProfileCommands {
 					lastIndent +
 					cpuNode.sourceLocation.relativeUrl.toString() +
 					cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`),
+					`[CM_ID: ${cpuNode.index}]`,
 					`- ${cpuNode.cpuTime.selfCPUTime} µs | ${cpuNode.cpuTime.aggregatedCPUTime} µs`
 				)
 			}

@@ -2,6 +2,7 @@
 import { program } from 'commander'
 
 import { VERSION } from './constants/app'
+import ConfigCommands from './commands/ConfigCommands'
 import BackendCommands from './commands/BackendCommands'
 import ReportCommands from './commands/ReportCommands'
 import CPUProfileCommands from './commands/CPUProfileCommands'
@@ -13,6 +14,7 @@ program
 	.version(VERSION)
 	.description('An CLI to interact with the @oaklean suite')
 
+ConfigCommands.init()
 InitCommands.init()
 ReportCommands.init()
 CPUProfileCommands.init()

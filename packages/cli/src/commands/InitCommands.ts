@@ -7,7 +7,8 @@ import {
 	SensorInterfaceType,
 	MicroSeconds_number,
 	RegistryOptions,
-	LoggerHelper
+	LoggerHelper,
+	STATIC_CONFIG_FILENAME
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 import { confirm, select } from '@inquirer/prompts'
@@ -16,7 +17,7 @@ export default class InitCommands {
 	constructor() {
 		program
 			.command('init')
-			.description('Create a .oaklean config file')
+			.description(`Create a ${STATIC_CONFIG_FILENAME} config file`)
 			.action(this.initCommand.bind(this))
 	}
 
