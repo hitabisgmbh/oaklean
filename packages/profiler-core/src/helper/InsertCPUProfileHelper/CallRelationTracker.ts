@@ -74,13 +74,13 @@ export class CallRelationTracker {
 	}
 
 	/**
-	 * Checks if a function call has child calls recorded (used in recursion tracking).
+	 * Gives the amount of recorded child calls for a function call.
 	 * 
 	 * @param {CallIdentifier} callIdentifier - The call identifier
 	 * @returns {boolean} true if the call has child calls recorded, false otherwise
 	 */
-	hasChildrenRecorded(callIdentifier: CallIdentifier) {
-		return (this._map.get(callIdentifier.toString())?.length || 0) >0
+	getChildrenCount(callIdentifier: CallIdentifier) {
+		return this._map.get(callIdentifier.toString())?.length || 0
 	}
 
 	/**

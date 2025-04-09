@@ -192,14 +192,6 @@ export class InsertCPUProfileHelper {
 			// ensure its a source node of type internal
 			parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode
 		) {
-			// remove aggregated time from last intern source node
-			// if the parent caller was already recorded once, don't subtract the cpu time from it again
-			const sensorValuesCorrected = InsertCPUProfileHelper.sensorValuesForVisitedNode(
-				sensorValues,
-				callRelationTracker.hasChildrenRecorded(parentCallIdentifier)
-			)
-			parentCallIdentifier.sourceNode.sensorValues.addToAggregated(sensorValuesCorrected, -1)
-
 			// link call to the parent caller
 			callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
@@ -582,7 +574,9 @@ export class InsertCPUProfileHelper {
 		async function traverse(
 			parentCallIdentifier: CallIdentifier,
 			cpuNode: CPUNode
-		) {
+		): Promise<{
+				compensations: ISensorValues[]
+			}> {
 			const {
 				accountingType,
 				accountedCallIdentifier,
@@ -592,13 +586,30 @@ export class InsertCPUProfileHelper {
 				parentCallIdentifier
 			)
 
+			let compensations: ISensorValues[] = []
 			for (const child of cpuNode.children()) {
-				await traverse(
+				const {
+					compensations: childCompensations
+				} = await traverse(
 					accountedCallIdentifier,
 					child
 				)
+				compensations.push(...childCompensations)
 			}
 			
+			if (accountingType === 'intern_calledFromExtern') {
+				if (
+					parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode &&
+					// the parent caller has only one child accounted (the current one)
+					// do not compensate when the parent caller has more than one child
+					// this prevents double compensations
+					callRelationTracker.getChildrenCount(parentCallIdentifier) <= 1
+				) {
+					parentCallIdentifier.sourceNode?.sensorValues.addToAggregated(cpuNode.sensorValues, -1)
+				}
+
+				compensations = [cpuNode.sensorValues]
+			}
 			// if the accountedSourceNodeReference is not undefined (which only happens for the root node)
 			// a link was created to the parent call identifier within the callRelationTracker
 			const newLinkWasCreated = accountedSourceNodeReference !== undefined
@@ -607,6 +618,10 @@ export class InsertCPUProfileHelper {
 				accountedCallIdentifier,
 				newLinkWasCreated
 			)
+
+			return {
+				compensations
+			}
 		}
 
 		await traverse(
