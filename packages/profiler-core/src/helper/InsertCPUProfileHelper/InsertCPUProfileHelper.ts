@@ -44,6 +44,22 @@ type accountOwnCodeGetsExecutedByExternal_AccountType = Extract<AccountingType, 
 type accountToIntern_AccountType = Extract<AccountingType, `intern_${string}`>
 type accountToExtern_AccountType = Extract<AccountingType, `extern_${string}`>
 
+function getAccountingCategory(type: AccountingType): keyof AccountingCategories {
+	switch (type) {
+		case 'langInternal_':
+			return 'langInternal'
+		case 'intern_':
+		case 'intern_awaiter':
+		case 'intern_wasm':
+		case 'intern_calledFromExtern':
+			return 'intern'
+		case 'extern_':
+			return 'extern'
+		case 'empty_':
+			return 'empty'
+	}
+}
+
 type AccountingResult = {
 	accountingType: AccountingType
 	accountedCallIdentifier: CallIdentifier,
@@ -609,6 +625,35 @@ export class InsertCPUProfileHelper {
 				}
 
 				compensations = [cpuNode.sensorValues]
+			} else if (
+				parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode &&
+				callRelationTracker.getChildrenCount(parentCallIdentifier) <= 1
+			) {
+				// Carry the compensation up the entire call tree path.
+				// During the downward traversal, it was added to every
+				// source node and source node reference in the call tree,
+				// so now we need to subtract it from all of them to compensate.
+				for (const compensation of compensations) {
+					// compensate from the parent node
+					parentCallIdentifier.sourceNode?.sensorValues.addToAggregated(compensation, -1)
+					accountedSourceNodeReference?.sensorValues.addToAggregated(compensation, -1)		
+
+					const accountingCategory = getAccountingCategory(accountingType)
+					switch (accountingCategory) {
+						case 'langInternal':
+							// remove aggregated time from the accounted source node reference
+							parentCallIdentifier.sourceNode?.sensorValues.addToLangInternal(compensation, -1)		
+							break
+						case 'intern':
+							// remove aggregated time from the accounted source node reference
+							parentCallIdentifier.sourceNode?.sensorValues.addToIntern(compensation, -1)		
+							break
+						case 'extern':
+							// remove aggregated time from the accounted source node reference
+							parentCallIdentifier.sourceNode?.sensorValues.addToExtern(compensation, -1)		
+							break
+					}
+				}
 			}
 			// if the accountedSourceNodeReference is not undefined (which only happens for the root node)
 			// a link was created to the parent call identifier within the callRelationTracker
