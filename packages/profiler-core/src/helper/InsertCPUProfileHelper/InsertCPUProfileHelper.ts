@@ -31,7 +31,7 @@ import {
 } from '../../types'
 
 type AccountingCategories = {
-	'intern': '' | 'awaiter' | 'wasm' | 'calledFromExtern',
+	'intern': '' | 'awaiter' | 'wasm' | 'selfCall' | 'calledFromExtern',
 	'extern': '',
 	'langInternal': '',
 	'empty': ''
@@ -51,6 +51,7 @@ function getAccountingCategory(type: AccountingType): keyof AccountingCategories
 		case 'intern_':
 		case 'intern_awaiter':
 		case 'intern_wasm':
+		case 'intern_selfCall':
 		case 'intern_calledFromExtern':
 			return 'intern'
 		case 'extern_':
@@ -61,6 +62,7 @@ function getAccountingCategory(type: AccountingType): keyof AccountingCategories
 }
 
 type AccountingResult = {
+	callRelationTrackerRecordedTheReference: boolean
 	accountingType: AccountingType
 	accountedCallIdentifier: CallIdentifier,
 	accountedSourceNodeReference:
@@ -69,6 +71,10 @@ type AccountingResult = {
 	SourceNodeMetaDataType.InternSourceNodeReference |
 	SourceNodeMetaDataType.LangInternalSourceNodeReference
 	> | undefined | null
+	// null represents there is technically a logical reference
+	// but it was not added to the source node
+	// this happens in cases like accountOwnCodeGetsExecutedByExternal
+	// or the source node called itself, so no reference was created
 }
 
 type AwaiterStack = {
@@ -100,6 +106,7 @@ export class InsertCPUProfileHelper {
 		parentCallIdentifier: CallIdentifier,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
+			callRelationTrackerRecordedTheReference: boolean
 			accountingType: accountToLangInternal_AccountType,
 			accountedCallIdentifier: CallIdentifier,
 			accountedSourceNodeReference:
@@ -140,10 +147,10 @@ export class InsertCPUProfileHelper {
 			currentCallIdentifier,
 			'langInternal')
 
-		if (
-			// ensure its a source node of type internal
+		// ensure its a source node of type internal
+		const shouldLinkToParent = 
 			parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode
-		) {
+		if (shouldLinkToParent) {
 			const alreadyLinked = callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
 				parentCallIdentifier
@@ -159,6 +166,7 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
+			callRelationTrackerRecordedTheReference: shouldLinkToParent,
 			accountingType: 'langInternal_',
 			accountedCallIdentifier: currentCallIdentifier,
 			accountedSourceNodeReference: currentSourceNodeReference
@@ -172,6 +180,7 @@ export class InsertCPUProfileHelper {
 		parentCallIdentifier: CallIdentifier,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
+			callRelationTrackerRecordedTheReference: boolean
 			accountingType: accountOwnCodeGetsExecutedByExternal_AccountType,
 			accountedCallIdentifier: CallIdentifier
 			accountedSourceNodeReference: null
@@ -204,10 +213,9 @@ export class InsertCPUProfileHelper {
 		// if parentNodeInfo.sourceNode.type !== SourceNodeMetaDataType.SourceNode
 		// the last call was from a lang internal source node (but within a node module report)
 		// this is often a node:vm call within a node module to execute some script of the users code
-		if (
-			// ensure its a source node of type internal
-			parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode
-		) {
+		// ensure its a source node of type internal
+		const shouldLinkToParent = parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode
+		if (shouldLinkToParent) {
 			// link call to the parent caller
 			callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
@@ -216,6 +224,7 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
+			callRelationTrackerRecordedTheReference: shouldLinkToParent,
 			accountingType: 'intern_calledFromExtern',
 			accountedCallIdentifier: currentCallIdentifier,
 			accountedSourceNodeReference: null
@@ -229,6 +238,7 @@ export class InsertCPUProfileHelper {
 		awaiterStack: AwaiterStack,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
+			callRelationTrackerRecordedTheReference: boolean
 			accountingType: accountToIntern_AccountType,
 			accountedCallIdentifier: CallIdentifier,
 			accountedSourceNodeReference:
@@ -311,28 +321,32 @@ export class InsertCPUProfileHelper {
 				}
 			}
 		}
-
-		if (
-			// ensure its a source node of type internal
-			parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode &&
-			parentCallIdentifier.sourceNode !== accountedSourceNode
-		) {
+		// ensure its a source node of type internal
+		const shouldLinkToParent = parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode
+		if (shouldLinkToParent) {
 			const alreadyLinked = callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
 				parentCallIdentifier
 			)
 
-			currentSourceNodeReference = parentCallIdentifier.sourceNode.addSensorValuesToIntern(
-				accountedSourceNode.globalIdentifier(),
-				InsertCPUProfileHelper.sensorValuesForVisitedNode(
-					sensorValues,
-					alreadyLinked
+			if (parentCallIdentifier.sourceNode !== accountedSourceNode) {
+				// only create a reference if its not a recursive call
+				currentSourceNodeReference = parentCallIdentifier.sourceNode.addSensorValuesToIntern(
+					accountedSourceNode.globalIdentifier(),
+					InsertCPUProfileHelper.sensorValuesForVisitedNode(
+						sensorValues,
+						alreadyLinked
+					)
 				)
-			)
-			currentSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+				currentSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+			} else {
+				// the source node called itself
+				accountingType = 'intern_selfCall'
+			}
 		}
 
 		return {
+			callRelationTrackerRecordedTheReference: shouldLinkToParent,
 			accountingType,
 			accountedCallIdentifier: currentCallIdentifier,
 			accountedSourceNodeReference: currentSourceNodeReference
@@ -346,10 +360,11 @@ export class InsertCPUProfileHelper {
 		sourceNodeLocation: ResolvedSourceNodeLocation,
 		callRelationTracker: CallRelationTracker
 	): Promise<{
+			callRelationTrackerRecordedTheReference: boolean,
 			accountingType: accountToExtern_AccountType,
 			accountedCallIdentifier: CallIdentifier,
 			accountedSourceNodeReference:
-			SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> | undefined,
+			SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> | undefined
 		}> {
 		const sensorValues = cpuNode.sensorValues
 		let currentSourceNodeReference:
@@ -383,10 +398,9 @@ export class InsertCPUProfileHelper {
 			currentCallIdentifier,
 			'extern')
 
-		if (
-			// ensure its a source node of type internal
-			parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode
-		) {
+		// ensure its a source node of type internal
+		const shouldLinkToParent = parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode
+		if (shouldLinkToParent) {
 			const alreadyLinked = callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
 				parentCallIdentifier
@@ -403,6 +417,7 @@ export class InsertCPUProfileHelper {
 		}
 
 		return {
+			callRelationTrackerRecordedTheReference: shouldLinkToParent,
 			accountingType: 'extern_',
 			accountedCallIdentifier: currentCallIdentifier,
 			accountedSourceNodeReference: currentSourceNodeReference
@@ -578,6 +593,7 @@ export class InsertCPUProfileHelper {
 			if (accountingResult === undefined) {
 				// default result
 				return {
+					callRelationTrackerRecordedTheReference: false,
 					accountingType: 'empty_',
 					accountedCallIdentifier: parentCallIdentifier,
 					accountedSourceNodeReference: undefined
@@ -596,7 +612,8 @@ export class InsertCPUProfileHelper {
 			const {
 				accountingType,
 				accountedCallIdentifier,
-				accountedSourceNodeReference
+				accountedSourceNodeReference,
+				callRelationTrackerRecordedTheReference
 			} = await beforeTraverse(
 				cpuNode,
 				parentCallIdentifier
@@ -638,30 +655,30 @@ export class InsertCPUProfileHelper {
 					parentCallIdentifier.sourceNode?.sensorValues.addToAggregated(compensation, -1)
 					accountedSourceNodeReference?.sensorValues.addToAggregated(compensation, -1)		
 
-					const accountingCategory = getAccountingCategory(accountingType)
-					switch (accountingCategory) {
-						case 'langInternal':
-							// remove aggregated time from the accounted source node reference
-							parentCallIdentifier.sourceNode?.sensorValues.addToLangInternal(compensation, -1)		
-							break
-						case 'intern':
-							// remove aggregated time from the accounted source node reference
-							parentCallIdentifier.sourceNode?.sensorValues.addToIntern(compensation, -1)		
-							break
-						case 'extern':
-							// remove aggregated time from the accounted source node reference
-							parentCallIdentifier.sourceNode?.sensorValues.addToExtern(compensation, -1)		
-							break
+					// if its a self call, there was no accounting besides self and aggregated
+					if (accountingType !== 'intern_selfCall') {
+						const accountingCategory = getAccountingCategory(accountingType)
+						switch (accountingCategory) {
+							case 'langInternal':
+								// remove aggregated time from the accounted source node reference
+								parentCallIdentifier.sourceNode?.sensorValues.addToLangInternal(compensation, -1)		
+								break
+							case 'intern':
+								// remove aggregated time from the accounted source node reference
+								parentCallIdentifier.sourceNode?.sensorValues.addToIntern(compensation, -1)		
+								break
+							case 'extern':
+								// remove aggregated time from the accounted source node reference
+								parentCallIdentifier.sourceNode?.sensorValues.addToExtern(compensation, -1)		
+								break
+						}
 					}
 				}
 			}
-			// if the accountedSourceNodeReference is not undefined (which only happens for the root node)
-			// a link was created to the parent call identifier within the callRelationTracker
-			const newLinkWasCreated = accountedSourceNodeReference !== undefined
 			afterTraverse(
 				parentCallIdentifier,
 				accountedCallIdentifier,
-				newLinkWasCreated
+				callRelationTrackerRecordedTheReference
 			)
 
 			return {
