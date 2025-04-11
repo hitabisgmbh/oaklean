@@ -297,6 +297,14 @@ export default class CPUProfileCommands {
 			cli.xterm(39)(' ■ ') + ' Node (Webpack)\n'
 		)
 
+		if (resolveFunctionIdentifierHelper !== undefined) {
+			LoggerHelper.log(
+				'┌───' + ' originally from the cpu profile\n' +
+				'│ ┌─' + ' resolved via the external resource (using sourcemaps)\n' +
+				'│ │ '
+			)
+		}
+
 		await traverse(cpuModel.getNode(0))
 	}
 
