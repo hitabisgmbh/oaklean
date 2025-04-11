@@ -1,6 +1,5 @@
 import { CPUModel } from './CPUModel'
 
-import { ExternalResourceHelper } from '../ExternalResourceHelper'
 import { IComputedNode } from '../../../lib/vscode-js-profile-core/src/cpu/model'
 // Types
 import {
@@ -39,10 +38,6 @@ export class CPUNode {
 
 	get sourceLocation() {
 		return this.cpuModel.CPUProfileSourceLocations[this.cpuNode.locationId]
-	}
-
-	get externalResourceHelper(): ExternalResourceHelper {
-		return this.cpuModel.externalResourceHelper
 	}
 
 	get profilerHits(): number {
