@@ -16,6 +16,14 @@ import {
 import { program } from 'commander'
 import bare from 'cli-color/bare'
 
+enum TraceColors {
+	Internal = 1,
+	LangInternal = 9,
+	External = 11,
+	WebAssembly = 57,
+	Webpack = 39
+}
+
 export default class CPUProfileCommands {
 	constructor() {
 		const baseCommand = program
@@ -191,16 +199,16 @@ export default class CPUProfileCommands {
 			resolvedAsExternal: boolean
 		) {
 			if (cpuNode.sourceLocation.isLangInternal) {
-				return cli.xterm(9)
+				return cli.xterm(TraceColors.LangInternal)
 			} else if (cpuNode.sourceLocation.isWASM) {
-				return cli.xterm(57)
+				return cli.xterm(TraceColors.WebAssembly)
 			} else if (cpuNode.sourceLocation.isWebpack) {
-				return cli.xterm(39)
+				return cli.xterm(TraceColors.Webpack)
 			} else if (
 				resolvedAsExternal ||
 				cpuNode.sourceLocation.relativeUrl.toString().includes('/node_modules/')
 			) {
-				return cli.xterm(11)
+				return cli.xterm(TraceColors.Internal)
 			}
 			return (arg: string) => arg
 		}
@@ -270,8 +278,8 @@ export default class CPUProfileCommands {
 					indent +
 					lastIndent +
 					relativeFilePath +
-					cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`),
-					(resolvedFunctionName !== '' ? cli.green(` ${resolvedFunctionName}`) : ''),
+					(resolvedFunctionName !== '' ? cli.green(` ${resolvedFunctionName}`) : '') +
+					cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`) +
 					`[CM_ID: ${cpuNode.index}]`,
 					`- ${cpuNode.cpuTime.selfCPUTime} µs | ${cpuNode.cpuTime.aggregatedCPUTime} µs`
 				)
@@ -291,10 +299,10 @@ export default class CPUProfileCommands {
 		LoggerHelper.log(
 			'\nLegend:\n' +
 			' ■ ' + ' Node (own code)\n' +
-			cli.xterm(9)(' ■ ') + ' Node (node internal)\n' +
-			cli.xterm(11)(' ■ ') + ' Node (node module)\n' +
-			cli.xterm(57)(' ■ ') + ' Node (WebAssembly)\n' + 
-			cli.xterm(39)(' ■ ') + ' Node (Webpack)\n'
+			cli.xterm(TraceColors.Internal)(' ■ ') + ' Node (node internal)\n' +
+			cli.xterm(TraceColors.External)(' ■ ') + ' Node (node module)\n' +
+			cli.xterm(TraceColors.WebAssembly)(' ■ ') + ' Node (WebAssembly)\n' + 
+			cli.xterm(TraceColors.Webpack)(' ■ ') + ' Node (Webpack)\n'
 		)
 
 		if (resolveFunctionIdentifierHelper !== undefined) {
