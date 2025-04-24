@@ -636,7 +636,7 @@ export class InsertCPUProfileHelper {
 					// the parent caller has only one child accounted (the current one)
 					// do not compensate when the parent caller has more than one child
 					// this prevents double compensations
-					callRelationTracker.getChildrenCount(parentCallIdentifier) <= 1
+					callRelationTracker.getNumberOfChildren(parentCallIdentifier) <= 1
 				) {
 					parentCallIdentifier.sourceNode?.sensorValues.addToAggregated(cpuNode.sensorValues, -1)
 				}
@@ -644,7 +644,7 @@ export class InsertCPUProfileHelper {
 				compensations = [cpuNode.sensorValues]
 			} else if (
 				parentCallIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode &&
-				callRelationTracker.getChildrenCount(parentCallIdentifier) <= 1
+				callRelationTracker.getNumberOfChildren(parentCallIdentifier) <= 1
 			) {
 				// Carry the compensation up the entire call tree path.
 				// During the downward traversal, it was added to every
