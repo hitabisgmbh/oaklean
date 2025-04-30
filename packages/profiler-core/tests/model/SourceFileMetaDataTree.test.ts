@@ -20,6 +20,7 @@ import {
 	UnifiedPathPart_string,
 	UnifiedPath_string,
 	SourceNodeIdentifier_string,
+	SourceNodeIdentifierPart_string,
 	GlobalSourceNodeIdentifier_string,
 	ModuleID_number,
 	PathID_number,
@@ -232,18 +233,18 @@ describe('SourceFileMetaDataTree', () => {
 						['{self}' as NodeModuleIdentifier_string]: {
 							id: 0 as ModuleID_number,
 							children: {
-								'directory': {
+								['directory' as UnifiedPathPart_string]: {
 									children: {
-										'file': {
+										['file' as UnifiedPathPart_string]: {
 											id: 1 as PathID_number,
 											file: {
-												'{root}': {
+												['{root}' as SourceNodeIdentifierPart_string]: {
 													id: undefined,
 													children: {
-														'{class:Class}': {
+														['{class:Class}' as SourceNodeIdentifierPart_string]: {
 															id: undefined,
 															children: {
-																'{method:method}': {
+																['{method:method}' as SourceNodeIdentifierPart_string]: {
 																	id: 2 as SourceNodeID_number
 																}
 															}
@@ -621,7 +622,7 @@ describe('SourceFileMetaDataTree', () => {
 								['{self}' as NodeModuleIdentifier_string]: {
 									id: 0 as ModuleID_number,
 									children: {
-										'file.js': {
+										['file.js' as UnifiedPathPart_string]: {
 											id: 1 as PathID_number
 										}
 									}
@@ -704,7 +705,7 @@ describe('SourceFileMetaDataTree', () => {
 								['package@1.0.1' as NodeModuleIdentifier_string]: {
 									id: 0 as ModuleID_number,
 									children: {
-										'file.js': {
+										['file.js' as UnifiedPathPart_string]: {
 											id: 1 as PathID_number
 										}
 									}

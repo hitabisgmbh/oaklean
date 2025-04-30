@@ -11,7 +11,7 @@ import type {
 } from './NodeModule'
 import type {
 	IGlobalIndex
-} from './index/GlobalIndex'
+} from './indices/GlobalIndex'
 
 import type {
 	LangInternalPath_string

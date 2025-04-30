@@ -16,6 +16,7 @@ import { ExternalResourceHelper } from '../../src/helper/ExternalResourceHelper'
 import { LoggerHelper } from '../../src/helper/LoggerHelper'
 import {
 	UnifiedPath_string,
+	UnifiedPathPart_string,
 	IProjectReport,
 	ProjectIdentifier_string,
 	ProjectReportOrigin,
@@ -23,6 +24,7 @@ import {
 	ISourceNodeMetaData,
 	SourceNodeMetaDataType,
 	SourceNodeIdentifier_string,
+	SourceNodeIdentifierPart_string,
 	NodeModuleIdentifier_string,
 	ISystemInformation,
 	GitHash_string,
@@ -31,11 +33,11 @@ import {
 	MilliJoule_number,
 	PathID_number,
 	ModuleID_number,
-	ISourceNodeIndex,
 	SourceNodeID_number,
-	SourceNodeIndexType,
 	MicroSeconds_number,
-	ReportKind
+	ReportKind,
+	IGlobalIndex,
+	ISourceFileMetaData
 } from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
@@ -90,29 +92,32 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 			['{self}' as NodeModuleIdentifier_string]: {
 				id: 0 as ModuleID_number,
 				children: {
-					'dist': {
+					['dist' as UnifiedPathPart_string]: {
 						children: {
-							'test.js': {
+							['test.js' as UnifiedPathPart_string]: {
 								id: 1 as PathID_number,
 								file: {
-									'{root}': {
+									['{root}' as SourceNodeIdentifierPart_string]: {
+										id: undefined,
 										children: {
-											'{class:Class}': {
+											['{class:Class}' as SourceNodeIdentifierPart_string]: {
+												id: undefined,
 												children: {
-													'{method:method}': {
+													['{method:method}' as SourceNodeIdentifierPart_string]: {
+														id: undefined,
 														children: {
-															'{functionExpression:0}': {
+															['{functionExpression:0}' as SourceNodeIdentifierPart_string]: {
 																id: 2 as SourceNodeID_number
 															}
 														}
-													} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>,
-													'{method:method2}': {
+													},
+													['{method:method2}' as SourceNodeIdentifierPart_string]: {
 														id: 6 as SourceNodeID_number
 													}
 												}
-											} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>
+											}
 										}
-									} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>
+									}
 								}
 							}
 						}
@@ -122,10 +127,10 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 			['{node}' as NodeModuleIdentifier_string]: {
 				id: 3 as ModuleID_number,
 				children: {
-					'': {
+					['' as UnifiedPathPart_string]: {
 						id: 4 as PathID_number,
 						file: {
-							'{root}': {
+							['{root}' as SourceNodeIdentifierPart_string]: {
 								id: 5 as SourceNodeID_number
 							}
 						}
@@ -135,29 +140,31 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 			['@oaklean/profiler-core@0.0.4' as NodeModuleIdentifier_string]: {
 				id: 7 as ModuleID_number,
 				children: {
-					'test.js': {
+					['test.js' as UnifiedPathPart_string]: {
 						id: 8 as PathID_number,
 						file: {
-							'{root}': {
+							['{root}' as SourceNodeIdentifierPart_string]: {
+								id: undefined,
 								children: {
-									'{class:Package}': {
+									['{class:Package}' as SourceNodeIdentifierPart_string]: {
+										id: undefined,
 										children: {
-											'{method:method}': {
+											['{method:method}' as SourceNodeIdentifierPart_string]: {
 												id: 9 as SourceNodeID_number
 											},
-											'{method:method2}': {
+											['{method:method2}' as SourceNodeIdentifierPart_string]: {
 												id: 10 as SourceNodeID_number
 											}
 										}
-									} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>
+									}
 								}
-							} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>
+							}
 						}
 					}
 				}
 			}
 		}
-	},
+	} satisfies IGlobalIndex,
 	intern: {
 		[1 as PathID_number]: {
 			path: './dist/test.js' as UnifiedPath_string,
@@ -166,63 +173,63 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 					id: 2 as SourceNodeID_number,
 					type: SourceNodeMetaDataType.SourceNode,
 					sensorValues: {
-						selfCPUTime: 20,
-						aggregatedCPUTime: 30,
-						langInternalCPUTime: 10,
+						selfCPUTime: 20 as MicroSeconds_number,
+						aggregatedCPUTime: 30 as MicroSeconds_number,
+						langInternalCPUTime: 10 as MicroSeconds_number,
 
-						selfCPUEnergyConsumption: 40,
-						aggregatedCPUEnergyConsumption: 60,
-						langInternalCPUEnergyConsumption: 20,
+						selfCPUEnergyConsumption: 40 as MilliJoule_number,
+						aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
+						langInternalCPUEnergyConsumption: 20 as MilliJoule_number,
 
-						selfRAMEnergyConsumption: 40,
-						aggregatedRAMEnergyConsumption: 60,
-						langInternalRAMEnergyConsumption: 20
-					} as ISensorValues,
+						selfRAMEnergyConsumption: 40 as MilliJoule_number,
+						aggregatedRAMEnergyConsumption: 60 as MilliJoule_number,
+						langInternalRAMEnergyConsumption: 20 as MilliJoule_number,
+					},
 					lang_internal: {
 						[5 as SourceNodeID_number]: {
 							id: 5 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 							sensorValues: {
-								aggregatedCPUTime: 10,
-								aggregatedCPUEnergyConsumption: 20,
+								aggregatedCPUTime: 10 as MicroSeconds_number,
+								aggregatedCPUEnergyConsumption: 20 as MilliJoule_number,
 
-								aggregatedRAMEnergyConsumption: 20
-							} as ISensorValues
+								aggregatedRAMEnergyConsumption: 20 as MilliJoule_number,
+							}
 						}
 					}
-				} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+				},
 				[6 as SourceNodeID_number]: {
 					id: 6 as SourceNodeID_number,
 					type: SourceNodeMetaDataType.SourceNode,
 					sensorValues: {
-						selfCPUTime: 30,
-						aggregatedCPUTime: 60,
-						langInternalCPUTime: 30,
+						selfCPUTime: 30 as MicroSeconds_number,
+						aggregatedCPUTime: 60 as MicroSeconds_number,
+						langInternalCPUTime: 30 as MicroSeconds_number,
 
-						selfCPUEnergyConsumption: 60,
-						aggregatedCPUEnergyConsumption: 120,
-						langInternalCPUEnergyConsumption: 60,
+						selfCPUEnergyConsumption: 60 as MilliJoule_number,
+						aggregatedCPUEnergyConsumption: 120 as MilliJoule_number,
+						langInternalCPUEnergyConsumption: 60 as MilliJoule_number,
 
-						selfRAMEnergyConsumption: 60,
-						aggregatedRAMEnergyConsumption: 120,
-						langInternalRAMEnergyConsumption: 60
-					} as ISensorValues,
+						selfRAMEnergyConsumption: 60 as MilliJoule_number,
+						aggregatedRAMEnergyConsumption: 120 as MilliJoule_number,
+						langInternalRAMEnergyConsumption: 60 as MilliJoule_number
+					},
 					lang_internal: {
 						[5 as SourceNodeID_number]: {
 							id: 5 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 							sensorValues: {
-								aggregatedCPUTime: 30,
+								aggregatedCPUTime: 30 as MicroSeconds_number,
 
-								aggregatedCPUEnergyConsumption: 60,
+								aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
 
-								aggregatedRAMEnergyConsumption: 60
-							} as ISensorValues
-						} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+								aggregatedRAMEnergyConsumption: 60 as MilliJoule_number
+							}
+						}
 					}
 				}
 			}
-		}
+		} satisfies ISourceFileMetaData
 	},
 	extern: {
 		[7 as ModuleID_number]: {

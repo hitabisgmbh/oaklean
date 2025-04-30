@@ -4,6 +4,7 @@ import { GlobalIndex } from './GlobalIndex'
 import { BaseModel } from '../BaseModel'
 import { ModelMap } from '../ModelMap'
 import { GlobalIdentifier } from '../../system/GlobalIdentifier'
+import { SourceNodeIdentifierHelper } from '../../helper/SourceNodeIdentifierHelper'
 // Types
 import {
 	SourceNodeIndexID,
@@ -12,6 +13,7 @@ import {
 	SourceNodeID_number,
 	LangInternalSourceNodeIdentifier_string,
 	SourceNodeIdentifier_string,
+	SourceNodeIdentifierPart_string,
 	UnifiedPath_string
 } from '../../types'
 
@@ -19,7 +21,7 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 	identifier: SourceNodeIdentifier_string | LangInternalSourceNodeIdentifier_string
 
 	private _id: SourceNodeIndexID<T>
-	children?: ModelMap<string, SourceNodeIndex<SourceNodeIndexType>>
+	children?: ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>
 
 	type: T
 	pathIndex: PathIndex
@@ -92,7 +94,7 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 
 	static fromJSON<T extends SourceNodeIndexType>(
 		json: string | ISourceNodeIndex<T>,
-		sourceNodeParts: string[],
+		sourceNodeParts: SourceNodeIdentifierPart_string[],
 		pathIndex: PathIndex,
 		type: T
 	): SourceNodeIndex<T> {
@@ -103,7 +105,7 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 			data = json
 		}
 		const result = new SourceNodeIndex<T>(
-			sourceNodeParts.join('.') as SourceNodeIdentifier_string,
+			SourceNodeIdentifierHelper.join(sourceNodeParts),
 			pathIndex,
 			type,
 			data.id
@@ -119,8 +121,8 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		}
 
 		if (data.children) {
-			result.children = new ModelMap<string, SourceNodeIndex<SourceNodeIndexType>>('string')
-			for (const key of Object.keys(data.children)) {
+			result.children = new ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>('string')
+			for (const key of Object.keys(data.children) as SourceNodeIdentifierPart_string[]) {
 				result.children.set(
 					key,
 					SourceNodeIndex.fromJSON(

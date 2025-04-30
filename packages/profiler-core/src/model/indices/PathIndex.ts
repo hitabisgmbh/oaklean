@@ -4,7 +4,7 @@ import { ModuleIndex } from './ModuleIndex'
 
 import { BaseModel } from '../BaseModel'
 import { ModelMap } from '../ModelMap'
-import { SourceNodeIdentifier_string } from '../../types/SourceNodeIdentifiers'
+import { SourceNodeIdentifierHelper } from '../../helper/SourceNodeIdentifierHelper'
 import { UnifiedPath } from '../../system/UnifiedPath'
 import { LangInternalPathRegex } from '../../constants/SourceNodeRegex'
 // Types
@@ -12,9 +12,12 @@ import {
 	PathID_number,
 	IPathIndex,
 	UnifiedPath_string,
+	UnifiedPathPart_string,
 	IndexRequestType,
 	SourceNodeID_number,
 	SourceNodeIndexType,
+	SourceNodeIdentifier_string,
+	SourceNodeIdentifierPart_string,
 	LangInternalPath_string,
 	LangInternalSourceNodeIdentifier_string
 } from '../../types'
@@ -30,8 +33,8 @@ export class PathIndex extends BaseModel {
 	SourceNodeIndex<SourceNodeIndexType.SourceNode>>
 
 	private _id?: PathID_number
-	children?: ModelMap<string, PathIndex>
-	file?: ModelMap<string, SourceNodeIndex<SourceNodeIndexType>>
+	children?: ModelMap<UnifiedPathPart_string, PathIndex>
+	file?: ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>
 
 	constructor(
 		identifier: UnifiedPath_string | LangInternalPath_string,
@@ -132,8 +135,8 @@ export class PathIndex extends BaseModel {
 		result.containsUncommittedChanges = data.cucc === undefined ? false : true
 
 		if (data.children) {
-			result.children = new ModelMap<string, PathIndex>('string')
-			for (const key of Object.keys(data.children)) {
+			result.children = new ModelMap<UnifiedPathPart_string, PathIndex>('string')
+			for (const key of Object.keys(data.children) as UnifiedPathPart_string[]) {
 				result.children.set(
 					key,
 					PathIndex.fromJSON(data.children[key], [...pathParts, key], moduleIndex)
@@ -142,8 +145,8 @@ export class PathIndex extends BaseModel {
 		}
 
 		if (data.file) {
-			result.file = new ModelMap<string, SourceNodeIndex<SourceNodeIndexType>>('string')
-			for (const key of Object.keys(data.file)) {
+			result.file = new ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>('string')
+			for (const key of Object.keys(data.file) as SourceNodeIdentifierPart_string[]) {
 				result.file.set(
 					key,
 					SourceNodeIndex.fromJSON(
@@ -185,81 +188,63 @@ export class PathIndex extends BaseModel {
 		}
 
 		let currentSourceNodeIndex: SourceNodeIndex<SourceNodeIndexType> | undefined
-		let currentSourceNodeMap: ModelMap<string, SourceNodeIndex<SourceNodeIndexType>> = this.file!
+		let currentSourceNodeMap: ModelMap<
+		SourceNodeIdentifierPart_string,
+		SourceNodeIndex<SourceNodeIndexType>
+		> = this.file!
 
-		if (sourceNodeIdentifier[0] && sourceNodeIdentifier[0] === '{') {
-			// case SourceNodeIdentifier {}.{}...
-			const sourceNodeIdentifierParts = sourceNodeIdentifier.split('.')
-			for (let i = 0; i < sourceNodeIdentifierParts.length; i++) {
-				let sourceNodeIndex: SourceNodeIndex<SourceNodeIndexType> | undefined =
-					currentSourceNodeMap.get(sourceNodeIdentifierParts[i])
+		const sourceNodeIdentifierParts = SourceNodeIdentifierHelper.split(sourceNodeIdentifier)
+		for (let i = 0; i < sourceNodeIdentifierParts.length; i++) {
+			let sourceNodeIndex: SourceNodeIndex<SourceNodeIndexType> | undefined =
+				currentSourceNodeMap.get(sourceNodeIdentifierParts[i])
 
-				if (sourceNodeIndex === undefined) {
-					switch (indexRequestType) {
-						case 'get':
-							return undefined as R
-						case 'upsert':
-							sourceNodeIndex = new SourceNodeIndex(
-								sourceNodeIdentifierParts.slice(0, i+1).join('.') as SourceNodeIdentifier_string,
-								this,
-								SourceNodeIndexType.Intermediate
-							)
-							currentSourceNodeMap.set(sourceNodeIdentifierParts[i], sourceNodeIndex)
-							break
-						default:
-							return undefined as R
-					}
-				}
-
-				if (i === sourceNodeIdentifierParts.length - 1) {
-					if (sourceNodeIndex.id === undefined) {
-						switch (indexRequestType) {
-							case 'get':
-								return undefined as R
-							case 'upsert':
-								sourceNodeIndex.type = SourceNodeIndexType.SourceNode
-								sourceNodeIndex.selfAssignId()
-								break
-							default:
-								return undefined as R
-						}
-					}
-					currentSourceNodeIndex = sourceNodeIndex
-				} else {
-					if (sourceNodeIndex.children === undefined) {
-						switch (indexRequestType) {
-							case 'get':
-								return undefined as R
-							case 'upsert':
-								sourceNodeIndex.children = new ModelMap<string, SourceNodeIndex<SourceNodeIndexType>>('string')
-								break
-							default:
-								return undefined as R
-						}
-					}
-					currentSourceNodeMap = sourceNodeIndex.children
-				}
-			}
-		} else {
-			// case RegExp:
-			currentSourceNodeIndex = currentSourceNodeMap.get(sourceNodeIdentifier)
-			if (currentSourceNodeIndex === undefined) {
-				let sourceNodeIndex
+			if (sourceNodeIndex === undefined) {
 				switch (indexRequestType) {
 					case 'get':
 						return undefined as R
 					case 'upsert':
 						sourceNodeIndex = new SourceNodeIndex(
-							sourceNodeIdentifier,
+							SourceNodeIdentifierHelper.join(sourceNodeIdentifierParts.slice(0, i+1)),
 							this,
-							SourceNodeIndexType.SourceNode
+							SourceNodeIndexType.Intermediate
 						)
+						currentSourceNodeMap.set(sourceNodeIdentifierParts[i], sourceNodeIndex)
 						break
 					default:
 						return undefined as R
 				}
+			}
+
+			if (i === sourceNodeIdentifierParts.length - 1) {
+				if (sourceNodeIndex.id === undefined) {
+					switch (indexRequestType) {
+						case 'get':
+							return undefined as R
+						case 'upsert':
+							sourceNodeIndex.type = SourceNodeIndexType.SourceNode
+							sourceNodeIndex.selfAssignId()
+							break
+						default:
+							return undefined as R
+					}
+				}
 				currentSourceNodeIndex = sourceNodeIndex
-				currentSourceNodeMap.set(sourceNodeIdentifier, sourceNodeIndex)
+			} else {
+				if (sourceNodeIndex.children === undefined) {
+					switch (indexRequestType) {
+						case 'get':
+							return undefined as R
+						case 'upsert':
+							sourceNodeIndex.children = new ModelMap<
+							SourceNodeIdentifierPart_string,
+							SourceNodeIndex<SourceNodeIndexType>
+							>('string')
+							break
+						default:
+							return undefined as R
+					}
+				}
+				currentSourceNodeMap = sourceNodeIndex.children
 			}
 		}
 		return currentSourceNodeIndex as R

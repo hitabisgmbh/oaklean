@@ -1,4 +1,4 @@
-export * from './index/index'
+export * from './indices/index'
 
 export * from './ModuleReport'
 export * from './NodeModule'
