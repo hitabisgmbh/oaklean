@@ -10,11 +10,11 @@ import { ProgramStructureTree } from '../model/ProgramStructureTree'
 import { UnifiedPath } from '../system/UnifiedPath'
 // Types
 import {
-	SourceNodeIdentifier_string,
 	ProgramStructureTreeType,
 	NodeLocation,
 	IdentifierType,
-	UnifiedPath_string
+	UnifiedPath_string,
+	SourceNodeIdentifierPart_string
 } from '../types'
 
 type TraverseNodeInfo = {
@@ -121,7 +121,7 @@ export class TypescriptParser {
 			idCounter++,
 			ProgramStructureTreeType.Root,
 			IdentifierType.Name,
-			'{root}' as SourceNodeIdentifier_string,
+			'{root}' as SourceNodeIdentifierPart_string,
 			TypescriptParser.posToLoc(sourceFile, 0),
 			TypescriptParser.posToLoc(sourceFile, sourceFile.getEnd())
 		)
@@ -177,7 +177,7 @@ export class TypescriptParser {
 							idCounter++,
 							ProgramStructureTreeType.ClassDeclaration,
 							IdentifierType.Name,
-							('{class:' + className + '}') as SourceNodeIdentifier_string,
+							('{class:' + className + '}') as SourceNodeIdentifierPart_string,
 							TypescriptParser.posToLoc(sourceFile, node.getStart()),
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 						)
@@ -191,7 +191,7 @@ export class TypescriptParser {
 						idCounter++,
 						ProgramStructureTreeType.ConstructorDeclaration,
 						IdentifierType.Name,
-						'{constructor:constructor}' as SourceNodeIdentifier_string,
+						'{constructor:constructor}' as SourceNodeIdentifierPart_string,
 						TypescriptParser.posToLoc(sourceFile, node.getStart()),
 						TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 					)
@@ -204,7 +204,7 @@ export class TypescriptParser {
 							idCounter++,
 							ProgramStructureTreeType.FunctionDeclaration,
 							IdentifierType.Name,
-							('{function:' + functionName + '}') as SourceNodeIdentifier_string,
+							('{function:' + functionName + '}') as SourceNodeIdentifierPart_string,
 							TypescriptParser.posToLoc(sourceFile, node.getStart()),
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 						)
@@ -228,7 +228,7 @@ export class TypescriptParser {
 							idCounter++,
 							ProgramStructureTreeType.FunctionExpression,
 							IdentifierType.Name,
-							`{${functionName}}` as SourceNodeIdentifier_string,
+							`{${functionName}}` as SourceNodeIdentifierPart_string,
 							TypescriptParser.posToLoc(sourceFile, node.getStart()),
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 						)
@@ -250,7 +250,7 @@ export class TypescriptParser {
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
 												IdentifierType.Name,
-												`{${functionName}}` as SourceNodeIdentifier_string,
+												`{${functionName}}` as SourceNodeIdentifierPart_string,
 												TypescriptParser.posToLoc(sourceFile, node.getStart()),
 												TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 											)
@@ -263,7 +263,7 @@ export class TypescriptParser {
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
 												IdentifierType.Literal,
-												`{${functionName}}` as SourceNodeIdentifier_string,
+												`{${functionName}}` as SourceNodeIdentifierPart_string,
 												TypescriptParser.posToLoc(sourceFile, node.getStart()),
 												TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 											)
@@ -276,7 +276,7 @@ export class TypescriptParser {
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
 												IdentifierType.Expression,
-												`{${functionName}}` as SourceNodeIdentifier_string,
+												`{${functionName}}` as SourceNodeIdentifierPart_string,
 												TypescriptParser.posToLoc(sourceFile, node.getStart()),
 												TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 											)
@@ -300,7 +300,7 @@ export class TypescriptParser {
 										idCounter++,
 										ProgramStructureTreeType.FunctionExpression,
 										IdentifierType.Expression,
-										`{${functionName}}` as SourceNodeIdentifier_string,
+										`{${functionName}}` as SourceNodeIdentifierPart_string,
 										TypescriptParser.posToLoc(sourceFile, node.getStart()),
 										TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 									)
@@ -314,7 +314,7 @@ export class TypescriptParser {
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
 												IdentifierType.Name,
-												`{${functionName}}` as SourceNodeIdentifier_string,
+												`{${functionName}}` as SourceNodeIdentifierPart_string,
 												TypescriptParser.posToLoc(sourceFile, node.getStart()),
 												TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 											)
@@ -344,7 +344,7 @@ export class TypescriptParser {
 								idCounter++,
 								ProgramStructureTreeType.FunctionExpression,
 								IdentifierType.Anonymous,
-								`{${functionName}}` as SourceNodeIdentifier_string,
+								`{${functionName}}` as SourceNodeIdentifierPart_string,
 								TypescriptParser.posToLoc(sourceFile, node.getStart()),
 								TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 							)
@@ -362,7 +362,7 @@ export class TypescriptParser {
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
 								IdentifierType.Name,
-								`{${methodName}}` as SourceNodeIdentifier_string,
+								`{${methodName}}` as SourceNodeIdentifierPart_string,
 								TypescriptParser.posToLoc(sourceFile, node.getStart()),
 								TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 							)
@@ -374,7 +374,7 @@ export class TypescriptParser {
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
 								IdentifierType.Literal,
-								`{${methodName}}` as SourceNodeIdentifier_string,
+								`{${methodName}}` as SourceNodeIdentifierPart_string,
 								TypescriptParser.posToLoc(sourceFile, node.getStart()),
 								TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 							)
@@ -385,7 +385,7 @@ export class TypescriptParser {
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
 								IdentifierType.Expression,
-								`{${methodName}}` as SourceNodeIdentifier_string,
+								`{${methodName}}` as SourceNodeIdentifierPart_string,
 								TypescriptParser.posToLoc(sourceFile, node.getStart()),
 								TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 							)
@@ -418,7 +418,7 @@ export class TypescriptParser {
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
 											IdentifierType.Name,
-											`{${functionName}}` as SourceNodeIdentifier_string,
+											`{${functionName}}` as SourceNodeIdentifierPart_string,
 											TypescriptParser.posToLoc(sourceFile, node.getStart()),
 											TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 										)
@@ -430,7 +430,7 @@ export class TypescriptParser {
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
 											IdentifierType.Literal,
-											`{${functionName}}` as SourceNodeIdentifier_string,
+											`{${functionName}}` as SourceNodeIdentifierPart_string,
 											TypescriptParser.posToLoc(sourceFile, node.getStart()),
 											TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 										)
@@ -442,7 +442,7 @@ export class TypescriptParser {
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
 											IdentifierType.Expression,
-											`{${functionName}}` as SourceNodeIdentifier_string,
+											`{${functionName}}` as SourceNodeIdentifierPart_string,
 											TypescriptParser.posToLoc(sourceFile, node.getStart()),
 											TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 										)
@@ -466,7 +466,7 @@ export class TypescriptParser {
 									idCounter++,
 									ProgramStructureTreeType.ArrowFunctionExpression,
 									IdentifierType.Expression,
-									`{${functionName}}` as SourceNodeIdentifier_string,
+									`{${functionName}}` as SourceNodeIdentifierPart_string,
 									TypescriptParser.posToLoc(sourceFile, node.getStart()),
 									TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 								)
@@ -480,7 +480,7 @@ export class TypescriptParser {
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
 											IdentifierType.Name,
-											`{${functionName}}` as SourceNodeIdentifier_string,
+											`{${functionName}}` as SourceNodeIdentifierPart_string,
 											TypescriptParser.posToLoc(sourceFile, node.getStart()),
 											TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 										)
@@ -509,7 +509,7 @@ export class TypescriptParser {
 							idCounter++,
 							ProgramStructureTreeType.ArrowFunctionExpression,
 							IdentifierType.Anonymous,
-							`{${functionName}}` as SourceNodeIdentifier_string,
+							`{${functionName}}` as SourceNodeIdentifierPart_string,
 							TypescriptParser.posToLoc(sourceFile, node.getStart()),
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 						)

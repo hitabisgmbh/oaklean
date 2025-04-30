@@ -1,5 +1,5 @@
 import {
-	SourceNodeIdentifier_string
+	SourceNodeIdentifierPart_string
 } from '../SourceNodeIdentifiers'
 
 export enum IdentifierType {
@@ -33,7 +33,7 @@ export interface IProgramStructureTree {
 	id: number
 	type: ProgramStructureTreeType
 	identifierType: IdentifierType
-	identifier: SourceNodeIdentifier_string
+	identifier: SourceNodeIdentifierPart_string
 	beginLoc: NodeLocation
 	endLoc: NodeLocation
 	children: Record<string, IProgramStructureTree>

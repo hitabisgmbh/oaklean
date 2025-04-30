@@ -7,7 +7,6 @@ import { PathIndex } from './indices/PathIndex'
 
 import { GlobalIdentifier } from '../system/GlobalIdentifier'
 import { BufferHelper } from '../helper/BufferHelper'
-import { RootRegex, SourceNodeIdentifierPartRegex } from '../constants/SourceNodeRegex'
 // Types
 import {
 	SourceNodeID_number,
@@ -26,10 +25,6 @@ import {
 	GlobalSourceNodeIdentifier_string,
 	MicroSeconds_number
 } from '../types'
-
-export function validateSourceNodeIdentifier(identifier: SourceNodeIdentifier_string) {
-	return (RootRegex.test(identifier) || SourceNodeIdentifierPartRegex.test(identifier))
-}
 
 function areNumbersClose(a: number, b: number, epsilon = 1e-10) {
 	return Math.abs(a - b) < epsilon
