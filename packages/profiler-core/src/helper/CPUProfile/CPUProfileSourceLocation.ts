@@ -1,5 +1,6 @@
 import { Protocol as Cdp } from 'devtools-protocol'
 
+import { SourceNodeIdentifierHelper } from '../SourceNodeIdentifierHelper'
 import { LangInternalSourceNodeRegExpRegexString } from '../../constants/SourceNodeRegex'
 import { UnifiedPath } from '../../system/UnifiedPath'
 import { UrlProtocolHelper } from '../UrlProtocolHelper'
@@ -38,8 +39,8 @@ export class CPUProfileSourceLocation {
 
 		// determine the type of the source location
 		if (
-			this.callFrame.url.startsWith('node:') ||
-			(this.callFrame.url === '' && this.callFrame.functionName.length > 0)
+			this.callFrame.scriptId === '0' ||
+			this.callFrame.url.startsWith('node:')
 		) {
 			this._type = CPUProfileSourceLocationType.LANG_INTERNAL
 		} else if (this.callFrame.url.startsWith('wasm://')) {
@@ -148,34 +149,12 @@ export class CPUProfileSourceLocation {
 		return this._relativeUrl
 	}
 
-	private functionNameToSourceNodeIdentifier(functionName: string) {
-		const chunks = []
-
-		let chunk = ''
-		let lastChar = ''
-		for (const char of functionName) {
-			if (char === '.') {
-				if (lastChar === '.') {
-					chunk += char
-				} else {
-					chunks.push(`{${chunk}}`)
-					chunk = ''
-				}
-			} else {
-				chunk += char
-			}
-			lastChar = char
-		}
-		chunks.push(`{${chunk}}`)
-		return chunks.join('.') as SourceNodeIdentifier_string
-	}
-
 	get sourceNodeIdentifier() {
 		if (this._sourceNodeIdentifier === undefined) {
 			if (RegExpTestRegex.test(this.rawFunctionName)) {
 				this._sourceNodeIdentifier = this.rawFunctionName as SourceNodeIdentifier_string
 			} else {
-				this._sourceNodeIdentifier = this.functionNameToSourceNodeIdentifier(
+				this._sourceNodeIdentifier = SourceNodeIdentifierHelper.functionNameToSourceNodeIdentifier(
 					this.rawFunctionName
 				)
 			}

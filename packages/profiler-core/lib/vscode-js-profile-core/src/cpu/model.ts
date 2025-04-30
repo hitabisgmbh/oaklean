@@ -172,7 +172,10 @@ export const buildModel = (profile: ICpuProfileRaw): IProfileModel => {
       aggregateTime: 0,
       ticks: 0,
       category: categorize(l.callFrame, src),
-      callFrame: l.callFrame,
+      callFrame: {
+				...l.callFrame,
+				scriptId: l.callFrame.scriptId.toString(),
+			},
       src,
     };
   });

@@ -7,7 +7,8 @@ import {
 	GlobalSourceNodeIdentifier_string,
 	ISourceNodeIndex,
 	SourceNodeID_number,
-	SourceNodeIndexType
+	SourceNodeIndexType,
+	SourceNodeIdentifierPart_string
 } from '../../../src/types'
 
 
@@ -55,7 +56,12 @@ describe('SourceNodeIndex', () => {
 		runInstanceTests('deserialized instance related', () => {
 			const globalIndex = new GlobalIndex(new NodeModule('node', '20.11.1'))
 			const pathIndex = globalIndex.getLangInternalIndex('upsert').getFilePathIndex('upsert', 'node:path' as LangInternalPath_string)
-			return SourceNodeIndex.fromJSON(EXPECTED_INDEX, ['{isAbsolute}'], pathIndex, SourceNodeIndexType.SourceNode)
+			return SourceNodeIndex.fromJSON(
+				EXPECTED_INDEX,
+				['{isAbsolute}'] as SourceNodeIdentifierPart_string[],
+				pathIndex,
+				SourceNodeIndexType.SourceNode
+			)
 		})
 	})
 })

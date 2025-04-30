@@ -1,7 +1,7 @@
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
-import { validateSourceNodeIdentifier } from './SourceNodeMetaData'
 
+import { SourceNodeIdentifierHelper } from '../helper/SourceNodeIdentifierHelper'
 import { memoize } from '../helper/memoize'
 // Types
 import {
@@ -10,7 +10,8 @@ import {
 	NodeLocation,
 	NodeLocationRange,
 	IProgramStructureTree,
-	SourceNodeIdentifier_string
+	SourceNodeIdentifier_string,
+	SourceNodeIdentifierPart_string
 } from '../types'
 
 
@@ -18,7 +19,7 @@ export class ProgramStructureTree extends BaseModel {
 	id: number
 	type: ProgramStructureTreeType
 	identifierType: IdentifierType
-	identifier: SourceNodeIdentifier_string
+	identifier: SourceNodeIdentifierPart_string
 	beginLoc: NodeLocation
 	endLoc: NodeLocation
 	children: ModelMap<string, ProgramStructureTree>
@@ -27,12 +28,12 @@ export class ProgramStructureTree extends BaseModel {
 		id: number,
 		type: ProgramStructureTreeType,
 		identifierType: IdentifierType,
-		identifier: SourceNodeIdentifier_string,
+		identifier: SourceNodeIdentifierPart_string,
 		beginLoc: NodeLocation,
 		endLoc: NodeLocation
 	) {
 		super()
-		if (!validateSourceNodeIdentifier(identifier)) {
+		if (!SourceNodeIdentifierHelper.validateSourceNodeIdentifierPart(identifier)) {
 			throw new Error('ProgramStructureTree.constructor invalid identifier format: ' + identifier)
 		}
 
@@ -121,12 +122,12 @@ export class ProgramStructureTree extends BaseModel {
 		}
 
 		if (this.containsLocation(targetLoc)) {
-			return traverse(this.identifier, this)
+			return traverse(this.identifier as unknown as SourceNodeIdentifier_string, this)
 		}
 		if (this.type === ProgramStructureTreeType.Root) {
 			if (targetLoc.line <= this.beginLoc.line && targetLoc.line <= this.endLoc.line) {
 				return {
-					identifier: this.identifier, // treat as root node if its before the root node
+					identifier: this.identifier as unknown as SourceNodeIdentifier_string, // treat as root node if its before the root node
 					node: this
 				}
 			}
@@ -142,7 +143,7 @@ export class ProgramStructureTree extends BaseModel {
 	}
 
 	sourceLocationOfIdentifier(identifier: SourceNodeIdentifier_string): NodeLocationRange | undefined{
-		const traverse = (identifierStack: string[], currentNode: ProgramStructureTree):
+		const traverse = (identifierStack: SourceNodeIdentifierPart_string[], currentNode: ProgramStructureTree):
 		NodeLocationRange | undefined => {
 			if (identifierStack[0] === currentNode.identifier) {
 				if (identifierStack.length === 1) {
@@ -163,7 +164,7 @@ export class ProgramStructureTree extends BaseModel {
 			return undefined
 		}
 		
-		const identifierStack = identifier.split('.')
+		const identifierStack = SourceNodeIdentifierHelper.split(identifier)
 		return traverse(identifierStack, this)
 	}
 }

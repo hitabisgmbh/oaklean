@@ -9,25 +9,26 @@ import {
 	PathID_number,
 	UnifiedPath_string,
 	SourceNodeIdentifier_string,
-	SourceNodeID_number
+	SourceNodeID_number,
+	SourceNodeIdentifierPart_string
 } from '../../../src/types'
 
 const EXAMPLE_PATH_INDEX: IPathIndex = {
 	id: 1 as PathID_number,
 	file: {
-		'{root}': {
+		['{root}' as SourceNodeIdentifierPart_string]: {
 			id: undefined,
 			children: {
-				'{class:GlobalIndex}': {
+				['{class:GlobalIndex}' as SourceNodeIdentifierPart_string]: {
 					id: undefined,
 					children: {
-						'{constructor:constructor}': {
+						['{constructor:constructor}' as SourceNodeIdentifierPart_string]: {
 							id: 2 as SourceNodeID_number
 						},
-						'{method:toJSON}': {
+						['{method:toJSON}' as SourceNodeIdentifierPart_string]: {
 							id: 3 as SourceNodeID_number
 						},
-						'{method:getModuleIndex}': {
+						['{method:getModuleIndex}' as SourceNodeIdentifierPart_string]: {
 							id: 4 as SourceNodeID_number
 						}
 					}

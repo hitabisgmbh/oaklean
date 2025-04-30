@@ -338,7 +338,7 @@ describe('SourceFileMetaData', () => {
 		)
 
 		const node1 = instance.createOrGetSourceNodeMetaData(
-			'{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
+			'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
 			SourceNodeMetaDataType.SourceNode
 		)
 		node1.addToSensorValues({
@@ -358,7 +358,7 @@ describe('SourceFileMetaData', () => {
 		node1.sensorValues.profilerHits += 1
 
 		const node2 = instance.createOrGetSourceNodeMetaData(
-			'{root}{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
+			'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
 			SourceNodeMetaDataType.SourceNode
 		)
 		node2.addToSensorValues({
@@ -378,7 +378,7 @@ describe('SourceFileMetaData', () => {
 		node2.sensorValues.profilerHits += 1
 
 		const node3 = instance.createOrGetSourceNodeMetaData(
-			'{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
+			'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
 			SourceNodeMetaDataType.SourceNode
 		)
 		node3.addToSensorValues({
@@ -408,8 +408,8 @@ describe('SourceFileMetaData', () => {
 			const filePath = new UnifiedPath('./file.js').toString()
 			globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
-			pathIndex.getSourceNodeIndex('upsert', '{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
-			pathIndex.getSourceNodeIndex('upsert', '{root}{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
+			pathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
+			pathIndex.getSourceNodeIndex('upsert', '{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
 		})
 
 		test('deserialization from string', () => {
@@ -436,8 +436,8 @@ describe('SourceFileMetaData', () => {
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 		const filePath = new UnifiedPath('./file.js').toString()
 		const filePathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
-		filePathIndex.getSourceNodeIndex('upsert', '{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
-		filePathIndex.getSourceNodeIndex('upsert', '{root}{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
+		filePathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
+		filePathIndex.getSourceNodeIndex('upsert', '{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
 
 		const buffer = Buffer.from(EXAMPLE_SOURCE_FILE_META_DATA_BUFFER, 'hex')
 
@@ -464,10 +464,10 @@ describe('SourceFileMetaData', () => {
 				functions: {
 					[firstPathIndex.getSourceNodeIndex(
 						'upsert',
-						'{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
+						'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
 						id: firstPathIndex.getSourceNodeIndex(
 							'upsert',
-							'{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
+							'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 1,
@@ -533,10 +533,10 @@ describe('SourceFileMetaData', () => {
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
 					[firstPathIndex.getSourceNodeIndex(
 						'upsert',
-						'{root}{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
+						'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
 						id: firstPathIndex.getSourceNodeIndex(
 							'upsert',
-							'{root}{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
+							'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 1,
@@ -573,8 +573,8 @@ describe('SourceFileMetaData', () => {
 			const second = SourceFileMetaData.fromJSON({
 				path: './file.js' as UnifiedPath_string,
 				functions: {
-					[secondPathIndex.getSourceNodeIndex('upsert', '{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: secondPathIndex.getSourceNodeIndex('upsert', '{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
+					[secondPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
+						id: secondPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 2,
@@ -646,8 +646,8 @@ describe('SourceFileMetaData', () => {
 						} as Record<GlobalSourceNodeIdentifier_string,
 						ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
 					},
-					[secondPathIndex.getSourceNodeIndex('upsert', '{root}{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: secondPathIndex.getSourceNodeIndex('upsert', '{root}{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
+					[secondPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
+						id: secondPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 2,
@@ -706,8 +706,8 @@ describe('SourceFileMetaData', () => {
 			const third = SourceFileMetaData.fromJSON({
 				path: './file.js' as UnifiedPath_string,
 				functions: {
-					[thirdPathIndex.getSourceNodeIndex('upsert', '{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: thirdPathIndex.getSourceNodeIndex('upsert', '{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
+					[thirdPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
+						id: thirdPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 2,
@@ -788,8 +788,8 @@ describe('SourceFileMetaData', () => {
 						} as Record<GlobalSourceNodeIdentifier_string,
 						ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
 					},
-					[thirdPathIndex.getSourceNodeIndex('upsert', '{root}{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: thirdPathIndex.getSourceNodeIndex('upsert', '{root}{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
+					[thirdPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
+						id: thirdPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 1,
@@ -894,8 +894,8 @@ describe('SourceFileMetaData', () => {
 			expect(mergeResult.toJSON()).toEqual({
 				path: './file.js',
 				functions: {
-					[pathIndex.getSourceNodeIndex('get', '{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
-						id: pathIndex.getSourceNodeIndex('get', '{root}{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1,
+					[pathIndex.getSourceNodeIndex('get', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
+						id: pathIndex.getSourceNodeIndex('get', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 5,
@@ -991,8 +991,8 @@ describe('SourceFileMetaData', () => {
 							}
 						}
 					},
-					[pathIndex.getSourceNodeIndex('get', '{root}{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
-						id: pathIndex.getSourceNodeIndex('get', '{root}{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1,
+					[pathIndex.getSourceNodeIndex('get', '{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
+						id: pathIndex.getSourceNodeIndex('get', '{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 1,
@@ -1019,8 +1019,8 @@ describe('SourceFileMetaData', () => {
 							}
 						}
 					},
-					[pathIndex.getSourceNodeIndex('get', '{root}{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
-						id: pathIndex.getSourceNodeIndex('get', '{root}{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1,
+					[pathIndex.getSourceNodeIndex('get', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
+						id: pathIndex.getSourceNodeIndex('get', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 3,

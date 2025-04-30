@@ -7,30 +7,31 @@ import {
 	IndexRequestType,
 	IModuleIndex,
 	ModuleID_number,
-	PathID_number
+	PathID_number,
+	UnifiedPathPart_string
 } from '../../../src/types'
 
 const EXAMPLE_MODULE_INDEX: IModuleIndex = {
 	id: 0 as ModuleID_number,
 	children: {
-		'packages': {
+		['packages' as UnifiedPathPart_string]: {
 			children: {
-				'profiler-core': {
+				['profiler-core' as UnifiedPathPart_string]: {
 					children: {
-						'src': {
+						['src' as UnifiedPathPart_string]: {
 							children: {
-								'model': {
+								['model' as UnifiedPathPart_string]: {
 									children: {
-										'index': {
+										['index' as UnifiedPathPart_string]: {
 											children: {
-												'GlobalIndex.ts': {
+												['GlobalIndex.ts' as UnifiedPathPart_string]: {
 													id: 1 as PathID_number
 												}
 											}
 										},
-										'helper': {
+										['helper' as UnifiedPathPart_string]: {
 											children: {
-												'CPUModel.ts': {
+												['CPUModel.ts' as UnifiedPathPart_string]: {
 													id: 2 as PathID_number
 												}
 											}

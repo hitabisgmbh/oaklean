@@ -1,4 +1,4 @@
-import { SourceNodeID_number } from './index/SourceNodeIndex'
+import { SourceNodeID_number } from './indices/SourceNodeIndex'
 import { ISensorValues} from './SensorValues'
 
 export enum SourceNodeMetaDataType {

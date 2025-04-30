@@ -3,7 +3,7 @@ import {
 } from './Report'
 import {
 	IGlobalIndex
-} from './index/GlobalIndex'
+} from './indices/GlobalIndex'
 import {
 	ISystemInformation
 } from './SystemInformation'

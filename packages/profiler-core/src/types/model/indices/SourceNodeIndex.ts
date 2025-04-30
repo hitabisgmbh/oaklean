@@ -1,3 +1,5 @@
+import { SourceNodeIdentifierPart_string } from '../../SourceNodeIdentifiers'
+
 const SourceNodeIDSymbol: unique symbol = Symbol('SourceNodeIDSymbol')
 export type SourceNodeID_number = number & { [SourceNodeIDSymbol]: never }
 
@@ -12,6 +14,6 @@ export interface ISourceNodeIndex<
 	T extends SourceNodeIndexType = SourceNodeIndexType.Intermediate
 > {
 	id: SourceNodeIndexID<T>
-	children?: Record<string, ISourceNodeIndex<SourceNodeIndexType>>,
+	children?: Record<SourceNodeIdentifierPart_string, ISourceNodeIndex<SourceNodeIndexType>>,
 	npiosc?: boolean // not present in original source code 
 }
