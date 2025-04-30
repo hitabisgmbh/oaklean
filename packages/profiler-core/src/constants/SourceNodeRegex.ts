@@ -18,6 +18,8 @@ export const LangInternalSourceNodeIdentifierRegexString =
 	`(?:\\.{|${LangInternalSourceNodeNameRegexString}})*`
 	+ `|${LangInternalSourceNodeRegExpRegexString})`
 
+export const SourceNodeIdentifierPathRegexString = '[^{}]+'
+
 // eslint-disable-next-line max-len
 export const SourceNodeIdentifierPartRegexString = `(?:${ConstructorDeclarationRegexString}|${ClassDeclarationRegexString}|${MethodDefinitionRegexString}|${FunctionDeclarationRegexString}|${FunctionExpressionRegexString})`
 

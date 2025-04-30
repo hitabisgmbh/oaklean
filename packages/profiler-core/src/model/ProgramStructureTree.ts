@@ -143,7 +143,7 @@ export class ProgramStructureTree extends BaseModel {
 	}
 
 	sourceLocationOfIdentifier(identifier: SourceNodeIdentifier_string): NodeLocationRange | undefined{
-		const traverse = (identifierStack: string[], currentNode: ProgramStructureTree):
+		const traverse = (identifierStack: SourceNodeIdentifierPart_string[], currentNode: ProgramStructureTree):
 		NodeLocationRange | undefined => {
 			if (identifierStack[0] === currentNode.identifier) {
 				if (identifierStack.length === 1) {
@@ -164,7 +164,7 @@ export class ProgramStructureTree extends BaseModel {
 			return undefined
 		}
 		
-		const identifierStack = identifier.split('.')
+		const identifierStack = SourceNodeIdentifierHelper.split(identifier)
 		return traverse(identifierStack, this)
 	}
 }

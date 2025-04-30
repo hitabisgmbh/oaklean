@@ -148,8 +148,8 @@ export class TypescriptParser {
 						 * 		__awaiter(this, void 0, void 0, function* () { console.log('') })
 						 * }
 						 * 
-						 * Since the actuall function is now wrapped into a call expression,
-						 * this will result in a hirarchy like this:
+						 * Since the actual function is now wrapped into a call expression,
+						 * this will result in a hierarchy like this:
 						 * - function:test
 						 * 		- functionExpression:anonymous
 						 * 
