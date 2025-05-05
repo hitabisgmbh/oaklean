@@ -1,0 +1,62 @@
+{
+	"id": 0,
+	"type": "Root",
+	"identifierType": "Name",
+	"identifier": "{root}",
+	"beginLoc": {
+		"line": 1,
+		"column": 0
+	},
+	"endLoc": {
+		"line": 8,
+		"column": 33
+	},
+	"children": {
+		"{class:ClassDeclaration}": {
+			"id": 1,
+			"type": "ClassDeclaration",
+			"identifierType": "Name",
+			"identifier": "{class:ClassDeclaration}",
+			"beginLoc": {
+				"line": 2,
+				"column": 0
+			},
+			"endLoc": {
+				"line": 5,
+				"column": 1
+			},
+			"children": {
+				"{constructor:constructor}": {
+					"id": 2,
+					"type": "ConstructorDeclaration",
+					"identifierType": "Name",
+					"identifier": "{constructor:constructor}",
+					"beginLoc": {
+						"line": 4,
+						"column": 1
+					},
+					"endLoc": {
+						"line": 4,
+						"column": 17
+					},
+					"children": {}
+				}
+			}
+		},
+		"{function:FunctionDeclaration}": {
+			"id": 3,
+			"type": "FunctionDeclaration",
+			"identifierType": "Name",
+			"identifier": "{function:FunctionDeclaration}",
+			"beginLoc": {
+				"line": 8,
+				"column": 0
+			},
+			"endLoc": {
+				"line": 8,
+				"column": 33
+			},
+			"children": {}
+		}
+	}
+}

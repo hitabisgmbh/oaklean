@@ -1,21 +1,24 @@
-import * as fs from 'fs'
+import {
+	BASICS_CASE,
+	FUNCTION_EXPRESSION_CASE,
+	EMIT_HELPER_PATH,
+	NESTED_DECLARATIONS_CASE
+} from './assets/ProgramStructureTree/index'
 
 import { ProgramStructureTree } from '../../src/model/ProgramStructureTree'
-import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { TypescriptParser } from '../../src/helper/TypescriptParser'
 import {
+	IProgramStructureTree,
 	SourceNodeIdentifier_string
 } from '../../src/types'
 
-const CURRENT_DIR = new UnifiedPath(__dirname)
 
 describe('ProgramStructureTree', () => {
 	describe('instance related', () => {
 		let instance: ProgramStructureTree
 
 		beforeEach(() => {
-			const testFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'MethodDefinition.js')
-			instance = TypescriptParser.parseFile(testFile)
+			instance = TypescriptParser.parseFile(NESTED_DECLARATIONS_CASE.source.path)
 		})
 
 		it('instance should be an instanceof ProgramStructureTree', () => {
@@ -43,9 +46,7 @@ describe('ProgramStructureTree', () => {
 		})
 
 		it('should serialize correctly', () => {
-			const expectedFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'MethodDefinition.expected.json')
-			const expected = JSON.parse(fs.readFileSync(expectedFile.toString()).toString())
-			expect(instance.toJSON()).toEqual(expected)
+			expect(instance.toJSON()).toEqual(NESTED_DECLARATIONS_CASE.expected.object)
 		})
 
 		test('containsLocation', () => {
@@ -63,9 +64,9 @@ describe('ProgramStructureTree', () => {
 		describe('identifierBySourceLocation', () => {
 			test('existing identifier', () => {
 				expect(instance.identifierBySourceLocation({
-					line: 3,
-					column: 4
-				})).toBe('{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}')
+					line: 8,
+					column: 21
+				})).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}')
 			})
 
 			test('non existing identifier', () => {
@@ -78,64 +79,65 @@ describe('ProgramStructureTree', () => {
 	})
 
 	describe('deserialization', () => {
-		const expectedFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'MethodDefinition.expected.json')
-		const expected = JSON.parse(fs.readFileSync(expectedFile.toString()).toString())
-
 		test('deserialization from string', () => {			
-			const instanceFromString = ProgramStructureTree.fromJSON(JSON.stringify(expected))
-			expect(JSON.stringify(instanceFromString)).toEqual(JSON.stringify(expected))
+			const instanceFromString = ProgramStructureTree.fromJSON(
+				FUNCTION_EXPRESSION_CASE.expected.content
+			)
+			expect(JSON.stringify(instanceFromString)).toEqual(
+				JSON.stringify(FUNCTION_EXPRESSION_CASE.expected.object)
+			)
 		})
 
 		test('deserialization from object', () => {
-			const instanceFromObject = ProgramStructureTree.fromJSON(expected)
-			expect(JSON.stringify(instanceFromObject)).toEqual(JSON.stringify(expected))
+			const instanceFromObject = ProgramStructureTree.fromJSON(
+				FUNCTION_EXPRESSION_CASE.expected.object as IProgramStructureTree
+			)
+			expect(JSON.stringify(instanceFromObject)).toEqual(
+				JSON.stringify(FUNCTION_EXPRESSION_CASE.expected.object)
+			)
 		})
 	})
 })
 
 describe('testing with typescript file parser', () => {
-	test('test case 1', () => {
-		const testFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'nestedDeclarations.js')
-		const expectedFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'nestedDeclarations.expected.json')
-
-		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(testFile)))
-		const expected = JSON.parse(fs.readFileSync(expectedFile.toString()).toString())
-
+	test('test case 2: NESTED_DECLARATIONS_CASE', () => {
+		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(
+			NESTED_DECLARATIONS_CASE.source.path
+		)))
+		const expected = JSON.parse(
+			NESTED_DECLARATIONS_CASE.expected.content
+		)
 		expect(tree).toEqual(expected)
 	})
 
-	test('test case 2: MethodDefinition', () => {
-		const testFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'MethodDefinition.js')
-		const expectedFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'MethodDefinition.expected.json')
-
-		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(testFile)))
-
-		const expected = JSON.parse(fs.readFileSync(expectedFile.toString()).toString())
-
+	test('test case 2: FUNCTION_EXPRESSION_CASE', () => {
+		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(
+			FUNCTION_EXPRESSION_CASE.source.path
+		)))
+		const expected = JSON.parse(
+			FUNCTION_EXPRESSION_CASE.expected.content
+		)
 		expect(tree).toEqual(expected)
 	})
 })
 
 describe('testing with typescript string parser', () => {
-	test('test case 1', () => {
-		const testFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'nestedDeclarations.js')
-		const expectedFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'nestedDeclarations.expected.json')
-		const sourceCode = fs.readFileSync(testFile.toString()).toString()
-
-		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseSource(testFile, sourceCode)))
-		const expected = JSON.parse(fs.readFileSync(expectedFile.toString()).toString())
+	test('test case 1: NESTED_DECLARATIONS_CASE', () => {
+		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseSource(
+			NESTED_DECLARATIONS_CASE.source.path,
+			NESTED_DECLARATIONS_CASE.source.content
+		)))
+		const expected = JSON.parse(NESTED_DECLARATIONS_CASE.expected.content)
 
 		expect(tree).toEqual(expected)
 	})
 
-	test('test case 2: MethodDefinition', () => {
-		const testFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'MethodDefinition.js')
-		const expectedFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'MethodDefinition.expected.json')
-		const sourceCode = fs.readFileSync(testFile.toString()).toString()
-
-		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseSource(testFile, sourceCode)))
-
-		const expected = JSON.parse(fs.readFileSync(expectedFile.toString()).toString())
+	test('test case 2: FUNCTION_EXPRESSION_CASE', () => {
+		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseSource(
+			FUNCTION_EXPRESSION_CASE.source.path,
+			FUNCTION_EXPRESSION_CASE.source.content
+		)))
+		const expected = JSON.parse(FUNCTION_EXPRESSION_CASE.expected.content)
 
 		expect(tree).toEqual(expected)
 	})
@@ -143,44 +145,38 @@ describe('testing with typescript string parser', () => {
 
 describe('ProgramStructureTreeType.identifierBySourceLocation', () => {
 	test('test case 1', () => {
-		const testFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'MethodDefinition.js')
+		const tree = TypescriptParser.parseFile(NESTED_DECLARATIONS_CASE.source.path)
 
-		const tree = TypescriptParser.parseFile(testFile)
+		expect(tree.identifierBySourceLocation({ line: 3, column: 1 })).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}')
 
-		expect(tree.identifierBySourceLocation({ line: 23, column: 26 })).toBe('{root}.{class:Child}.{functionExpression:arrowFunction}')
-
-		expect(tree.identifierBySourceLocation({ line: 5, column: 4 })).toBe('{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:2)}')
+		expect(tree.identifierBySourceLocation({ line: 5, column: 3 })).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}')
 		
-		expect(tree.identifierBySourceLocation({ line: 31, column: 24 })).toBe('{root}.{class:Child}.{method:asyncMethod}')
+		expect(tree.identifierBySourceLocation({ line: 7, column: 21 })).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}')
 	})
 })
 
 describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 	test('test case 1', () => {
-		const testFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'MethodDefinition.js')
+		const tree = TypescriptParser.parseFile(NESTED_DECLARATIONS_CASE.source.path)
 
-		const tree = TypescriptParser.parseFile(testFile)
-
-		expect(tree.sourceLocationOfIdentifier('{root}.{class:Child}.{functionExpression:arrowFunction}' as SourceNodeIdentifier_string)).toEqual({
-			beginLoc: { line: 23, column: 18 },
-			endLoc: { line: 25, column: 3 },
+		expect(tree.sourceLocationOfIdentifier('{root}.{class:ExampleClass}.{method:memberFunction1}' as SourceNodeIdentifier_string)).toEqual({
+			beginLoc: { line: 2, column: 1 },
+			endLoc: { line: 11, column: 2 },
 		})
 
-		expect(tree.sourceLocationOfIdentifier('{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:2)}' as SourceNodeIdentifier_string)).toEqual({
-			beginLoc: { line: 5, column: 4 },
-			endLoc: { line: 5, column: 12 },
+		expect(tree.sourceLocationOfIdentifier('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}' as SourceNodeIdentifier_string)).toEqual({
+			beginLoc: { line: 4, column: 25 },
+			endLoc: { line: 9, column: 4 },
 		})
 
-		expect(tree.sourceLocationOfIdentifier('{root}.{class:Child}.{method:asyncMethod}' as SourceNodeIdentifier_string)).toEqual({
-			beginLoc: { line: 31, column: 2 },
-			endLoc: { line: 33, column: 3 },
+		expect(tree.sourceLocationOfIdentifier('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}' as SourceNodeIdentifier_string)).toEqual({
+			beginLoc: { line: 7, column: 14 },
+			endLoc: { line: 7, column: 22 },
 		})
 	})
 
 	test('EmitHelpers', () => {
-		const testFile = CURRENT_DIR.join('assets', 'ProgramStructureTree', 'EmitHelpers.js')
-
-		const tree = TypescriptParser.parseFile(testFile)
+		const tree = TypescriptParser.parseFile(EMIT_HELPER_PATH)
 
 		expect(
 			tree.sourceLocationOfIdentifier(

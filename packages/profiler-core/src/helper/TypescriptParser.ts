@@ -255,6 +255,7 @@ export class TypescriptParser {
 												TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 											)
 											break
+										case ts.SyntaxKind.StringLiteral:
 										case ts.SyntaxKind.FirstLiteralToken:
 											functionName =
 												'functionExpression:(literal:' +
