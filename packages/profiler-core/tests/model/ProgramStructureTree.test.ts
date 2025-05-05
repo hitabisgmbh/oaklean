@@ -3,7 +3,8 @@ import {
 	FUNCTION_EXPRESSION_CASE,
 	ARROW_FUNCTION_EXPRESSION_CASE,
 	EMIT_HELPER_PATH,
-	NESTED_DECLARATIONS_CASE
+	NESTED_DECLARATIONS_CASE,
+	updateTestCase
 } from './assets/ProgramStructureTree/index'
 
 import { ProgramStructureTree } from '../../src/model/ProgramStructureTree'
@@ -20,6 +21,7 @@ const testCases = {
 	NESTED_DECLARATIONS_CASE
 }
 
+const UPDATE_TEST_ASSETS = false
 
 describe('ProgramStructureTree', () => {
 	describe('instance related', () => {
@@ -116,6 +118,10 @@ for (const [testCaseName, testCase] of Object.entries(testCases)) {
 			const expected = JSON.parse(
 				testCase.expected.content
 			)
+			updateTestCase({
+				path: testCase.expected.path,
+				object: tree
+			}, UPDATE_TEST_ASSETS)
 			expect(tree).toEqual(expected)
 		})
 
@@ -125,7 +131,6 @@ for (const [testCaseName, testCase] of Object.entries(testCases)) {
 				testCase.source.content
 			)))
 			const expected = JSON.parse(testCase.expected.content)
-
 			expect(tree).toEqual(expected)
 		})
 	})

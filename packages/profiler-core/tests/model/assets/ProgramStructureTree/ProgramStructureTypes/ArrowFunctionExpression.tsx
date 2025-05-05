@@ -5,6 +5,9 @@ class ArrowFunctionExpression {
 
 	constructor(arg: any) {}
 
+	// ts.SyntaxKind.PrivateIdentifier
+	#private = () => {}
+
 	// ts.SyntaxKind.PropertyDeclaration
 	PropertyDeclaration = () => {};
 

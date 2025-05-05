@@ -36,6 +36,18 @@ function loadTestCase(
 	}
 }
 
+export function updateTestCase(
+	expected: Omit<TestCase['expected'], 'content'>,
+	shouldUpdate: boolean
+) {
+	if (shouldUpdate) {
+		fs.writeFileSync(
+			expected.path.toPlatformString(),
+			JSON.stringify(expected.object, null, '\t')
+		)
+	}
+}
+
 export const BASICS_CASE: TestCase = loadTestCase(
 	ProgramStructureTypes_DIR.join('Basics.ts'),
 	ProgramStructureTypes_DIR.join('Basics.ts.expected.json')

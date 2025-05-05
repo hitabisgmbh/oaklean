@@ -5,6 +5,9 @@ class FunctionExpression {
 
 	constructor(arg: any) {}
 
+	// ts.SyntaxKind.PrivateIdentifier
+	#private = function() {}
+
 	// ts.SyntaxKind.PropertyDeclaration
 	PropertyDeclaration = function() {};
 

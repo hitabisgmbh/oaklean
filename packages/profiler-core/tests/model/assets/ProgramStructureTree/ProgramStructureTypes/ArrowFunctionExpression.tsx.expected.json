@@ -8,7 +8,7 @@
 		"column": 0
 	},
 	"endLoc": {
-		"line": 58,
+		"line": 61,
 		"column": 14
 	},
 	"children": {
@@ -22,7 +22,7 @@
 				"column": 0
 			},
 			"endLoc": {
-				"line": 19,
+				"line": 22,
 				"column": 1
 			},
 			"children": {
@@ -41,62 +41,77 @@
 					},
 					"children": {}
 				},
-				"{functionExpression:PropertyDeclaration}": {
+				"{functionExpression:#private}": {
 					"id": 3,
+					"type": "ArrowFunctionExpression",
+					"identifierType": "Name",
+					"identifier": "{functionExpression:#private}",
+					"beginLoc": {
+						"line": 9,
+						"column": 12
+					},
+					"endLoc": {
+						"line": 9,
+						"column": 20
+					},
+					"children": {}
+				},
+				"{functionExpression:PropertyDeclaration}": {
+					"id": 4,
 					"type": "ArrowFunctionExpression",
 					"identifierType": "Name",
 					"identifier": "{functionExpression:PropertyDeclaration}",
 					"beginLoc": {
-						"line": 9,
+						"line": 12,
 						"column": 23
 					},
 					"endLoc": {
-						"line": 9,
+						"line": 12,
 						"column": 31
 					},
 					"children": {}
 				},
 				"{functionExpression:(literal:0)}": {
-					"id": 4,
+					"id": 5,
 					"type": "ArrowFunctionExpression",
 					"identifierType": "Literal",
 					"identifier": "{functionExpression:(literal:0)}",
 					"beginLoc": {
-						"line": 12,
+						"line": 15,
 						"column": 6
 					},
 					"endLoc": {
-						"line": 12,
+						"line": 15,
 						"column": 14
 					},
 					"children": {}
 				},
 				"{functionExpression:(literal:1)}": {
-					"id": 5,
+					"id": 6,
 					"type": "ArrowFunctionExpression",
 					"identifierType": "Literal",
 					"identifier": "{functionExpression:(literal:1)}",
 					"beginLoc": {
-						"line": 15,
+						"line": 18,
 						"column": 19
 					},
 					"endLoc": {
-						"line": 15,
+						"line": 18,
 						"column": 27
 					},
 					"children": {}
 				},
 				"{functionExpression:(expression:2)}": {
-					"id": 6,
+					"id": 7,
 					"type": "ArrowFunctionExpression",
 					"identifierType": "Expression",
 					"identifier": "{functionExpression:(expression:2)}",
 					"beginLoc": {
-						"line": 18,
+						"line": 21,
 						"column": 26
 					},
 					"endLoc": {
-						"line": 18,
+						"line": 21,
 						"column": 34
 					},
 					"children": {}
@@ -104,150 +119,150 @@
 			}
 		},
 		"{functionExpression:(anonymous:0)}": {
-			"id": 7,
+			"id": 8,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Anonymous",
 			"identifier": "{functionExpression:(anonymous:0)}",
 			"beginLoc": {
-				"line": 22,
+				"line": 25,
 				"column": 9
 			},
 			"endLoc": {
-				"line": 22,
+				"line": 25,
 				"column": 17
 			},
 			"children": {}
 		},
 		"{functionExpression:VariableDeclaration}": {
-			"id": 8,
+			"id": 9,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Name",
 			"identifier": "{functionExpression:VariableDeclaration}",
 			"beginLoc": {
-				"line": 25,
+				"line": 28,
 				"column": 28
 			},
 			"endLoc": {
-				"line": 25,
+				"line": 28,
 				"column": 36
 			},
 			"children": {}
 		},
 		"{functionExpression:(expression:0)}": {
-			"id": 9,
+			"id": 10,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Expression",
 			"identifier": "{functionExpression:(expression:0)}",
 			"beginLoc": {
-				"line": 28,
+				"line": 31,
 				"column": 2
 			},
 			"endLoc": {
-				"line": 28,
+				"line": 31,
 				"column": 10
 			},
 			"children": {}
 		},
 		"{functionExpression:(anonymous:1)}": {
-			"id": 10,
+			"id": 11,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Anonymous",
 			"identifier": "{functionExpression:(anonymous:1)}",
 			"beginLoc": {
-				"line": 31,
+				"line": 34,
 				"column": 22
 			},
 			"endLoc": {
-				"line": 31,
+				"line": 34,
 				"column": 30
 			},
 			"children": {}
 		},
 		"{functionExpression:(expression:1)}": {
-			"id": 11,
+			"id": 12,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Expression",
 			"identifier": "{functionExpression:(expression:1)}",
 			"beginLoc": {
-				"line": 34,
+				"line": 37,
 				"column": 7
 			},
 			"endLoc": {
-				"line": 34,
+				"line": 37,
 				"column": 15
 			},
 			"children": {}
 		},
 		"{functionExpression:(anonymous:2)}": {
-			"id": 12,
+			"id": 13,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Anonymous",
 			"identifier": "{functionExpression:(anonymous:2)}",
 			"beginLoc": {
-				"line": 38,
+				"line": 41,
 				"column": 7
 			},
 			"endLoc": {
-				"line": 38,
+				"line": 41,
 				"column": 15
 			},
 			"children": {}
 		},
 		"{functionExpression:(anonymous:3)}": {
-			"id": 13,
+			"id": 14,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Anonymous",
 			"identifier": "{functionExpression:(anonymous:3)}",
 			"beginLoc": {
-				"line": 41,
+				"line": 44,
 				"column": 2
 			},
 			"endLoc": {
-				"line": 41,
+				"line": 44,
 				"column": 10
 			},
 			"children": {}
 		},
 		"{functionExpression:(anonymous:4)}": {
-			"id": 14,
+			"id": 15,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Anonymous",
 			"identifier": "{functionExpression:(anonymous:4)}",
 			"beginLoc": {
-				"line": 44,
+				"line": 47,
 				"column": 7
 			},
 			"endLoc": {
-				"line": 44,
+				"line": 47,
 				"column": 15
 			},
 			"children": {}
 		},
 		"{function:ReturnStatement}": {
-			"id": 15,
+			"id": 16,
 			"type": "FunctionDeclaration",
 			"identifierType": "Name",
 			"identifier": "{function:ReturnStatement}",
 			"beginLoc": {
-				"line": 46,
+				"line": 49,
 				"column": 0
 			},
 			"endLoc": {
-				"line": 49,
+				"line": 52,
 				"column": 1
 			},
 			"children": {
 				"{functionExpression:(anonymous:0)}": {
-					"id": 16,
+					"id": 17,
 					"type": "ArrowFunctionExpression",
 					"identifierType": "Anonymous",
 					"identifier": "{functionExpression:(anonymous:0)}",
 					"beginLoc": {
-						"line": 48,
+						"line": 51,
 						"column": 8
 					},
 					"endLoc": {
-						"line": 48,
+						"line": 51,
 						"column": 16
 					},
 					"children": {}
@@ -255,46 +270,46 @@
 			}
 		},
 		"{functionExpression:(anonymous:5)}": {
-			"id": 17,
+			"id": 18,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Anonymous",
 			"identifier": "{functionExpression:(anonymous:5)}",
 			"beginLoc": {
-				"line": 52,
+				"line": 55,
 				"column": 6
 			},
 			"endLoc": {
-				"line": 52,
+				"line": 55,
 				"column": 14
 			},
 			"children": {}
 		},
 		"{functionExpression:(anonymous:6)}": {
-			"id": 18,
+			"id": 19,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Anonymous",
 			"identifier": "{functionExpression:(anonymous:6)}",
 			"beginLoc": {
-				"line": 55,
+				"line": 58,
 				"column": 28
 			},
 			"endLoc": {
-				"line": 55,
+				"line": 58,
 				"column": 36
 			},
 			"children": {}
 		},
 		"{functionExpression:(anonymous:7)}": {
-			"id": 19,
+			"id": 20,
 			"type": "ArrowFunctionExpression",
 			"identifierType": "Anonymous",
 			"identifier": "{functionExpression:(anonymous:7)}",
 			"beginLoc": {
-				"line": 58,
+				"line": 61,
 				"column": 6
 			},
 			"endLoc": {
-				"line": 58,
+				"line": 61,
 				"column": 14
 			},
 			"children": {}

@@ -172,7 +172,7 @@ export class TypescriptParser {
 				let subTree: ProgramStructureTree | undefined = undefined
 				if (ts.isClassDeclaration(node)) {
 					if (node.name?.kind === ts.SyntaxKind.Identifier) {
-						const className = node.name?.escapedText
+						const className = node.name.escapedText
 						subTree = new ProgramStructureTree(
 							idCounter++,
 							ProgramStructureTreeType.ClassDeclaration,
@@ -206,7 +206,7 @@ export class TypescriptParser {
 
 				if (ts.isFunctionDeclaration(node)) {
 					if (node.name?.kind === ts.SyntaxKind.Identifier) {
-						const functionName = node.name?.escapedText
+						const functionName = node.name.escapedText
 						subTree = new ProgramStructureTree(
 							idCounter++,
 							ProgramStructureTreeType.FunctionDeclaration,
@@ -252,7 +252,8 @@ export class TypescriptParser {
 									parent = node.parent as ts.PropertyDeclaration
 									switch (parent.name.kind) {
 										case ts.SyntaxKind.Identifier:
-											functionName = `functionExpression:${parent.name?.escapedText}`
+										case ts.SyntaxKind.PrivateIdentifier:
+											functionName = `functionExpression:${parent.name.escapedText}`
 											subTree = new ProgramStructureTree(
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
@@ -317,7 +318,7 @@ export class TypescriptParser {
 									parent = node.parent as ts.VariableDeclaration
 									switch (parent.name.kind) {
 										case ts.SyntaxKind.Identifier:
-											functionName = `functionExpression:${parent.name?.escapedText}`
+											functionName = `functionExpression:${parent.name.escapedText}`
 											subTree = new ProgramStructureTree(
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
@@ -365,7 +366,7 @@ export class TypescriptParser {
 					switch (node.name.kind) {
 						case ts.SyntaxKind.Identifier:
 						case ts.SyntaxKind.PrivateIdentifier:
-							methodName = 'method:' + node.name?.escapedText.toString()
+							methodName = 'method:' + node.name.escapedText.toString()
 							subTree = new ProgramStructureTree(
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
@@ -423,7 +424,8 @@ export class TypescriptParser {
 								parent = node.parent as ts.PropertyDeclaration
 								switch (parent.name.kind) {
 									case ts.SyntaxKind.Identifier:
-										functionName = `functionExpression:${parent.name?.escapedText}`
+									case ts.SyntaxKind.PrivateIdentifier:
+										functionName = `functionExpression:${parent.name.escapedText}`
 										subTree = new ProgramStructureTree(
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
@@ -486,7 +488,7 @@ export class TypescriptParser {
 								parent = node.parent as ts.VariableDeclaration
 								switch (parent.name.kind) {
 									case ts.SyntaxKind.Identifier:
-										functionName = `functionExpression:${parent.name?.escapedText}`
+										functionName = `functionExpression:${parent.name.escapedText}`
 										subTree = new ProgramStructureTree(
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
