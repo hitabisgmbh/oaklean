@@ -14,12 +14,15 @@ class ArrowFunctionExpression {
 	// ts.SyntaxKind.FirstLiteralToken
 	42 = () => {};
 
-	// ts.isFunctionExpression
+	// ts.SyntaxKind.StringLiteral
 	'StringLiteral' = () => {};
 
 	// ts.SyntaxKind.ComputedPropertyName
 	[ComputedPropertyName] = () => {};
 }
+
+// ts.SyntaxKind.ArrowFunction
+const ArrowFunction = () => () => {}
 
 // ts.SyntaxKind.ExportAssignment
 export = () => {}

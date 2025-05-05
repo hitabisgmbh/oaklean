@@ -14,12 +14,15 @@ class FunctionExpression {
 	// ts.SyntaxKind.FirstLiteralToken
 	42 = function() {};
 
-	// ts.isFunctionExpression
+	// ts.SyntaxKind.StringLiteral
 	'StringLiteral' = function() {};
 
 	// ts.SyntaxKind.ComputedPropertyName
 	[ComputedPropertyName] = function() {};
 }
+
+// ts.SyntaxKind.ArrowFunction
+const ArrowFunction = () => function() {}
 
 // ts.SyntaxKind.ExportAssignment
 export = function() {}
