@@ -1,0 +1,303 @@
+{
+	"id": 0,
+	"type": "Root",
+	"identifierType": "Name",
+	"identifier": "{root}",
+	"beginLoc": {
+		"line": 1,
+		"column": 0
+	},
+	"endLoc": {
+		"line": 58,
+		"column": 14
+	},
+	"children": {
+		"{class:ArrowFunctionExpression}": {
+			"id": 1,
+			"type": "ClassDeclaration",
+			"identifierType": "Name",
+			"identifier": "{class:ArrowFunctionExpression}",
+			"beginLoc": {
+				"line": 3,
+				"column": 0
+			},
+			"endLoc": {
+				"line": 19,
+				"column": 1
+			},
+			"children": {
+				"{constructor:constructor}": {
+					"id": 2,
+					"type": "ConstructorDeclaration",
+					"identifierType": "Name",
+					"identifier": "{constructor:constructor}",
+					"beginLoc": {
+						"line": 6,
+						"column": 1
+					},
+					"endLoc": {
+						"line": 6,
+						"column": 25
+					},
+					"children": {}
+				},
+				"{functionExpression:PropertyDeclaration}": {
+					"id": 3,
+					"type": "ArrowFunctionExpression",
+					"identifierType": "Name",
+					"identifier": "{functionExpression:PropertyDeclaration}",
+					"beginLoc": {
+						"line": 9,
+						"column": 23
+					},
+					"endLoc": {
+						"line": 9,
+						"column": 31
+					},
+					"children": {}
+				},
+				"{functionExpression:(literal:0)}": {
+					"id": 4,
+					"type": "ArrowFunctionExpression",
+					"identifierType": "Literal",
+					"identifier": "{functionExpression:(literal:0)}",
+					"beginLoc": {
+						"line": 12,
+						"column": 6
+					},
+					"endLoc": {
+						"line": 12,
+						"column": 14
+					},
+					"children": {}
+				},
+				"{functionExpression:(literal:1)}": {
+					"id": 5,
+					"type": "ArrowFunctionExpression",
+					"identifierType": "Literal",
+					"identifier": "{functionExpression:(literal:1)}",
+					"beginLoc": {
+						"line": 15,
+						"column": 19
+					},
+					"endLoc": {
+						"line": 15,
+						"column": 27
+					},
+					"children": {}
+				},
+				"{functionExpression:(expression:2)}": {
+					"id": 6,
+					"type": "ArrowFunctionExpression",
+					"identifierType": "Expression",
+					"identifier": "{functionExpression:(expression:2)}",
+					"beginLoc": {
+						"line": 18,
+						"column": 26
+					},
+					"endLoc": {
+						"line": 18,
+						"column": 34
+					},
+					"children": {}
+				}
+			}
+		},
+		"{functionExpression:(anonymous:0)}": {
+			"id": 7,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Anonymous",
+			"identifier": "{functionExpression:(anonymous:0)}",
+			"beginLoc": {
+				"line": 22,
+				"column": 9
+			},
+			"endLoc": {
+				"line": 22,
+				"column": 17
+			},
+			"children": {}
+		},
+		"{functionExpression:VariableDeclaration}": {
+			"id": 8,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Name",
+			"identifier": "{functionExpression:VariableDeclaration}",
+			"beginLoc": {
+				"line": 25,
+				"column": 28
+			},
+			"endLoc": {
+				"line": 25,
+				"column": 36
+			},
+			"children": {}
+		},
+		"{functionExpression:(expression:0)}": {
+			"id": 9,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Expression",
+			"identifier": "{functionExpression:(expression:0)}",
+			"beginLoc": {
+				"line": 28,
+				"column": 2
+			},
+			"endLoc": {
+				"line": 28,
+				"column": 10
+			},
+			"children": {}
+		},
+		"{functionExpression:(anonymous:1)}": {
+			"id": 10,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Anonymous",
+			"identifier": "{functionExpression:(anonymous:1)}",
+			"beginLoc": {
+				"line": 31,
+				"column": 22
+			},
+			"endLoc": {
+				"line": 31,
+				"column": 30
+			},
+			"children": {}
+		},
+		"{functionExpression:(expression:1)}": {
+			"id": 11,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Expression",
+			"identifier": "{functionExpression:(expression:1)}",
+			"beginLoc": {
+				"line": 34,
+				"column": 7
+			},
+			"endLoc": {
+				"line": 34,
+				"column": 15
+			},
+			"children": {}
+		},
+		"{functionExpression:(anonymous:2)}": {
+			"id": 12,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Anonymous",
+			"identifier": "{functionExpression:(anonymous:2)}",
+			"beginLoc": {
+				"line": 38,
+				"column": 7
+			},
+			"endLoc": {
+				"line": 38,
+				"column": 15
+			},
+			"children": {}
+		},
+		"{functionExpression:(anonymous:3)}": {
+			"id": 13,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Anonymous",
+			"identifier": "{functionExpression:(anonymous:3)}",
+			"beginLoc": {
+				"line": 41,
+				"column": 2
+			},
+			"endLoc": {
+				"line": 41,
+				"column": 10
+			},
+			"children": {}
+		},
+		"{functionExpression:(anonymous:4)}": {
+			"id": 14,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Anonymous",
+			"identifier": "{functionExpression:(anonymous:4)}",
+			"beginLoc": {
+				"line": 44,
+				"column": 7
+			},
+			"endLoc": {
+				"line": 44,
+				"column": 15
+			},
+			"children": {}
+		},
+		"{function:ReturnStatement}": {
+			"id": 15,
+			"type": "FunctionDeclaration",
+			"identifierType": "Name",
+			"identifier": "{function:ReturnStatement}",
+			"beginLoc": {
+				"line": 46,
+				"column": 0
+			},
+			"endLoc": {
+				"line": 49,
+				"column": 1
+			},
+			"children": {
+				"{functionExpression:(anonymous:0)}": {
+					"id": 16,
+					"type": "ArrowFunctionExpression",
+					"identifierType": "Anonymous",
+					"identifier": "{functionExpression:(anonymous:0)}",
+					"beginLoc": {
+						"line": 48,
+						"column": 8
+					},
+					"endLoc": {
+						"line": 48,
+						"column": 16
+					},
+					"children": {}
+				}
+			}
+		},
+		"{functionExpression:(anonymous:5)}": {
+			"id": 17,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Anonymous",
+			"identifier": "{functionExpression:(anonymous:5)}",
+			"beginLoc": {
+				"line": 52,
+				"column": 6
+			},
+			"endLoc": {
+				"line": 52,
+				"column": 14
+			},
+			"children": {}
+		},
+		"{functionExpression:(anonymous:6)}": {
+			"id": 18,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Anonymous",
+			"identifier": "{functionExpression:(anonymous:6)}",
+			"beginLoc": {
+				"line": 55,
+				"column": 28
+			},
+			"endLoc": {
+				"line": 55,
+				"column": 36
+			},
+			"children": {}
+		},
+		"{functionExpression:(anonymous:7)}": {
+			"id": 19,
+			"type": "ArrowFunctionExpression",
+			"identifierType": "Anonymous",
+			"identifier": "{functionExpression:(anonymous:7)}",
+			"beginLoc": {
+				"line": 58,
+				"column": 6
+			},
+			"endLoc": {
+				"line": 58,
+				"column": 14
+			},
+			"children": {}
+		}
+	}
+}

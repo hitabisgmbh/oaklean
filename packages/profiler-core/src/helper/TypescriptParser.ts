@@ -182,6 +182,13 @@ export class TypescriptParser {
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 						)
 					} else {
+						LoggerHelper.error(
+							'TypescriptParser.parseFile.enterNode (isClassDeclaration): unhandled case: node.name.kind === ' + node.name?.kind, {
+								filePath,
+								kind: node.name?.kind ? ts.SyntaxKind[node.name?.kind] : undefined,
+								pos: node.name ? TypescriptParser.posToLoc(sourceFile, node.name.getStart()) : undefined
+							}
+						)
 						throw new Error('TypescriptParser.parseFile.enterNode (isClassDeclaration): unhandled case: node.name.kind === ' + node.name?.kind)
 					}
 				}
@@ -327,10 +334,10 @@ export class TypescriptParser {
 												TypescriptParser.posToLoc(sourceFile, node.parent.getStart())
 											)
 											LoggerHelper.error(
-												'TypescriptParser.parseFile.enterNode (isFunctionExpression: VariableDeclaration): unhandled case: node.parent.kind  === ' +
-												node.parent.kind, {
+												'TypescriptParser.parseFile.enterNode (isFunctionExpression: VariableDeclaration): unhandled case: node.parent.kind  === ' + node.parent.kind, {
 													filePath,
-													kind: node.parent.kind
+													kind: node.parent.kind,
+													pos: TypescriptParser.posToLoc(sourceFile, node.parent.getStart())
 												}
 											)
 											throw new Error('TypescriptParser.parseFile.enterNode (isFunctionExpression: VariableDeclaration): unhandled case: node.parent.kind  === ' + node.parent.kind)
@@ -355,7 +362,7 @@ export class TypescriptParser {
 
 				if (ts.isMethodDeclaration(node)) {
 					let methodName = ''
-					switch (node.name?.kind) {
+					switch (node.name.kind) {
 						case ts.SyntaxKind.Identifier:
 						case ts.SyntaxKind.PrivateIdentifier:
 							methodName = 'method:' + node.name?.escapedText.toString()
@@ -393,11 +400,13 @@ export class TypescriptParser {
 							break
 						default:
 							LoggerHelper.error(
-								'TypescriptParser.parseFile.enterNode (isMethodDeclaration): unhandled case: node.name.kind', {
-									filePath
+								'TypescriptParser.parseFile.enterNode (isMethodDeclaration): unhandled case: node.name.kind  === ' + node.name?.kind, {
+									filePath,
+									kind: node.name.kind,
+									pos: TypescriptParser.posToLoc(sourceFile, node.name.getStart())
 								}
 							)
-							throw new Error('TypescriptParser.parseFile.enterNode (isMethodDeclaration): unhandled case: node.name.kind')
+							throw new Error('TypescriptParser.parseFile.enterNode (isMethodDeclaration): unhandled case: node.name.kind  === ' + node.name?.kind)
 					}
 				}
 
@@ -424,6 +433,7 @@ export class TypescriptParser {
 											TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 										)
 										break
+									case ts.SyntaxKind.StringLiteral:
 									case ts.SyntaxKind.FirstLiteralToken:
 										functionName =
 											`functionExpression:(literal:${currentNodeInfo.literalFunctionCounter++})`
@@ -453,7 +463,7 @@ export class TypescriptParser {
 											'TypescriptParser.parseFile.enterNode (isArrowFunction: PropertyDeclaration): unhandled case: parent.name.kind === ' + parent.name.kind,
 											{
 												filePath,
-												kind: parent.name.kind,
+												kind: ts.SyntaxKind[parent.name.kind],
 												pos: TypescriptParser.posToLoc(sourceFile, parent.name.getStart())
 											}
 										)
@@ -495,7 +505,8 @@ export class TypescriptParser {
 										LoggerHelper.error(
 											'TypescriptParser.parseFile.enterNode (isArrowFunction: VariableDeclaration): unhandled case: node.parent.kind  === ' + node.parent.kind, {
 												filePath,
-												kind: node.parent.kind
+												kind: ts.SyntaxKind[node.parent.kind],
+												pos: TypescriptParser.posToLoc(sourceFile, node.parent.getStart())
 											}
 										)
 										throw new Error('TypescriptParser.parseFile.enterNode (isArrowFunction: VariableDeclaration): unhandled case: node.parent.kind  === ' + node.parent.kind)

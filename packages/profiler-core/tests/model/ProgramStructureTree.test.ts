@@ -1,6 +1,7 @@
 import {
 	BASICS_CASE,
 	FUNCTION_EXPRESSION_CASE,
+	ARROW_FUNCTION_EXPRESSION_CASE,
 	EMIT_HELPER_PATH,
 	NESTED_DECLARATIONS_CASE
 } from './assets/ProgramStructureTree/index'
@@ -11,6 +12,13 @@ import {
 	IProgramStructureTree,
 	SourceNodeIdentifier_string
 } from '../../src/types'
+
+const testCases = {
+	BASICS_CASE,
+	FUNCTION_EXPRESSION_CASE,
+	ARROW_FUNCTION_EXPRESSION_CASE,
+	NESTED_DECLARATIONS_CASE
+}
 
 
 describe('ProgramStructureTree', () => {
@@ -99,49 +107,29 @@ describe('ProgramStructureTree', () => {
 	})
 })
 
-describe('testing with typescript file parser', () => {
-	test('test case 2: NESTED_DECLARATIONS_CASE', () => {
-		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(
-			NESTED_DECLARATIONS_CASE.source.path
-		)))
-		const expected = JSON.parse(
-			NESTED_DECLARATIONS_CASE.expected.content
-		)
-		expect(tree).toEqual(expected)
+for (const [testCaseName, testCase] of Object.entries(testCases)) {
+	describe(`testing with ${testCaseName}`, () => {
+		test('testing with typescript file parser', () => {
+			const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(
+				testCase.source.path
+			)))
+			const expected = JSON.parse(
+				testCase.expected.content
+			)
+			expect(tree).toEqual(expected)
+		})
+
+		test('testing with typescript string parser', () => {
+			const tree = JSON.parse(JSON.stringify(TypescriptParser.parseSource(
+				testCase.source.path,
+				testCase.source.content
+			)))
+			const expected = JSON.parse(testCase.expected.content)
+
+			expect(tree).toEqual(expected)
+		})
 	})
-
-	test('test case 2: FUNCTION_EXPRESSION_CASE', () => {
-		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(
-			FUNCTION_EXPRESSION_CASE.source.path
-		)))
-		const expected = JSON.parse(
-			FUNCTION_EXPRESSION_CASE.expected.content
-		)
-		expect(tree).toEqual(expected)
-	})
-})
-
-describe('testing with typescript string parser', () => {
-	test('test case 1: NESTED_DECLARATIONS_CASE', () => {
-		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseSource(
-			NESTED_DECLARATIONS_CASE.source.path,
-			NESTED_DECLARATIONS_CASE.source.content
-		)))
-		const expected = JSON.parse(NESTED_DECLARATIONS_CASE.expected.content)
-
-		expect(tree).toEqual(expected)
-	})
-
-	test('test case 2: FUNCTION_EXPRESSION_CASE', () => {
-		const tree = JSON.parse(JSON.stringify(TypescriptParser.parseSource(
-			FUNCTION_EXPRESSION_CASE.source.path,
-			FUNCTION_EXPRESSION_CASE.source.content
-		)))
-		const expected = JSON.parse(FUNCTION_EXPRESSION_CASE.expected.content)
-
-		expect(tree).toEqual(expected)
-	})
-})
+}
 
 describe('ProgramStructureTreeType.identifierBySourceLocation', () => {
 	test('test case 1', () => {

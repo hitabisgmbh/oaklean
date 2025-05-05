@@ -1,59 +1,58 @@
 const ComputedPropertyName = 'Computed' + 'Property' + 'Name'
 
-class FunctionExpression {
+class ArrowFunctionExpression {
 	[key: string | number | symbol]: any;
 
 	constructor(arg: any) {}
 
 	// ts.SyntaxKind.PropertyDeclaration
-	PropertyDeclaration = function() {};
+	PropertyDeclaration = () => {};
 
 	// ts.SyntaxKind.FirstLiteralToken
-	42 = function() {};
+	42 = () => {};
 
 	// ts.isFunctionExpression
-	'StringLiteral' = function() {};
+	'StringLiteral' = () => {};
 
 	// ts.SyntaxKind.ComputedPropertyName
-	[ComputedPropertyName] = function() {};
+	[ComputedPropertyName] = () => {};
 }
 
 // ts.SyntaxKind.ExportAssignment
-export = function() {}
+export = () => {}
 
 // ts.SyntaxKind.VariableDeclaration
-const VariableDeclaration = function() {}
+const VariableDeclaration = () => {}
 
 // ts.SyntaxKind.ParenthesizedExpression
-;(function() {})()
+;(() => {})()
 
 // ts.SyntaxKind.PropertyAssignment
-const obj = { method: function () {} }
+const obj = { method: () => {} }
 
 // ts.SyntaxKind.CallExpression
-typeof(function () {})
+typeof(() => {})
 
 let x
 // ts.SyntaxKind.BinaryExpression
-if(x = function () {}) {}
+if(x = () => {}) {}
 
 // ts.SyntaxKind.ArrayLiteralExpression
-;[function () {}, 42]
+;[() => {}, 42]
 
 // ts.SyntaxKind.ConditionalExpression
-true ? function () {} : null
+true ? () => {} : null
 
 function ReturnStatement() {
 	// ts.SyntaxKind.ReturnStatement
-	return function () {}
+	return () => {}
 }
 
 // ts.SyntaxKind.JsxExpression
-<div>{function() {} }</div>
+<div>{() => {}}</div>
 
 // ts.SyntaxKind.NewExpression
-new FunctionExpression(function() {})
+new ArrowFunctionExpression(() => {})
 
 // ts.SyntaxKind.ThrowStatement
-
-throw function() {}
+throw () => {}
