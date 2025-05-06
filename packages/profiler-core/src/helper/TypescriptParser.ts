@@ -24,6 +24,23 @@ type TraverseNodeInfo = {
 	literalFunctionCounter: number
 }
 
+type OnDuplicateIdentifierCallback = (
+	filePath: UnifiedPath | UnifiedPath_string,
+	node:
+	ts.FunctionDeclaration |
+	ts.FunctionExpression |
+	ts.ArrowFunction | ts.MethodDeclaration | ts.ClassDeclaration | ts.ConstructorDeclaration,
+	identifier: string,
+	loc: {
+		begin: NodeLocation,
+		end: NodeLocation
+	},
+	duplicateLoc: {
+		begin: NodeLocation,
+		end: NodeLocation
+	}
+) => void
+
 export class TypescriptParser {
 
 	/**
@@ -105,17 +122,35 @@ export class TypescriptParser {
 		return TypescriptParser.parseSource(filePath, sourceCode)
 	}
 
-	static parseSource(
+	static codeToTSSourceFile(
 		filePath: UnifiedPath | UnifiedPath_string,
 		sourceCode: string
-	): ProgramStructureTree {
-		const sourceFile = ts.createSourceFile(
+	): ts.SourceFile {
+		return ts.createSourceFile(
 			filePath.toString(),
 			sourceCode,
 			ts.ScriptTarget.ES2015,
 			/*setParentNodes */ true
 		)
+	}
 
+	static parseSource(
+		filePath: UnifiedPath | UnifiedPath_string,
+		sourceCode: string,
+		onDuplicateIdentifier?: OnDuplicateIdentifierCallback
+	): ProgramStructureTree {
+		return TypescriptParser.parseTSSourceFile(
+			filePath,
+			TypescriptParser.codeToTSSourceFile(filePath, sourceCode),
+			onDuplicateIdentifier
+		)
+	}
+
+	static parseTSSourceFile(
+		filePath: UnifiedPath | UnifiedPath_string,
+		sourceFile: ts.SourceFile,
+		onDuplicateIdentifier?: OnDuplicateIdentifierCallback
+	) {
 		let idCounter = 0
 		const root: ProgramStructureTree = new ProgramStructureTree(
 			idCounter++,
@@ -532,8 +567,27 @@ export class TypescriptParser {
 
 				if (subTree) {
 					if (subTree.identifier) {
-						if (subTree.identifier in currentNodeInfo.tree.children) {
-							throw new Error('TypescriptParser.parseFile: duplicate function identifier definition: ' + subTree.identifier)
+						const found = currentNodeInfo.tree.children.get(subTree.identifier)
+						if (found !== undefined && onDuplicateIdentifier !== undefined) {
+							const identifierPath = stack.map(
+								(n) => {
+									return n.tree.identifier
+								}
+							)
+
+							onDuplicateIdentifier(
+								filePath,
+								(node as any),
+								[...identifierPath, subTree.identifier].join('.'),
+								{
+									begin: subTree.beginLoc,
+									end: subTree.endLoc
+								},
+								{
+									begin: found.beginLoc,
+									end: found.endLoc
+								}
+							)
 						}
 						currentNodeInfo.tree.children.set(subTree.identifier, subTree)
 					}
