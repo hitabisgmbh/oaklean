@@ -36,5 +36,5 @@ export interface IProgramStructureTree {
 	identifier: SourceNodeIdentifierPart_string
 	beginLoc: NodeLocation
 	endLoc: NodeLocation
-	children: Record<string, IProgramStructureTree>
+	children: Record<SourceNodeIdentifierPart_string, IProgramStructureTree>
 }

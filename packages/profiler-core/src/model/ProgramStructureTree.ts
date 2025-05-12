@@ -22,7 +22,7 @@ export class ProgramStructureTree extends BaseModel {
 	identifier: SourceNodeIdentifierPart_string
 	beginLoc: NodeLocation
 	endLoc: NodeLocation
-	children: ModelMap<string, ProgramStructureTree>
+	children: ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>
 
 	constructor(
 		id: number,
@@ -43,7 +43,7 @@ export class ProgramStructureTree extends BaseModel {
 		this.identifier = identifier
 		this.beginLoc = beginLoc
 		this.endLoc = endLoc
-		this.children = new ModelMap<string, ProgramStructureTree>('string')
+		this.children = new ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>('string')
 
 		this.containsLocation = memoize(this.containsLocation.bind(this))
 		this.identifierBySourceLocation = memoize(this.identifierBySourceLocation.bind(this))
@@ -79,7 +79,7 @@ export class ProgramStructureTree extends BaseModel {
 			data.endLoc
 		)
 
-		for (const key of Object.keys(data.children)) {
+		for (const key of Object.keys(data.children) as SourceNodeIdentifierPart_string[]) {
 			result.children.set(key, ProgramStructureTree.fromJSON(data.children[key]))
 		}
 
