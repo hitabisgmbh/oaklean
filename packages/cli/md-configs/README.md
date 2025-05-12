@@ -15,6 +15,9 @@ Options:
   -h, --help      display help for command
 
 Commands:
+  config          commands to interact with a config file
+     - resolve Resolves the given config file and outputs the resolved config (including all default values and overrides)
+
   init            Create a .oaklean config file
   report          commands to convert or inspect the profiler's format
      - toHash Calculates the hash of given a profiler format
