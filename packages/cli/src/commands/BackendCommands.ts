@@ -2,7 +2,8 @@ import {
 	UnifiedPath,
 	ProjectReport,
 	LoggerHelper,
-	RegistryHelper
+	RegistryHelper,
+	STATIC_CONFIG_FILENAME
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
@@ -14,7 +15,7 @@ export default class BackendCommands {
 
 		parseCommand
 			.command('send')
-			.description('Sends a given .oak report to a backend specified in the .oaklean config')
+			.description(`Sends a given .oak report to a backend specified in the ${STATIC_CONFIG_FILENAME} config`)
 			.argument('<input>', 'input file path')
 			.action(this.sendReportToBackend.bind(this))
 	}
