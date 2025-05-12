@@ -8,9 +8,21 @@ import {
 	LoggerHelper,
 	CPUNode,
 	ProfilerConfig,
-	CPUProfileHelper
+	CPUProfileHelper,
+	STATIC_CONFIG_FILENAME,
+	ResolveFunctionIdentifierHelper,
+	ExternalResourceHelper
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
+import bare from 'cli-color/bare'
+
+enum TraceColors {
+	Internal = 1,
+	LangInternal = 9,
+	External = 11,
+	WebAssembly = 57,
+	Webpack = 39
+}
 
 export default class CPUProfileCommands {
 	constructor() {
@@ -35,11 +47,15 @@ export default class CPUProfileCommands {
 			.command('trace')
 			.description('Displays the trace of the cpu profile')
 			.argument('<input>', 'input file path')
+			.option('-r, --root-dir <rootdir>', 'specify which root dir should be used, if not set it will be determined by the config file', undefined)
+			.option('-e, --external-resources <external-resources>', 'external resources file path - When provided, this improves file resolution accuracy and ensures source maps are taken into account.', undefined)
 			.action(this.trace.bind(this))
 
 		baseCommand
 			.command('anonymize')
-			.description('Converts all paths in the cpu profile to relative paths (relative to the rootDir mentioned in the .oaklean config) to remove all user related paths')
+			.description('Converts all paths in the cpu profile to relative paths ' + 
+				`(relative to the rootDir mentioned in the ${STATIC_CONFIG_FILENAME} config)` + 
+				' to remove all user related paths')
 			.argument('<input>', 'input file path')
 			.option('-o, --output <output>', 'output file path (default: input file path)')
 			.action(this.anonymize.bind(this))
@@ -134,88 +150,170 @@ export default class CPUProfileCommands {
 		], ['type', 'value', 'unit'])
 	}
 
-	async trace(input: string) {
+	async trace(
+		input: string,
+		options: {
+			externalResources?: string,
+			rootDir?: string
+		}
+	) {
 		let inputPath = new UnifiedPath(input)
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
 		}
+		const cpuProfile = JSON.parse(fs.readFileSync(inputPath.toPlatformString()).toString())
+		let rootDir: UnifiedPath
+		if (options.rootDir !== undefined) {
+			rootDir = new UnifiedPath(options.rootDir)
+		} else {
+			const profilerConfig = ProfilerConfig.autoResolveFromPath(inputPath.dirName())
+			rootDir = profilerConfig.getRootDir()
+		}
 
-		function colorByType(cpuNode: CPUNode) {
+		let resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper | undefined
+		let externalResourceHelper: ExternalResourceHelper | undefined
+		if (options.externalResources !== undefined) {
+			let resourcesHelperPath = new UnifiedPath(options.externalResources)
+			if (resourcesHelperPath.isRelative()) {
+				resourcesHelperPath = new UnifiedPath(process.cwd()).join(resourcesHelperPath)
+			}
+			externalResourceHelper = ExternalResourceHelper.loadFromFile(
+				rootDir,
+				resourcesHelperPath
+			)
+			if (externalResourceHelper === undefined) {
+				LoggerHelper.warn(
+					'Failed to load external resources file. Check if the file exists and is valid.'
+				)
+			} else {
+				resolveFunctionIdentifierHelper = new ResolveFunctionIdentifierHelper(
+					rootDir,
+					externalResourceHelper
+				)
+			}
+		}
+
+
+		function colorByType(
+			cpuNode: CPUNode,
+			resolvedAsExternal: boolean
+		) {
 			if (cpuNode.sourceLocation.isLangInternal) {
-				return cli.xterm(9)
+				return cli.xterm(TraceColors.LangInternal)
 			} else if (cpuNode.sourceLocation.isWASM) {
-				return cli.xterm(57)
+				return cli.xterm(TraceColors.WebAssembly)
 			} else if (cpuNode.sourceLocation.isWebpack) {
-				return cli.xterm(39)
-			} else if (cpuNode.sourceLocation.relativeUrl.toString().includes('/node_modules/')) {
-				return cli.xterm(11)
+				return cli.xterm(TraceColors.Webpack)
+			} else if (
+				resolvedAsExternal ||
+				cpuNode.sourceLocation.relativeUrl.toString().includes('/node_modules/')
+			) {
+				return cli.xterm(TraceColors.Internal)
 			}
 			return (arg: string) => arg
 		}
 
-		const cpuProfile = JSON.parse(fs.readFileSync(inputPath.toPlatformString()).toString())
-
-		const profilerConfig = ProfilerConfig.autoResolveFromPath(inputPath.dirName())
-
 		const cpuModel = new CPUModel(
-			profilerConfig.getRootDir(),
+			rootDir,
 			cpuProfile,
-			BigInt(0) as NanoSeconds_BigInt
+			BigInt(0) as NanoSeconds_BigInt,
+			externalResourceHelper
 		)
 
-		function traverse(
+		async function traverse(
 			cpuNode: CPUNode,
 			parentsPaint: ((arg: string) => string)[] = [],
 			last: boolean[] = [] // specifies wether the parents are the last children
 		) {
+			let selfPaint: bare.Format | ((arg: string) => string) = colorByType(cpuNode, false)
 			if (cpuNode.index === 0) {
-				LoggerHelper.log(cli.xterm(9)(' ■ ') + cli.green('({root})'))
+				const resolvedPrefix = resolveFunctionIdentifierHelper !== undefined ?
+					cli.xterm(9)('■ ') : ''
+				LoggerHelper.log(resolvedPrefix + cli.xterm(9)('■ ') + cli.green('({root})'))
 			} else {
 				let indent = ''
 				for (let i = 0; i < last.length - 1; i++) {
 					if (last[i]) {
-						indent += '    '
+						indent += '  '
 					} else {
-						indent += parentsPaint[i]('│   ')
+						indent += parentsPaint[i]('│ ')
 					}
 				}
-				const selfPaint = colorByType(cpuNode)
-				const prefix = selfPaint(' ■ ')
+
+				const originalPrefix = selfPaint('■ ')
+				let resolvedPrefix = ''
+				let relativeFilePath = cpuNode.sourceLocation.relativeUrl.toString()
+				let resolvedFunctionName = ''
+				if (resolveFunctionIdentifierHelper !== undefined) {
+					if (
+						!cpuNode.sourceLocation.isLangInternal &&
+						!cpuNode.sourceLocation.isWASM &&
+						!cpuNode.sourceLocation.isEmpty
+					) {
+						const {
+							sourceNodeLocation,
+							nodeModule,
+							relativeNodeModulePath
+						} = await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
+							cpuNode.sourceLocation
+						)
+						relativeFilePath = sourceNodeLocation.relativeFilePath.toString()
+						const functionIdentifierParts = sourceNodeLocation.functionIdentifier.split('.')
+						resolvedFunctionName = functionIdentifierParts[functionIdentifierParts.length - 1]
+						if ((relativeNodeModulePath !== null && nodeModule !== null)) {
+							// change color to node module
+							selfPaint = colorByType(cpuNode, true)
+						}
+					}
+					resolvedPrefix = selfPaint('■ ')
+				}
+				
 				const lastIndent = parentsPaint[parentsPaint.length - 1](
 					(last[last.length - 1] ? '└' : '├')
-				) + selfPaint('── ')
+				) + selfPaint('─ ')
 
 				console.log(
-					prefix +
+					originalPrefix +
+					resolvedPrefix + 
 					indent +
 					lastIndent +
-					cpuNode.sourceLocation.relativeUrl.toString() +
-					cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`),
+					relativeFilePath +
+					(resolvedFunctionName !== '' ? cli.green(` ${resolvedFunctionName}`) : '') +
+					cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`) +
+					`[CM_ID: ${cpuNode.index}]`,
 					`- ${cpuNode.cpuTime.selfCPUTime} µs | ${cpuNode.cpuTime.aggregatedCPUTime} µs`
 				)
 			}
 			
 			const nodes = Array.from(cpuNode.children())
 			for (let i = 0; i < nodes.length; i++) {
-				traverse(
+				await traverse(
 					nodes[i],
-					[...parentsPaint, colorByType(cpuNode)],
+					[...parentsPaint, selfPaint],
 					[...last, i === nodes.length - 1]
 				)
 			}
 		}
 
 		// vertical legend
-		console.log(
+		LoggerHelper.log(
 			'\nLegend:\n' +
 			' ■ ' + ' Node (own code)\n' +
-			cli.xterm(9)(' ■ ') + ' Node (node internal)\n' +
-			cli.xterm(11)(' ■ ') + ' Node (node module)\n' +
-			cli.xterm(57)(' ■ ') + ' Node (WebAssembly)\n' + 
-			cli.xterm(39)(' ■ ') + ' Node (Webpack)\n'
+			cli.xterm(TraceColors.Internal)(' ■ ') + ' Node (node internal)\n' +
+			cli.xterm(TraceColors.External)(' ■ ') + ' Node (node module)\n' +
+			cli.xterm(TraceColors.WebAssembly)(' ■ ') + ' Node (WebAssembly)\n' + 
+			cli.xterm(TraceColors.Webpack)(' ■ ') + ' Node (Webpack)\n'
 		)
 
-		traverse(cpuModel.getNode(0))
+		if (resolveFunctionIdentifierHelper !== undefined) {
+			LoggerHelper.log(
+				'┌───' + ' originally from the cpu profile\n' +
+				'│ ┌─' + ' resolved via the external resource (using sourcemaps)\n' +
+				'│ │ '
+			)
+		}
+
+		await traverse(cpuModel.getNode(0))
 	}
 
 	async anonymize(

@@ -2,21 +2,25 @@
 import { program } from 'commander'
 
 import { VERSION } from './constants/app'
+import ConfigCommands from './commands/ConfigCommands'
 import BackendCommands from './commands/BackendCommands'
-import ReportCommand from './commands/ReportCommands'
+import ReportCommands from './commands/ReportCommands'
 import CPUProfileCommands from './commands/CPUProfileCommands'
 import CodeParsingCommands from './commands/CodeParsingCommands'
 import InitCommands from './commands/InitCommands'
+import JestCommands from './commands/JestCommands'
 
 program
 	.version(VERSION)
 	.description('An CLI to interact with the @oaklean suite')
 
+ConfigCommands.init()
 InitCommands.init()
-ReportCommand.init()
+ReportCommands.init()
 CPUProfileCommands.init()
 CodeParsingCommands.init()
 BackendCommands.init()
+JestCommands.init()
 
 program.configureHelp({
 	subcommandDescription: (cmd) => {

@@ -13,7 +13,7 @@ import {
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
-export default class ReportCommand {
+export default class ReportCommands {
 	constructor() {
 		const baseCommand = program
 			.command('report')
@@ -55,7 +55,7 @@ export default class ReportCommand {
 	}
 
 	static init() {
-		return new ReportCommand()
+		return new ReportCommands()
 	}
 
 	async toHash(input: string) {
