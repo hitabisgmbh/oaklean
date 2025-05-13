@@ -182,11 +182,12 @@ export class ResolveFunctionIdentifierHelper {
 					}
 				}
 			} else {
-				if (urlProtocol === null) {
+				if (urlProtocol === 'webpack' || urlProtocol === 'webpack-internal') {
 					originalSourceFileNotFoundError = {
 						originalPositionSource: originalPosition.source,
-						originalPositionPath,
-						absoluteOriginalSourcePath,
+						relativeOriginalSourcePath: relativeOriginalSourcePath.toString(),
+						absoluteOriginalSourcePath: absoluteOriginalSourcePath.toString(),
+						originalPositionPath: originalPositionPath.toString()
 					}
 				}
 			}
@@ -232,7 +233,7 @@ export class ResolveFunctionIdentifierHelper {
 					url: sourceLocation.absoluteUrl.toString(),
 					lineNumber,
 					columnNumber,
-					...originalSourceFileNotFoundError,
+					triedToParse: originalSourceFileNotFoundError
 				}
 			)
 		}
