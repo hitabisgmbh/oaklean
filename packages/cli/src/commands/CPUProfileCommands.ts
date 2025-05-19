@@ -17,7 +17,6 @@ import { program } from 'commander'
 import bare from 'cli-color/bare'
 
 enum TraceColors {
-	Internal = 1,
 	LangInternal = 9,
 	External = 11,
 	WebAssembly = 57,
@@ -208,7 +207,7 @@ export default class CPUProfileCommands {
 				resolvedAsExternal ||
 				cpuNode.sourceLocation.relativeUrl.toString().includes('/node_modules/')
 			) {
-				return cli.xterm(TraceColors.Internal)
+				return cli.xterm(TraceColors.External)
 			}
 			return (arg: string) => arg
 		}
@@ -228,8 +227,8 @@ export default class CPUProfileCommands {
 			let selfPaint: bare.Format | ((arg: string) => string) = colorByType(cpuNode, false)
 			if (cpuNode.index === 0) {
 				const resolvedPrefix = resolveFunctionIdentifierHelper !== undefined ?
-					cli.xterm(9)('■ ') : ''
-				LoggerHelper.log(resolvedPrefix + cli.xterm(9)('■ ') + cli.green('({root})'))
+					cli.xterm(TraceColors.LangInternal)('■ ') : ''
+				LoggerHelper.log(resolvedPrefix + cli.xterm(TraceColors.LangInternal)('■ ') + cli.green('({root})'))
 			} else {
 				let indent = ''
 				for (let i = 0; i < last.length - 1; i++) {
@@ -281,6 +280,7 @@ export default class CPUProfileCommands {
 					(resolvedFunctionName !== '' ? cli.green(` ${resolvedFunctionName}`) : '') +
 					cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`) +
 					`[CM_ID: ${cpuNode.index}]`,
+					`[SCRIPT_ID: ${cpuNode.sourceLocation.scriptID} | ${cpuNode.sourceLocation.isLangInternal}]`,
 					`- ${cpuNode.cpuTime.selfCPUTime} µs | ${cpuNode.cpuTime.aggregatedCPUTime} µs`
 				)
 			}
@@ -299,7 +299,7 @@ export default class CPUProfileCommands {
 		LoggerHelper.log(
 			'\nLegend:\n' +
 			' ■ ' + ' Node (own code)\n' +
-			cli.xterm(TraceColors.Internal)(' ■ ') + ' Node (node internal)\n' +
+			cli.xterm(TraceColors.LangInternal)(' ■ ') + ' Node (node internal)\n' +
 			cli.xterm(TraceColors.External)(' ■ ') + ' Node (node module)\n' +
 			cli.xterm(TraceColors.WebAssembly)(' ■ ') + ' Node (WebAssembly)\n' + 
 			cli.xterm(TraceColors.Webpack)(' ■ ') + ' Node (Webpack)\n'
