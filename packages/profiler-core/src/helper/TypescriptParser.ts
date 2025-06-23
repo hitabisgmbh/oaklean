@@ -219,11 +219,11 @@ export class TypescriptParser {
 							TypescriptParser.posToLoc(sourceFile, node.getStart()),
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 						)
-					} else if (TypeScriptHelper.classHasDefaultModifier(node)) {
+					} else if (TypeScriptHelper.hasDefaultKeywordModifier(node)) {
 						subTree = new ProgramStructureTree(
 							idCounter++,
 							ProgramStructureTreeType.ClassDeclaration,
-							IdentifierType.Name,
+							IdentifierType.KeyWord,
 							('{class:default}') as SourceNodeIdentifierPart_string,
 							TypescriptParser.posToLoc(sourceFile, node.getStart()),
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
@@ -262,7 +262,16 @@ export class TypescriptParser {
 							TypescriptParser.posToLoc(sourceFile, node.getStart()),
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 						)
-					} else {
+					} else if (TypeScriptHelper.hasDefaultKeywordModifier(node)) {
+						subTree = new ProgramStructureTree(
+							idCounter++,
+							ProgramStructureTreeType.FunctionDeclaration,
+							IdentifierType.KeyWord,
+							'{function:default}' as SourceNodeIdentifierPart_string,
+							TypescriptParser.posToLoc(sourceFile, node.getStart()),
+							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+						)
+					}	else {
 						LoggerHelper.error(
 							'TypescriptParser.parseFile.enterNode (isFunctionDeclaration): unhandled case: node.name.kind === ' + node.name?.kind, {
 								filePath,
@@ -563,6 +572,15 @@ export class TypescriptParser {
 
 								parent = node.parent as ts.VariableDeclaration
 						}
+					} else if (node.parent.kind === ts.SyntaxKind.ExportAssignment) {
+						subTree = new ProgramStructureTree(
+							idCounter++,
+							ProgramStructureTreeType.ArrowFunctionExpression,
+							IdentifierType.KeyWord,
+							'{functionExpression:default}' as SourceNodeIdentifierPart_string,
+							TypescriptParser.posToLoc(sourceFile, node.getStart()),
+							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+						)
 					} else {
 						const functionName =
 						`functionExpression:(anonymous:${currentNodeInfo.anonymousFunctionCounter++})`

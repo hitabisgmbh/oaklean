@@ -72,7 +72,7 @@ export class TypeScriptHelper {
 		return '{root}.{functionExpression:__awaiter}' as SourceNodeIdentifier_string
 	}
 
-	static classHasDefaultModifier(node: ts.ClassDeclaration | ts.ClassExpression): boolean {
+	static hasDefaultKeywordModifier(node: ts.ClassDeclaration | ts.ClassExpression | ts.FunctionDeclaration): boolean {
 		if (node.modifiers === undefined || node.modifiers.length === 0) {
 			return false
 		}

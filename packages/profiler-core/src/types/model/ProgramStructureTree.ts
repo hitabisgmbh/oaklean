@@ -7,6 +7,7 @@ export enum IdentifierType {
 	Expression = 'Expression',
 	Literal = 'Literal',
 	Anonymous = 'Anonymous',
+	KeyWord = 'Keyword',
 }
 
 export enum ProgramStructureTreeType {

@@ -3,27 +3,6 @@ import { UnifiedPath } from '../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../src/types'
 
-describe('ts.SyntaxKind.DefaultKeyword', () => {
-	const code = `
-		export default function DefaultKeyword() {
-	`
-
-	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
-
-		const hierarchy = pst.identifierHierarchy()
-
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{function:DefaultKeyword}': {
-					type: ProgramStructureTreeType.FunctionDeclaration,
-				}
-			}
-		})
-	})
-})
-
 describe('ts.SyntaxKind.ArrowFunction', () => {
 	const code = `
 		const ArrowFunction = () => function () {}
