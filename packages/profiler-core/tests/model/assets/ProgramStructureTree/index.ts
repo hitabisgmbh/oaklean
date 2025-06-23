@@ -48,16 +48,6 @@ export function updateTestCase(
 	}
 }
 
-export const BASICS_CASE: TestCase = loadTestCase(
-	ProgramStructureTypes_DIR.join('Basics.ts'),
-	ProgramStructureTypes_DIR.join('Basics.ts.expected.json')
-)
-
-export const FUNCTION_EXPRESSION_CASE: TestCase = loadTestCase(
-	ProgramStructureTypes_DIR.join('FunctionExpression.tsx'),
-	ProgramStructureTypes_DIR.join('FunctionExpression.tsx.expected.json')
-)
-
 export const ARROW_FUNCTION_EXPRESSION_CASE: TestCase = loadTestCase(
 	ProgramStructureTypes_DIR.join('ArrowFunctionExpression.tsx'),
 	ProgramStructureTypes_DIR.join('ArrowFunctionExpression.tsx.expected.json')

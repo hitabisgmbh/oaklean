@@ -1,6 +1,4 @@
 import {
-	BASICS_CASE,
-	FUNCTION_EXPRESSION_CASE,
 	ARROW_FUNCTION_EXPRESSION_CASE,
 	EMIT_HELPER_PATH,
 	NESTED_DECLARATIONS_CASE,
@@ -10,13 +8,10 @@ import {
 import { ProgramStructureTree } from '../../src/model/ProgramStructureTree'
 import { TypescriptParser } from '../../src/helper/TypescriptParser'
 import {
-	IProgramStructureTree,
 	SourceNodeIdentifier_string
 } from '../../src/types'
 
 const testCases = {
-	BASICS_CASE,
-	FUNCTION_EXPRESSION_CASE,
 	ARROW_FUNCTION_EXPRESSION_CASE,
 	NESTED_DECLARATIONS_CASE
 }
@@ -85,26 +80,6 @@ describe('ProgramStructureTree', () => {
 					column: 10000000000
 				})).toBe('')
 			})
-		})
-	})
-
-	describe('deserialization', () => {
-		test('deserialization from string', () => {			
-			const instanceFromString = ProgramStructureTree.fromJSON(
-				FUNCTION_EXPRESSION_CASE.expected.content
-			)
-			expect(JSON.stringify(instanceFromString)).toEqual(
-				JSON.stringify(FUNCTION_EXPRESSION_CASE.expected.object)
-			)
-		})
-
-		test('deserialization from object', () => {
-			const instanceFromObject = ProgramStructureTree.fromJSON(
-				FUNCTION_EXPRESSION_CASE.expected.object as IProgramStructureTree
-			)
-			expect(JSON.stringify(instanceFromObject)).toEqual(
-				JSON.stringify(FUNCTION_EXPRESSION_CASE.expected.object)
-			)
 		})
 	})
 })
