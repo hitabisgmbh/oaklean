@@ -11,37 +11,40 @@ Usage: oak [options] [command]
 An CLI to interact with the @oaklean suite
 
 Options:
-  -V, --version   output the version number
-  -h, --help      display help for command
+  -V, --version    output the version number
+  -h, --help       display help for command
 
 Commands:
-  config          commands to interact with a config file
+  config           commands to interact with a config file
      - resolve Resolves the given config file and outputs the resolved config (including all default values and overrides)
 
-  init            Create a .oaklean config file
-  report          commands to convert or inspect the profiler's format
+  init             Create a .oaklean config file
+  report           commands to convert or inspect the profiler's format
      - toHash Calculates the hash of given a profiler format
      - toJSON Converts a profiler format that is given in binary format to a json version
      - toSourceFileTree Converts a profiler format that is given in binary format to a SourceFileMetaDataTree
      - check Checks wether all files in the profiler format are present
      - inspect Displays an overview of the reports stats
 
-  profile         commands to convert or inspect the cpu profile's format
+  profile          commands to convert or inspect the cpu profile's format
      - toCPUModel Converts a cpu profile format that is given to a cpu model format
      - inspect Displays an overview of the cpu profile stats
      - trace Displays the trace of the cpu profile
      - anonymize Converts all paths in the cpu profile to relative paths (relative to the rootDir mentioned in the .oaklean config) to remove all user related paths
 
-  parse           commands to parse javascript or typescript files
+  parse            commands to parse javascript or typescript files
      - toPST Converts a given javascript/typescript file and extracts the ProgramStructureTree from it and stores it into a file
 
-  backend         commands to interact with the backend
+  backend          commands to interact with the backend
      - send Sends a given .oak report to a backend specified in the .oaklean config
 
-  jest            Commands to inspect the jest profiler format. This is mostly used for debugging purposes
+  jest             Commands to inspect the jest profiler format. This is mostly used for debugging purposes
      - verify Checks wether the accumulate report of the jest-test-environment would be generated the same way with this version
 
-  help [command]  display help for command
+  metrics-data|md  commands to convert or inspect the metrics data collection format
+     - show Displays the metrics data collection as a table
+
+  help [command]   display help for command
 ```
 
 ## Fast Config Setup
