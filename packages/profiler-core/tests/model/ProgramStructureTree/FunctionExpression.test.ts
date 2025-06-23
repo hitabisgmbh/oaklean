@@ -3,6 +3,27 @@ import { UnifiedPath } from '../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../src/types'
 
+describe('ts.SyntaxKind.ExportAssignment', () => {
+	const code = `
+		export = function FunctionExpression() {}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression
+				}
+			}
+		})
+	})
+})
+
 describe('ts.SyntaxKind.ArrowFunction', () => {
 	const code = `
 		const ArrowFunction = () => function () {}

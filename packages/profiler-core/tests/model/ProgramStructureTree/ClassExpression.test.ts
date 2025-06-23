@@ -3,6 +3,30 @@ import { UnifiedPath } from '../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../src/types'
 
+describe('ts.SyntaxKind.ExportAssignment', () => {
+	const code = `
+		export = class ClassExpression {
+			constructor(args: any) {}
+		}
+	`
+
+	it.todo('Should include the class name in the hierarchy')
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{constructor:constructor}': {
+					type: ProgramStructureTreeType.ConstructorDeclaration
+				}
+			}
+		})
+	})
+})
+
 describe('ts.SyntaxKind.VariableDeclaration', () => {
 	const code = `
 		const VariableDeclaration = class {

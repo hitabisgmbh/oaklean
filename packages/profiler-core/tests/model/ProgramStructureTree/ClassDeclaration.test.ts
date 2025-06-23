@@ -3,7 +3,6 @@ import { UnifiedPath } from '../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../src/types'
 
-
 describe('ts.SyntaxKind.ClassDeclaration', () => {
 	const code = `
 		class ClassDeclaration {
