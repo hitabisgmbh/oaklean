@@ -6,6 +6,7 @@ import { memoize } from '../helper/memoize'
 // Types
 import {
 	ProgramStructureTreeType,
+	PSTIdentifierHierarchy,
 	IdentifierType,
 	NodeLocation,
 	NodeLocationRange,
@@ -13,10 +14,6 @@ import {
 	SourceNodeIdentifier_string,
 	SourceNodeIdentifierPart_string
 } from '../types'
-
-type IdentifierHierarchy = {
-	[key: SourceNodeIdentifierPart_string]: IdentifierHierarchy
-}
 
 export class ProgramStructureTree extends BaseModel {
 	id: number
@@ -53,11 +50,15 @@ export class ProgramStructureTree extends BaseModel {
 		this.sourceLocationOfIdentifier = memoize(this.sourceLocationOfIdentifier.bind(this))
 	}
 
-	identifierHierarchy(): IdentifierHierarchy {
-		const traverse = (currentNode: ProgramStructureTree): IdentifierHierarchy => {
-			const result: IdentifierHierarchy = {}
+	identifierHierarchy(): PSTIdentifierHierarchy {
+		const traverse = (currentNode: ProgramStructureTree): PSTIdentifierHierarchy => {
+			const result: PSTIdentifierHierarchy = {
+				type: currentNode.type
+			}
 			for (const [childIdentifier, child] of currentNode.children.entries()) {
-				result[childIdentifier] = traverse(child)
+				const children = result.children || {}
+				children[childIdentifier] = traverse(child)
+				result.children = children
 			}
 			return result
 		}

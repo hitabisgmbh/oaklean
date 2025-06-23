@@ -1,9 +1,12 @@
 import { TypescriptParser } from '../../../src/helper/TypescriptParser'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'
+// Types
+import { ProgramStructureTreeType } from '../../../src/types'
+
 
 describe('ts.SyntaxKind.ArrowFunction', () => {
 	const code = `
-		const ArrowFunction = () => {}
+		const ArrowFunction = () => function () {}
 	`
 
 	test('expected identifier', () => {
@@ -12,7 +15,17 @@ describe('ts.SyntaxKind.ArrowFunction', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:ArrowFunction}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:ArrowFunction}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						}
+					}
+				}
+			}
 		})
 	})
 })
@@ -28,7 +41,12 @@ describe('ts.SyntaxKind.ExportAssignment', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				}
+			}
 		})
 	})
 })
@@ -44,7 +62,12 @@ describe('ts.SyntaxKind.VariableDeclaration', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:VariableDeclaration}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:VariableDeclaration}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				}
+			}
 		})
 	})
 })
@@ -60,7 +83,12 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(expression:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(expression:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				}
+			}
 		})
 	})
 })
@@ -76,7 +104,12 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				}
+			}
 		})
 	})
 })
@@ -92,7 +125,12 @@ describe('ts.SyntaxKind.CallExpression', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				}
+			}
 		})
 	})
 })
@@ -109,7 +147,12 @@ describe('ts.SyntaxKind.BinaryExpression', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				}
+			}
 		})
 	})
 })
@@ -125,8 +168,16 @@ describe('ts.SyntaxKind.Parameter', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{function:Parameter}': {
-				'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{function:Parameter}': {
+					type: ProgramStructureTreeType.FunctionDeclaration,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						}
+					}
+				}
 			}
 		})
 	})
@@ -143,7 +194,12 @@ describe('ts.SyntaxKind.ForInStatement', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				}
+			}
 		})
 	})
 })
@@ -159,7 +215,12 @@ describe('ts.SyntaxKind.ArrayLiteralExpression', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				}
+			}
 		})
 	})
 })
@@ -175,8 +236,15 @@ describe('ts.SyntaxKind.ConditionalExpression', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {},
-			'{functionExpression:(anonymous:1)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression
+				},
+				'{functionExpression:(anonymous:1)}': {
+					type: ProgramStructureTreeType.FunctionExpression
+				}
+			}
 		})
 	})
 })
@@ -194,8 +262,16 @@ describe('ts.SyntaxKind.ReturnStatement', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{function:ReturnStatement}': {
-				'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{function:ReturnStatement}': {
+					type: ProgramStructureTreeType.FunctionDeclaration,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				}
 			}
 		})
 	})
@@ -207,12 +283,21 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 	`
 
 	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
+		const pst = TypescriptParser.parseSource(
+			new UnifiedPath('test.ts'),
+			code,
+			'TSX'
+		)
 
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression
+				}
+			}
 		})
 	})
 })
@@ -228,7 +313,12 @@ describe('ts.SyntaxKind.NewExpression', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression
+				}
+			}
 		})
 	})
 })
@@ -244,7 +334,12 @@ describe('ts.SyntaxKind.ThrowStatement', () => {
 		const hierarchy = pst.identifierHierarchy()
 
 		expect(hierarchy).toEqual({
-			'{functionExpression:(anonymous:0)}': {}
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression
+				}
+			}
 		})
 	})
 })
@@ -263,8 +358,16 @@ describe('FunctionExpression in Class', () => {
 			const hierarchy = pst.identifierHierarchy()
 
 			expect(hierarchy).toEqual({
-				'{class:FunctionExpression}': {
-					'{functionExpression:#private}': {}
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:#private}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							}
+						}
+					}
 				}
 			})
 		})
@@ -283,8 +386,16 @@ describe('FunctionExpression in Class', () => {
 			const hierarchy = pst.identifierHierarchy()
 
 			expect(hierarchy).toEqual({
-				'{class:FunctionExpression}': {
-					'{functionExpression:PropertyDeclaration}': {}
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:PropertyDeclaration}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							}
+						}
+					}
 				}
 			})
 		})
@@ -303,8 +414,16 @@ describe('FunctionExpression in Class', () => {
 			const hierarchy = pst.identifierHierarchy()
 
 			expect(hierarchy).toEqual({
-				'{class:FunctionExpression}': {
-					'{functionExpression:(literal:0)}': {}
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:(literal:0)}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							}
+						}
+					}
 				}
 			})
 		})
@@ -323,8 +442,16 @@ describe('FunctionExpression in Class', () => {
 			const hierarchy = pst.identifierHierarchy()
 
 			expect(hierarchy).toEqual({
-				'{class:FunctionExpression}': {
-					'{functionExpression:(literal:0)}': {}
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:(literal:0)}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							}
+						}
+					}
 				}
 			})
 		})
@@ -345,8 +472,16 @@ describe('FunctionExpression in Class', () => {
 			const hierarchy = pst.identifierHierarchy()
 
 			expect(hierarchy).toEqual({
-				'{class:FunctionExpression}': {
-					'{functionExpression:(expression:0)}': {}
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:(expression:0)}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							}
+						}
+					}
 				}
 			})
 		})

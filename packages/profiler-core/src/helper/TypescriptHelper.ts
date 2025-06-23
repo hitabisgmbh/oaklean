@@ -71,4 +71,16 @@ export class TypeScriptHelper {
 	static awaiterSourceNodeIdentifier(): SourceNodeIdentifier_string {
 		return '{root}.{functionExpression:__awaiter}' as SourceNodeIdentifier_string
 	}
+
+	static classHasDefaultModifier(node: ts.ClassDeclaration | ts.ClassExpression): boolean {
+		if (node.modifiers === undefined || node.modifiers.length === 0) {
+			return false
+		}
+		for (const modifier of node.modifiers) {
+			if (modifier.kind === ts.SyntaxKind.DefaultKeyword) {
+				return true
+			}
+		}
+		return false
+	}
 }

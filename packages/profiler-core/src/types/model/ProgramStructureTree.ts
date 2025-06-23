@@ -19,6 +19,11 @@ export enum ProgramStructureTreeType {
 	ArrowFunctionExpression = 'ArrowFunctionExpression',
 }
 
+export type PSTIdentifierHierarchy = {
+	type: ProgramStructureTreeType,
+	children?: Record<SourceNodeIdentifierPart_string, PSTIdentifierHierarchy>
+}
+
 export type NodeLocation = {
 	line: number,
 	column: number,

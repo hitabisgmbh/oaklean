@@ -125,7 +125,7 @@ export class TypescriptParser {
 	static codeToTSSourceFile(
 		filePath: UnifiedPath | UnifiedPath_string,
 		sourceCode: string,
-		scriptKind: 'TSX' | 'TS'
+		scriptKind: 'TSX' | 'TS' = 'TS'
 	): ts.SourceFile {
 		return ts.createSourceFile(
 			filePath.toString(),
@@ -216,6 +216,15 @@ export class TypescriptParser {
 							ProgramStructureTreeType.ClassDeclaration,
 							IdentifierType.Name,
 							('{class:' + className + '}') as SourceNodeIdentifierPart_string,
+							TypescriptParser.posToLoc(sourceFile, node.getStart()),
+							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+						)
+					} else if (TypeScriptHelper.classHasDefaultModifier(node)) {
+						subTree = new ProgramStructureTree(
+							idCounter++,
+							ProgramStructureTreeType.ClassDeclaration,
+							IdentifierType.Name,
+							('{class:default}') as SourceNodeIdentifierPart_string,
 							TypescriptParser.posToLoc(sourceFile, node.getStart()),
 							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
 						)
