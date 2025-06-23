@@ -1,9 +1,4 @@
-import { ProgramStructureTree } from '../../../src/model/ProgramStructureTree'
 import { TypescriptParser } from '../../../src/helper/TypescriptParser'
-import {
-	IProgramStructureTree,
-	SourceNodeIdentifier_string
-} from '../../../src/types'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'
 
 describe('ts.SyntaxKind.ArrowFunction', () => {
@@ -212,7 +207,7 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 	`
 
 	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
 
 		const hierarchy = pst.identifierHierarchy()
 
