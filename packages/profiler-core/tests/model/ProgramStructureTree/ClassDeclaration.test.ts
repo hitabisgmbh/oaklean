@@ -3,6 +3,36 @@ import { UnifiedPath } from '../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../src/types'
 
+describe('exports', () => {
+	describe('ts.SyntaxKind.DefaultKeyword', () => {
+		const code = `
+			export default class {
+				constructor(args: any) {}
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:default}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{constructor:constructor}': {
+								type: ProgramStructureTreeType.ConstructorDeclaration,
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+})
+
 describe('ts.SyntaxKind.ClassDeclaration', () => {
 	const code = `
 		class ClassDeclaration {
@@ -40,30 +70,3 @@ describe('ts.SyntaxKind.ClassDeclaration', () => {
 	})
 })
 
-describe('ts.SyntaxKind.DefaultKeyword', () => {
-	const code = `
-		export default class {
-			constructor(args: any) {}
-		}
-	`
-
-	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
-
-		const hierarchy = pst.identifierHierarchy()
-
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{class:default}': {
-					type: ProgramStructureTreeType.ClassDeclaration,
-					children: {
-						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
-						}
-					}
-				}
-			}
-		})
-	})
-})

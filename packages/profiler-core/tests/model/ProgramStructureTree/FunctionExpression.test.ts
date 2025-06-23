@@ -3,26 +3,68 @@ import { UnifiedPath } from '../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../src/types'
 
-describe('ts.SyntaxKind.ExportAssignment', () => {
-	const code = `
-		export = function FunctionExpression() {}
-	`
+describe('exports', () => {
+	/*
+		export = function() {}
+		transpiled to:
+		module.exports = function() {}
 
-	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+		This case:
+		export = function() {}
+		export = function() {}
+		will throw, since the export can only be used once in a file
 
-		const hierarchy = pst.identifierHierarchy()
+		BUT this case:
+		module.exports = function() {}
+		module.exports = function() {}
+		will NOT throw, since it can be assigned multiple times
 
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.FunctionExpression
+		so we should give them anonymous identifiers (like anonymous:0) instead of default,
+		so both cases will have the same identifiers
+	*/
+	describe('module.exports', () => {
+		const code = `
+			module.exports = function FunctionExpression() {}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{functionExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.FunctionExpression
+					}
 				}
-			}
+			})
+		})
+	})
+
+	describe('ts.SyntaxKind.ExportAssignment', () => {
+		const code = `
+			export = function FunctionExpression() {}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{functionExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.FunctionExpression
+					}
+				}
+			})
 		})
 	})
 })
+
 
 describe('ts.SyntaxKind.ArrowFunction', () => {
 	const code = `

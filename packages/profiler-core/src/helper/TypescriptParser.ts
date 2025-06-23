@@ -572,15 +572,6 @@ export class TypescriptParser {
 
 								parent = node.parent as ts.VariableDeclaration
 						}
-					} else if (node.parent.kind === ts.SyntaxKind.ExportAssignment) {
-						subTree = new ProgramStructureTree(
-							idCounter++,
-							ProgramStructureTreeType.ArrowFunctionExpression,
-							IdentifierType.KeyWord,
-							'{functionExpression:default}' as SourceNodeIdentifierPart_string,
-							TypescriptParser.posToLoc(sourceFile, node.getStart()),
-							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
-						)
 					} else {
 						const functionName =
 						`functionExpression:(anonymous:${currentNodeInfo.anonymousFunctionCounter++})`
