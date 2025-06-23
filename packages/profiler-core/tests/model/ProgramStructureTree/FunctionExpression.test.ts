@@ -439,9 +439,11 @@ describe('FunctionExpression in Class', () => {
 		const code = `
 			class FunctionExpression {
 				PropertyDeclaration = function() {};
+				static PropertyDeclaration = function() {};
 			}
 		`
 
+		it.todo('should include static version in identifier hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -467,6 +469,7 @@ describe('FunctionExpression in Class', () => {
 		const code = `
 			class FunctionExpression {
 				42 = function() {};
+				static 42 = function() {};
 			}
 		`
 
@@ -482,6 +485,9 @@ describe('FunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:(literal:0)}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							},
+							'{functionExpression:(literal:1)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
@@ -495,6 +501,7 @@ describe('FunctionExpression in Class', () => {
 		const code = `
 			class FunctionExpression {
 				'StringLiteral' = function() {};
+				static 'StringLiteral' = function() {};
 			}
 		`
 
@@ -511,6 +518,9 @@ describe('FunctionExpression in Class', () => {
 						children: {
 							'{functionExpression:(literal:0)}': {
 								type: ProgramStructureTreeType.FunctionExpression
+							},
+							'{functionExpression:(literal:1)}': {
+								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
 					}
@@ -521,10 +531,11 @@ describe('FunctionExpression in Class', () => {
 
 	describe('ts.SyntaxKind.ComputedPropertyName', () => {
 		const code = `
-			const ComputedPropertyName = 'Computed' + 'Property' + 'Name'
+			const ComputedPropertyName = 'ComputedPropertyName'
 
 			class FunctionExpression {
 				[ComputedPropertyName] = function() {};
+				static [ComputedPropertyName] = function() {};
 			}
 		`
 
@@ -540,6 +551,9 @@ describe('FunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:(expression:0)}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							},
+							'{functionExpression:(expression:1)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}

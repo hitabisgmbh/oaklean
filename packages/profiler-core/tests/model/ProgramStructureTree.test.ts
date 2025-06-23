@@ -1,5 +1,4 @@
 import {
-	ARROW_FUNCTION_EXPRESSION_CASE,
 	EMIT_HELPER_PATH,
 	NESTED_DECLARATIONS_CASE,
 	updateTestCase
@@ -12,8 +11,7 @@ import {
 } from '../../src/types'
 
 const testCases = {
-	ARROW_FUNCTION_EXPRESSION_CASE,
-	NESTED_DECLARATIONS_CASE
+	NESTED_DECLARATIONS_CASE,
 }
 
 const UPDATE_TEST_ASSETS = false

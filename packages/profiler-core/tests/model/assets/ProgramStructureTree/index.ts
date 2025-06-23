@@ -48,11 +48,6 @@ export function updateTestCase(
 	}
 }
 
-export const ARROW_FUNCTION_EXPRESSION_CASE: TestCase = loadTestCase(
-	ProgramStructureTypes_DIR.join('ArrowFunctionExpression.tsx'),
-	ProgramStructureTypes_DIR.join('ArrowFunctionExpression.tsx.expected.json')
-)
-
 export const NESTED_DECLARATIONS_CASE: TestCase = loadTestCase(
 	CURRENT_DIR.join('nestedDeclarations.js'),
 	CURRENT_DIR.join('nestedDeclarations.js.expected.json')

@@ -440,9 +440,11 @@ describe('ArrowFunctionExpression in Class', () => {
 		const code = `
 			class FunctionExpression {
 				PropertyDeclaration = () => {};
+				static PropertyDeclaration = () => {};
 			}
 		`
 
+		it.todo('Should include the static version in the identifier hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -468,6 +470,7 @@ describe('ArrowFunctionExpression in Class', () => {
 		const code = `
 			class FunctionExpression {
 				42 = () => {};
+				static 42 = () => {};
 			}
 		`
 
@@ -483,6 +486,9 @@ describe('ArrowFunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:(literal:0)}': {
+								type: ProgramStructureTreeType.ArrowFunctionExpression
+							},
+							'{functionExpression:(literal:1)}': {
 								type: ProgramStructureTreeType.ArrowFunctionExpression
 							}
 						}
@@ -496,6 +502,7 @@ describe('ArrowFunctionExpression in Class', () => {
 		const code = `
 			class FunctionExpression {
 				'StringLiteral' = () => {};
+				static 'StringLiteral' = () => {};
 			}
 		`
 
@@ -512,6 +519,9 @@ describe('ArrowFunctionExpression in Class', () => {
 						children: {
 							'{functionExpression:(literal:0)}': {
 								type: ProgramStructureTreeType.ArrowFunctionExpression
+							},
+							'{functionExpression:(literal:1)}': {
+								type: ProgramStructureTreeType.ArrowFunctionExpression
 							}
 						}
 					}
@@ -522,9 +532,10 @@ describe('ArrowFunctionExpression in Class', () => {
 
 	describe(' ts.SyntaxKind.ComputedPropertyName', () => {
 		const code = `
-			const ComputedPropertyName = 'Computed' + 'Property' + 'Name'
+			const ComputedPropertyName = 'ComputedPropertyName'
 			class FunctionExpression {
 				[ComputedPropertyName] = () => {};
+				static [ComputedPropertyName] = () => {};
 			}
 		`
 
@@ -540,6 +551,9 @@ describe('ArrowFunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:(expression:0)}': {
+								type: ProgramStructureTreeType.ArrowFunctionExpression
+							},
+							'{functionExpression:(expression:1)}': {
 								type: ProgramStructureTreeType.ArrowFunctionExpression
 							}
 						}
