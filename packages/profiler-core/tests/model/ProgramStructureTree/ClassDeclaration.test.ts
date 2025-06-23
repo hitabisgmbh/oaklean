@@ -69,4 +69,3 @@ describe('ts.SyntaxKind.ClassDeclaration', () => {
 		})
 	})
 })
-

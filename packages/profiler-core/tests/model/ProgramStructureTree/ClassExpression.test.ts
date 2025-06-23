@@ -30,7 +30,7 @@ describe ('exports', () => {
 			}
 		`
 
-		it.todo('Should include the class anonymous name in the hierarchy')
+		it.todo('Should include the anonymous class name in the hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -54,7 +54,7 @@ describe ('exports', () => {
 			}
 		`
 
-		it.todo('Should include the class anonymous name in the hierarchy')
+		it.todo('Should include the anonymous class name in the hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -107,7 +107,7 @@ describe('ts.SyntaxKind.ReturnStatement', () => {
 		}
 	`
 
-	it.todo('Should include the class name in the hierarchy')
+	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -136,7 +136,7 @@ describe('ts.SyntaxKind.PropertyAccessExpression', () => {
 		}
 	`
 
-	it.todo('Should include the class name in the hierarchy')
+	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -160,7 +160,7 @@ describe('ts.SyntaxKind.NewExpression', () => {
 		})
 	`
 
-	it.todo('Should include the class name in the hierarchy')
+	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -185,7 +185,7 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 		})(0)
 	`
 
-		it.todo('Should include the class name in the hierarchy')
+		it.todo('Should include the anonymous class name in the hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -209,7 +209,7 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 		})
 	`
 
-		it.todo('Should include the class name in the hierarchy')
+		it.todo('Should include the anonymous class name in the hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -234,7 +234,7 @@ describe('ts.SyntaxKind.CallExpression', () => {
 		})
 	`
 
-	it.todo('Should include the class name in the hierarchy')
+	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -260,7 +260,7 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 		};
 	`
 
-	it.todo('Should include the class name in the hierarchy')
+	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -284,7 +284,7 @@ describe('ts.SyntaxKind.ArrayLiteralExpression', () => {
 		}];
 	`
 
-	it.todo('Should include the class name in the hierarchy')
+	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -308,7 +308,7 @@ describe('ts.SyntaxKind.ArrowFunction', () => {
 		};
 	`
 
-	it.todo('Should include the class name in the hierarchy')
+	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -339,10 +339,32 @@ describe('ts.SyntaxKind.ConditionalExpression', () => {
 		};
 	`
 
-	it.todo('Should include the class name in the hierarchy')
+	it.todo('Should include the anonymous class name in the hierarchy')
 	it.todo('Should identify two classes in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{constructor:constructor}': {
+					type: ProgramStructureTreeType.ConstructorDeclaration,
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.JsxExpression', () => {
+	const code = `
+		<div>{class ClassExpression {constructor(args: any) {}}}</div>
+	`
+
+	it.todo('Should include the anonymous class name in the hierarchy')
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
 
 		const hierarchy = pst.identifierHierarchy()
 

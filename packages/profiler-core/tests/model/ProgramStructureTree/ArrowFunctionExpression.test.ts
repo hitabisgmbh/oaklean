@@ -1,0 +1,408 @@
+import { TypescriptParser } from '../../../src/helper/TypescriptParser'
+import { UnifiedPath } from '../../../src/system/UnifiedPath'
+// Types
+import { ProgramStructureTreeType } from '../../../src/types'
+
+describe('exports', () => {
+	/*
+		export = () => {}
+		transpiled to:
+		module.exports = () => {}
+
+		This case:
+		export = () => {}
+		export = () => {}
+		will throw, since the export can only be used once in a file
+
+		BUT this case:
+		module.exports = () => {}
+		module.exports = () => {}
+		will NOT throw, since it can be assigned multiple times
+
+		so we should give them anonymous identifiers (like anonymous:0) instead of default,
+		so both cases will have the same identifiers
+	*/
+
+	describe('module.exports', () => {
+		const code = `
+			module.exports = () => {}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{functionExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.ArrowFunctionExpression,
+					}
+				}
+			})
+		})
+	})
+
+	describe('ts.SyntaxKind.ExportAssignment', () => {
+		const code = `
+			export = () => {}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{functionExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.ArrowFunctionExpression,
+					}
+				}
+			})
+		})
+	})
+
+	describe('ts.SyntaxKind.DefaultKeyword', () => {
+		const code = `
+			export default () => {}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{functionExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.ArrowFunctionExpression,
+					}
+				}
+			})
+		})
+	})
+})
+
+describe('ts.SyntaxKind.ArrowFunction', () => {
+	const code = `
+		const ArrowFunction = () => () => {}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:ArrowFunction}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.ArrowFunctionExpression,
+						}
+					}
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.VariableDeclaration', () => {
+	const code = `
+		const VariableDeclaration = () => {}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:VariableDeclaration}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.ParenthesizedExpression', () => {
+	const code = `
+		;(() => {})()
+	`
+
+	it.todo('Maybe we should not include the parenthesized expression in the hierarchy?')
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(expression:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.PropertyAssignment', () => {
+	const code = `
+		const obj = { method: () => {} }
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.CallExpression', () => {
+	const code = `
+		Object.entries(() => {})
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.BinaryExpression', () => {
+	const code = `
+		let x
+		if(x = () => {}) {}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.Parameter', () => {
+	const code = `
+		function Parameter(f = () => {}) {}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{function:Parameter}': {
+					type: ProgramStructureTreeType.FunctionDeclaration,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.ArrowFunctionExpression,
+						}
+					}
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.ForInStatement', () => {
+	const code = `
+		for(const ForInStatement in () => {}) {}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.ArrayLiteralExpression', () => {
+	const code = `
+		;[() => {}, 42]
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.ConditionalExpression', () => {
+	const code = `
+		true ? () => {} : () => {}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				},
+				'{functionExpression:(anonymous:1)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.ReturnStatement', () => {
+	const code = `
+		function ReturnStatement() {
+			return () => {}
+		}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{function:ReturnStatement}': {
+					type: ProgramStructureTreeType.FunctionDeclaration,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.ArrowFunctionExpression,
+						
+						}
+					}
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.JsxExpression', () => {
+	const code = `
+		<div>{() => {}}</div>
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.NewExpression', () => {
+	const code = `
+		new ArrowFunctionExpression(() => {})
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.ThrowStatement', () => {
+	const code = `
+		throw () => {}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				
+				}
+			}
+		})
+	})
+})
