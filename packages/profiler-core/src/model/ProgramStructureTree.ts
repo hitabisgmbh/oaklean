@@ -14,6 +14,9 @@ import {
 	SourceNodeIdentifierPart_string
 } from '../types'
 
+type IdentifierHierarchy = {
+	[key: SourceNodeIdentifierPart_string]: IdentifierHierarchy
+}
 
 export class ProgramStructureTree extends BaseModel {
 	id: number
@@ -48,6 +51,18 @@ export class ProgramStructureTree extends BaseModel {
 		this.containsLocation = memoize(this.containsLocation.bind(this))
 		this.identifierBySourceLocation = memoize(this.identifierBySourceLocation.bind(this))
 		this.sourceLocationOfIdentifier = memoize(this.sourceLocationOfIdentifier.bind(this))
+	}
+
+	identifierHierarchy(): IdentifierHierarchy {
+		const traverse = (currentNode: ProgramStructureTree): IdentifierHierarchy => {
+			const result: IdentifierHierarchy = {}
+			for (const [childIdentifier, child] of currentNode.children.entries()) {
+				result[childIdentifier] = traverse(child)
+			}
+			return result
+		}
+
+		return traverse(this)
 	}
 
 	toJSON(): IProgramStructureTree {

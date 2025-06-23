@@ -124,24 +124,27 @@ export class TypescriptParser {
 
 	static codeToTSSourceFile(
 		filePath: UnifiedPath | UnifiedPath_string,
-		sourceCode: string
+		sourceCode: string,
+		scriptKind: 'TSX' | 'TS'
 	): ts.SourceFile {
 		return ts.createSourceFile(
 			filePath.toString(),
 			sourceCode,
-			ts.ScriptTarget.ES2015,
-			/*setParentNodes */ true
+			ts.ScriptTarget.Latest,
+			true, // setParentNodes
+			scriptKind === 'TS' ? ts.ScriptKind.TS : ts.ScriptKind.TSX
 		)
 	}
 
 	static parseSource(
 		filePath: UnifiedPath | UnifiedPath_string,
 		sourceCode: string,
+		scriptKind: 'TSX' | 'TS' = 'TS',
 		onDuplicateIdentifier?: OnDuplicateIdentifierCallback
 	): ProgramStructureTree {
 		return TypescriptParser.parseTSSourceFile(
 			filePath,
-			TypescriptParser.codeToTSSourceFile(filePath, sourceCode),
+			TypescriptParser.codeToTSSourceFile(filePath, sourceCode, scriptKind),
 			onDuplicateIdentifier
 		)
 	}
