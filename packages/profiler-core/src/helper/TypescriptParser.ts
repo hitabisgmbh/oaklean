@@ -82,7 +82,8 @@ export class TypescriptParser {
 			ts.isArrowFunction(node) ||
 			ts.isMethodDeclaration(node) ||
 			ts.isConstructorDeclaration(node) ||
-			ts.isClassDeclaration(node)
+			ts.isClassDeclaration(node) ||
+			ts.isClassExpression(node)
 	}
 
 	/**
@@ -240,6 +241,127 @@ export class TypescriptParser {
 					}
 				}
 
+				if (ts.isClassExpression(node)) {
+					if (
+						node.parent.kind === ts.SyntaxKind.VariableDeclaration ||
+						node.parent.kind === ts.SyntaxKind.PropertyDeclaration ||
+						node.parent.kind === ts.SyntaxKind.ParenthesizedExpression
+					) {
+						let parent = undefined
+						let className = undefined
+						switch (node.parent.kind) {
+							case ts.SyntaxKind.PropertyDeclaration:
+								parent = node.parent as ts.PropertyDeclaration
+								switch (parent.name.kind) {
+									case ts.SyntaxKind.Identifier:
+									case ts.SyntaxKind.PrivateIdentifier:
+										className = `classExpression:${parent.name.escapedText}`
+										subTree = new ProgramStructureTree(
+											idCounter++,
+											ProgramStructureTreeType.ClassExpression,
+											IdentifierType.Name,
+											`{${className}}` as SourceNodeIdentifierPart_string,
+											TypescriptParser.posToLoc(sourceFile, node.getStart()),
+											TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+										)
+										break
+									case ts.SyntaxKind.StringLiteral:
+									case ts.SyntaxKind.FirstLiteralToken:
+										className =
+											'classExpression:(literal:' +
+											`${currentNodeInfo.literalFunctionCounter++})`
+										subTree = new ProgramStructureTree(
+											idCounter++,
+											ProgramStructureTreeType.ClassExpression,
+											IdentifierType.Literal,
+											`{${className}}` as SourceNodeIdentifierPart_string,
+											TypescriptParser.posToLoc(sourceFile, node.getStart()),
+											TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+										)
+										break
+									case ts.SyntaxKind.ComputedPropertyName:
+										className =
+											'classExpression:(expression:' +
+											`${currentNodeInfo.literalFunctionCounter++})`
+										subTree = new ProgramStructureTree(
+											idCounter++,
+											ProgramStructureTreeType.ClassExpression,
+											IdentifierType.Expression,
+											`{${className}}` as SourceNodeIdentifierPart_string,
+											TypescriptParser.posToLoc(sourceFile, node.getStart()),
+											TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+										)
+										break
+									default:
+										LoggerHelper.error(
+											'TypescriptParser.parseFile.enterNode (isClassExpression: PropertyDeclaration): unhandled case: parent.name.kind === ' + parent.name.kind,
+											{
+												filePath,
+												kind: parent.name.kind,
+												pos: TypescriptParser.posToLoc(sourceFile, parent.name.getStart())
+											}
+										)
+										throw new Error('TypescriptParser.parseFile.enterNode (isArrowFunction: PropertyDeclaration): unhandled case: parent.name.kind === ' + parent.name.kind)
+								}
+								break
+							case ts.SyntaxKind.ParenthesizedExpression:
+								className =
+									`classExpression:(expression:${currentNodeInfo.literalFunctionCounter++})`
+								subTree = new ProgramStructureTree(
+									idCounter++,
+									ProgramStructureTreeType.ClassExpression,
+									IdentifierType.Expression,
+									`{${className}}` as SourceNodeIdentifierPart_string,
+									TypescriptParser.posToLoc(sourceFile, node.getStart()),
+									TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+								)
+								break
+							case ts.SyntaxKind.VariableDeclaration:
+								parent = node.parent as ts.VariableDeclaration
+								switch (parent.name.kind) {
+									case ts.SyntaxKind.Identifier:
+										className = `classExpression:${parent.name.escapedText}`
+										subTree = new ProgramStructureTree(
+											idCounter++,
+											ProgramStructureTreeType.ClassExpression,
+											IdentifierType.Name,
+											`{${className}}` as SourceNodeIdentifierPart_string,
+											TypescriptParser.posToLoc(sourceFile, node.getStart()),
+											TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+										)
+										break
+									default:
+										LoggerHelper.error(
+											'Error: TypescriptParser.parseFile.enterNode',
+											filePath,
+											TypescriptParser.posToLoc(sourceFile, node.parent.getStart())
+										)
+										LoggerHelper.error(
+											'TypescriptParser.parseFile.enterNode (isClassExpression: VariableDeclaration): unhandled case: node.parent.kind  === ' + node.parent.kind, {
+												filePath,
+												kind: node.parent.kind,
+												pos: TypescriptParser.posToLoc(sourceFile, node.parent.getStart())
+											}
+										)
+										throw new Error('TypescriptParser.parseFile.enterNode (isClassExpression: VariableDeclaration): unhandled case: node.parent.kind  === ' + node.parent.kind)
+								}
+
+								parent = node.parent as ts.VariableDeclaration
+						}
+					} else {
+						const className =
+							`classExpression:(anonymous:${currentNodeInfo.anonymousFunctionCounter++})`
+						subTree = new ProgramStructureTree(
+							idCounter++,
+							ProgramStructureTreeType.ClassExpression,
+							IdentifierType.Anonymous,
+							`{${className}}` as SourceNodeIdentifierPart_string,
+							TypescriptParser.posToLoc(sourceFile, node.getStart()),
+							TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+						)
+					}
+				}
+
 				if (ts.isConstructorDeclaration(node)) {
 					subTree = new ProgramStructureTree(
 						idCounter++,
@@ -355,7 +477,7 @@ export class TypescriptParser {
 													pos: TypescriptParser.posToLoc(sourceFile, parent.name.getStart())
 												}
 											)
-											throw new Error('TypescriptParser.parseFile.enterNode (isArrowFunction: PropertyDeclaration): unhandled case: parent.name.kind === ' + parent.name.kind)
+											throw new Error('TypescriptParser.parseFile.enterNode (isFunctionExpression: PropertyDeclaration): unhandled case: parent.name.kind === ' + parent.name.kind)
 									}
 									break
 								case ts.SyntaxKind.ParenthesizedExpression:

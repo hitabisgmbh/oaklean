@@ -30,7 +30,6 @@ describe ('exports', () => {
 			}
 		`
 
-		it.todo('Should include the anonymous class name in the hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -39,8 +38,13 @@ describe ('exports', () => {
 			expect(hierarchy).toEqual({
 				type: ProgramStructureTreeType.Root,
 				children: {
-					'{constructor:constructor}': {
-						type: ProgramStructureTreeType.ConstructorDeclaration
+					'{classExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.ClassExpression,
+						children: {
+							'{constructor:constructor}': {
+								type: ProgramStructureTreeType.ConstructorDeclaration
+							}
+						}
 					}
 				}
 			})
@@ -54,7 +58,6 @@ describe ('exports', () => {
 			}
 		`
 
-		it.todo('Should include the anonymous class name in the hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -63,8 +66,13 @@ describe ('exports', () => {
 			expect(hierarchy).toEqual({
 				type: ProgramStructureTreeType.Root,
 				children: {
-					'{constructor:constructor}': {
-						type: ProgramStructureTreeType.ConstructorDeclaration
+					'{classExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.ClassExpression,
+						children: {
+							'{constructor:constructor}': {
+								type: ProgramStructureTreeType.ConstructorDeclaration
+							}
+						}
 					}
 				}
 			})
@@ -79,7 +87,6 @@ describe('ts.SyntaxKind.VariableDeclaration', () => {
 		}
 	`
 
-	it.todo('Should include the class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -88,8 +95,13 @@ describe('ts.SyntaxKind.VariableDeclaration', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{constructor:constructor}': {
-					type: ProgramStructureTreeType.ConstructorDeclaration,
+				'{classExpression:VariableDeclaration}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						}
+					}
 				}
 			}
 		})
@@ -107,7 +119,6 @@ describe('ts.SyntaxKind.ReturnStatement', () => {
 		}
 	`
 
-	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -116,11 +127,21 @@ describe('ts.SyntaxKind.ReturnStatement', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{constructor:constructor}': {
-					type: ProgramStructureTreeType.ConstructorDeclaration,
+				'{classExpression:ReturnStatement}': {
+					type: ProgramStructureTreeType.ClassExpression,
 					children: {
 						'{constructor:constructor}': {
 							type: ProgramStructureTreeType.ConstructorDeclaration,
+							children: {
+								'{classExpression:(anonymous:0)}': {
+									type: ProgramStructureTreeType.ClassExpression,
+									children: {
+										'{constructor:constructor}': {
+											type: ProgramStructureTreeType.ConstructorDeclaration,
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -136,7 +157,6 @@ describe('ts.SyntaxKind.PropertyAccessExpression', () => {
 		}
 	`
 
-	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -145,8 +165,13 @@ describe('ts.SyntaxKind.PropertyAccessExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{constructor:constructor}': {
-					type: ProgramStructureTreeType.ConstructorDeclaration,
+				'{classExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						}
+					}
 				}
 			}
 		})
@@ -160,7 +185,6 @@ describe('ts.SyntaxKind.NewExpression', () => {
 		})
 	`
 
-	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -169,8 +193,13 @@ describe('ts.SyntaxKind.NewExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{constructor:constructor}': {
-					type: ProgramStructureTreeType.ConstructorDeclaration,
+				'{classExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						}
+					}
 				}
 			}
 		})
@@ -185,7 +214,6 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 		})(0)
 	`
 
-		it.todo('Should include the anonymous class name in the hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -194,8 +222,13 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 			expect(hierarchy).toEqual({
 				type: ProgramStructureTreeType.Root,
 				children: {
-					'{constructor:constructor}': {
-						type: ProgramStructureTreeType.ConstructorDeclaration,
+					'{classExpression:(expression:0)}': {
+						type: ProgramStructureTreeType.ClassExpression,
+						children: {
+							'{constructor:constructor}': {
+								type: ProgramStructureTreeType.ConstructorDeclaration,
+							}
+						}
 					}
 				}
 			})
@@ -209,7 +242,6 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 		})
 	`
 
-		it.todo('Should include the anonymous class name in the hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -218,9 +250,14 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 			expect(hierarchy).toEqual({
 				type: ProgramStructureTreeType.Root,
 				children: {
-					'{constructor:constructor}': {
-						type: ProgramStructureTreeType.ConstructorDeclaration,
-					}	
+					'{classExpression:(expression:0)}': {
+						type: ProgramStructureTreeType.ClassExpression,
+						children: {
+							'{constructor:constructor}': {
+								type: ProgramStructureTreeType.ConstructorDeclaration,
+							}
+						}
+					}
 				}
 			})
 		})
@@ -234,7 +271,6 @@ describe('ts.SyntaxKind.CallExpression', () => {
 		})
 	`
 
-	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -243,8 +279,13 @@ describe('ts.SyntaxKind.CallExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{constructor:constructor}': {
-					type: ProgramStructureTreeType.ConstructorDeclaration,
+				'{classExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						}
+					}
 				}
 			}
 		})
@@ -260,7 +301,6 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 		};
 	`
 
-	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -269,8 +309,13 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{constructor:constructor}': {
-					type: ProgramStructureTreeType.ConstructorDeclaration,
+				'{classExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						}
+					}
 				}
 			}
 		})
@@ -284,7 +329,6 @@ describe('ts.SyntaxKind.ArrayLiteralExpression', () => {
 		}];
 	`
 
-	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -293,8 +337,13 @@ describe('ts.SyntaxKind.ArrayLiteralExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{constructor:constructor}': {
-					type: ProgramStructureTreeType.ConstructorDeclaration,
+				'{classExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						}
+					}
 				}
 			}
 		})
@@ -308,7 +357,6 @@ describe('ts.SyntaxKind.ArrowFunction', () => {
 		};
 	`
 
-	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -320,8 +368,13 @@ describe('ts.SyntaxKind.ArrowFunction', () => {
 				'{functionExpression:fn}': {
 					type: ProgramStructureTreeType.ArrowFunctionExpression,
 					children: {
-						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+						'{classExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.ClassExpression,
+							children: {
+								'{constructor:constructor}': {
+									type: ProgramStructureTreeType.ConstructorDeclaration,
+								}
+							}
 						}
 					}
 				}
@@ -339,8 +392,6 @@ describe('ts.SyntaxKind.ConditionalExpression', () => {
 		};
 	`
 
-	it.todo('Should include the anonymous class name in the hierarchy')
-	it.todo('Should identify two classes in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -349,8 +400,21 @@ describe('ts.SyntaxKind.ConditionalExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{constructor:constructor}': {
-					type: ProgramStructureTreeType.ConstructorDeclaration,
+				'{classExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						}
+					}
+				},
+				'{classExpression:(anonymous:1)}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						}
+					}
 				}
 			}
 		})
@@ -362,7 +426,6 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 		<div>{class ClassExpression {constructor(args: any) {}}}</div>
 	`
 
-	it.todo('Should include the anonymous class name in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
 
@@ -371,8 +434,13 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{constructor:constructor}': {
-					type: ProgramStructureTreeType.ConstructorDeclaration,
+				'{classExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						}
+					}
 				}
 			}
 		})

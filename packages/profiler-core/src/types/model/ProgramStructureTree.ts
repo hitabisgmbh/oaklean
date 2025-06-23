@@ -14,6 +14,7 @@ export enum ProgramStructureTreeType {
 	Root = 'Root',
 	ConstructorDeclaration = 'ConstructorDeclaration',
 	ClassDeclaration = 'ClassDeclaration',
+	ClassExpression = 'ClassExpression',
 	MethodDefinition = 'MethodDefinition',
 	FunctionDeclaration = 'FunctionDeclaration',
 	FunctionExpression = 'FunctionExpression',

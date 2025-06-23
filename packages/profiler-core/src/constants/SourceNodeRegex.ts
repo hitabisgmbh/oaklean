@@ -9,6 +9,8 @@ export const MethodDefinitionRegexString = `{method:${SourceNodeNameExpressionRe
 export const FunctionDeclarationRegexString = `{function:${SourceNodeNameExpressionRegexString}}`
 export const FunctionExpressionRegexString =
 	`{functionExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
+export const ClassExpressionRegexString =
+	`{classExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
 
 export const LangInternalSourceNodeRegExpRegexString = 'RegExp: .*'
 export const LangInternalSourceNodeNameRegexString = '[^{}]+'
@@ -21,7 +23,7 @@ export const LangInternalSourceNodeIdentifierRegexString =
 export const SourceNodeIdentifierPathRegexString = '[^{}]+'
 
 // eslint-disable-next-line max-len
-export const SourceNodeIdentifierPartRegexString = `(?:${ConstructorDeclarationRegexString}|${ClassDeclarationRegexString}|${MethodDefinitionRegexString}|${FunctionDeclarationRegexString}|${FunctionExpressionRegexString})`
+export const SourceNodeIdentifierPartRegexString = `(?:${ConstructorDeclarationRegexString}|${ClassDeclarationRegexString}|${MethodDefinitionRegexString}|${FunctionDeclarationRegexString}|${FunctionExpressionRegexString}|${ClassExpressionRegexString})`
 
 export const SourceNodeIdentifierRegexString =
 	`(?:${RootRegexString}(?:\\.${SourceNodeIdentifierPartRegexString})*` +
@@ -34,6 +36,7 @@ export const MethodDefinitionRegex = new RegExp(`^${MethodDefinitionRegexString}
 export const ClassDeclarationRegex = new RegExp(`^${ClassDeclarationRegexString}$`)
 export const FunctionDeclarationRegex = new RegExp(`^${FunctionDeclarationRegexString}$`)
 export const FunctionExpressionRegex = new RegExp(`^${FunctionExpressionRegexString}$`)
+export const ClassExpressionRegex = new RegExp(`^${ClassExpressionRegexString}$`)
 export const ConstructorDeclarationRegex = new RegExp(`^${ConstructorDeclarationRegexString}$`)
 export const LangInternalSourceNodeRegExpRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
 
