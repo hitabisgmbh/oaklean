@@ -549,3 +549,27 @@ describe('FunctionExpression in Class', () => {
 		})
 	})
 })
+
+describe('ts.SyntaxKind.AsteriskToken', () => {
+	const code = `
+		const FunctionExpression = function* () {
+			yield 1;
+			yield 2;
+		}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:FunctionExpression}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				}
+			}
+		})
+	})
+})

@@ -406,3 +406,146 @@ describe('ts.SyntaxKind.ThrowStatement', () => {
 		})
 	})
 })
+
+describe('ArrowFunctionExpression in Class', () => {
+	describe('ts.SyntaxKind.PrivateIdentifier', () => {
+		const code = `
+			class FunctionExpression {
+				#private = () => {}
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:#private}': {
+								type: ProgramStructureTreeType.ArrowFunctionExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
+	describe('ts.SyntaxKind.PropertyDeclaration', () => {
+		const code = `
+			class FunctionExpression {
+				PropertyDeclaration = () => {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:PropertyDeclaration}': {
+								type: ProgramStructureTreeType.ArrowFunctionExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
+	describe('ts.SyntaxKind.FirstLiteralToken', () => {
+		const code = `
+			class FunctionExpression {
+				42 = () => {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:(literal:0)}': {
+								type: ProgramStructureTreeType.ArrowFunctionExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
+	describe('ts.SyntaxKind.StringLiteral', () => {
+		const code = `
+			class FunctionExpression {
+				'StringLiteral' = () => {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:(literal:0)}': {
+								type: ProgramStructureTreeType.ArrowFunctionExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
+	describe(' ts.SyntaxKind.ComputedPropertyName', () => {
+		const code = `
+			const ComputedPropertyName = 'Computed' + 'Property' + 'Name'
+			class FunctionExpression {
+				[ComputedPropertyName] = () => {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:(expression:0)}': {
+								type: ProgramStructureTreeType.ArrowFunctionExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+})

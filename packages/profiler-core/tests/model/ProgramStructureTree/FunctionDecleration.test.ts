@@ -69,3 +69,27 @@ describe('ts.SyntaxKind.FunctionDeclaration', () => {
 		})
 	})
 })
+
+describe('ts.SyntaxKind.AsteriskToken', () => {
+	const code = `
+		function* FunctionDeclaration() {
+			yield 1;
+			yield 2;
+		}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{function:FunctionDeclaration}': {
+					type: ProgramStructureTreeType.FunctionDeclaration,
+				}
+			}
+		})
+	})
+})
