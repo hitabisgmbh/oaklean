@@ -73,21 +73,23 @@ export default class CodeParsingCommands {
 
 	private verifyCode(
 		code: string | null,
-		addToDebug: Record<string, string>
+		addToDebug: {
+			resourceFile?: string,
+			scriptID?: ScriptID_string,
+			filePath?: UnifiedPath_string
+		}
 	) {
 		if (code === null) {
 			return
 		}
-		TypescriptParser.parseSource(new UnifiedPath(''), code, (
+		const tmpName = (addToDebug.scriptID !== undefined ? addToDebug.scriptID : addToDebug.filePath) || 'tmp.ts'
+		TypescriptParser.parseSource(new UnifiedPath(tmpName), code, 'TSX', (
 			filePath,
 			node,
 			identifier: string,
 			loc,
 			duplicateLoc
 		) => {
-			if (identifier === '{constructor:constructor}') {
-				return
-			}
 			LoggerHelper.warn('Duplicated identifier found:', {
 				...addToDebug,
 				identifier,

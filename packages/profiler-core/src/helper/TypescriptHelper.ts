@@ -83,4 +83,16 @@ export class TypeScriptHelper {
 		}
 		return false
 	}
+
+	static hasStaticKeywordModifier(node: ts.MethodDeclaration): boolean {
+		if (node.modifiers === undefined || node.modifiers.length === 0) {
+			return false
+		}
+		for (const modifier of node.modifiers) {
+			if (modifier.kind === ts.SyntaxKind.StaticKeyword) {
+				return true
+			}
+		}
+		return false
+	}
 }

@@ -309,11 +309,16 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{classExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ClassExpression,
+				'{scope:(anonymous:0)}': {
+					type: ProgramStructureTreeType.Scope,
 					children: {
-						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+						'{classExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.ClassExpression,
+							children: {
+								'{constructor:constructor}': {
+									type: ProgramStructureTreeType.ConstructorDeclaration,
+								}
+							}
 						}
 					}
 				}

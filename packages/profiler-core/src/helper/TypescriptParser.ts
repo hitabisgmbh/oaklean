@@ -19,6 +19,7 @@ import {
 
 type TraverseNodeInfo = {
 	tree: ProgramStructureTree,
+	anonymousScopeCounter: number
 	anonymousFunctionCounter: number
 	expressionFunctionCounter: number
 	literalFunctionCounter: number
@@ -83,7 +84,8 @@ export class TypescriptParser {
 			ts.isMethodDeclaration(node) ||
 			ts.isConstructorDeclaration(node) ||
 			ts.isClassDeclaration(node) ||
-			ts.isClassExpression(node)
+			ts.isClassExpression(node) ||
+			ts.isObjectLiteralExpression(node)
 	}
 
 	/**
@@ -168,6 +170,7 @@ export class TypescriptParser {
 
 		let currentNodeInfo: TraverseNodeInfo = {
 			tree: root,
+			anonymousScopeCounter: 0,
 			anonymousFunctionCounter: 0,
 			expressionFunctionCounter: 0,
 			literalFunctionCounter: 0
@@ -540,11 +543,13 @@ export class TypescriptParser {
 				}
 
 				if (ts.isMethodDeclaration(node)) {
+					const staticSuffix = TypeScriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
+
 					let methodName = ''
 					switch (node.name.kind) {
 						case ts.SyntaxKind.Identifier:
 						case ts.SyntaxKind.PrivateIdentifier:
-							methodName = 'method:' + node.name.escapedText.toString()
+							methodName = `method${staticSuffix}:` + node.name.escapedText.toString()
 							subTree = new ProgramStructureTree(
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
@@ -556,7 +561,7 @@ export class TypescriptParser {
 							break
 						case ts.SyntaxKind.StringLiteral:
 						case ts.SyntaxKind.FirstLiteralToken:
-							methodName = `method:(literal:${currentNodeInfo.literalFunctionCounter++})`
+							methodName = `method${staticSuffix}:(literal:${currentNodeInfo.literalFunctionCounter++})`
 							subTree = new ProgramStructureTree(
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
@@ -567,7 +572,8 @@ export class TypescriptParser {
 							)
 							break
 						case ts.SyntaxKind.ComputedPropertyName:
-							methodName = `method:(expression:${currentNodeInfo.expressionFunctionCounter++})`
+							methodName =
+								`method${staticSuffix}:(expression:${currentNodeInfo.expressionFunctionCounter++})`
 							subTree = new ProgramStructureTree(
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
@@ -708,6 +714,19 @@ export class TypescriptParser {
 					}
 				}
 
+				if (ts.isObjectLiteralExpression(node)) {
+					const scopeName =
+					`scope:(anonymous:${currentNodeInfo.anonymousScopeCounter++})`
+					subTree = new ProgramStructureTree(
+						idCounter++,
+						ProgramStructureTreeType.Scope,
+						IdentifierType.Anonymous,
+						`{${scopeName}}` as SourceNodeIdentifierPart_string,
+						TypescriptParser.posToLoc(sourceFile, node.getStart()),
+						TypescriptParser.posToLoc(sourceFile, node.getEnd()),
+					)
+				}
+
 				if (subTree) {
 					if (subTree.identifier) {
 						const found = currentNodeInfo.tree.children.get(subTree.identifier)
@@ -740,6 +759,7 @@ export class TypescriptParser {
 					// set current node to newly traversed node
 					currentNodeInfo = {
 						tree: subTree,
+						anonymousScopeCounter: 0,
 						anonymousFunctionCounter: 0,
 						expressionFunctionCounter: 0,
 						literalFunctionCounter: 0

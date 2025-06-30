@@ -5,12 +5,13 @@ export const SourceNodeNameExpressionRegexString =
 export const RootRegexString = '{root}'
 export const ConstructorDeclarationRegexString = '{constructor:constructor}'
 export const ClassDeclarationRegexString = `{class:${SourceNodeNameRegexString}}`
-export const MethodDefinitionRegexString = `{method:${SourceNodeNameExpressionRegexString}}`
+export const MethodDefinitionRegexString = `{method(?:@static)?:${SourceNodeNameExpressionRegexString}}`
 export const FunctionDeclarationRegexString = `{function:${SourceNodeNameExpressionRegexString}}`
 export const FunctionExpressionRegexString =
 	`{functionExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
 export const ClassExpressionRegexString =
 	`{classExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
+export const ScopeRegexString = '{scope:\\(anonymous:[0-9]+\\)}'
 
 export const LangInternalSourceNodeRegExpRegexString = 'RegExp: .*'
 export const LangInternalSourceNodeNameRegexString = '[^{}]+'
@@ -23,7 +24,7 @@ export const LangInternalSourceNodeIdentifierRegexString =
 export const SourceNodeIdentifierPathRegexString = '[^{}]+'
 
 // eslint-disable-next-line max-len
-export const SourceNodeIdentifierPartRegexString = `(?:${ConstructorDeclarationRegexString}|${ClassDeclarationRegexString}|${MethodDefinitionRegexString}|${FunctionDeclarationRegexString}|${FunctionExpressionRegexString}|${ClassExpressionRegexString})`
+export const SourceNodeIdentifierPartRegexString = `(?:${ConstructorDeclarationRegexString}|${ClassDeclarationRegexString}|${MethodDefinitionRegexString}|${FunctionDeclarationRegexString}|${FunctionExpressionRegexString}|${ClassExpressionRegexString}|${ScopeRegexString})`
 
 export const SourceNodeIdentifierRegexString =
 	`(?:${RootRegexString}(?:\\.${SourceNodeIdentifierPartRegexString})*` +
@@ -39,6 +40,7 @@ export const FunctionExpressionRegex = new RegExp(`^${FunctionExpressionRegexStr
 export const ClassExpressionRegex = new RegExp(`^${ClassExpressionRegexString}$`)
 export const ConstructorDeclarationRegex = new RegExp(`^${ConstructorDeclarationRegexString}$`)
 export const LangInternalSourceNodeRegExpRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
+export const ScopeRegex = new RegExp(`^${ScopeRegexString}$`)
 
 // Source Node Identifier Regex
 export const LangInternalSourceNodeIdentifierRegex = new RegExp(`^${LangInternalSourceNodeIdentifierRegexString}$`)

@@ -50,6 +50,24 @@ export class ProgramStructureTree extends BaseModel {
 		this.sourceLocationOfIdentifier = memoize(this.sourceLocationOfIdentifier.bind(this))
 	}
 
+	numberOfLeafs(): number {
+		const traverse = (currentNode: ProgramStructureTree): number => {
+			if (currentNode.children.size === 0) {
+				if (currentNode.type === ProgramStructureTreeType.Root) {
+					return 0
+				}
+				return 1
+			}
+			let count = 0
+			for (const child of currentNode.children.values()) {
+				count += traverse(child)
+			}
+			return count
+		}
+
+		return 	traverse(this)
+	}
+
 	identifierHierarchy(): PSTIdentifierHierarchy {
 		const traverse = (currentNode: ProgramStructureTree): PSTIdentifierHierarchy => {
 			const result: PSTIdentifierHierarchy = {

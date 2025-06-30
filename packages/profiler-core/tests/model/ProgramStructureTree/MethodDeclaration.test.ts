@@ -39,7 +39,6 @@ describe('ts.SyntaxKind.Identifier', () => {
 		}
 	`
 
-	it.todo('Should include the static version in the identifier hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -52,6 +51,9 @@ describe('ts.SyntaxKind.Identifier', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{method:method}': {
+							type: ProgramStructureTreeType.MethodDefinition,
+						},
+						'{method@static:method}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						}
 					}
@@ -83,7 +85,7 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 						'{method:(literal:0)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						},
-						'{method:(literal:1)}': {
+						'{method@static:(literal:1)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						}
 					}
@@ -115,7 +117,7 @@ describe('ts.SyntaxKind.FunctionExpression', () => {
 						'{method:(literal:0)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						},
-						'{method:(literal:1)}': {
+						'{method@static:(literal:1)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						}
 					}
@@ -148,7 +150,7 @@ describe('ts.SyntaxKind.ComputedPropertyName', () => {
 						'{method:(expression:0)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						},
-						'{method:(expression:1)}': {
+						'{method@static:(expression:1)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						}
 					}
@@ -171,8 +173,13 @@ describe('ts.SyntaxKind.ObjectLiteralExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{method:method}': {
-					type: ProgramStructureTreeType.MethodDefinition
+				'{scope:(anonymous:0)}': {
+					type: ProgramStructureTreeType.Scope,
+					children: {
+						'{method:method}': {
+							type: ProgramStructureTreeType.MethodDefinition
+						}
+					}
 				}
 			}
 		})

@@ -19,6 +19,7 @@ export enum ProgramStructureTreeType {
 	FunctionDeclaration = 'FunctionDeclaration',
 	FunctionExpression = 'FunctionExpression',
 	ArrowFunctionExpression = 'ArrowFunctionExpression',
+	Scope = 'Scope'
 }
 
 export type PSTIdentifierHierarchy = {

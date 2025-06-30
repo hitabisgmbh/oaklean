@@ -169,8 +169,13 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				'{scope:(anonymous:0)}': {
+					type: ProgramStructureTreeType.Scope,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.ArrowFunctionExpression,
+						}
+					}
 				}
 			}
 		})
