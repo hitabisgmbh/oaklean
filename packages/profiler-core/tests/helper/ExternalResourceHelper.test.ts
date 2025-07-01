@@ -328,29 +328,35 @@ describe('ExternalResourceHelper', () => {
 		expect(instance.scriptIDs).toEqual(['1', '2', '3'])
 
 		expect((await instance.sourceMapFromScriptID('1' as ScriptID_string, SCRIPT_01_PATH))?.toJSON()).toEqual({
+			file: 'script01.js',
 			mappings: ';AAAA,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA',
 			names: [],
 			sources: [
 				'../../examples/script01.ts',
 			],
+			sourceRoot: '',
 			version: 3,
 		})
 
-		expect((await instance.sourceMapFromScriptID('2' as ScriptID_string, SCRIPT_01_PATH))?.toJSON()).toEqual({
+		expect((await instance.sourceMapFromScriptID('2' as ScriptID_string, SCRIPT_02_PATH))?.toJSON()).toEqual({
+			file: 'script02.js',
 			mappings: ';AAAA,KAAK,IAAI,CAAC,GAAG,CAAC,EAAE,CAAC,GAAG,CAAC,EAAE,CAAC,EAAE,EAAE,CAAC;IAC5B,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA;AAC7B,CAAC',
 			names: [],
 			sources: [
 				'../../examples/script02.ts',
 			],
-			'version': 3,
+			sourceRoot: '',
+			version: 3
 		})
 
-		expect((await instance.sourceMapFromScriptID('3' as ScriptID_string, SCRIPT_01_PATH))?.toJSON()).toEqual({
+		expect((await instance.sourceMapFromScriptID('3' as ScriptID_string, SCRIPT_03_PATH))?.toJSON()).toEqual({
+			file: 'script03.js',
 			mappings: ';;AAAA,SAAwB,GAAG,CAAC,CAAS;IACpC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;QACZ,OAAO,CAAC,CAAA;IACT,CAAC;IACD,OAAO,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,GAAG,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,CAAA;AAC/B,CAAC;AALD,sBAKC',
 			names: [],
 			sources: [
 				'../../examples/script03.ts',
 			],
+			sourceRoot: '',
 			version: 3,
 		})
 	})
