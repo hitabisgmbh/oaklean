@@ -159,6 +159,7 @@ export class TypescriptParser {
 	) {
 		let idCounter = 0
 		const root: ProgramStructureTree = new ProgramStructureTree(
+			null,
 			idCounter++,
 			ProgramStructureTreeType.Root,
 			IdentifierType.Name,
@@ -216,6 +217,7 @@ export class TypescriptParser {
 					if (node.name?.kind === ts.SyntaxKind.Identifier) {
 						const className = node.name.escapedText
 						subTree = new ProgramStructureTree(
+							currentNodeInfo.tree,
 							idCounter++,
 							ProgramStructureTreeType.ClassDeclaration,
 							IdentifierType.Name,
@@ -225,6 +227,7 @@ export class TypescriptParser {
 						)
 					} else if (TypeScriptHelper.hasDefaultKeywordModifier(node)) {
 						subTree = new ProgramStructureTree(
+							currentNodeInfo.tree,
 							idCounter++,
 							ProgramStructureTreeType.ClassDeclaration,
 							IdentifierType.KeyWord,
@@ -260,6 +263,7 @@ export class TypescriptParser {
 									case ts.SyntaxKind.PrivateIdentifier:
 										className = `classExpression:${parent.name.escapedText}`
 										subTree = new ProgramStructureTree(
+											currentNodeInfo.tree,
 											idCounter++,
 											ProgramStructureTreeType.ClassExpression,
 											IdentifierType.Name,
@@ -274,6 +278,7 @@ export class TypescriptParser {
 											'classExpression:(literal:' +
 											`${currentNodeInfo.literalFunctionCounter++})`
 										subTree = new ProgramStructureTree(
+											currentNodeInfo.tree,
 											idCounter++,
 											ProgramStructureTreeType.ClassExpression,
 											IdentifierType.Literal,
@@ -287,6 +292,7 @@ export class TypescriptParser {
 											'classExpression:(expression:' +
 											`${currentNodeInfo.literalFunctionCounter++})`
 										subTree = new ProgramStructureTree(
+											currentNodeInfo.tree,
 											idCounter++,
 											ProgramStructureTreeType.ClassExpression,
 											IdentifierType.Expression,
@@ -311,6 +317,7 @@ export class TypescriptParser {
 								className =
 									`classExpression:(expression:${currentNodeInfo.literalFunctionCounter++})`
 								subTree = new ProgramStructureTree(
+									currentNodeInfo.tree,
 									idCounter++,
 									ProgramStructureTreeType.ClassExpression,
 									IdentifierType.Expression,
@@ -325,6 +332,7 @@ export class TypescriptParser {
 									case ts.SyntaxKind.Identifier:
 										className = `classExpression:${parent.name.escapedText}`
 										subTree = new ProgramStructureTree(
+											currentNodeInfo.tree,
 											idCounter++,
 											ProgramStructureTreeType.ClassExpression,
 											IdentifierType.Name,
@@ -355,6 +363,7 @@ export class TypescriptParser {
 						const className =
 							`classExpression:(anonymous:${currentNodeInfo.anonymousFunctionCounter++})`
 						subTree = new ProgramStructureTree(
+							currentNodeInfo.tree,
 							idCounter++,
 							ProgramStructureTreeType.ClassExpression,
 							IdentifierType.Anonymous,
@@ -367,6 +376,7 @@ export class TypescriptParser {
 
 				if (ts.isConstructorDeclaration(node)) {
 					subTree = new ProgramStructureTree(
+						currentNodeInfo.tree,
 						idCounter++,
 						ProgramStructureTreeType.ConstructorDeclaration,
 						IdentifierType.Name,
@@ -380,6 +390,7 @@ export class TypescriptParser {
 					if (node.name?.kind === ts.SyntaxKind.Identifier) {
 						const functionName = node.name.escapedText
 						subTree = new ProgramStructureTree(
+							currentNodeInfo.tree,
 							idCounter++,
 							ProgramStructureTreeType.FunctionDeclaration,
 							IdentifierType.Name,
@@ -389,6 +400,7 @@ export class TypescriptParser {
 						)
 					} else if (TypeScriptHelper.hasDefaultKeywordModifier(node)) {
 						subTree = new ProgramStructureTree(
+							currentNodeInfo.tree,
 							idCounter++,
 							ProgramStructureTreeType.FunctionDeclaration,
 							IdentifierType.KeyWord,
@@ -413,6 +425,7 @@ export class TypescriptParser {
 					if (emitHelperName !== undefined) {
 						const functionName = `functionExpression:${emitHelperName}`
 						subTree = new ProgramStructureTree(
+							currentNodeInfo.tree,
 							idCounter++,
 							ProgramStructureTreeType.FunctionExpression,
 							IdentifierType.Name,
@@ -436,6 +449,7 @@ export class TypescriptParser {
 										case ts.SyntaxKind.PrivateIdentifier:
 											functionName = `functionExpression:${parent.name.escapedText}`
 											subTree = new ProgramStructureTree(
+												currentNodeInfo.tree,
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
 												IdentifierType.Name,
@@ -450,6 +464,7 @@ export class TypescriptParser {
 												'functionExpression:(literal:' +
 												`${currentNodeInfo.literalFunctionCounter++})`
 											subTree = new ProgramStructureTree(
+												currentNodeInfo.tree,
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
 												IdentifierType.Literal,
@@ -463,6 +478,7 @@ export class TypescriptParser {
 												'functionExpression:(expression:' +
 												`${currentNodeInfo.literalFunctionCounter++})`
 											subTree = new ProgramStructureTree(
+												currentNodeInfo.tree,
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
 												IdentifierType.Expression,
@@ -487,6 +503,7 @@ export class TypescriptParser {
 									functionName =
 										`functionExpression:(expression:${currentNodeInfo.literalFunctionCounter++})`
 									subTree = new ProgramStructureTree(
+										currentNodeInfo.tree,
 										idCounter++,
 										ProgramStructureTreeType.FunctionExpression,
 										IdentifierType.Expression,
@@ -501,6 +518,7 @@ export class TypescriptParser {
 										case ts.SyntaxKind.Identifier:
 											functionName = `functionExpression:${parent.name.escapedText}`
 											subTree = new ProgramStructureTree(
+												currentNodeInfo.tree,
 												idCounter++,
 												ProgramStructureTreeType.FunctionExpression,
 												IdentifierType.Name,
@@ -531,6 +549,7 @@ export class TypescriptParser {
 							const functionName =
 								`functionExpression:(anonymous:${currentNodeInfo.anonymousFunctionCounter++})`
 							subTree = new ProgramStructureTree(
+								currentNodeInfo.tree,
 								idCounter++,
 								ProgramStructureTreeType.FunctionExpression,
 								IdentifierType.Anonymous,
@@ -551,6 +570,7 @@ export class TypescriptParser {
 						case ts.SyntaxKind.PrivateIdentifier:
 							methodName = `method${staticSuffix}:` + node.name.escapedText.toString()
 							subTree = new ProgramStructureTree(
+								currentNodeInfo.tree,
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
 								IdentifierType.Name,
@@ -563,6 +583,7 @@ export class TypescriptParser {
 						case ts.SyntaxKind.FirstLiteralToken:
 							methodName = `method${staticSuffix}:(literal:${currentNodeInfo.literalFunctionCounter++})`
 							subTree = new ProgramStructureTree(
+								currentNodeInfo.tree,
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
 								IdentifierType.Literal,
@@ -575,6 +596,7 @@ export class TypescriptParser {
 							methodName =
 								`method${staticSuffix}:(expression:${currentNodeInfo.expressionFunctionCounter++})`
 							subTree = new ProgramStructureTree(
+								currentNodeInfo.tree,
 								idCounter++,
 								ProgramStructureTreeType.MethodDefinition,
 								IdentifierType.Expression,
@@ -611,6 +633,7 @@ export class TypescriptParser {
 									case ts.SyntaxKind.PrivateIdentifier:
 										functionName = `functionExpression:${parent.name.escapedText}`
 										subTree = new ProgramStructureTree(
+											currentNodeInfo.tree,
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
 											IdentifierType.Name,
@@ -624,6 +647,7 @@ export class TypescriptParser {
 										functionName =
 											`functionExpression:(literal:${currentNodeInfo.literalFunctionCounter++})`
 										subTree = new ProgramStructureTree(
+											currentNodeInfo.tree,
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
 											IdentifierType.Literal,
@@ -636,6 +660,7 @@ export class TypescriptParser {
 										functionName =
 										`functionExpression:(expression:${currentNodeInfo.literalFunctionCounter++})`
 										subTree = new ProgramStructureTree(
+											currentNodeInfo.tree,
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
 											IdentifierType.Expression,
@@ -660,6 +685,7 @@ export class TypescriptParser {
 								functionName =
 								`functionExpression:(expression:${currentNodeInfo.literalFunctionCounter++})`
 								subTree = new ProgramStructureTree(
+									currentNodeInfo.tree,
 									idCounter++,
 									ProgramStructureTreeType.ArrowFunctionExpression,
 									IdentifierType.Expression,
@@ -674,6 +700,7 @@ export class TypescriptParser {
 									case ts.SyntaxKind.Identifier:
 										functionName = `functionExpression:${parent.name.escapedText}`
 										subTree = new ProgramStructureTree(
+											currentNodeInfo.tree,
 											idCounter++,
 											ProgramStructureTreeType.ArrowFunctionExpression,
 											IdentifierType.Name,
@@ -704,6 +731,7 @@ export class TypescriptParser {
 						const functionName =
 						`functionExpression:(anonymous:${currentNodeInfo.anonymousFunctionCounter++})`
 						subTree = new ProgramStructureTree(
+							currentNodeInfo.tree,
 							idCounter++,
 							ProgramStructureTreeType.ArrowFunctionExpression,
 							IdentifierType.Anonymous,
@@ -718,6 +746,7 @@ export class TypescriptParser {
 					const scopeName =
 					`scope:(anonymous:${currentNodeInfo.anonymousScopeCounter++})`
 					subTree = new ProgramStructureTree(
+						currentNodeInfo.tree,
 						idCounter++,
 						ProgramStructureTreeType.Scope,
 						IdentifierType.Anonymous,
@@ -776,6 +805,14 @@ export class TypescriptParser {
 				if (found > -1) {
 					skippedSourceNodes.splice(found, 1)
 					return
+				}
+				if (
+					currentNodeInfo.tree.type === ProgramStructureTreeType.Scope &&
+					currentNodeInfo.tree.children.size === 0
+				) {
+					// remove empty scopes since scopes are only used as a hierarchy level to distinguish between
+					// functions, methods, etc.
+					currentNodeInfo.tree.parent?.children.delete(currentNodeInfo.tree.identifier)
 				}
 				const nodeInfo = stack.pop()
 				if (nodeInfo) {

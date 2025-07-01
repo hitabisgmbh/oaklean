@@ -15,18 +15,22 @@ import {
 	SourceNodeIdentifierPart_string
 } from '../types'
 
-export class ProgramStructureTree extends BaseModel {
+export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramStructureTreeType> extends BaseModel {
 	id: number
-	type: ProgramStructureTreeType
+	type: T
 	identifierType: IdentifierType
 	identifier: SourceNodeIdentifierPart_string
 	beginLoc: NodeLocation
 	endLoc: NodeLocation
 	children: ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>
+	parent?: T extends ProgramStructureTreeType.Root ? null : ProgramStructureTree
 
 	constructor(
+		parent: T extends ProgramStructureTreeType.Root ?
+			null :
+			ProgramStructureTree,
 		id: number,
-		type: ProgramStructureTreeType,
+		type: T,
 		identifierType: IdentifierType,
 		identifier: SourceNodeIdentifierPart_string,
 		beginLoc: NodeLocation,
@@ -37,6 +41,7 @@ export class ProgramStructureTree extends BaseModel {
 			throw new Error('ProgramStructureTree.constructor invalid identifier format: ' + identifier)
 		}
 
+		this.parent = parent
 		this.id = id
 		this.type = type
 		this.identifierType = identifierType
@@ -97,6 +102,13 @@ export class ProgramStructureTree extends BaseModel {
 	}
 
 	static fromJSON(json: string | IProgramStructureTree): ProgramStructureTree {
+		return ProgramStructureTree.fromJSONWithParent(json, null)
+	}
+
+	static fromJSONWithParent(
+		json: string | IProgramStructureTree,
+		parent: ProgramStructureTree | null
+	): ProgramStructureTree {
 		let data: IProgramStructureTree
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -105,6 +117,7 @@ export class ProgramStructureTree extends BaseModel {
 		}
 
 		const result = new ProgramStructureTree(
+			parent,
 			data.id,
 			data.type,
 			data.identifierType,
