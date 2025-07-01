@@ -7,10 +7,7 @@ import { ProgramStructureTreeType } from '../../../../src/types'
 	This file contains cases that were previously identified as duplicates
 */
 
-function duplicatesExist(
-	code: string,
-	scriptKind: 'TS' | 'TSX' = 'TS'
-) {
+function duplicatesExist(code: string, scriptKind: 'TS' | 'TSX' = 'TS') {
 	let hasDuplicates = false
 
 	const pst = TypescriptParser.parseSource(
@@ -53,8 +50,22 @@ test('object method', () => {
 	expect(result.pst.numberOfLeafs()).toBe(2)
 })
 
-test('defined within if case', () => {
-	const code = `
+describe('defined within if case', () => {
+	test('one case', () => {
+		const code = `
+		if(Date.now() % 2 === 0) {
+			const func = () => {}
+		}
+		const func = () => {}
+	`
+
+		const result = duplicatesExist(code)
+		expect(result.hasDuplicates).toBe(false)
+		expect(result.pst.numberOfLeafs()).toBe(2)
+	})
+
+	test('two cases', () => {
+		const code = `
 		if(Date.now() % 2 === 0) {
 			function a() {}
 		} else {
@@ -62,8 +73,22 @@ test('defined within if case', () => {
 		}
 	`
 
-	const result = duplicatesExist(code)
-	expect(result.hasDuplicates).toBe(false)
-	expect(result.pst.numberOfLeafs()).toBe(2)
-})
+		const result = duplicatesExist(code)
+		expect(result.hasDuplicates).toBe(false)
+		expect(result.pst.numberOfLeafs()).toBe(2)
+	})
 
+	test('else if cases', () => {
+		const code = `
+		if(Date.now() % 2 === 0) {
+			function a() {}
+		} else if(Date.now() % 2 === 1){
+			function a() {}
+		}
+	`
+
+		const result = duplicatesExist(code)
+		expect(result.hasDuplicates).toBe(false)
+		expect(result.pst.numberOfLeafs()).toBe(2)
+	})
+})

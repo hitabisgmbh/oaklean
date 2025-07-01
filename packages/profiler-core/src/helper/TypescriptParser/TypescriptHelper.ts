@@ -2,8 +2,9 @@ import * as ts from 'typescript'
 
 // Types
 import {
-	SourceNodeIdentifier_string
-} from '../types'
+	SourceNodeIdentifier_string,
+	NodeLocation
+} from '../../types'
 
 export enum EmitHelperNames {
 	// TypeScript Helpers
@@ -36,7 +37,16 @@ export enum EmitHelperNames {
 
 export const EmitHelperNameStrings = Object.values(EmitHelperNames)
 
-export class TypeScriptHelper {
+export class TypescriptHelper {
+	static posToLoc(sourceFile: ts.SourceFile, pos: number): NodeLocation {
+		const lineAndChar = sourceFile.getLineAndCharacterOfPosition(pos)
+
+		return {
+			line: lineAndChar.line + 1,
+			column: lineAndChar.character
+		}
+	}
+
 	static isUseStrict(node: ts.Node) {
 		if (ts.isStringLiteral(node)) {
 			if (node.text === 'use strict') {
@@ -94,5 +104,21 @@ export class TypeScriptHelper {
 			}
 		}
 		return false
+	}
+
+	/*
+		Returns the case number of the given block node.
+		If the blok is not an if-case block, it returns -1.
+	*/
+	static parseIfCase(node: ts.Block): 'if-case' | 'else-case' | undefined {
+		if (node.parent.kind === ts.SyntaxKind.IfStatement) {
+			const ifStatement = node.parent as ts.IfStatement
+			if (ifStatement.elseStatement === node) {
+				return 'else-case'
+			} else if (ifStatement.thenStatement === node) {
+				return 'if-case'
+			}
+		}
+		return undefined
 	}
 }
