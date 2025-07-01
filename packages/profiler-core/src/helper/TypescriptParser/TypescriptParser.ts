@@ -11,7 +11,8 @@ import {
 	FunctionExpressionHelper,
 	MethodDeclarationHelper,
 	ArrowFunctionHelper,
-	ScopeHelper
+	ScopeHelper,
+	SkipHelper
 } from './index'
 
 import { TypescriptHelper } from './TypescriptHelper'
@@ -192,30 +193,8 @@ export class TypescriptParser {
 		const skippedSourceNodes: ts.Node[] = []
 		let skipNext = false
 		const enterNode = (node: ts.Node) => {
-			if (ts.isCallExpression(node)) {
-				if (ts.isIdentifier(node.expression)) {
-					if (node.expression.escapedText === '___awaiter') {
-						/**
-						 * the actual function is wrapped into an generated ___awaiter call like this:
-						 * async function test() { console.log('') }
-						 * transpiles sometimes to:
-						 * test() {
-						 * 		__awaiter(this, void 0, void 0, function* () { console.log('') })
-						 * }
-						 * 
-						 * Since the actual function is now wrapped into a call expression,
-						 * this will result in a hierarchy like this:
-						 * - function:test
-						 * 		- functionExpression:anonymous
-						 * 
-						 * since this happens only through the transpiling
-						 * we ignore the next call expression to keep the hirachy like:
-						 * - function:test
-						 * 
-						 */
-						skipNext = true
-					}
-				}
+			if (SkipHelper.nodeShouldBeSkipped(node)) {
+				skipNext = true
 			}
 
 			if (TypescriptParser.isProgramStructureType(node)) {
@@ -305,14 +284,7 @@ export class TypescriptParser {
 					skippedSourceNodes.splice(found, 1)
 					return
 				}
-				if (
-					traverseNodeInfo.tree.type === ProgramStructureTreeType.Scope &&
-					traverseNodeInfo.tree.children.size === 0
-				) {
-					// remove empty scopes since scopes are only used as a hierarchy level to distinguish between
-					// functions, methods, etc.
-					traverseNodeInfo.tree.parent?.children.delete(traverseNodeInfo.tree.identifier)
-				}
+				TypescriptParser.clearEmptyScopes(traverseNodeInfo)
 				const nodeInfo = stack.pop()
 				if (nodeInfo) {
 					traverseNodeInfo = nodeInfo
@@ -323,6 +295,19 @@ export class TypescriptParser {
 		TypescriptParser.traverseSourceFile(sourceFile, { enter: enterNode, leave: leaveNode })
 
 		return root
+	}
+
+	static clearEmptyScopes(
+		traverseNodeInfo: TraverseNodeInfo
+	) {
+		if (
+			traverseNodeInfo.tree.type === ProgramStructureTreeType.Scope &&
+			traverseNodeInfo.tree.children.size === 0
+		) {
+			// remove empty scopes since scopes are only used as a hierarchy level to distinguish between
+			// functions, methods, etc.
+			traverseNodeInfo.tree.parent?.children.delete(traverseNodeInfo.tree.identifier)
+		}
 	}
 
 	static parseNode(
