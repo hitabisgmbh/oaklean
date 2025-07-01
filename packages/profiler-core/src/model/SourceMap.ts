@@ -2,12 +2,16 @@ import { SourceMapConsumer, RawSourceMap, MappedPosition } from 'source-map'
 
 import { BaseModel } from './BaseModel'
 
-import { ISourceMap } from '../types'
 import { DataUrlUtils } from '../helper/DataUrlUtils'
 import { UnifiedPath } from '../system/UnifiedPath'
+// Types
+import {
+	ISourceMap,
+	SOURCE_MAP_REQUIRED_ATTRIBUTE_NAMES
+} from '../types/model/SourceMap'
+
 
 const SOURCE_MAPPING_URL_REGEX = /^\/\/# sourceMappingURL=(.*)$/m
-const SOURCE_MAP_ATTRIBUTE_NAMES = ['version', 'sources', 'names', 'mappings']
 
 export type SourceMapRedirect = {
 	type: 'redirect',
@@ -20,23 +24,37 @@ export class SourceMap extends BaseModel implements ISourceMap {
 	sourceMapLocation: UnifiedPath // location of the source map, for inline sourceMaps it is the .js file
 
 	version: number
-	sources: string[]
-	names: string[]
-	mappings: string
+	file?: string // optional, name of the generated file (e.g., bundle.js)
+	sourceRoot?: string // optional, base path for sources
+	sources: (string | null)[] // list of source files (relative or absolute paths)
+	sourcesContent?: (string | null)[] // optional, content of the sources (same order as `sources`)
+	names?: string[] // optional, list of symbol names
+	mappings: string // VLQ-encoded string of mappings
+	ignoreList?: number[]
 
 	constructor(
 		sourceMapLocation: UnifiedPath,
-		version: number,
-		sources: string[],
-		names: string[],
-		mappings: string
+		{
+			version,
+			file,
+			sourceRoot,
+			sources,
+			sourcesContent,
+			names,
+			mappings,
+			ignoreList
+		}: ISourceMap
 	) {
 		super()
 		this.sourceMapLocation = sourceMapLocation
 		this.version = version
+		this.file = file
+		this.sourceRoot = sourceRoot
 		this.sources = sources
+		this.sourcesContent = sourcesContent
 		this.names = names
 		this.mappings = mappings
+		this.ignoreList = ignoreList
 	}
 
 	public get numberOfLinesInCompiledFile() : number {
@@ -75,10 +93,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 
 		return new SourceMap(
 			new UnifiedPath(''),
-			data.version,
-			data.sources,
-			data.names,
-			data.mappings
+			data
 		)
 	}
 
@@ -89,13 +104,9 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		const parsed = JSON.parse(s)
 
 		if (SourceMap.isSourceMap(parsed)) {
-			const { version, sources, names, mappings } = parsed
 			return new SourceMap(
 				sourceMapLocation,
-				version,
-				sources,
-				names,
-				mappings
+				parsed
 			)
 		}
 		return null
@@ -105,7 +116,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		if (!sourceMapCandidate) {
 			return false
 		}
-		for (const attributeName of SOURCE_MAP_ATTRIBUTE_NAMES) {
+		for (const attributeName of SOURCE_MAP_REQUIRED_ATTRIBUTE_NAMES) {
 			if (!(attributeName in sourceMapCandidate)) {
 				return false
 			}
@@ -163,9 +174,11 @@ export class SourceMap extends BaseModel implements ISourceMap {
 	}
 
 	toBase64String(): string {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const data: any = {}
 		
-		for (const attributeName of SOURCE_MAP_ATTRIBUTE_NAMES) {
+		for (const attributeName of SOURCE_MAP_REQUIRED_ATTRIBUTE_NAMES) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			data[attributeName] = (this as any)[attributeName]
 		}
 
@@ -174,7 +187,15 @@ export class SourceMap extends BaseModel implements ISourceMap {
 
 	asConsumer(): SourceMapConsumer {
 		if (!this._consumer) {
-			this._consumer = new SourceMapConsumer(this as unknown as RawSourceMap)
+			this._consumer = new SourceMapConsumer({
+				version: this.version.toString(),
+				file: this.file,
+				sourceRoot: this.sourceRoot,
+				sources: this.sources,
+				sourcesContent: this.sourcesContent,
+				names: this.names || [],
+				mappings: this.mappings
+			} as RawSourceMap)
 		}
 		return this._consumer
 	}

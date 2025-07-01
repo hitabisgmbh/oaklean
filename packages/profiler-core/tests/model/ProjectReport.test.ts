@@ -309,6 +309,9 @@ async function preprocess() {
 
 			if (sourceMap !== undefined && sourceMap !== null) {
 				const newSources = sourceMap.sources.map((source) => {
+					if (source === null) {
+						return null
+					}
 					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
 				})
 				sourceMap.sources = newSources
@@ -325,6 +328,9 @@ async function preprocess() {
 
 			if (sourceMap !== undefined && sourceMap !== null) {
 				const newSources = sourceMap.sources.map((source) => {
+					if (source === null) {
+						return null
+					}
 					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
 				})
 				sourceMap.sources = newSources

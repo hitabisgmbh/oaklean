@@ -48,6 +48,32 @@ describe('UrlProtocolHelper', () => {
 			})
 		})
 
+		test('webpack external', () => {
+			const url = 'webpack://next/external commonjs "next/dist/client/components/action-async-storage.external.js"'
+
+			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
+
+			expect(result).toEqual({
+				protocol: 'webpack',
+				namespace: 'next',
+				filePath: 'external commonjs "next/dist/client/components/action-async-storage.external.js"',
+				options: ''
+			})
+		})
+
+		test('webpack with relative path', () => {
+			const url = 'webpack://_N_E/../src/shared/lib/router/utils/app-paths.ts'
+
+			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
+
+			expect(result).toEqual({
+				protocol: 'webpack',
+				namespace: '_N_E',
+				filePath: '../src/shared/lib/router/utils/app-paths.ts',
+				options: ''
+			})
+		})
+
 		test('webpack-internal', () => {
 			const url = 'webpack-internal:///(rsc)/./src/app/layout.tsx'
 
@@ -84,15 +110,41 @@ describe('UrlProtocolHelper', () => {
 		
 	})
 
-	test('webpackSourceMapUrlToOriginalUrl', () => {
-		const rootDir = new UnifiedPath('/Users/user/project')
-		const originalSource = 'webpack://_N_E/node_modules/next/dist/esm/server/web/adapter.js?4fab'
+	describe('webpackSourceMapUrlToOriginalUrl', () => {
+		test('with node module path', () =>{
+			const rootDir = new UnifiedPath('/Users/user/project')
+			const originalSource = 'webpack://_N_E/node_modules/next/dist/esm/server/web/adapter.js?4fab'
 
-		const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
+			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
 
-		expect(result).toEqual({
-			url: new UnifiedPath('/Users/user/project/node_modules/next/dist/esm/server/web/adapter.js'),
-			protocol: 'webpack'
+			expect(result).toEqual({
+				url: new UnifiedPath('/Users/user/project/node_modules/next/dist/esm/server/web/adapter.js'),
+				protocol: 'webpack'
+			})
+		})
+
+		test('with relative path', () => {
+			const rootDir = new UnifiedPath('/Users/user/project')
+			const originalSource = 'webpack://_N_E/../src/shared/lib/router/utils/app-paths.ts?4fab'
+
+			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
+
+			expect(result).toEqual({
+				url: new UnifiedPath('/Users/user/src/shared/lib/router/utils/app-paths.ts'),
+				protocol: 'webpack'
+			})
+		})
+
+		test('with external', () => {
+			const rootDir = new UnifiedPath('/Users/user/project')
+			const originalSource = 'webpack://next/external commonjs "next/dist/client/components/action-async-storage.external.js"'
+
+			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
+
+			expect(result).toEqual({
+				url: new UnifiedPath('/Users/user/project/external commonjs "next/dist/client/components/action-async-storage.external.js"'),
+				protocol: 'webpack'
+			})
 		})
 	})
 })

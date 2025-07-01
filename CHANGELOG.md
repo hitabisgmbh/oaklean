@@ -10,6 +10,7 @@
 - Fixed a bug related to the correct resolving of source maps.
 - Fixed a bug that occasionally resolved an incorrect node module path.
 - Fixed a bug that falsely increased the profiler hits.
+- Fixed a bug that made some SourceMaps not parsable by the profiler.
 - Fixed a bug that prevented the profiler from distinguishing methods from static methods that share the same name like this:
 	```
 	class Test {
