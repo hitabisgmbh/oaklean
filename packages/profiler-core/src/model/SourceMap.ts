@@ -7,7 +7,8 @@ import { UnifiedPath } from '../system/UnifiedPath'
 // Types
 import {
 	ISourceMap,
-	SOURCE_MAP_REQUIRED_ATTRIBUTE_NAMES
+	SOURCE_MAP_REQUIRED_ATTRIBUTE_NAMES,
+	SOURCE_MAP_ALL_ATTRIBUTE_NAMES
 } from '../types/model/SourceMap'
 
 
@@ -76,10 +77,14 @@ export class SourceMap extends BaseModel implements ISourceMap {
 
 	toJSON(): ISourceMap {
 		return {
+			file: this.file,
+			ignoreList: this.ignoreList,
 			version: this.version,
 			sources: this.sources,
+			sourceRoot: this.sourceRoot,
 			names: this.names,
-			mappings: this.mappings
+			mappings: this.mappings,
+			sourcesContent: this.sourcesContent
 		}
 	}
 
@@ -177,7 +182,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const data: any = {}
 		
-		for (const attributeName of SOURCE_MAP_REQUIRED_ATTRIBUTE_NAMES) {
+		for (const attributeName of SOURCE_MAP_ALL_ATTRIBUTE_NAMES) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			data[attributeName] = (this as any)[attributeName]
 		}
