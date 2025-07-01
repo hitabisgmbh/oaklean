@@ -224,70 +224,15 @@ export class TypescriptParser {
 					skipNext = false
 					return
 				}
-				let subTree: ProgramStructureTree | undefined = undefined
-				if (ts.isClassDeclaration(node)) {
-					subTree = ClassDeclarationHelper.parseNode(
-						node,
-						sourceFile,
-						traverseNodeInfo
-					)
-				}
-
-				if (ts.isClassExpression(node)) {
-					subTree = ClassExpressionHelper.parseNode(
-						node,
-						sourceFile,
-						traverseNodeInfo
-					)
-				}
-
-				if (ts.isConstructorDeclaration(node)) {
-					subTree = ConstructorDeclarationHelper.parseNode(
-						node,
-						sourceFile,
-						traverseNodeInfo
-					)
-				}
-
-				if (ts.isFunctionDeclaration(node)) {
-					subTree = FunctionDeclarationHelper.parseNode(
-						node,
-						sourceFile,
-						traverseNodeInfo
-					)
-				}
-
-				if (ts.isFunctionExpression(node)) {
-					subTree = FunctionExpressionHelper.parseNode(
-						node,
-						sourceFile,
-						traverseNodeInfo
-					)
-				}
-
-				if (ts.isMethodDeclaration(node)) {
-					subTree = MethodDeclarationHelper.parseNode(
-						node,
-						sourceFile,
-						traverseNodeInfo
-					)
-				}
-
-				if (ts.isArrowFunction(node)) {
-					subTree = ArrowFunctionHelper.parseNode(
-						node,
-						sourceFile,
-						traverseNodeInfo
-					)
-				}
-
-				if (ts.isObjectLiteralExpression(node)) {
-					subTree = ScopeHelper.parseNode(
-						node,
-						sourceFile,
-						traverseNodeInfo
-					)
-				}
+				const subTree = TypescriptParser.parseNode(
+					node,
+					sourceFile,
+					traverseNodeInfo
+				)
+				
+				// if (ts.isBlock(node)) {
+					
+				// }
 
 				if (subTree) {
 					if (subTree.identifier) {
@@ -313,7 +258,24 @@ export class TypescriptParser {
 								}
 							)
 
-							
+							// throw new Error(
+							// 	'TypescriptParser.parseFile: duplicate function identifier definition: ' +
+							// 	subTree.identifier + '\n' +
+							// 	JSON.stringify({
+							// 		filePath,
+							// 		identifierPath: [...identifierPath, subTree.identifier].join('.'),
+							// 		loc: {
+							// 			begin: subTree.beginLoc,
+							// 			end: subTree.endLoc
+							// 		},
+							// 		previouslyFound: {
+							// 			loc: {
+							// 				begin: found.beginLoc,
+							// 				end: found.endLoc
+							// 			}
+							// 		}
+							// 	}, undefined, 2)
+							// )
 						}
 						traverseNodeInfo.tree.children.set(subTree.identifier, subTree)
 					}
@@ -361,6 +323,78 @@ export class TypescriptParser {
 		TypescriptParser.traverseSourceFile(sourceFile, { enter: enterNode, leave: leaveNode })
 
 		return root
+	}
+
+	static parseNode(
+		node: ts.Node,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	): ProgramStructureTree | undefined {
+		if (ts.isClassDeclaration(node)) {
+			return ClassDeclarationHelper.parseNode(
+				node,
+				sourceFile,
+				traverseNodeInfo
+			)
+		}
+
+		if (ts.isClassExpression(node)) {
+			return ClassExpressionHelper.parseNode(
+				node,
+				sourceFile,
+				traverseNodeInfo
+			)
+		}
+
+		if (ts.isConstructorDeclaration(node)) {
+			return ConstructorDeclarationHelper.parseNode(
+				node,
+				sourceFile,
+				traverseNodeInfo
+			)
+		}
+
+		if (ts.isFunctionDeclaration(node)) {
+			return FunctionDeclarationHelper.parseNode(
+				node,
+				sourceFile,
+				traverseNodeInfo
+			)
+		}
+
+		if (ts.isFunctionExpression(node)) {
+			return FunctionExpressionHelper.parseNode(
+				node,
+				sourceFile,
+				traverseNodeInfo
+			)
+		}
+
+		if (ts.isMethodDeclaration(node)) {
+			return MethodDeclarationHelper.parseNode(
+				node,
+				sourceFile,
+				traverseNodeInfo
+			)
+		}
+
+		if (ts.isArrowFunction(node)) {
+			return ArrowFunctionHelper.parseNode(
+				node,
+				sourceFile,
+				traverseNodeInfo
+			)
+		}
+
+		if (ts.isObjectLiteralExpression(node)) {
+			return ScopeHelper.parseNode(
+				node,
+				sourceFile,
+				traverseNodeInfo
+			)
+		}
+
+		return undefined
 	}
 
 	/**
