@@ -81,8 +81,31 @@ export class Report extends BaseModel {
 	normalize(
 		newGlobalIndex: GlobalIndex
 	) {
+		function sortIDsByPath(
+			input: ModelMap<PathID_number, SourceFileMetaData>
+		): PathID_number[] {
+			return Array.from(input.values())
+				.map((value) => ({
+					path: value.path,
+					id: value.pathIndex.id!
+				})) // Pair identifier with id
+				.sort((a, b) => a.path.localeCompare(b.path)) // Sort by path
+				.map(pair => pair.id) // Extract sorted ids
+		}
+		function sortIDsByModuleIdentifier(
+			input: ModelMap<ModuleID_number, ModuleReport>
+		): ModuleID_number[] {
+			return Array.from(input.values())
+				.map((value) => ({
+					identifier: value.nodeModule.identifier,
+					id: value.moduleIndex.id
+				})) // Pair identifier with id
+				.sort((a, b) => a.identifier.localeCompare(b.identifier)) // Sort by identifier
+				.map(pair => pair.id) // Extract sorted ids
+		}
+
 		const new_lang_internal = new ModelMap<PathID_number, SourceFileMetaData>('number')
-		for (const pathID of Array.from(this.lang_internal.keys()).sort()) {
+		for (const pathID of sortIDsByPath(this.lang_internal)) {
 			const sourceFileMetaData = this.lang_internal.get(pathID)!
 			sourceFileMetaData.normalize(newGlobalIndex)
 			if (sourceFileMetaData.pathIndex.id === undefined) {
@@ -92,7 +115,7 @@ export class Report extends BaseModel {
 		}
 		const newModuleIndex = this.moduleIndex.insertToOtherIndex(newGlobalIndex)
 		const new_intern = new ModelMap<PathID_number, SourceFileMetaData>('number')
-		for (const pathID of Array.from(this.intern.keys()).sort()) {
+		for (const pathID of sortIDsByPath(this.intern)) {
 			const sourceFileMetaData = this.intern.get(pathID)!
 			sourceFileMetaData.normalize(newGlobalIndex)
 			if (sourceFileMetaData.pathIndex.id === undefined) {
@@ -101,7 +124,7 @@ export class Report extends BaseModel {
 			new_intern.set(sourceFileMetaData.pathIndex.id, sourceFileMetaData)
 		}
 		const new_extern = new ModelMap<ModuleID_number, ModuleReport>('number')
-		for (const moduleID of Array.from(this.extern.keys()).sort()) {
+		for (const moduleID of sortIDsByModuleIdentifier(this.extern)) {
 			const moduleReport = this.extern.get(moduleID)!
 			moduleReport.normalize(newGlobalIndex)
 			new_extern.set(moduleReport.moduleIndex.id, moduleReport)
