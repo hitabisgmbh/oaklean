@@ -190,7 +190,7 @@ export class TypescriptParser {
 			literalFunctionCounter: 0
 		}
 
-		const skippedSourceNodes: ts.Node[] = []
+		const skippedSourceNodes = new Set<ts.Node>()
 		let skipNext = false
 
 		const addSubTree = (
@@ -249,7 +249,7 @@ export class TypescriptParser {
 
 			if (TypescriptParser.isProgramStructureType(node)) {
 				if (skipNext) {
-					skippedSourceNodes.push(node)
+					skippedSourceNodes.add(node)
 					skipNext = false
 					return
 				}
@@ -299,9 +299,8 @@ export class TypescriptParser {
 
 		const leaveNode = (node: ts.Node) => {
 			if (TypescriptParser.isProgramStructureType(node)) {
-				const found = skippedSourceNodes.indexOf(node)
-				if (found > -1) {
-					skippedSourceNodes.splice(found, 1)
+				if (skippedSourceNodes.has(node)) {
+					skippedSourceNodes.delete(node)
 					return
 				}
 				TypescriptParser.clearEmptyScopes(traverseNodeInfo)
