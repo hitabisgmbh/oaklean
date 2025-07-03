@@ -192,6 +192,56 @@ export class TypescriptParser {
 
 		const skippedSourceNodes: ts.Node[] = []
 		let skipNext = false
+
+		const addSubTree = (
+			node: ts.Node,
+			subTree: ProgramStructureTree,
+			tree: ProgramStructureTree,
+		) => {
+			const found = tree.children.get(subTree.identifier)
+			if (found !== undefined && onDuplicateIdentifier !== undefined) {
+				const identifierPath = stack.map(
+					(n) => {
+						return n.tree.identifier
+					}
+				)
+
+				onDuplicateIdentifier(
+					filePath,
+					(node as any),
+					[...identifierPath, subTree.identifier].join('.'),
+					{
+						begin: subTree.beginLoc,
+						end: subTree.endLoc
+					},
+					{
+						begin: found.beginLoc,
+						end: found.endLoc
+					}
+				)
+
+				// throw new Error(
+				// 	'TypescriptParser.parseFile: duplicate function identifier definition: ' +
+				// 	subTree.identifier + '\n' +
+				// 	JSON.stringify({
+				// 		filePath,
+				// 		identifierPath: [...identifierPath, subTree.identifier].join('.'),
+				// 		loc: {
+				// 			begin: subTree.beginLoc,
+				// 			end: subTree.endLoc
+				// 		},
+				// 		previouslyFound: {
+				// 			loc: {
+				// 				begin: found.beginLoc,
+				// 				end: found.endLoc
+				// 			}
+				// 		}
+				// 	}, undefined, 2)
+				// )
+			}
+			tree.children.set(subTree.identifier, subTree)
+		}
+
 		const enterNode = (node: ts.Node) => {
 			if (SkipHelper.nodeShouldBeSkipped(node)) {
 				skipNext = true
@@ -214,50 +264,12 @@ export class TypescriptParser {
 				// }
 
 				if (subTree) {
-					if (subTree.identifier) {
-						const found = traverseNodeInfo.tree.children.get(subTree.identifier)
-						if (found !== undefined && onDuplicateIdentifier !== undefined) {
-							const identifierPath = stack.map(
-								(n) => {
-									return n.tree.identifier
-								}
-							)
-
-							onDuplicateIdentifier(
-								filePath,
-								(node as any),
-								[...identifierPath, subTree.identifier].join('.'),
-								{
-									begin: subTree.beginLoc,
-									end: subTree.endLoc
-								},
-								{
-									begin: found.beginLoc,
-									end: found.endLoc
-								}
-							)
-
-							// throw new Error(
-							// 	'TypescriptParser.parseFile: duplicate function identifier definition: ' +
-							// 	subTree.identifier + '\n' +
-							// 	JSON.stringify({
-							// 		filePath,
-							// 		identifierPath: [...identifierPath, subTree.identifier].join('.'),
-							// 		loc: {
-							// 			begin: subTree.beginLoc,
-							// 			end: subTree.endLoc
-							// 		},
-							// 		previouslyFound: {
-							// 			loc: {
-							// 				begin: found.beginLoc,
-							// 				end: found.endLoc
-							// 			}
-							// 		}
-							// 	}, undefined, 2)
-							// )
-						}
-						traverseNodeInfo.tree.children.set(subTree.identifier, subTree)
-					}
+					// adds the subtree to the current tree
+					addSubTree(
+						node,
+						subTree,
+						traverseNodeInfo.tree
+					)
 					// store last visited node 
 					stack.push(traverseNodeInfo)
 
@@ -272,6 +284,14 @@ export class TypescriptParser {
 						literalFunctionCounter: 0
 					}
 				} else {
+					LoggerHelper.error(
+						'TypescriptParser.parseFile: subTree is undefined, unexpected behaviour',
+						JSON.stringify({
+							filePath,
+							node: ts.SyntaxKind[node.kind],
+							code: node.getText(sourceFile)
+						}, undefined, 2)
+					)
 					throw new Error('TypescriptParser.parseFile: subTree is undefined, unexpected behaviour')
 				}
 			}
@@ -371,12 +391,13 @@ export class TypescriptParser {
 			)
 		}
 
-		if (ts.isObjectLiteralExpression(node)) {
-			return ScopeHelper.parseNode(
-				node,
-				sourceFile,
-				traverseNodeInfo
-			)
+		const subTree = ScopeHelper.parseNode(
+			node,
+			sourceFile,
+			traverseNodeInfo
+		)
+		if (subTree !== undefined) {
+			return subTree
 		}
 
 		return undefined

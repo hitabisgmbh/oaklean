@@ -13,6 +13,20 @@ import {
 
 export class ScopeHelper {
 	static parseNode(
+		node: ts.Node,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	): ProgramStructureTree<ProgramStructureTreeType.Scope> | undefined {
+		if (ts.isObjectLiteralExpression(node)) {
+			return ScopeHelper.parseObjectLiteralExpression(
+				node,
+				sourceFile,
+				traverseNodeInfo
+			)
+		}
+	}
+
+	static parseObjectLiteralExpression(
 		node: ts.ObjectLiteralExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
