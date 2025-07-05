@@ -291,7 +291,7 @@ export class Profiler {
 			samples: profile.samples,
 			timeDeltas: profile.timeDeltas
 		}
-		const outFileCPUProfile = this.exportAssetHelper.outputProfilePath(title)
+		const outFileCPUProfile = this.exportAssetHelper.outputCPUProfilePath(title)
 		const outFileExternalResourceHelper = this.exportAssetHelper.outputExternalResourceHelperPath(title)
 		const outFileReport = this.exportAssetHelper.outputReportPath(title)
 		const outFileMetricsDataCollection = this.exportAssetHelper.outputMetricsDataCollectionPath(title)

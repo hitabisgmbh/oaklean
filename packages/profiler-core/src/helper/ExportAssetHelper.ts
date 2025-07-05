@@ -12,7 +12,7 @@ import {
 	METRICS_DATA_COLLECTION_FILE_EXTENSION,
 	PERFORMANCE_FILE_NAME,
 	REPORT_FILE_EXTENSION,
-	V8_CPU_PROFILE_FILE_EXTENSION
+	CPU_PROFILE_FILE_EXTENSION
 } from '../constants'
 
 export class ExportAssetHelper {
@@ -36,8 +36,8 @@ export class ExportAssetHelper {
 		)
 	}
 
-	outputProfilePath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}${V8_CPU_PROFILE_FILE_EXTENSION}`)
+	outputCPUProfilePath(title: string): UnifiedPath {
+		return this.outputDir().join(`${title}${CPU_PROFILE_FILE_EXTENSION}`)
 	}
 
 	outputExternalResourceHelperPath(title: string): UnifiedPath {
