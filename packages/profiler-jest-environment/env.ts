@@ -112,7 +112,7 @@ class CustomEnvironment implements JestEnvironment {
 
 				performance.stop('jestEnv.env.setup')
 				performance.printReport('jestEnv.env.setup')
-				performance.exportAndSum(this.profiler.outputDir().join('performance.json'))
+				performance.exportAndSum(this.profiler.exportAssetHelper.outputPerformancePath())
 
 				await this.profiler.start(
 					this.testPath.toString(),
@@ -133,7 +133,7 @@ class CustomEnvironment implements JestEnvironment {
 				const stopTime = TimeHelper.getCurrentHighResolutionTime()
 				performance.stop('jestEnv.env.teardown')
 				performance.printReport('jestEnv.env.teardown')
-				performance.exportAndSum(this.profiler.outputDir().join('performance.json'))
+				performance.exportAndSum(this.profiler.exportAssetHelper.outputPerformancePath())
 
 				await this.profiler.finish(this.testPath.toString(), stopTime)
 			} catch (e) {

@@ -18,7 +18,8 @@ import {
 	ExecutionDetails,
 	PerformanceHelper,
 	ExternalResourceHelper,
-	RegistryHelper
+	RegistryHelper,
+	ExportAssetHelper
 } from '@oaklean/profiler-core'
 
 import { V8Profiler } from './model/V8Profiler'
@@ -43,6 +44,7 @@ interface TraceEventParams {
 export class Profiler {
 	subOutputDir: string | undefined
 	config: ProfilerConfig
+	exportAssetHelper: ExportAssetHelper
 	executionDetails?: IProjectReportExecutionDetailsDuringMeasurement
 
 	private _externalResourceHelper: ExternalResourceHelper
@@ -58,6 +60,9 @@ export class Profiler {
 		this.loadSensorInterface()
 		this._externalResourceHelper = new ExternalResourceHelper(
 			this.config.getRootDir()
+		)
+		this.exportAssetHelper = new ExportAssetHelper(
+			this.config.getOutDir().join(this.subOutputDir || '')
 		)
 	}
 
@@ -183,7 +188,7 @@ export class Profiler {
 		const performance = new PerformanceHelper()
 		performance.start('Profiler.start')
 
-		const outFileReport = this.outputReportPath(title)
+		const outFileReport = this.exportAssetHelper.outputReportPath(title)
 		const outDir = outFileReport.dirName()
 
 		performance.start('Profiler.start.createOutDir')
@@ -249,27 +254,7 @@ export class Profiler {
 		performance.stop('Profiler.start.V8Profiler.startProfiling')
 		performance.stop('Profiler.start')
 		performance.printReport('Profiler.start')
-		performance.exportAndSum(this.outputDir().join('performance.json'))
-	}
-
-	outputDir(): UnifiedPath {
-		return this.config.getOutDir().join(this.subOutputDir || '')
-	}
-
-	outputReportPath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}.oak`)
-	}
-
-	outputMetricCollectionPath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}.mcollection`)
-	}
-
-	outputProfilePath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}.cpuprofile`)
-	}
-
-	outputExternalResourceHelperPath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}.resources.json`)
+		performance.exportAndSum(this.exportAssetHelper.outputPerformancePath())
 	}
 
 	async finish(title: string, highResolutionStopTime?: NanoSeconds_BigInt): Promise<ProjectReport> {
@@ -306,10 +291,10 @@ export class Profiler {
 			samples: profile.samples,
 			timeDeltas: profile.timeDeltas
 		}
-		const outFileCPUProfile = this.outputProfilePath(title)
-		const outFileExternalResourceHelper = this.outputExternalResourceHelperPath(title)
-		const outFileReport = this.outputReportPath(title)
-		const outFileMetricCollection = this.outputMetricCollectionPath(title)
+		const outFileCPUProfile = this.exportAssetHelper.outputProfilePath(title)
+		const outFileExternalResourceHelper = this.exportAssetHelper.outputExternalResourceHelperPath(title)
+		const outFileReport = this.exportAssetHelper.outputReportPath(title)
+		const outFileMetricCollection = this.exportAssetHelper.outputMetricCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportV8Profile')
 			// create parent directories if they do not exist
@@ -404,7 +389,7 @@ export class Profiler {
 		}
 		performance.stop('Profiler.finish')
 		performance.printReport('Profiler.finish')
-		performance.exportAndSum(this.outputDir().join('performance.json'))
+		performance.exportAndSum(this.exportAssetHelper.outputPerformancePath())
 
 		return report
 	}
