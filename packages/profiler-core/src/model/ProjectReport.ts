@@ -10,11 +10,10 @@ import { ModuleIndex } from './indices/ModuleIndex'
 
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import {
-	NODE_ENV
-} from '../constants/env'
-import {
+	REPORT_FILE_EXTENSION,
+	NODE_ENV,
 	BIN_FILE_MAGIC
-} from '../constants/binary'
+} from '../constants'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
@@ -291,7 +290,7 @@ export class ProjectReport extends Report {
 		}
 		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
 		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
-			throw new Error('ProjectReport.consumeFromBuffer: not a binary .oak format')
+			throw new Error(`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`)
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const {
@@ -313,7 +312,7 @@ export class ProjectReport extends Report {
 		}
 		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
 		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
-			throw new Error('ProjectReport.consumeFromBuffer: not a binary .oak format')
+			throw new Error(`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`)
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const {

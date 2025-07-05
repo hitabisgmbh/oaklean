@@ -1,13 +1,14 @@
 import * as fs from 'fs'
 
-import { sync } from 'glob'
 import {
 	UnifiedPath,
 	TypescriptParser,
 	ExternalResourceHelper,
 	LoggerHelper,
 	ScriptID_string,
-	UnifiedPath_string
+	UnifiedPath_string,
+	ExportAssetHelper,
+	EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
@@ -27,20 +28,23 @@ export default class CodeParsingCommands {
 		const externalResourceCommand = program
 			.command('external-resource')
 			.alias('er')
-			.description('commands to interact with external resource files (.resources.json)')
+			.description(
+				'commands to interact with external resource files ' +
+				`(${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION})`
+			)
 
 		externalResourceCommand
 			.command('verify-identifiers')
 			.alias('vi')
 			.description('Parses all source files in all resource files within a given path and verifies that all identifiers are valid and unique')
-			.argument('<input>', 'File path to the directory containing the .resources.json files')
+			.argument('<input>', `File path to the directory containing the ${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION} files`)
 			.action(this.verifyIdentifiers.bind(this))
 
 		externalResourceCommand
 			.command('extract')
 			.alias('e')
 			.description('Extract a file from a resource file and stores it into a separate file')
-			.argument('<input>', 'File path to the .resources.json file')
+			.argument('<input>', `File path to the ${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION} file`)
 			.argument('<file>', 'File to extract from the resource file (scriptID or file path)')
 			.option('-o, --output <output>', 'Path to store the file (default: execute directory + code.ts)', undefined)
 			.action(this.extractFile.bind(this))
@@ -107,17 +111,17 @@ export default class CodeParsingCommands {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
 		}
 
+		const exportAssetHelper = new ExportAssetHelper(inputPath)
 		const cwdPath = new UnifiedPath(process.cwd())
+		const externalResourcePaths = exportAssetHelper.allExternalResourcePathsInOutputDir()
 
-		const globDir = inputPath.join('**', '*.resources.json')
+		for (const externalResourcePath of externalResourcePaths) {
+			const relativePath = cwdPath.pathTo(externalResourcePath)
 
-		const filePaths = sync(globDir.toString())
-
-		for (const filePath of filePaths) {
-			const unifiedPath = new UnifiedPath(filePath)
-			const relativePath = cwdPath.pathTo(unifiedPath)
-
-			const resourceFile = ExternalResourceHelper.loadFromFile(new UnifiedPath(process.cwd()), unifiedPath)
+			const resourceFile = ExternalResourceHelper.loadFromFile(
+				new UnifiedPath(process.cwd()),
+				externalResourcePath
+			)
 
 			if (resourceFile === undefined) {
 				LoggerHelper.error(`Could not load resource file: ${relativePath.toPlatformString()}`)

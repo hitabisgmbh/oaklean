@@ -82,10 +82,12 @@ class CustomEnvironment implements JestEnvironment {
 		this.ranSuccessfully = true
 	}
 
-	private async getExecutionDetails(config: ProfilerConfig): Promise<
-	IProjectReportExecutionDetailsDuringMeasurement
-	> {
-		const executionDetailsPath = config.getOutDir().join('jest', 'execution-details.json')
+	private async getExecutionDetails(
+		profiler: Profiler,
+		config: ProfilerConfig
+	): Promise<IProjectReportExecutionDetailsDuringMeasurement> {
+		const executionDetailsPath = profiler.exportAssetHelper.outputExecutionDetailsPath()
+
 		let executionDetails = ExecutionDetails.loadFromFile(executionDetailsPath)
 
 		if (executionDetails === undefined) {
@@ -107,7 +109,7 @@ class CustomEnvironment implements JestEnvironment {
 				performance.stop('jestEnv.env.resolveConfig')
 
 				performance.start('jestEnv.env.resolveExecutionDetails')
-				const executionDetails = await this.getExecutionDetails(config)
+				const executionDetails = await this.getExecutionDetails(this.profiler, config)
 				performance.stop('jestEnv.env.resolveExecutionDetails')
 
 				performance.stop('jestEnv.env.setup')

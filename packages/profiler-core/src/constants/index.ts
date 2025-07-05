@@ -1,4 +1,5 @@
 export * from './env'
+export * from './file'
 export * from './app'
 export * from './config'
 export * from './binary'
