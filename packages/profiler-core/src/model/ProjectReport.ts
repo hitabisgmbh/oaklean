@@ -90,14 +90,28 @@ export class ProjectReport extends Report {
 			throw new Error('ProjectReport.merge: no ProjectReports were given')
 		}
 
-		const systemInformationList = args.map((x) => x.executionDetails.systemInformation)
+		const sortedReports = [...args].sort((reportA, reportB) => {
+			const compared =
+				BigInt(reportA.executionDetails.highResolutionBeginTime || '0') -
+				BigInt(reportB.executionDetails.highResolutionBeginTime || '0')
+
+			if (compared > BigInt(0)) {
+				return 1
+			} else if (compared < BigInt(0)) {
+				return -1
+			}
+			return 0
+		})
+
+
+		const systemInformationList = sortedReports.map((x) => x.executionDetails.systemInformation)
 
 		if (!SystemInformation.sameSystem(...systemInformationList)) {
 			throw new Error('ProjectReport.merge: cannot merge ProjectReports from different systems')
 		}
-		const executionDetails = args[0].executionDetails
-
-		for (const currentProjectReport of args) {
+		const executionDetails = sortedReports[0].executionDetails
+		
+		for (const currentProjectReport of sortedReports) {
 			if (
 				currentProjectReport.executionDetails.commitHash !== executionDetails.commitHash
 			) {
@@ -121,7 +135,7 @@ export class ProjectReport extends Report {
 
 		const result = Object.assign(
 			new ProjectReport(executionDetails, ReportKind.accumulated),
-			Report.merge(moduleIndex, ...args)
+			Report.merge(moduleIndex, ...sortedReports)
 		)
 		result.globalIndex = moduleIndex.globalIndex
 		return result
