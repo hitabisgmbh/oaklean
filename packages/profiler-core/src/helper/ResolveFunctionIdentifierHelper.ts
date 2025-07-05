@@ -103,7 +103,7 @@ export class ResolveFunctionIdentifierHelper {
 			const sourceCode = await this.externalResourceHelper.sourceCodeFromScriptID(sourceLocation.scriptID)
 			if (sourceCode === null) {
 				throw new Error(
-					'InsertCPUProfileHelper.resolveFunctionIdentifier: sourceCode should not be null' +
+					'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: sourceCode should not be null' +
 					`scriptID: ${sourceLocation.scriptID}` +
 					` (${sourceLocation.absoluteUrl.toPlatformString()})`
 				)
@@ -227,7 +227,7 @@ export class ResolveFunctionIdentifierHelper {
 			// - the source file is NOT part of a node module,
 			//		since node modules often include source maps that point to non-existing files we ignore them
 			LoggerHelper.error(
-				'InsertCPUProfileHelper.resolveFunctionIdentifier: original source file does not exist', {
+				'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: original source file does not exist', {
 					rootDir: this.rootDir.toString(),
 					sources: sourceMap?.sources,
 					url: sourceLocation.absoluteUrl.toString(),
@@ -239,12 +239,12 @@ export class ResolveFunctionIdentifierHelper {
 		}
 
 		if (functionIdentifier === '') {
-			LoggerHelper.error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
+			LoggerHelper.error('ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
 				url: sourceLocation.absoluteUrl.toString(),
 				lineNumber,
 				columnNumber
 			})
-			throw new Error('InsertCPUProfileHelper.resolveFunctionIdentifier: functionIdentifier should not be empty')
+			throw new Error('ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: functionIdentifier should not be empty')
 		}
 
 

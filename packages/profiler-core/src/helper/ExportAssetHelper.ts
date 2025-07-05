@@ -9,7 +9,7 @@ import {
 	ACCUMULATED_REPORT_FILE_NAME,
 	EXECUTION_DETAILS_FILE_NAME,
 	EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION,
-	METRIC_DATA_COLLECTION_FILE_EXTENSION,
+	METRICS_DATA_COLLECTION_FILE_EXTENSION,
 	PERFORMANCE_FILE_NAME,
 	REPORT_FILE_EXTENSION,
 	V8_CPU_PROFILE_FILE_EXTENSION
@@ -30,9 +30,9 @@ export class ExportAssetHelper {
 		return this.outputDir().join(`${title}${REPORT_FILE_EXTENSION}`)
 	}
 
-	outputMetricCollectionPath(title: string): UnifiedPath {
+	outputMetricsDataCollectionPath(title: string): UnifiedPath {
 		return this.outputDir().join(
-			`${title}${METRIC_DATA_COLLECTION_FILE_EXTENSION}`
+			`${title}${METRICS_DATA_COLLECTION_FILE_EXTENSION}`
 		)
 	}
 

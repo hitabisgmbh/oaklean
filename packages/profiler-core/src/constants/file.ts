@@ -1,5 +1,5 @@
 export const REPORT_FILE_EXTENSION = '.oak'
-export const METRIC_DATA_COLLECTION_FILE_EXTENSION = '.mcollection'
+export const METRICS_DATA_COLLECTION_FILE_EXTENSION = '.mcollection'
 export const V8_CPU_PROFILE_FILE_EXTENSION = '.cpuprofile'
 export const EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION = '.resources.json'
 export const PERFORMANCE_FILE_NAME = 'performance.json'

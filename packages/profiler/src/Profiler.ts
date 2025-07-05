@@ -294,7 +294,7 @@ export class Profiler {
 		const outFileCPUProfile = this.exportAssetHelper.outputProfilePath(title)
 		const outFileExternalResourceHelper = this.exportAssetHelper.outputExternalResourceHelperPath(title)
 		const outFileReport = this.exportAssetHelper.outputReportPath(title)
-		const outFileMetricCollection = this.exportAssetHelper.outputMetricCollectionPath(title)
+		const outFileMetricsDataCollection = this.exportAssetHelper.outputMetricsDataCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportV8Profile')
 			// create parent directories if they do not exist
@@ -323,7 +323,7 @@ export class Profiler {
 		if (this.config.shouldExportSensorInterfaceData()) {
 			if (metricsDataCollection !== undefined) {
 				performance.start('Profiler.finish.exportMetricsDataCollection')
-				metricsDataCollection.storeToFile(outFileMetricCollection)
+				metricsDataCollection.storeToFile(outFileMetricsDataCollection)
 				performance.stop('Profiler.finish.exportMetricsDataCollection')
 			}
 		}
