@@ -570,7 +570,7 @@ export class Report extends BaseModel {
 		config?: ProfilerConfig
 	) {
 		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName().toPlatformString())
+			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
 		}
 		if (!this.relativeRootDir) {
 			const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()

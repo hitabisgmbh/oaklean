@@ -1,6 +1,10 @@
+import * as fs from 'fs'
+
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 
+import { UnifiedPath } from '../system'
+import { PermissionHelper } from '../helper/PermissionHelper'
 import { SourceNodeIdentifierHelper } from '../helper/SourceNodeIdentifierHelper'
 import { memoize } from '../helper/memoize'
 // Types
@@ -100,6 +104,28 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 			children: this.children.toJSON<IProgramStructureTree>() || {}
 		}
 	}
+
+	storeToFile(filePath: UnifiedPath) {
+		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
+			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
+		}
+		PermissionHelper.writeFileWithUserPermission(
+			filePath.toPlatformString(),
+			JSON.stringify(this, null, 2)
+		)
+	}
+
+	static loadFromFile(
+		filePath: UnifiedPath
+	): ProgramStructureTree | undefined {
+		if (!fs.existsSync(filePath.toPlatformString())) {
+			return undefined
+		}
+		return ProgramStructureTree.fromJSON(
+			fs.readFileSync(filePath.toPlatformString()).toString()
+		)
+	}
+
 
 	static fromJSON(json: string | IProgramStructureTree): ProgramStructureTree {
 		return ProgramStructureTree.fromJSONWithParent(json, null)

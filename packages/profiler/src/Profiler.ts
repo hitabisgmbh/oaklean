@@ -19,7 +19,8 @@ import {
 	PerformanceHelper,
 	ExternalResourceHelper,
 	RegistryHelper,
-	ExportAssetHelper
+	ExportAssetHelper,
+	CPUProfileHelper
 } from '@oaklean/profiler-core'
 
 import { V8Profiler } from './model/V8Profiler'
@@ -284,7 +285,7 @@ export class Profiler {
 		const CPUProfilerBeginTime = BigInt(await this.getCPUProfilerBeginTime()) * BigInt(1000) as NanoSeconds_BigInt
 		const highResolutionBeginTimeToUse = CPUProfilerBeginTime.toString()
 
-		const exportData = {
+		const cpuProfile = {
 			nodes: profile.nodes,
 			startTime: profile.startTime,
 			endTime: profile.endTime,
@@ -297,14 +298,9 @@ export class Profiler {
 		const outFileMetricsDataCollection = this.exportAssetHelper.outputMetricsDataCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportV8Profile')
-			// create parent directories if they do not exist
-			const dir = outFileCPUProfile.dirName()
-			if (!fs.existsSync(dir.toPlatformString())) {
-				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
-			}
-			PermissionHelper.writeFileWithUserPermission(
-				outFileCPUProfile.toPlatformString(),
-				JSON.stringify(exportData, null, 2),
+			CPUProfileHelper.storeToFile(
+				cpuProfile,
+				outFileCPUProfile,
 			)
 			performance.stop('Profiler.finish.exportV8Profile')
 		}
@@ -339,14 +335,9 @@ export class Profiler {
 
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportExternalResourceHelper')
-			// create parent directories if they do not exist
-			const dir = outFileExternalResourceHelper.dirName()
-			if (!fs.existsSync(dir.toPlatformString())) {
-				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
-			}
-			PermissionHelper.writeFileWithUserPermission(
-				outFileExternalResourceHelper.toPlatformString(),
-				JSON.stringify(this._externalResourceHelper, null, 2),
+			this._externalResourceHelper.storeToFile(
+				outFileExternalResourceHelper,
+				'pretty-json'
 			)
 			performance.stop('Profiler.finish.exportExternalResourceHelper')
 		}
@@ -354,7 +345,7 @@ export class Profiler {
 		performance.start('Profiler.finish.insertCPUProfile')
 		await report.insertCPUProfile(
 			rootDir,
-			profile,
+			cpuProfile,
 			this._externalResourceHelper,
 			metricsDataCollection
 		)
@@ -366,14 +357,9 @@ export class Profiler {
 
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportExternalResourceHelper')
-			// create parent directories if they do not exist
-			const dir = outFileExternalResourceHelper.dirName()
-			if (!fs.existsSync(dir.toPlatformString())) {
-				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
-			}
-			PermissionHelper.writeFileWithUserPermission(
-				outFileExternalResourceHelper.toPlatformString(),
-				JSON.stringify(this._externalResourceHelper, null, 2),
+			this._externalResourceHelper.storeToFile(
+				outFileExternalResourceHelper,
+				'pretty-json'
 			)
 			performance.stop('Profiler.finish.exportExternalResourceHelper')
 		}

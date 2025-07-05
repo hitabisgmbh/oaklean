@@ -60,7 +60,7 @@ export class ExecutionDetails {
 		filePath: UnifiedPath
 	): void {
 		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName().toPlatformString())
+			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
 		}
 		PermissionHelper.writeFileWithUserPermission(
 			filePath.toPlatformString(),

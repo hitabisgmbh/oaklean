@@ -11,7 +11,8 @@ import {
 	CPUProfileHelper,
 	STATIC_CONFIG_FILENAME,
 	ResolveFunctionIdentifierHelper,
-	ExternalResourceHelper
+	ExternalResourceHelper,
+	PermissionHelper
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 import bare from 'cli-color/bare'
@@ -74,7 +75,6 @@ export default class CPUProfileCommands {
 		if (outputPath.isRelative()) {
 			outputPath = new UnifiedPath(process.cwd()).join(outputPath)
 		}
-		const outDir = outputPath.dirName()
 
 		const cpuProfile = JSON.parse(fs.readFileSync(inputPath.toPlatformString()).toString())
 		const cpuModel = new CPUModel(
@@ -83,17 +83,7 @@ export default class CPUProfileCommands {
 			BigInt(0) as NanoSeconds_BigInt
 		)
 
-		if (!fs.existsSync(outDir.toPlatformString())) {
-			fs.mkdirSync(outDir.toPlatformString(), { recursive: true })
-		}
-
-		fs.writeFileSync(outputPath.toPlatformString(), JSON.stringify(
-			cpuModel,
-			(key, value) =>
-				typeof value === 'bigint'
-					? value.toString()
-					: value // return everything else unchanged
-			, 2))
+		cpuModel.storeToFile(outputPath)
 	}
 
 	async inspect(input: string) {

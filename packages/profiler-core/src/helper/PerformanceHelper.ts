@@ -39,7 +39,10 @@ export class PerformanceHelper {
 		if (!fs.existsSync(dir.toPlatformString())) {
 			PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
 		}
-		fs.writeFileSync(path.toPlatformString(), JSON.stringify(data, null, 2))
+		PermissionHelper.writeFileWithUserPermission(
+			path.toPlatformString(),
+			JSON.stringify(data, null, 2)
+		)
 	}
 
 	exportAndSum(path: UnifiedPath) {

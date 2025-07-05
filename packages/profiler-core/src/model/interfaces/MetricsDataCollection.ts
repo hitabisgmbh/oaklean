@@ -69,9 +69,7 @@ export class MetricsDataCollection extends BaseModel {
 
 	storeToFile(filePath: UnifiedPath) {
 		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(
-				filePath.dirName().toPlatformString()
-			)
+			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
 		}
 		PermissionHelper.writeFileWithUserPermission(
 			filePath.toPlatformString(),

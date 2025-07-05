@@ -257,7 +257,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		kind?: 'pretty-json' | 'json'
 	) {
 		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName().toPlatformString())
+			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
 		}
 
 		switch (kind !== undefined ? kind : 'json') {

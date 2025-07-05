@@ -8,7 +8,8 @@ import {
 	ScriptID_string,
 	UnifiedPath_string,
 	ExportAssetHelper,
-	EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION
+	EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION,
+	PermissionHelper
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
@@ -64,15 +65,10 @@ export default class CodeParsingCommands {
 		if (outputPath.isRelative()) {
 			outputPath = new UnifiedPath(process.cwd()).join(outputPath)
 		}
-		const outDir = outputPath.dirName()
 
 		const programStructureTree = TypescriptParser.parseFile(inputPath)
 
-		if (!fs.existsSync(outDir.toString())) {
-			fs.mkdirSync(outDir.toString(), { recursive: true })
-		}
-
-		fs.writeFileSync(outputPath.toPlatformString(), JSON.stringify(programStructureTree, null, 2))
+		programStructureTree.storeToFile(outputPath)
 	}
 
 	private verifyCode(
@@ -188,9 +184,12 @@ export default class CodeParsingCommands {
 		}
 
 		const outDir = outputPath.dirName()
-		if (!fs.existsSync(outDir.toString())) {
-			fs.mkdirSync(outDir.toString(), { recursive: true })
+		if (!fs.existsSync(outDir.toPlatformString())) {
+			PermissionHelper.mkdirRecursivelyWithUserPermission(outDir)
 		}
-		fs.writeFileSync(outputPath.toPlatformString(), code)
+		PermissionHelper.writeFileWithUserPermission(
+			outputPath.toPlatformString(),
+			code
+		)
 	}
 }

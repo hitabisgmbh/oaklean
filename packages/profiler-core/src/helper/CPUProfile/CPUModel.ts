@@ -1,6 +1,9 @@
+import * as fs from 'fs'
+
 import { CPUNode } from './CPUNode'
 import { CPUProfileSourceLocation } from './CPUProfileSourceLocation'
 
+import { PermissionHelper } from '../PermissionHelper'
 import { ExternalResourceHelper } from '../ExternalResourceHelper'
 import {
 	IComputedNode,
@@ -219,5 +222,21 @@ export class CPUModel {
 		}
 		return node
 		
+	}
+
+	storeToFile(filePath: UnifiedPath) {
+		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
+			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
+		}
+		PermissionHelper.writeFileWithUserPermission(
+			filePath.toPlatformString(),
+			JSON.stringify(
+				this,
+				(key, value) =>
+					typeof value === 'bigint'
+						? value.toString()
+						: value // return everything else unchanged
+				, 2)
+		)
 	}
 }
