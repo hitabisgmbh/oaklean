@@ -578,9 +578,6 @@ export class InsertCPUProfileHelper {
 		externalResourceHelper: ExternalResourceHelper,
 		metricsDataCollection?: MetricsDataCollection,
 	) {
-		if (reportToApply.executionDetails.highResolutionBeginTime === undefined) {
-			throw new Error('InsertCPUProfileHelper.insertCPUProfile: executionDetails.highResolutionBeginTime is undefined')
-		}
 		const cpuModel = new CPUModel(
 			rootDir,
 			profile,

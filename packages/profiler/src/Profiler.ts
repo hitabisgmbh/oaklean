@@ -8,6 +8,7 @@ import {
 	ProfilerConfig,
 	ProjectReport,
 	IProjectReportExecutionDetails,
+	IProjectReportExecutionDetailsDuringMeasurement,
 	TimeHelper,
 	NanoSeconds_BigInt,
 	MicroSeconds_number,
@@ -42,7 +43,7 @@ interface TraceEventParams {
 export class Profiler {
 	subOutputDir: string | undefined
 	config: ProfilerConfig
-	executionDetails?: IProjectReportExecutionDetails
+	executionDetails?: IProjectReportExecutionDetailsDuringMeasurement
 
 	private _externalResourceHelper: ExternalResourceHelper
 	private _sensorInterface: BaseSensorInterface | undefined
@@ -178,7 +179,7 @@ export class Profiler {
 		return this._profilerStartTime
 	}
 
-	async start(title: string, executionDetails?: IProjectReportExecutionDetails) {
+	async start(title: string, executionDetails?: IProjectReportExecutionDetailsDuringMeasurement) {
 		const performance = new PerformanceHelper()
 		performance.start('Profiler.start')
 
@@ -272,14 +273,15 @@ export class Profiler {
 	}
 
 	async finish(title: string, highResolutionStopTime?: NanoSeconds_BigInt): Promise<ProjectReport> {
+		const highResolutionStopTimeToUse = highResolutionStopTime !== undefined
+			? highResolutionStopTime.toString()
+			: TimeHelper.getCurrentHighResolutionTime().toString()
+		
 		const performance = new PerformanceHelper()
 		
 		performance.start('Profiler.finish')
 		if (this.executionDetails === undefined) {
 			throw new Error('Profiler.finish: Profiler was not started yet')
-		}
-		if (highResolutionStopTime !== undefined) {
-			this.executionDetails.highResolutionStopTime = highResolutionStopTime.toString()
 		}
 
 		performance.start('Profiler.finish.stopProfiling')
@@ -295,7 +297,7 @@ export class Profiler {
 		performance.stop('Profiler.finish.sensorInterface.stopProfiling')
 
 		const CPUProfilerBeginTime = BigInt(await this.getCPUProfilerBeginTime()) * BigInt(1000) as NanoSeconds_BigInt
-		this.executionDetails.highResolutionBeginTime = CPUProfilerBeginTime.toString()
+		const highResolutionBeginTimeToUse = CPUProfilerBeginTime.toString()
 
 		const exportData = {
 			nodes: profile.nodes,
@@ -325,8 +327,14 @@ export class Profiler {
 		const metricsDataCollection = await this._sensorInterface?.readSensorValues(process.pid)
 		performance.stop('Profiler.finish.sensorInterface.readSensorValues')
 
+		const executionDetailsFull: IProjectReportExecutionDetails = {
+			...this.executionDetails,
+			highResolutionBeginTime: highResolutionBeginTimeToUse,
+			highResolutionStopTime: highResolutionStopTimeToUse
+		}
+
 		const rootDir = this.config.getRootDir()
-		const report = new ProjectReport(this.executionDetails, ReportKind.measurement)
+		const report = new ProjectReport(executionDetailsFull, ReportKind.measurement)
 		if (this.config.shouldExportSensorInterfaceData()) {
 			if (metricsDataCollection !== undefined) {
 				performance.start('Profiler.finish.exportMetricsDataCollection')

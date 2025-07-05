@@ -24,19 +24,19 @@ import { ExternalResourceHelper } from '../helper/ExternalResourceHelper'
 import {
 	ReportKind,
 	ReportType,
-	IProjectReportExecutionDetails,
 	IProjectMetaData,
 	ProjectReportOrigin,
-	IProjectReport
+	IProjectReport,
+	IProjectReportExecutionDetailsFull
 } from '../types'
 
 export class ProjectReport extends Report {
-	executionDetails: IProjectReportExecutionDetails
+	executionDetails: IProjectReportExecutionDetailsFull
 	projectMetaData: IProjectMetaData
 	globalIndex: GlobalIndex
 
 	constructor(
-		executionDetails: IProjectReportExecutionDetails,
+		executionDetails: IProjectReportExecutionDetailsFull,
 		kind: ReportKind,
 		projectMetaData?: IProjectMetaData,
 		globalIndex?: GlobalIndex,
@@ -92,8 +92,8 @@ export class ProjectReport extends Report {
 
 		const sortedReports = [...args].sort((reportA, reportB) => {
 			const compared =
-				BigInt(reportA.executionDetails.highResolutionBeginTime || '0') -
-				BigInt(reportB.executionDetails.highResolutionBeginTime || '0')
+				BigInt(reportA.executionDetails.highResolutionBeginTime) -
+				BigInt(reportB.executionDetails.highResolutionBeginTime)
 
 			if (compared > BigInt(0)) {
 				return 1
@@ -327,7 +327,7 @@ export class ProjectReport extends Report {
 			remainingBuffer: newRemainingBuffer1
 		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
-		const executionDetails = JSON.parse(executionDetails_JSON_string) as IProjectReportExecutionDetails
+		const executionDetails = JSON.parse(executionDetails_JSON_string) as IProjectReportExecutionDetailsFull
 
 		const {
 			instance: projectMetaData_JSON_string,

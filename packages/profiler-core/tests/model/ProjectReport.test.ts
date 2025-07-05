@@ -52,6 +52,8 @@ const EXAMPLE_EXECUTION_DETAILS = {
 	commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
 	commitTimestamp: 1687845481077,
 	timestamp: 1687845481077,
+	highResolutionBeginTime: '887518894424000',
+	highResolutionStopTime: '887518904424000',
 	uncommittedChanges: false,
 	systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 	languageInformation: {
@@ -675,6 +677,8 @@ describe('ProjectReport', () => {
 			commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
 			commitTimestamp: 1687845481077,
 			timestamp: 1687845481077,
+			highResolutionBeginTime: '887518894424000',
+			highResolutionStopTime: '887518904424000',
 			uncommittedChanges: false,
 			systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 			languageInformation: {
@@ -923,6 +927,7 @@ describe('ProjectReport', () => {
 				timestamp: 1706554909143,
 				uncommittedChanges: true,
 				highResolutionBeginTime: '887518894424000',
+				highResolutionStopTime: '887518904424000',
 				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 				languageInformation: {
 					name: 'node',
@@ -958,10 +963,6 @@ describe('ProjectReport', () => {
 			}
 
 			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
-			if (expectedJson) {
-				expectedJson.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
-				expectedJson.executionDetails.highResolutionBeginTime = '887518894424000'
-			}
 
 			expect(
 				projectReport.toJSON()
@@ -970,10 +971,6 @@ describe('ProjectReport', () => {
 			)
 
 			const expectedBin = ProjectReport.loadFromFile(expectedProjectReportFilePathBin, 'bin')
-			if (expectedBin) {
-				expectedBin.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
-				expectedBin.executionDetails.highResolutionBeginTime = '887518894424000'
-			}
 
 			expect(
 				projectReport.toJSON()
@@ -997,6 +994,7 @@ describe('ProjectReport', () => {
 				timestamp: 1706556938476,
 				uncommittedChanges: true,
 				highResolutionBeginTime: '889548167236000',
+				highResolutionStopTime: '889548267236000',
 				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 				languageInformation: {
 					name: 'node',
@@ -1031,10 +1029,6 @@ describe('ProjectReport', () => {
 			}
 
 			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
-			if (expectedJson) {
-				expectedJson.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
-				expectedJson.executionDetails.highResolutionBeginTime = '889548167236000'
-			}
 
 			expect(
 				projectReport.toJSON()
@@ -1043,10 +1037,6 @@ describe('ProjectReport', () => {
 			)
 
 			const expectedBin = ProjectReport.loadFromFile(expectedProjectReportFilePathBin, 'bin')
-			if (expectedBin) {
-				expectedBin.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
-				expectedBin.executionDetails.highResolutionBeginTime = '889548167236000'
-			}
 
 			expect(
 				projectReport.toJSON()
@@ -1070,6 +1060,7 @@ describe('ProjectReport', () => {
 				timestamp: 1687845481077,
 				uncommittedChanges: false,
 				highResolutionBeginTime: '2345442642551333',
+				highResolutionStopTime: '2345443642551333',
 				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 				languageInformation: {
 					name: 'node',

@@ -7,13 +7,13 @@ import {
 import { Profiler } from '@oaklean/profiler'
 import {
 	UnifiedPath,
-	NanoSeconds_BigInt,
 	ProfilerConfig,
 	ProjectReportOrigin,
 	LoggerHelper,
 	ExecutionDetails,
-	IProjectReportExecutionDetails,
-	PerformanceHelper
+	IProjectReportExecutionDetailsDuringMeasurement,
+	PerformanceHelper,
+	TimeHelper
 } from '@oaklean/profiler-core'
 // Jest Environments
 import NodeEnvironment from 'jest-environment-node'
@@ -82,7 +82,9 @@ class CustomEnvironment implements JestEnvironment {
 		this.ranSuccessfully = true
 	}
 
-	private async getExecutionDetails(config: ProfilerConfig): Promise<IProjectReportExecutionDetails> {
+	private async getExecutionDetails(config: ProfilerConfig): Promise<
+	IProjectReportExecutionDetailsDuringMeasurement
+	> {
 		const executionDetailsPath = config.getOutDir().join('jest', 'execution-details.json')
 		let executionDetails = ExecutionDetails.loadFromFile(executionDetailsPath)
 
@@ -128,7 +130,7 @@ class CustomEnvironment implements JestEnvironment {
 			const performance = new PerformanceHelper()
 			try {
 				performance.start('jestEnv.env.teardown')
-				const stopTime = process.hrtime.bigint() as NanoSeconds_BigInt
+				const stopTime = TimeHelper.getCurrentHighResolutionTime()
 				performance.stop('jestEnv.env.teardown')
 				performance.printReport('jestEnv.env.teardown')
 				performance.exportAndSum(this.profiler.outputDir().join('performance.json'))
