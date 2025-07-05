@@ -27,16 +27,16 @@ import {
 	IProjectMetaData,
 	ProjectReportOrigin,
 	IProjectReport,
-	IProjectReportExecutionDetailsFull
+	IProjectReportExecutionDetails
 } from '../types'
 
 export class ProjectReport extends Report {
-	executionDetails: IProjectReportExecutionDetailsFull
+	executionDetails: IProjectReportExecutionDetails
 	projectMetaData: IProjectMetaData
 	globalIndex: GlobalIndex
 
 	constructor(
-		executionDetails: IProjectReportExecutionDetailsFull,
+		executionDetails: IProjectReportExecutionDetails,
 		kind: ReportKind,
 		projectMetaData?: IProjectMetaData,
 		globalIndex?: GlobalIndex,
@@ -327,7 +327,7 @@ export class ProjectReport extends Report {
 			remainingBuffer: newRemainingBuffer1
 		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
-		const executionDetails = JSON.parse(executionDetails_JSON_string) as IProjectReportExecutionDetailsFull
+		const executionDetails = JSON.parse(executionDetails_JSON_string) as IProjectReportExecutionDetails
 
 		const {
 			instance: projectMetaData_JSON_string,
