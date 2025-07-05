@@ -59,7 +59,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ModuleReport)
 			const bufferString = instance.toBuffer().toString('hex')
 			if (UPDATE_TEST_REPORTS && title === 'instance related') {
 				PermissionHelper.writeFileWithUserPermission(
-					CURRENT_DIR.join('assets', 'ProjectReport', 'module-report.instance.buffer').toPlatformString(),
+					CURRENT_DIR.join('assets', 'ProjectReport', 'module-report.instance.buffer'),
 					bufferString
 				)
 			}

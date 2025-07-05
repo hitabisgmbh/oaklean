@@ -569,9 +569,6 @@ export class Report extends BaseModel {
 		type: ReportType,
 		config?: ProfilerConfig
 	) {
-		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
-		}
 		if (!this.relativeRootDir) {
 			const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
 			this.relativeRootDir = filePath.dirName().pathTo(usedConfig.getRootDir())
@@ -580,19 +577,19 @@ export class Report extends BaseModel {
 		switch (kind) {
 			case 'pretty-json':
 				PermissionHelper.writeFileWithUserPermission(
-					filePath.toPlatformString(),
+					filePath,
 					JSON.stringify(this, null, 2)
 				)
 				break
 			case 'json':
 				PermissionHelper.writeFileWithUserPermission(
-					filePath.toPlatformString(),
+					filePath,
 					JSON.stringify(this)
 				)
 				break
 			case 'bin':
 				PermissionHelper.writeFileWithUserPermission(
-					filePath.toPlatformString(),
+					filePath,
 					this.toBuffer(type)
 				)
 				break

@@ -59,11 +59,8 @@ export class ExecutionDetails {
 		executionDetails: IProjectReportExecutionDetailsDuringMeasurement,
 		filePath: UnifiedPath
 	): void {
-		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
-		}
 		PermissionHelper.writeFileWithUserPermission(
-			filePath.toPlatformString(),
+			filePath,
 			JSON.stringify(executionDetails)
 		)
 	}

@@ -79,18 +79,22 @@ export class PermissionHelper {
 		} catch { }
 	}
 
-	static mkdirRecursivelyWithUserPermission(path: UnifiedPath | string) {
-		const dirPath = typeof path === 'string' ? path : path.toPlatformString()
-
-		const createdDirs = createDirectoriesRecursively(dirPath)
+	static mkdirRecursivelyWithUserPermission(path: UnifiedPath) {
+		const createdDirs = createDirectoriesRecursively(path.toPlatformString())
 		for (const dir of createdDirs) {
 			PermissionHelper.changeFileOwnershipBackToUser(dir)
 		}
 	}
 
-	static writeFileWithUserPermission(file: string, data: string | NodeJS.ArrayBufferView) {
-		fs.writeFileSync(file, data)
-		PermissionHelper.changeFileOwnershipBackToUser(file)
+	static writeFileWithUserPermission(path: UnifiedPath, data: string | NodeJS.ArrayBufferView) {
+		const dirPath = path.dirName()
+		if (!fs.existsSync(dirPath.toPlatformString())) {
+			PermissionHelper.mkdirRecursivelyWithUserPermission(dirPath)
+		}
+		
+		const filePath = path.toPlatformString()
+		fs.writeFileSync(filePath, data)
+		PermissionHelper.changeFileOwnershipBackToUser(filePath)
 	}
 
 

@@ -109,20 +109,16 @@ export class ExternalResourceHelper {
 		filePath: UnifiedPath,
 		kind: 'pretty-json' | 'json'
 	) {
-		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
-		}
-
 		switch (kind) {
 			case 'pretty-json':
 				PermissionHelper.writeFileWithUserPermission(
-					filePath.toPlatformString(),
+					filePath,
 					JSON.stringify(this, null, 2)
 				)
 				break
 			case 'json':
 				PermissionHelper.writeFileWithUserPermission(
-					filePath.toPlatformString(),
+					filePath,
 					JSON.stringify(this)
 				)
 				break

@@ -183,13 +183,6 @@ export default class CodeParsingCommands {
 			return
 		}
 
-		const outDir = outputPath.dirName()
-		if (!fs.existsSync(outDir.toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(outDir)
-		}
-		PermissionHelper.writeFileWithUserPermission(
-			outputPath.toPlatformString(),
-			code
-		)
+		PermissionHelper.writeFileWithUserPermission(outputPath, code)
 	}
 }

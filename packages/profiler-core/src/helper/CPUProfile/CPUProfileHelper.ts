@@ -71,14 +71,8 @@ export class CPUProfileHelper {
 		cpuProfile: Cdp.Profiler.Profile,
 		cpuProfilePath: UnifiedPath
 	): void {
-		const dir = cpuProfilePath.dirName()
-		if (!fs.existsSync(dir.toPlatformString())) {
-			// create parent directories if they do not exist
-			PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
-		}
-
 		PermissionHelper.writeFileWithUserPermission(
-			cpuProfilePath.toPlatformString(),
+			cpuProfilePath,
 			JSON.stringify(cpuProfile, null, 2),
 		)
 	}

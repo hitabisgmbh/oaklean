@@ -80,18 +80,12 @@ export default class ReportCommands {
 		if (outputPath.isRelative()) {
 			outputPath = new UnifiedPath(process.cwd()).join(outputPath)
 		}
-		const outDir = outputPath.dirName()
 
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
 			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
 			return
 		}
-
-		if (!fs.existsSync(outDir.toPlatformString())) {
-			fs.mkdirSync(outDir.toPlatformString(), { recursive: true })
-		}
-
 		report.storeToFile(outputPath, 'pretty-json')
 	}
 
@@ -105,16 +99,11 @@ export default class ReportCommands {
 		if (outputPath.isRelative()) {
 			outputPath = new UnifiedPath(process.cwd()).join(outputPath)
 		}
-		const outDir = outputPath.dirName()
 
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
 			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
 			return
-		}
-
-		if (!fs.existsSync(outDir.toPlatformString())) {
-			fs.mkdirSync(outDir.toPlatformString(), { recursive: true })
 		}
 
 		const tree = SourceFileMetaDataTree.fromProjectReport(report).filter(undefined, undefined).node

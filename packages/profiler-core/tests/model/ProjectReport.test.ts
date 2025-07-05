@@ -565,7 +565,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			const bufferString = instance.toBuffer().toString('hex')
 			if (UPDATE_TEST_REPORTS && title === 'instance related') {
 				PermissionHelper.writeFileWithUserPermission(
-					CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer').toPlatformString(),
+					CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer'),
 					bufferString
 				)
 			}
@@ -577,7 +577,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			const hashString = instance.hash()
 			if (UPDATE_TEST_REPORTS && title === 'instance related') {
 				PermissionHelper.writeFileWithUserPermission(
-					CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash').toPlatformString(),
+					CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash'),
 					hashString
 				)
 			}

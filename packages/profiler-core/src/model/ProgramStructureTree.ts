@@ -106,11 +106,8 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 	}
 
 	storeToFile(filePath: UnifiedPath) {
-		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
-		}
 		PermissionHelper.writeFileWithUserPermission(
-			filePath.toPlatformString(),
+			filePath,
 			JSON.stringify(this, null, 2)
 		)
 	}

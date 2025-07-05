@@ -190,7 +190,7 @@ describe('ExternalResourceHelper', () => {
 
 			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledTimes(1)
 			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledWith(
-				filePath.toPlatformString(),
+				filePath,
 				JSON.stringify(instance)
 			)
 
@@ -198,7 +198,7 @@ describe('ExternalResourceHelper', () => {
 
 			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledTimes(2)
 			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledWith(
-				filePath.toPlatformString(),
+				filePath,
 				JSON.stringify(instance, null, 2)
 			)
 
@@ -214,7 +214,7 @@ describe('ExternalResourceHelper', () => {
 
 			if (UPDATE_TEST_REPORTS) {
 				PermissionHelper.writeFileWithUserPermission(
-					filePath.toPlatformString(),
+					filePath,
 					JSON.stringify(instance, null, 2)
 				)
 			}

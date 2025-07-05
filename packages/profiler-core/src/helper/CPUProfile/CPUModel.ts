@@ -225,11 +225,8 @@ export class CPUModel {
 	}
 
 	storeToFile(filePath: UnifiedPath) {
-		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName())
-		}
 		PermissionHelper.writeFileWithUserPermission(
-			filePath.toPlatformString(),
+			filePath,
 			JSON.stringify(
 				this,
 				(key, value) =>

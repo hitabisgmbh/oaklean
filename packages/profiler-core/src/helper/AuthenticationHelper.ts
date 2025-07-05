@@ -29,13 +29,9 @@ export class AuthenticationHelper {
 		const configDir = new UnifiedPath(os.homedir()).join(STATIC_GLOBAL_CONFIG_DIR)
 		const authFile = configDir.join('auth')
 
-		if (!fs.existsSync(configDir.toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(configDir)
-		}
-
 		if (!fs.existsSync(authFile.toPlatformString())) {
 			const auth = Crypto.uniqueID()
-			PermissionHelper.writeFileWithUserPermission(authFile.toPlatformString(), auth)
+			PermissionHelper.writeFileWithUserPermission(authFile, auth)
 			PermissionHelper.changeFilePermission(authFile.toPlatformString(), PermissionTypes.ReadWriteOnlyOwner)
 			return auth as unknown as UUID_string
 		} else {
