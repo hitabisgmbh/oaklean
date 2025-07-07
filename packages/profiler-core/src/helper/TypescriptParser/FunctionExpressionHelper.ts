@@ -13,15 +13,13 @@ import {
 } from '../../types'
 
 export class FunctionExpressionHelper {
+	static syntaxKind = ts.SyntaxKind.FunctionExpression
+
 	static parseNode(
-		node: ts.Node,
+		node: ts.FunctionExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> | undefined {
-		if (!ts.isFunctionExpression(node)) {
-			return undefined
-		}
-
+	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
 		const emitHelperName = TypescriptHelper.getEmitHelperName(node)
 		if (emitHelperName !== undefined) {
 			const functionName = `functionExpression:${emitHelperName}`

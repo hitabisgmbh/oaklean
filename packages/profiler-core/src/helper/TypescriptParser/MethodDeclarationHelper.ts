@@ -3,6 +3,7 @@ import * as ts from 'typescript'
 import { TypescriptHelper } from './TypescriptHelper'
 import { TraverseNodeInfo } from './TraverseNodeInfo'
 
+import { LoggerHelper } from '../LoggerHelper'
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
 import {
@@ -10,18 +11,15 @@ import {
 	ProgramStructureTreeType,
 	SourceNodeIdentifierPart_string
 } from '../../types'
-import { LoggerHelper } from '../LoggerHelper'
 
 export class MethodDeclarationHelper {
+	static syntaxKind = ts.SyntaxKind.MethodDeclaration
+
 	static parseNode(
-		node: ts.Node,
+		node: ts.MethodDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.MethodDefinition> | undefined {
-		if (!ts.isMethodDeclaration(node)) {
-			return undefined
-		}
-
+	): ProgramStructureTree<ProgramStructureTreeType.MethodDefinition> {
 		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
 		switch (node.name.kind) {
 			case ts.SyntaxKind.Identifier:

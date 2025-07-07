@@ -3,6 +3,7 @@ import * as ts from 'typescript'
 import { TypescriptHelper } from './TypescriptHelper'
 import { TraverseNodeInfo } from './TraverseNodeInfo'
 
+import { LoggerHelper } from '../LoggerHelper'
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
 import {
@@ -10,18 +11,15 @@ import {
 	ProgramStructureTreeType,
 	SourceNodeIdentifierPart_string
 } from '../../types'
-import { LoggerHelper } from '../LoggerHelper'
 
 export class ClassExpressionHelper {
+	static syntaxKind = ts.SyntaxKind.ClassExpression
+
 	static parseNode(
-		node: ts.Node,
+		node: ts.ClassExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ClassExpression> | undefined {
-		if (!ts.isClassExpression(node)) {
-			return undefined
-		}
-
+	): ProgramStructureTree<ProgramStructureTreeType.ClassExpression> {
 		if (ts.isParenthesizedExpression(node.parent)) {
 			return ClassExpressionHelper.parseWithParentParenthesizedExpression(
 				node,

@@ -12,14 +12,13 @@ import {
 } from '../../types'
 
 export class ScopeHelper {
+	static syntaxKind = ts.SyntaxKind.ObjectLiteralExpression
+
 	static parseNode(
-		node: ts.Node,
+		node: ts.ObjectLiteralExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.Scope> | undefined {
-		if (!ts.isObjectLiteralExpression(node)) {
-			return undefined
-		}
+	): ProgramStructureTree<ProgramStructureTreeType.Scope> {
 		return ScopeHelper.parseObjectLiteralExpression(
 			node,
 			sourceFile,

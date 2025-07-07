@@ -13,15 +13,13 @@ import {
 } from '../../types'
 
 export class FunctionDeclarationHelper {
+	static syntaxKind = ts.SyntaxKind.FunctionDeclaration
+
 	static parseNode(
-		node: ts.Node,
+		node: ts.FunctionDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.FunctionDeclaration> | undefined{
-		if (!ts.isFunctionDeclaration(node)) {
-			return undefined
-		}
-
+	): ProgramStructureTree<ProgramStructureTreeType.FunctionDeclaration> {
 		if (node.name !== undefined && ts.isIdentifier(node.name)) {
 			const functionName = node.name.escapedText
 			return new ProgramStructureTree(

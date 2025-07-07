@@ -12,14 +12,13 @@ import {
 } from '../../types'
 
 export class ConstructorDeclarationHelper {
+	static syntaxKind = ts.SyntaxKind.Constructor
+
 	static parseNode(
-		node: ts.Node,
+		node: ts.ConstructorDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ConstructorDeclaration> | undefined {
-		if (!ts.isConstructorDeclaration(node)) {
-			return undefined
-		}
+	): ProgramStructureTree<ProgramStructureTreeType.ConstructorDeclaration> {
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,

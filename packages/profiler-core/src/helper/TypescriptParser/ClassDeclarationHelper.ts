@@ -3,6 +3,7 @@ import * as ts from 'typescript'
 import { TypescriptHelper } from './TypescriptHelper'
 import { TraverseNodeInfo } from './TraverseNodeInfo'
 
+import { LoggerHelper } from '../LoggerHelper'
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
 import {
@@ -10,18 +11,15 @@ import {
 	ProgramStructureTreeType,
 	SourceNodeIdentifierPart_string
 } from '../../types'
-import { LoggerHelper } from '../LoggerHelper'
 
 export class ClassDeclarationHelper {
+	static syntaxKind = ts.SyntaxKind.ClassDeclaration
+
 	static parseNode(
-		node: ts.Node,
+		node: ts.ClassDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ClassDeclaration> | undefined {
-		if (!ts.isClassDeclaration(node)) {
-			return undefined
-		}
-
+	): ProgramStructureTree<ProgramStructureTreeType.ClassDeclaration> {
 		if (node.name?.kind === ts.SyntaxKind.Identifier) {
 			const className = node.name.escapedText
 			return new ProgramStructureTree(

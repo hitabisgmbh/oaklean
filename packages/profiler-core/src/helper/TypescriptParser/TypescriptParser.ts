@@ -47,22 +47,16 @@ type OnDuplicateIdentifierCallback = (
 	}
 ) => void
 
-type ParseNodeFunction = (
-	node: ts.Node,
-	sourceFile: ts.SourceFile,
-	traverseNodeInfo: TraverseNodeInfo
-) => ProgramStructureTree | undefined
-
-const PARSE_NODE_FUNCTIONS: ParseNodeFunction[] = [
-	ClassDeclarationHelper.parseNode,
-	ClassExpressionHelper.parseNode,
-	ConstructorDeclarationHelper.parseNode,
-	FunctionDeclarationHelper.parseNode,
-	FunctionExpressionHelper.parseNode,
-	MethodDeclarationHelper.parseNode,
-	ArrowFunctionHelper.parseNode,
-	ScopeHelper.parseNode
-]
+const PARSE_NODE_FUNCTIONS = {
+	[ClassDeclarationHelper.syntaxKind]: ClassDeclarationHelper.parseNode,
+	[ClassExpressionHelper.syntaxKind]: ClassExpressionHelper.parseNode,
+	[ConstructorDeclarationHelper.syntaxKind]: ConstructorDeclarationHelper.parseNode,
+	[FunctionDeclarationHelper.syntaxKind]: FunctionDeclarationHelper.parseNode,
+	[FunctionExpressionHelper.syntaxKind]: FunctionExpressionHelper.parseNode,
+	[MethodDeclarationHelper.syntaxKind]: MethodDeclarationHelper.parseNode,
+	[ArrowFunctionHelper.syntaxKind]: ArrowFunctionHelper.parseNode,
+	[ScopeHelper.syntaxKind]: ScopeHelper.parseNode
+}
 
 export class TypescriptParser {
 
@@ -341,11 +335,14 @@ export class TypescriptParser {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree | undefined {
-		for (const parseNodeFunction of PARSE_NODE_FUNCTIONS) {
-			const subTree = parseNodeFunction(node, sourceFile, traverseNodeInfo)
-			if (subTree !== undefined) {
-				return subTree
-			}
+		const parseNodeFunction = PARSE_NODE_FUNCTIONS[node.kind]
+		if (parseNodeFunction !== undefined) {
+			return parseNodeFunction(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				node as any,
+				sourceFile,
+				traverseNodeInfo
+			)
 		}
 
 		return undefined

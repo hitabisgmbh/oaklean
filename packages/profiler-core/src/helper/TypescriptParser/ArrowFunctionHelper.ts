@@ -3,6 +3,7 @@ import * as ts from 'typescript'
 import { TypescriptHelper } from './TypescriptHelper'
 import { TraverseNodeInfo } from './TraverseNodeInfo'
 
+import { LoggerHelper } from '../LoggerHelper'
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
 import {
@@ -10,18 +11,15 @@ import {
 	ProgramStructureTreeType,
 	SourceNodeIdentifierPart_string
 } from '../../types'
-import { LoggerHelper } from '../LoggerHelper'
 
 export class ArrowFunctionHelper {
+	static syntaxKind = ts.SyntaxKind.ArrowFunction
+
 	static parseNode(
-		node: ts.Node,
+		node: ts.ArrowFunction,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression> | undefined {
-		if (!ts.isArrowFunction(node)) {
-			return undefined
-		}
-
+	): ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression> {
 		if (ts.isPropertyDeclaration(node.parent)) {
 			return ArrowFunctionHelper.parseWithParentPropertyDeclaration(
 				node,
