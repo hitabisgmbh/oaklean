@@ -58,6 +58,19 @@ export class ExportAssetHelper {
 		return this.outputDir().join(ACCUMULATED_REPORT_FILE_NAME)
 	}
 
+	static titleFromReportFilePath(
+		reportFilePath: UnifiedPath
+	): string {
+		const fileName = reportFilePath.basename()
+		if (fileName.endsWith(REPORT_FILE_EXTENSION)) {
+			return fileName.slice(0, -REPORT_FILE_EXTENSION.length)
+		}
+		throw new Error(
+			`Invalid report file path: ${reportFilePath.toPlatformString()}. Expected to end
+			with ${REPORT_FILE_EXTENSION}`
+		)
+	}
+
 	static historyReportFileName(
 		timestamp: number,
 		commitHash: GitHash_string | undefined
