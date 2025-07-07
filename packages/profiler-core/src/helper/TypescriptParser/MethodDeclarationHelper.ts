@@ -21,56 +21,100 @@ export class MethodDeclarationHelper {
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.MethodDefinition> {
 		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
-		switch (node.name.kind) {
-			case ts.SyntaxKind.Identifier:
-			case ts.SyntaxKind.PrivateIdentifier: {
-				const methodName = `method${staticSuffix}:` + node.name.escapedText.toString()
-				return new ProgramStructureTree(
-					traverseNodeInfo.tree,
-					traverseNodeInfo.idCounter++,
-					ProgramStructureTreeType.MethodDefinition,
-					IdentifierType.Name,
-					`{${methodName}}` as SourceNodeIdentifierPart_string,
-					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-					TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
-				)
-			}
-			case ts.SyntaxKind.StringLiteral:
-			case ts.SyntaxKind.FirstLiteralToken: {
-				const methodName = `method${staticSuffix}:(literal:${traverseNodeInfo.literalFunctionCounter++})`
-				return new ProgramStructureTree(
-					traverseNodeInfo.tree,
-					traverseNodeInfo.idCounter++,
-					ProgramStructureTreeType.MethodDefinition,
-					IdentifierType.Literal,
-					`{${methodName}}` as SourceNodeIdentifierPart_string,
-					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-					TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
-				)
-			}
-			case ts.SyntaxKind.ComputedPropertyName: {
-				const methodName =
-					`method${staticSuffix}:(expression:${traverseNodeInfo.expressionFunctionCounter++})`
-				return new ProgramStructureTree(
-					traverseNodeInfo.tree,
-					traverseNodeInfo.idCounter++,
-					ProgramStructureTreeType.MethodDefinition,
-					IdentifierType.Expression,
-					`{${methodName}}` as SourceNodeIdentifierPart_string,
-					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-					TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
-				)
-			}
-			default:
-				LoggerHelper.error(
-					'MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' + node.name?.kind, {
-						filePath: traverseNodeInfo.filePath,
-						kind: node.name.kind,
-						pos: TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
-					}
-				)
-				throw new Error('MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' + node.name?.kind)
+		
+		const parseNodeFunction = PARSE_NODE_FUNCTIONS[node.name.kind]
+		if (parseNodeFunction !== undefined) {
+			return parseNodeFunction(
+				staticSuffix,
+				node,
+				node.name,
+				sourceFile,
+				traverseNodeInfo
+			)
 		}
+		
+		LoggerHelper.error(
+			'MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' + node.name.kind, {
+				filePath: traverseNodeInfo.filePath,
+				kind: node.name.kind,
+				pos: TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
+			}
+		)
+		throw new Error('MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' + node.name.kind)
 	}
 
+
+	static parseWithNameIdentifier(
+		staticSuffix: string,
+		node: ts.MethodDeclaration,
+		identifier: ts.Identifier | ts.PrivateIdentifier,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	) {
+		const methodName = `method${staticSuffix}:` + identifier.escapedText.toString()
+		return new ProgramStructureTree(
+			traverseNodeInfo.tree,
+			traverseNodeInfo.idCounter++,
+			ProgramStructureTreeType.MethodDefinition,
+			IdentifierType.Name,
+			`{${methodName}}` as SourceNodeIdentifierPart_string,
+			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
+		)
+	}
+
+	static parseWithNameLiteral(
+		staticSuffix: string,
+		node: ts.MethodDeclaration,
+		identifier: ts.StringLiteral | ts.NumericLiteral,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	) {
+		const methodName = `method${staticSuffix}:(literal:${traverseNodeInfo.literalFunctionCounter++})`
+		return new ProgramStructureTree(
+			traverseNodeInfo.tree,
+			traverseNodeInfo.idCounter++,
+			ProgramStructureTreeType.MethodDefinition,
+			IdentifierType.Literal,
+			`{${methodName}}` as SourceNodeIdentifierPart_string,
+			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
+		)
+	}
+
+	static parseWithNameComputedPropertyName(
+		staticSuffix: string,
+		node: ts.MethodDeclaration,
+		identifier: ts.ComputedPropertyName,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	) {
+		const methodName =
+			`method${staticSuffix}:(expression:${traverseNodeInfo.expressionFunctionCounter++})`
+		return new ProgramStructureTree(
+			traverseNodeInfo.tree,
+			traverseNodeInfo.idCounter++,
+			ProgramStructureTreeType.MethodDefinition,
+			IdentifierType.Expression,
+			`{${methodName}}` as SourceNodeIdentifierPart_string,
+			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
+		)
+	}
+}
+
+type ParseNodeFunction = (
+	staticSuffix: string,
+	node: ts.MethodDeclaration,
+	identifier: any,
+	sourceFile: ts.SourceFile,
+	traverseNodeInfo: TraverseNodeInfo
+) => ProgramStructureTree<ProgramStructureTreeType.MethodDefinition>
+
+const PARSE_NODE_FUNCTIONS: Partial<Record<ts.SyntaxKind, ParseNodeFunction>> = {
+	[ts.SyntaxKind.Identifier]: MethodDeclarationHelper.parseWithNameIdentifier,
+	[ts.SyntaxKind.PrivateIdentifier]: MethodDeclarationHelper.parseWithNameIdentifier,
+	[ts.SyntaxKind.StringLiteral]: MethodDeclarationHelper.parseWithNameLiteral,
+	[ts.SyntaxKind.FirstLiteralToken]: MethodDeclarationHelper.parseWithNameLiteral,
+	[ts.SyntaxKind.ComputedPropertyName]: MethodDeclarationHelper.parseWithNameComputedPropertyName
 }

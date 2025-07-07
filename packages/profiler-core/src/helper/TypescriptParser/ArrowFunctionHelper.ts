@@ -20,30 +20,16 @@ export class ArrowFunctionHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression> {
-		if (ts.isPropertyDeclaration(node.parent)) {
-			return ArrowFunctionHelper.parseWithParentPropertyDeclaration(
+		const parseNodeFunction = PARSE_NODE_FUNCTIONS[node.parent.kind]
+		if (parseNodeFunction !== undefined) {
+			return parseNodeFunction(
 				node,
 				node.parent,
 				sourceFile,
 				traverseNodeInfo
 			)
 		}
-		if (ts.isParenthesizedExpression(node.parent)) {
-			return ArrowFunctionHelper.parseWithParentParenthesizedExpression(
-				node,
-				node.parent,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-		if (ts.isVariableDeclaration(node.parent)) {
-			return ArrowFunctionHelper.parseWithParentVariableDeclaration(
-				node,
-				node.parent,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
+
 		const functionName =
 			`functionExpression:(anonymous:${traverseNodeInfo.anonymousFunctionCounter++})`
 		return new ProgramStructureTree(
@@ -163,4 +149,17 @@ export class ArrowFunctionHelper {
 		)
 		throw new Error('ArrowFunctionHelper (parseWithParentVariableDeclaration): unhandled case: node.parent.kind  === ' + node.parent.kind)
 	}
+}
+
+type ParseNodeFunction = (
+	node: any,
+	parent: any,
+	sourceFile: ts.SourceFile,
+	traverseNodeInfo: TraverseNodeInfo
+) => ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression>
+
+const PARSE_NODE_FUNCTIONS: Partial<Record<ts.SyntaxKind, ParseNodeFunction>> = {
+	[ts.SyntaxKind.PropertyDeclaration]: ArrowFunctionHelper.parseWithParentPropertyDeclaration,
+	[ts.SyntaxKind.ParenthesizedExpression]: ArrowFunctionHelper.parseWithParentParenthesizedExpression,
+	[ts.SyntaxKind.VariableDeclaration]: ArrowFunctionHelper.parseWithParentVariableDeclaration
 }

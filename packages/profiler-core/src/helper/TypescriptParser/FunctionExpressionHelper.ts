@@ -33,26 +33,10 @@ export class FunctionExpressionHelper {
 				TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
 			)
 		}
-		if (ts.isPropertyDeclaration(node.parent)) {
-			return FunctionExpressionHelper.parseWithParentPropertyDeclaration(
-				node,
-				node.parent,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-
-		if (ts.isParenthesizedExpression(node.parent)) {
-			return FunctionExpressionHelper.parseWithParentParenthesizedExpression(
-				node,
-				node.parent,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-
-		if (ts.isVariableDeclaration(node.parent)) {
-			return FunctionExpressionHelper.parseWithParentVariableDeclaration(
+		
+		const parseNodeFunction = PARSE_NODE_FUNCTIONS[node.parent.kind]
+		if (parseNodeFunction !== undefined) {
+			return parseNodeFunction(
 				node,
 				node.parent,
 				sourceFile,
@@ -179,4 +163,17 @@ export class FunctionExpressionHelper {
 		)
 		throw new Error('FunctionExpressionHelper (parseWithParentVariableDeclaration): unhandled case: node.parent.kind  === ' + node.parent.kind)
 	}
+}
+
+type ParseNodeFunction = (
+	node: any,
+	parent: any,
+	sourceFile: ts.SourceFile,
+	traverseNodeInfo: TraverseNodeInfo
+) => ProgramStructureTree<ProgramStructureTreeType.FunctionExpression>
+
+const PARSE_NODE_FUNCTIONS: Partial<Record<ts.SyntaxKind, ParseNodeFunction>> = {
+	[ts.SyntaxKind.PropertyDeclaration]: FunctionExpressionHelper.parseWithParentPropertyDeclaration,
+	[ts.SyntaxKind.ParenthesizedExpression]: FunctionExpressionHelper.parseWithParentParenthesizedExpression,
+	[ts.SyntaxKind.VariableDeclaration]: FunctionExpressionHelper.parseWithParentVariableDeclaration
 }
