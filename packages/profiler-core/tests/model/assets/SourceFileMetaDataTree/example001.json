@@ -3718,10 +3718,18 @@
                                       },
                                       "{functionExpression:(expression:0)}": {
                                         "children": {
-                                          "{scope:(anonymous:0)}": {
+                                          "{scope:(if:0)}": {
                                             "children": {
-                                              "{functionExpression:(anonymous:0)}": {
-                                                "id": 98
+                                              "{scope:then}": {
+                                                "children": {
+                                                  "{scope:(anonymous:0)}": {
+                                                    "children": {
+                                                      "{functionExpression:(anonymous:0)}": {
+                                                        "id": 98
+                                                      }
+                                                    }
+                                                  }
+                                                }
                                               }
                                             }
                                           }

@@ -593,7 +593,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			}
 
 			instance.relativeRootDir = undefined
-			instance.storeToFile(projectReportFilePath, 'json')
+			instance.storeToFile(projectReportFilePath, 'pretty-json')
 
 			const config = ProfilerConfig.autoResolve()
 
@@ -958,7 +958,7 @@ describe('ProjectReport', () => {
 			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
 			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
 			if (UPDATE_TEST_REPORTS) {
-				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
+				projectReport.storeToFile(expectedProjectReportFilePathJson, 'pretty-json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
 			}
 
@@ -1024,7 +1024,7 @@ describe('ProjectReport', () => {
 			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
 			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.bin')
 			if (UPDATE_TEST_REPORTS) {
-				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
+				projectReport.storeToFile(expectedProjectReportFilePathJson, 'pretty-json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
 			}
 
@@ -1162,7 +1162,7 @@ describe('ProjectReport', () => {
 			mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
 			if (UPDATE_TEST_REPORTS) {
-				mergedProjectReport.storeToFile(expectedPathJson, 'json')
+				mergedProjectReport.storeToFile(expectedPathJson, 'pretty-json')
 				mergedProjectReport.storeToFile(expectedPathBin, 'bin')
 			}
 

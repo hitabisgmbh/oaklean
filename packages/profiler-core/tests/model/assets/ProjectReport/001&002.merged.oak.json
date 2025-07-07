@@ -221,10 +221,18 @@
                                       },
                                       "{functionExpression:(expression:0)}": {
                                         "children": {
-                                          "{scope:(anonymous:0)}": {
+                                          "{scope:(if:0)}": {
                                             "children": {
-                                              "{functionExpression:(anonymous:0)}": {
-                                                "id": 100
+                                              "{scope:then}": {
+                                                "children": {
+                                                  "{scope:(anonymous:0)}": {
+                                                    "children": {
+                                                      "{functionExpression:(anonymous:0)}": {
+                                                        "id": 100
+                                                      }
+                                                    }
+                                                  }
+                                                }
                                               }
                                             }
                                           }
@@ -847,8 +855,32 @@
                           "{functionExpression:(anonymous:0)}": {
                             "id": 158,
                             "children": {
-                              "{functionExpression:(anonymous:0)}": {
-                                "id": 153
+                              "{scope:(if:0)}": {
+                                "children": {
+                                  "{scope:else}": {
+                                    "children": {
+                                      "{scope:(if:0)}": {
+                                        "children": {
+                                          "{scope:else}": {
+                                            "children": {
+                                              "{scope:(if:0)}": {
+                                                "children": {
+                                                  "{scope:then}": {
+                                                    "children": {
+                                                      "{functionExpression:(anonymous:0)}": {
+                                                        "id": 153
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
                               }
                             }
                           }
@@ -901,8 +933,16 @@
                           "{function:parseStartTag}": {
                             "id": 162
                           },
-                          "{functionExpression:(anonymous:0)}": {
-                            "id": 163
+                          "{scope:(if:0)}": {
+                            "children": {
+                              "{scope:else}": {
+                                "children": {
+                                  "{functionExpression:(anonymous:0)}": {
+                                    "id": 163
+                                  }
+                                }
+                              }
+                            }
                           }
                         }
                       },

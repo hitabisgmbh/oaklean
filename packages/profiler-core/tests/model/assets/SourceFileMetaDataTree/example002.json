@@ -5923,8 +5923,32 @@
                           "{functionExpression:(anonymous:0)}": {
                             "id": 82,
                             "children": {
-                              "{functionExpression:(anonymous:0)}": {
-                                "id": 80
+                              "{scope:(if:0)}": {
+                                "children": {
+                                  "{scope:else}": {
+                                    "children": {
+                                      "{scope:(if:0)}": {
+                                        "children": {
+                                          "{scope:else}": {
+                                            "children": {
+                                              "{scope:(if:0)}": {
+                                                "children": {
+                                                  "{scope:then}": {
+                                                    "children": {
+                                                      "{functionExpression:(anonymous:0)}": {
+                                                        "id": 80
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
                               }
                             }
                           }
@@ -5956,8 +5980,16 @@
                           "{function:parseStartTag}": {
                             "id": 91
                           },
-                          "{functionExpression:(anonymous:0)}": {
-                            "id": 92
+                          "{scope:(if:0)}": {
+                            "children": {
+                              "{scope:else}": {
+                                "children": {
+                                  "{functionExpression:(anonymous:0)}": {
+                                    "id": 92
+                                  }
+                                }
+                              }
+                            }
                           }
                         }
                       },

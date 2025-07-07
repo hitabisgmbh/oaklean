@@ -753,7 +753,7 @@ describe('SourceFileMetaDataTree', () => {
 
 			const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example001.json')
 			if (UPDATE_TEST_REPORTS) {
-				tree.storeToFile(expectedSourceFileMetaDataTreePath)
+				tree.storeToFile(expectedSourceFileMetaDataTreePath, 'pretty-json')
 			}
 
 			const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
@@ -773,7 +773,7 @@ describe('SourceFileMetaDataTree', () => {
 
 			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport).filter(undefined, undefined).node!
 			if (UPDATE_TEST_REPORTS) {
-				tree.storeToFile(expectedSourceFileMetaDataTreePath)
+				tree.storeToFile(expectedSourceFileMetaDataTreePath, 'pretty-json')
 			}
 			const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
 
