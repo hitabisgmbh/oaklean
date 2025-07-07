@@ -115,6 +115,6 @@ const PARSE_NODE_FUNCTIONS: Partial<Record<ts.SyntaxKind, ParseNodeFunction>> = 
 	[ts.SyntaxKind.Identifier]: MethodDeclarationHelper.parseWithNameIdentifier,
 	[ts.SyntaxKind.PrivateIdentifier]: MethodDeclarationHelper.parseWithNameIdentifier,
 	[ts.SyntaxKind.StringLiteral]: MethodDeclarationHelper.parseWithNameLiteral,
-	[ts.SyntaxKind.FirstLiteralToken]: MethodDeclarationHelper.parseWithNameLiteral,
+	[ts.SyntaxKind.NumericLiteral]: MethodDeclarationHelper.parseWithNameLiteral,
 	[ts.SyntaxKind.ComputedPropertyName]: MethodDeclarationHelper.parseWithNameComputedPropertyName
 }
