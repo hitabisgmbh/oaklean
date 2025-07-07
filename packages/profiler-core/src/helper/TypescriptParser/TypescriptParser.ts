@@ -84,33 +84,6 @@ export class TypescriptParser {
 		}
 	}
 
-	static isProgramStructureType (node: ts.Node) {
-		return TypescriptParser.isExecutableScope(node) ||
-			TypescriptParser.isHierarchyLayer(node)
-	}
-
-	/*
-		Only the following node types are considered a executable scope.
-		Scopes like `if` statements are only used for hierarchy and not for execution.
-	*/
-	static isExecutableScope(node: ts.Node) {
-		return ts.isFunctionDeclaration(node) ||
-			ts.isFunctionExpression(node) ||
-			ts.isArrowFunction(node) ||
-			ts.isMethodDeclaration(node) ||
-			ts.isConstructorDeclaration(node) ||
-			ts.isClassDeclaration(node) ||
-			ts.isClassExpression(node)
-	}
-
-	/*
-		The following node types are considered hierarchy layers.
-		They are only used to create a hierarchy in the program structure tree but cannot be a leaf node.
-	*/
-	static isHierarchyLayer(node: ts.Node) {
-		return ts.isObjectLiteralExpression(node)
-	}
-
 	/**
 	 * Method to transpile a file
 	 * it determines the tsconfig to use and transpiles the given file with the compiler options of its tsconfig
@@ -256,49 +229,52 @@ export class TypescriptParser {
 				return
 			}
 
-			if (TypescriptParser.isProgramStructureType(node)) {
-				const subTree = TypescriptParser.parseNode(
-					node,
-					sourceFile,
-					currentTraverseNodeInfo
-				)
+			const subTree = TypescriptParser.parseNode(
+				node,
+				sourceFile,
+				currentTraverseNodeInfo
+			)
+
+			if (subTree === null) {
+				// there is no parser for this node type
+				return
+			}
+			
+			// if (ts.isBlock(node)) {
 				
-				// if (ts.isBlock(node)) {
-					
-				// }
+			// }
 
-				if (subTree) {
-					// adds the subtree to the current tree
-					addSubTree(
-						node,
-						subTree,
-						currentTraverseNodeInfo.tree
-					)
-					// store last visited node 
-					stack.push(currentTraverseNodeInfo)
+			if (subTree) {
+				// adds the subtree to the current tree
+				addSubTree(
+					node,
+					subTree,
+					currentTraverseNodeInfo.tree
+				)
+				// store last visited node 
+				stack.push(currentTraverseNodeInfo)
 
-					// set current node to newly traversed node
-					currentTraverseNodeInfo = {
-						node,
-						filePath,
-						idCounter: currentTraverseNodeInfo.idCounter,
-						tree: subTree,
-						anonymousScopeCounter: 0,
-						anonymousFunctionCounter: 0,
-						expressionFunctionCounter: 0,
-						literalFunctionCounter: 0
-					}
-				} else {
-					LoggerHelper.error(
-						'TypescriptParser.parseFile: subTree is undefined, unexpected behaviour',
-						JSON.stringify({
-							filePath,
-							node: ts.SyntaxKind[node.kind],
-							code: node.getText(sourceFile)
-						}, undefined, 2)
-					)
-					throw new Error('TypescriptParser.parseFile: subTree is undefined, unexpected behaviour')
+				// set current node to newly traversed node
+				currentTraverseNodeInfo = {
+					node,
+					filePath,
+					idCounter: currentTraverseNodeInfo.idCounter,
+					tree: subTree,
+					anonymousScopeCounter: 0,
+					anonymousFunctionCounter: 0,
+					expressionFunctionCounter: 0,
+					literalFunctionCounter: 0
 				}
+			} else {
+				LoggerHelper.error(
+					'TypescriptParser.parseFile: subTree is undefined, unexpected behaviour',
+					JSON.stringify({
+						filePath,
+						node: ts.SyntaxKind[node.kind],
+						code: node.getText(sourceFile)
+					}, undefined, 2)
+				)
+				throw new Error('TypescriptParser.parseFile: subTree is undefined, unexpected behaviour')
 			}
 		}
 
@@ -334,7 +310,7 @@ export class TypescriptParser {
 		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree | undefined {
+	): ProgramStructureTree | null {
 		const parseNodeFunction = PARSE_NODE_FUNCTIONS[node.kind]
 		if (parseNodeFunction !== undefined) {
 			return parseNodeFunction(
@@ -345,7 +321,7 @@ export class TypescriptParser {
 			)
 		}
 
-		return undefined
+		return null
 	}
 
 	/**

@@ -16,10 +16,6 @@ describe('TypescriptParser', () => {
 		expect(TypescriptParser.traverseSourceFile).toBeTruthy()
 	})
 
-	it('should have a static method isProgramStructureType()', () => {
-		expect(TypescriptParser.isProgramStructureType).toBeTruthy()
-	})
-
 	it('should have a static method parseFile()', () => {
 		expect(TypescriptParser.parseFile).toBeTruthy()
 	})
