@@ -27,7 +27,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 	beginLoc: NodeLocation
 	endLoc: NodeLocation
 	children: ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>
-	parent?: T extends ProgramStructureTreeType.Root ? null : ProgramStructureTree
+	parent: T extends ProgramStructureTreeType.Root ? null : ProgramStructureTree
 
 	constructor(
 		parent: T extends ProgramStructureTreeType.Root ?
@@ -75,6 +75,16 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		}
 
 		return 	traverse(this)
+	}
+
+	/**
+	 * Returns the identifier path of the current node.
+	 */
+	identifierPath(): SourceNodeIdentifier_string {
+		if (this.parent === null) {
+			return this.identifier as unknown as SourceNodeIdentifier_string
+		}
+		return (this.parent.identifierPath() + '.' + this.identifier) as SourceNodeIdentifier_string
 	}
 
 	identifierHierarchy(): PSTIdentifierHierarchy {

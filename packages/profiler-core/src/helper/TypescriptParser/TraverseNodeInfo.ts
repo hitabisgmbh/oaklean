@@ -9,10 +9,12 @@ import {
 
 
 export type TraverseNodeInfo = {
+	parent: TraverseNodeInfo | null
 	node: ts.Node
 	filePath: UnifiedPath | UnifiedPath_string
 	idCounter: number
 	tree: ProgramStructureTree,
+	ifStatementCounter: number
 	anonymousScopeCounter: number
 	anonymousFunctionCounter: number
 	expressionFunctionCounter: number

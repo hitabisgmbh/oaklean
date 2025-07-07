@@ -1,7 +1,7 @@
-import { TypescriptParser } from '../../../src/helper/TypescriptParser'
-import { UnifiedPath } from '../../../src/system/UnifiedPath'
+import { TypescriptParser } from '../../../../src/helper/TypescriptParser'
+import { UnifiedPath } from '../../../../src/system/UnifiedPath'
 // Types
-import { ProgramStructureTreeType } from '../../../src/types'
+import { ProgramStructureTreeType } from '../../../../src/types'
 
 
 describe('with no executable children', () => {

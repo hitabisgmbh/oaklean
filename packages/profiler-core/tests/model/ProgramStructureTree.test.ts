@@ -79,6 +79,15 @@ describe('ProgramStructureTree', () => {
 				})).toBe('')
 			})
 		})
+
+		test('identifierPath', () => {
+			const result = instance.identifierNodeBySourceLocation({
+				line: 8,
+				column: 21
+			})
+
+			expect(result?.node.identifierPath()).toEqual('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}')
+		})
 	})
 })
 

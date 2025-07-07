@@ -8,6 +8,9 @@ export enum IdentifierType {
 	Literal = 'Literal',
 	Anonymous = 'Anonymous',
 	KeyWord = 'Keyword',
+	IfStatement = 'IfStatement',
+	ThenStatement = 'ThenStatement',
+	ElseStatement = 'ElseStatement',
 }
 
 export enum ProgramStructureTreeType {

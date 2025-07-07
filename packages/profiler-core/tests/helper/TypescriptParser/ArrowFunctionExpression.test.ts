@@ -217,8 +217,13 @@ describe('ts.SyntaxKind.BinaryExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+				'{scope:(if:0)}': {
+					type: ProgramStructureTreeType.Scope,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.ArrowFunctionExpression,
+						}
+					}
 				}
 			}
 		})

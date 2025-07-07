@@ -11,7 +11,7 @@ export const FunctionExpressionRegexString =
 	`{functionExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
 export const ClassExpressionRegexString =
 	`{classExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
-export const ScopeRegexString = '{scope:\\(anonymous:[0-9]+\\)}'
+export const ScopeRegexString = '{scope:(?:\\(anonymous:[0-9]+\\)|then|else|\\(if:[0-9]+\\))}'
 
 export const LangInternalSourceNodeRegExpRegexString = 'RegExp: .*'
 export const LangInternalSourceNodeNameRegexString = '[^{}]+'

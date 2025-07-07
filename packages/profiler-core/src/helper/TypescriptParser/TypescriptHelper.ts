@@ -105,20 +105,4 @@ export class TypescriptHelper {
 		}
 		return false
 	}
-
-	/*
-		Returns the case number of the given block node.
-		If the blok is not an if-case block, it returns -1.
-	*/
-	static parseIfCase(node: ts.Block): 'if-case' | 'else-case' | undefined {
-		if (node.parent.kind === ts.SyntaxKind.IfStatement) {
-			const ifStatement = node.parent as ts.IfStatement
-			if (ifStatement.elseStatement === node) {
-				return 'else-case'
-			} else if (ifStatement.thenStatement === node) {
-				return 'if-case'
-			}
-		}
-		return undefined
-	}
 }

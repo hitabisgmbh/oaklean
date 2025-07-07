@@ -11,8 +11,10 @@ import {
 	FunctionExpressionHelper,
 	MethodDeclarationHelper,
 	ArrowFunctionHelper,
+	SkipHelper,
 	ScopeHelper,
-	SkipHelper
+	ObjectLiteralExpressionHelper,
+	IfStatementHelper
 } from './index'
 
 import { TypescriptHelper } from './TypescriptHelper'
@@ -55,7 +57,8 @@ const PARSE_NODE_FUNCTIONS = {
 	[FunctionExpressionHelper.syntaxKind]: FunctionExpressionHelper.parseNode,
 	[MethodDeclarationHelper.syntaxKind]: MethodDeclarationHelper.parseNode,
 	[ArrowFunctionHelper.syntaxKind]: ArrowFunctionHelper.parseNode,
-	[ScopeHelper.syntaxKind]: ScopeHelper.parseNode
+	[ObjectLiteralExpressionHelper.syntaxKind]: ObjectLiteralExpressionHelper.parseNode,
+	[IfStatementHelper.syntaxKind]: IfStatementHelper.parseNode
 }
 
 export class TypescriptParser {
@@ -162,13 +165,14 @@ export class TypescriptParser {
 			TypescriptHelper.posToLoc(sourceFile, 0),
 			TypescriptHelper.posToLoc(sourceFile, sourceFile.getEnd())
 		)
-		const stack: TraverseNodeInfo[] = []
 
 		let currentTraverseNodeInfo: TraverseNodeInfo = {
+			parent: null,
 			node: sourceFile,
 			filePath,
 			idCounter: 1, // root node has id 0
 			tree: root,
+			ifStatementCounter: 0,
 			anonymousScopeCounter: 0,
 			anonymousFunctionCounter: 0,
 			expressionFunctionCounter: 0,
@@ -182,16 +186,12 @@ export class TypescriptParser {
 		) => {
 			const found = tree.children.get(subTree.identifier)
 			if (found !== undefined && onDuplicateIdentifier !== undefined) {
-				const identifierPath = stack.map(
-					(n) => {
-						return n.tree.identifier
-					}
-				)
+				const identifier = tree.identifierPath() + '.' + subTree.identifier
 
 				onDuplicateIdentifier(
 					filePath,
 					(node as any),
-					[...identifierPath, subTree.identifier].join('.'),
+					identifier,
 					{
 						begin: subTree.beginLoc,
 						end: subTree.endLoc
@@ -229,6 +229,28 @@ export class TypescriptParser {
 				return
 			}
 
+			const intermediateNode = ScopeHelper.parseIntermediateNode(node, sourceFile, currentTraverseNodeInfo)
+			if (intermediateNode !== undefined) {
+				// if the node is an if-case, we add the if case as an intermediate scope
+				addSubTree(
+					node,
+					intermediateNode,
+					currentTraverseNodeInfo.tree
+				)
+				currentTraverseNodeInfo = {
+					parent: currentTraverseNodeInfo, // store last visited node
+					node,
+					filePath,
+					idCounter: currentTraverseNodeInfo.idCounter,
+					tree: intermediateNode,
+					ifStatementCounter: 0,
+					anonymousScopeCounter: 0,
+					anonymousFunctionCounter: 0,
+					expressionFunctionCounter: 0,
+					literalFunctionCounter: 0
+				}
+			}
+
 			const subTree = TypescriptParser.parseNode(
 				node,
 				sourceFile,
@@ -251,15 +273,15 @@ export class TypescriptParser {
 					subTree,
 					currentTraverseNodeInfo.tree
 				)
-				// store last visited node 
-				stack.push(currentTraverseNodeInfo)
 
 				// set current node to newly traversed node
 				currentTraverseNodeInfo = {
+					parent: currentTraverseNodeInfo, // store last visited node
 					node,
 					filePath,
 					idCounter: currentTraverseNodeInfo.idCounter,
 					tree: subTree,
+					ifStatementCounter: 0,
 					anonymousScopeCounter: 0,
 					anonymousFunctionCounter: 0,
 					expressionFunctionCounter: 0,
@@ -279,11 +301,13 @@ export class TypescriptParser {
 		}
 
 		const leaveNode = (node: ts.Node) => {
-			if (currentTraverseNodeInfo.node === node) {
-				TypescriptParser.clearEmptyScopes(currentTraverseNodeInfo)
-				const nodeInfo = stack.pop()
-				if (nodeInfo) {
-					currentTraverseNodeInfo = nodeInfo
+			while (
+				currentTraverseNodeInfo.node !== sourceFile &&
+				currentTraverseNodeInfo.node === node
+			) {
+				ScopeHelper.clearEmptyScopes(currentTraverseNodeInfo)
+				if (currentTraverseNodeInfo.parent !== null) {
+					currentTraverseNodeInfo = currentTraverseNodeInfo.parent
 				}
 			}
 		}
@@ -291,19 +315,6 @@ export class TypescriptParser {
 		TypescriptParser.traverseSourceFile(sourceFile, { enter: enterNode, leave: leaveNode })
 
 		return root
-	}
-
-	static clearEmptyScopes(
-		traverseNodeInfo: TraverseNodeInfo
-	) {
-		if (
-			traverseNodeInfo.tree.type === ProgramStructureTreeType.Scope &&
-			traverseNodeInfo.tree.children.size === 0
-		) {
-			// remove empty scopes since scopes are only used as a hierarchy level to distinguish between
-			// functions, methods, etc.
-			traverseNodeInfo.tree.parent?.children.delete(traverseNodeInfo.tree.identifier)
-		}
 	}
 
 	static parseNode(
