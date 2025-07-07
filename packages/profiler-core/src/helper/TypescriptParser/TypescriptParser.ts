@@ -191,8 +191,6 @@ export class TypescriptParser {
 			literalFunctionCounter: 0
 		}
 
-		let skipNext = false
-
 		const addSubTree = (
 			node: ts.Node,
 			subTree: ProgramStructureTree,
@@ -244,14 +242,10 @@ export class TypescriptParser {
 
 		const enterNode = (node: ts.Node) => {
 			if (SkipHelper.nodeShouldBeSkipped(node)) {
-				skipNext = true
+				return
 			}
 
 			if (TypescriptParser.isProgramStructureType(node)) {
-				if (skipNext) {
-					skipNext = false
-					return
-				}
 				const subTree = TypescriptParser.parseNode(
 					node,
 					sourceFile,

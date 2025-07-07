@@ -4,9 +4,9 @@ export class SkipHelper {
 	static nodeShouldBeSkipped(
 		node: ts.Node
 	): boolean {
-		if (ts.isCallExpression(node)) {
-			if (ts.isIdentifier(node.expression)) {
-				if (node.expression.escapedText === '___awaiter') {
+		if (node.parent !== undefined && ts.isCallExpression(node.parent)) {
+			if (ts.isIdentifier(node.parent.expression)) {
+				if (node.parent.expression.escapedText === '___awaiter') {
 					/**
 					 * the actual function is wrapped into an generated ___awaiter call like this:
 					 * async function test() { console.log('') }
@@ -21,7 +21,7 @@ export class SkipHelper {
 					 * 		- functionExpression:anonymous
 					 * 
 					 * since this happens only through the transpiling
-					 * we ignore the next call expression to keep the hirachy like:
+					 * we ignore this functionExpression to keep the hierarchy like:
 					 * - function:test
 					 * 
 					 */
@@ -29,6 +29,7 @@ export class SkipHelper {
 				}
 			}
 		}
+
 		return false
 	}
 }
