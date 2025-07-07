@@ -13,10 +13,13 @@ import {
 
 export class ConstructorDeclarationHelper {
 	static parseNode(
-		node: ts.ConstructorDeclaration,
+		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ConstructorDeclaration> {
+	): ProgramStructureTree<ProgramStructureTreeType.ConstructorDeclaration> | undefined {
+		if (!ts.isConstructorDeclaration(node)) {
+			return undefined
+		}
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,

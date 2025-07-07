@@ -14,10 +14,14 @@ import { LoggerHelper } from '../LoggerHelper'
 
 export class ArrowFunctionHelper {
 	static parseNode(
-		node: ts.ArrowFunction,
+		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression> {
+	): ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression> | undefined {
+		if (!ts.isArrowFunction(node)) {
+			return undefined
+		}
+
 		if (ts.isPropertyDeclaration(node.parent)) {
 			return ArrowFunctionHelper.parseWithParentPropertyDeclaration(
 				node,

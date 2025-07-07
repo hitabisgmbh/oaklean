@@ -14,10 +14,14 @@ import {
 
 export class FunctionDeclarationHelper {
 	static parseNode(
-		node: ts.FunctionDeclaration,
+		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.FunctionDeclaration> {
+	): ProgramStructureTree<ProgramStructureTreeType.FunctionDeclaration> | undefined{
+		if (!ts.isFunctionDeclaration(node)) {
+			return undefined
+		}
+
 		if (node.name !== undefined && ts.isIdentifier(node.name)) {
 			const functionName = node.name.escapedText
 			return new ProgramStructureTree(

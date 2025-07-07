@@ -47,6 +47,23 @@ type OnDuplicateIdentifierCallback = (
 	}
 ) => void
 
+type ParseNodeFunction = (
+	node: ts.Node,
+	sourceFile: ts.SourceFile,
+	traverseNodeInfo: TraverseNodeInfo
+) => ProgramStructureTree | undefined
+
+const PARSE_NODE_FUNCTIONS: ParseNodeFunction[] = [
+	ClassDeclarationHelper.parseNode,
+	ClassExpressionHelper.parseNode,
+	ConstructorDeclarationHelper.parseNode,
+	FunctionDeclarationHelper.parseNode,
+	FunctionExpressionHelper.parseNode,
+	MethodDeclarationHelper.parseNode,
+	ArrowFunctionHelper.parseNode,
+	ScopeHelper.parseNode
+]
+
 export class TypescriptParser {
 
 	/**
@@ -324,69 +341,11 @@ export class TypescriptParser {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree | undefined {
-		if (ts.isClassDeclaration(node)) {
-			return ClassDeclarationHelper.parseNode(
-				node,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-
-		if (ts.isClassExpression(node)) {
-			return ClassExpressionHelper.parseNode(
-				node,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-
-		if (ts.isConstructorDeclaration(node)) {
-			return ConstructorDeclarationHelper.parseNode(
-				node,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-
-		if (ts.isFunctionDeclaration(node)) {
-			return FunctionDeclarationHelper.parseNode(
-				node,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-
-		if (ts.isFunctionExpression(node)) {
-			return FunctionExpressionHelper.parseNode(
-				node,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-
-		if (ts.isMethodDeclaration(node)) {
-			return MethodDeclarationHelper.parseNode(
-				node,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-
-		if (ts.isArrowFunction(node)) {
-			return ArrowFunctionHelper.parseNode(
-				node,
-				sourceFile,
-				traverseNodeInfo
-			)
-		}
-
-		const subTree = ScopeHelper.parseNode(
-			node,
-			sourceFile,
-			traverseNodeInfo
-		)
-		if (subTree !== undefined) {
-			return subTree
+		for (const parseNodeFunction of PARSE_NODE_FUNCTIONS) {
+			const subTree = parseNodeFunction(node, sourceFile, traverseNodeInfo)
+			if (subTree !== undefined) {
+				return subTree
+			}
 		}
 
 		return undefined

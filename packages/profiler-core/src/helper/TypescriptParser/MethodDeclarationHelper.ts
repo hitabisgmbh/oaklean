@@ -14,10 +14,14 @@ import { LoggerHelper } from '../LoggerHelper'
 
 export class MethodDeclarationHelper {
 	static parseNode(
-		node: ts.MethodDeclaration,
+		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.MethodDefinition> {
+	): ProgramStructureTree<ProgramStructureTreeType.MethodDefinition> | undefined {
+		if (!ts.isMethodDeclaration(node)) {
+			return undefined
+		}
+
 		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
 		switch (node.name.kind) {
 			case ts.SyntaxKind.Identifier:

@@ -14,10 +14,14 @@ import { LoggerHelper } from '../LoggerHelper'
 
 export class ClassDeclarationHelper {
 	static parseNode(
-		node: ts.ClassDeclaration,
+		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ClassDeclaration> {
+	): ProgramStructureTree<ProgramStructureTreeType.ClassDeclaration> | undefined {
+		if (!ts.isClassDeclaration(node)) {
+			return undefined
+		}
+
 		if (node.name?.kind === ts.SyntaxKind.Identifier) {
 			const className = node.name.escapedText
 			return new ProgramStructureTree(

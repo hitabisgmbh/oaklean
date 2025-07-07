@@ -14,10 +14,14 @@ import {
 
 export class FunctionExpressionHelper {
 	static parseNode(
-		node: ts.FunctionExpression,
+		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
+	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> | undefined {
+		if (!ts.isFunctionExpression(node)) {
+			return undefined
+		}
+
 		const emitHelperName = TypescriptHelper.getEmitHelperName(node)
 		if (emitHelperName !== undefined) {
 			const functionName = `functionExpression:${emitHelperName}`

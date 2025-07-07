@@ -14,10 +14,14 @@ import { LoggerHelper } from '../LoggerHelper'
 
 export class ClassExpressionHelper {
 	static parseNode(
-		node: ts.ClassExpression,
+		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ClassExpression> {
+	): ProgramStructureTree<ProgramStructureTreeType.ClassExpression> | undefined {
+		if (!ts.isClassExpression(node)) {
+			return undefined
+		}
+
 		if (ts.isParenthesizedExpression(node.parent)) {
 			return ClassExpressionHelper.parseWithParentParenthesizedExpression(
 				node,

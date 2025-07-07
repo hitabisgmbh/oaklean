@@ -17,13 +17,14 @@ export class ScopeHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.Scope> | undefined {
-		if (ts.isObjectLiteralExpression(node)) {
-			return ScopeHelper.parseObjectLiteralExpression(
-				node,
-				sourceFile,
-				traverseNodeInfo
-			)
+		if (!ts.isObjectLiteralExpression(node)) {
+			return undefined
 		}
+		return ScopeHelper.parseObjectLiteralExpression(
+			node,
+			sourceFile,
+			traverseNodeInfo
+		)
 	}
 
 	static parseObjectLiteralExpression(
