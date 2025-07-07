@@ -180,7 +180,8 @@ export class TypescriptParser {
 		)
 		const stack: TraverseNodeInfo[] = []
 
-		let traverseNodeInfo: TraverseNodeInfo = {
+		let currentTraverseNodeInfo: TraverseNodeInfo = {
+			node: sourceFile,
 			filePath,
 			idCounter: 1, // root node has id 0
 			tree: root,
@@ -190,7 +191,6 @@ export class TypescriptParser {
 			literalFunctionCounter: 0
 		}
 
-		const skippedSourceNodes = new Set<ts.Node>()
 		let skipNext = false
 
 		const addSubTree = (
@@ -249,14 +249,13 @@ export class TypescriptParser {
 
 			if (TypescriptParser.isProgramStructureType(node)) {
 				if (skipNext) {
-					skippedSourceNodes.add(node)
 					skipNext = false
 					return
 				}
 				const subTree = TypescriptParser.parseNode(
 					node,
 					sourceFile,
-					traverseNodeInfo
+					currentTraverseNodeInfo
 				)
 				
 				// if (ts.isBlock(node)) {
@@ -268,15 +267,16 @@ export class TypescriptParser {
 					addSubTree(
 						node,
 						subTree,
-						traverseNodeInfo.tree
+						currentTraverseNodeInfo.tree
 					)
 					// store last visited node 
-					stack.push(traverseNodeInfo)
+					stack.push(currentTraverseNodeInfo)
 
 					// set current node to newly traversed node
-					traverseNodeInfo = {
+					currentTraverseNodeInfo = {
+						node,
 						filePath,
-						idCounter: traverseNodeInfo.idCounter,
+						idCounter: currentTraverseNodeInfo.idCounter,
 						tree: subTree,
 						anonymousScopeCounter: 0,
 						anonymousFunctionCounter: 0,
@@ -298,15 +298,11 @@ export class TypescriptParser {
 		}
 
 		const leaveNode = (node: ts.Node) => {
-			if (TypescriptParser.isProgramStructureType(node)) {
-				if (skippedSourceNodes.has(node)) {
-					skippedSourceNodes.delete(node)
-					return
-				}
-				TypescriptParser.clearEmptyScopes(traverseNodeInfo)
+			if (currentTraverseNodeInfo.node === node) {
+				TypescriptParser.clearEmptyScopes(currentTraverseNodeInfo)
 				const nodeInfo = stack.pop()
 				if (nodeInfo) {
-					traverseNodeInfo = nodeInfo
+					currentTraverseNodeInfo = nodeInfo
 				}
 			}
 		}
