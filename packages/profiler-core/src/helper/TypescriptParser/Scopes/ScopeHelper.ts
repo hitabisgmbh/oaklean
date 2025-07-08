@@ -34,12 +34,12 @@ const PARSE_INTERMEDIATE_NODE: Partial<Record<ts.SyntaxKind, ParseIntermediateFu
 	[ts.SyntaxKind.CaseBlock]: SwitchStatementHelper.switchCase,
 }
 
-export class ScopeHelper {
-	static intermediateNodeParentTypes = new Set([
-		ts.SyntaxKind.IfStatement,
-		ts.SyntaxKind.CaseBlock
-	])
+const INTERMEDIATE_NODE_PARENT_TYPE = new Set([
+	ts.SyntaxKind.IfStatement,
+	ts.SyntaxKind.CaseBlock
+])
 
+export class ScopeHelper {
 	static clearEmptyScopes(
 		traverseNodeInfo: TraverseNodeInfo
 	) {
@@ -77,6 +77,6 @@ export class ScopeHelper {
 	static isIntermediateNode(
 		node: ts.Node
 	) {
-		return ScopeHelper.intermediateNodeParentTypes.has(node.parent?.kind)
+		return INTERMEDIATE_NODE_PARENT_TYPE.has(node.parent?.kind)
 	}
 }
