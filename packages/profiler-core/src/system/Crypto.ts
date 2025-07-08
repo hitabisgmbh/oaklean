@@ -15,7 +15,7 @@ export class Crypto {
 	}
 
 	static smallHash(input: string): string {
-		return crypto.createHash('sha1').update(input).digest('base64url').slice(0, 8)
+		return crypto.createHash('sha1').update(input).digest('hex').slice(0, 8)
 	}
 
 	static uniqueID(): UUID_string {

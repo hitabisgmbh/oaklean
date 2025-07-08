@@ -76,7 +76,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 					'{scope:(switch:0)}': {
 						type: ProgramStructureTreeType.Scope,
 						children: {
-							'{scope:(case:NWoZK3kT)}': {
+							'{scope:(case:356a192b)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
@@ -84,7 +84,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 									}
 								}
 							},
-							'{scope:(case:d95o2uzY)}': {
+							'{scope:(case:77de68da)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
@@ -97,7 +97,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 					'{scope:(switch:1)}': {
 						type: ProgramStructureTreeType.Scope,
 						children: {
-							'{scope:(case:NWoZK3kT)}': {
+							'{scope:(case:356a192b)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
@@ -105,7 +105,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 									}
 								}
 							},
-							'{scope:(case:d95o2uzY)}': {
+							'{scope:(case:77de68da)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
@@ -171,7 +171,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 					'{scope:(switch:0)}': {
 						type: ProgramStructureTreeType.Scope,
 						children: {
-							'{scope:(case:NWoZK3kT)}': {
+							'{scope:(case:356a192b)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
@@ -179,7 +179,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 									}
 								}
 							},
-							'{scope:(case:d95o2uzY)}': {
+							'{scope:(case:77de68da)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
@@ -200,7 +200,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 					'{scope:(switch:1)}': {
 						type: ProgramStructureTreeType.Scope,
 						children: {
-							'{scope:(case:NWoZK3kT)}': {
+							'{scope:(case:356a192b)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
@@ -208,7 +208,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 									}
 								}
 							},
-							'{scope:(case:d95o2uzY)}': {
+							'{scope:(case:77de68da)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
@@ -281,13 +281,13 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 					'{scope:(switch:0)}': {
 						type: ProgramStructureTreeType.Scope,
 						children: {
-							'{scope:(case:tlifxqsN)}': {
+							'{scope:(case:b6589fc6)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{scope:(switch:0)}': {
 										type: ProgramStructureTreeType.Scope,
 										children: {
-											'{scope:(case:tlifxqsN)}': {
+											'{scope:(case:b6589fc6)}': {
 												type: ProgramStructureTreeType.Scope,
 												children: {
 													'{function:a}': {
@@ -307,7 +307,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 									}
 								}
 							},
-							'{scope:(case:NWoZK3kT)}': {
+							'{scope:(case:356a192b)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
@@ -315,7 +315,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 									}
 								}
 							},
-							'{scope:(case:d95o2uzY)}': {
+							'{scope:(case:77de68da)}': {
 								type: ProgramStructureTreeType.Scope,
 								children: {
 									'{function:a}': {
