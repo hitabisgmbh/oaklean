@@ -14,7 +14,8 @@ import {
 	SkipHelper,
 	ScopeHelper,
 	ObjectLiteralExpressionHelper,
-	IfStatementHelper
+	IfStatementHelper,
+	SwitchStatementHelper,
 } from './index'
 
 import { TypescriptHelper } from './TypescriptHelper'
@@ -58,7 +59,8 @@ const PARSE_NODE_FUNCTIONS = {
 	[MethodDeclarationHelper.syntaxKind]: MethodDeclarationHelper.parseNode,
 	[ArrowFunctionHelper.syntaxKind]: ArrowFunctionHelper.parseNode,
 	[ObjectLiteralExpressionHelper.syntaxKind]: ObjectLiteralExpressionHelper.parseNode,
-	[IfStatementHelper.syntaxKind]: IfStatementHelper.parseNode
+	[IfStatementHelper.syntaxKind]: IfStatementHelper.parseNode,
+	[SwitchStatementHelper.syntaxKind]: SwitchStatementHelper.parseNode,
 }
 
 export class TypescriptParser {
@@ -173,6 +175,7 @@ export class TypescriptParser {
 			idCounter: 1, // root node has id 0
 			tree: root,
 			ifStatementCounter: 0,
+			switchCounter: 0,
 			anonymousScopeCounter: 0,
 			anonymousFunctionCounter: 0,
 			expressionFunctionCounter: 0,
@@ -244,6 +247,7 @@ export class TypescriptParser {
 					idCounter: currentTraverseNodeInfo.idCounter,
 					tree: intermediateNode,
 					ifStatementCounter: 0,
+					switchCounter: 0,
 					anonymousScopeCounter: 0,
 					anonymousFunctionCounter: 0,
 					expressionFunctionCounter: 0,
@@ -282,6 +286,7 @@ export class TypescriptParser {
 					idCounter: currentTraverseNodeInfo.idCounter,
 					tree: subTree,
 					ifStatementCounter: 0,
+					switchCounter: 0,
 					anonymousScopeCounter: 0,
 					anonymousFunctionCounter: 0,
 					expressionFunctionCounter: 0,

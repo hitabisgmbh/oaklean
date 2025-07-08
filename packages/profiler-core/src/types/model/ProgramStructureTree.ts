@@ -11,6 +11,8 @@ export enum IdentifierType {
 	IfStatement = 'IfStatement',
 	ThenStatement = 'ThenStatement',
 	ElseStatement = 'ElseStatement',
+	SwitchStatement = 'SwitchStatement',
+	SwitchCase = 'SwitchCase',
 }
 
 export enum ProgramStructureTreeType {

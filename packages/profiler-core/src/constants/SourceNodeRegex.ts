@@ -11,7 +11,16 @@ export const FunctionExpressionRegexString =
 	`{functionExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
 export const ClassExpressionRegexString =
 	`{classExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
-export const ScopeRegexString = '{scope:(?:\\(anonymous:[0-9]+\\)|then|else|\\(if:[0-9]+\\))}'
+// Scopes
+export const ExpressionHashRegexString = '[A-Za-z0-9+/]+'
+
+export const ObjectLiteralExpressionRegexString = '{scope:\\(anonymous:[0-9]+\\)}'
+export const IfStatementRegexString = '{scope:(?:then|else|\\(if:[0-9]+\\))}'
+// eslint-disable-next-line max-len
+export const SwitchStatementRegexString = `{scope:(?:\\(switch:[0-9]+\\)|\\(case:(?:${ExpressionHashRegexString}|default)\\))}`
+
+// eslint-disable-next-line max-len
+export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${IfStatementRegexString}|${SwitchStatementRegexString})`
 
 export const LangInternalSourceNodeRegExpRegexString = 'RegExp: .*'
 export const LangInternalSourceNodeNameRegexString = '[^{}]+'

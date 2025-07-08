@@ -14,6 +14,7 @@ export type TraverseNodeInfo = {
 	filePath: UnifiedPath | UnifiedPath_string
 	idCounter: number
 	tree: ProgramStructureTree,
+	switchCounter: number
 	ifStatementCounter: number
 	anonymousScopeCounter: number
 	anonymousFunctionCounter: number
