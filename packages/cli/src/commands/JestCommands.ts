@@ -149,12 +149,12 @@ export default class JestCommands {
 					)
 					report.storeToFile(
 						verifyExportAssetHelper.outputReportPath(assetPath),
-						'bin',
+						'pretty-json',
 						profilerConfig
 					)
 					expectedReport.storeToFile(
 						verifyExportAssetHelper.outputReportPath(assetPath + '-expected'),
-						'bin',
+						'pretty-json',
 						profilerConfig
 					)
 				} else {
