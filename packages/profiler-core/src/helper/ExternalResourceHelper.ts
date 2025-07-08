@@ -183,8 +183,7 @@ export class ExternalResourceHelper {
 		return {
 			fileInfoPerScriptID,
 			fileInfoPerPath,
-			nodeModules,
-			uncommittedFiles: this.uncommittedFiles
+			nodeModules
 		}
 	}
 
@@ -199,7 +198,6 @@ export class ExternalResourceHelper {
 			data = json
 		}
 		const result = new ExternalResourceHelper(rootDir)
-		result._uncommittedFiles = data.uncommittedFiles
 
 		for (const [key, value] of Object.entries(data.fileInfoPerScriptID)) {
 			let fileInfo: ExternalResourceFileInfo | null = null

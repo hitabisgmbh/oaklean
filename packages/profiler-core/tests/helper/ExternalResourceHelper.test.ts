@@ -127,6 +127,10 @@ describe('ExternalResourceHelper', () => {
 			expect(instance.scriptIDs).toEqual(['1', '2', '3'])
 		})
 
+		it('should have a getter uncommittedFiles', () => {
+			expect(instance.uncommittedFiles).toEqual([ROOT_DIR.pathTo(SCRIPT_01_PATH).toString()])
+		})
+
 		it('should have a getter loadedFilePaths', () => {
 			expect(instance.loadedFilePaths).toEqual([
 				ROOT_DIR.pathTo(SCRIPT_01_PATH).toString(),

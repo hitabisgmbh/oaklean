@@ -11,6 +11,5 @@ export type IExternalResourceFileInfo = {
 export type IExternalResourceHelper = {
 	fileInfoPerScriptID: Record<ScriptID_string, IExternalResourceFileInfo | null>,
 	fileInfoPerPath: Record<UnifiedPath_string, IExternalResourceFileInfo | null>,
-	nodeModules: Record<UnifiedPath_string, INodeModule | null>,
-	uncommittedFiles: UnifiedPath_string[] | undefined | null
+	nodeModules: Record<UnifiedPath_string, INodeModule | null>
 }
