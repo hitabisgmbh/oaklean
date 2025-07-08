@@ -169,7 +169,7 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{scope:(anonymous:0)}': {
-					type: ProgramStructureTreeType.Scope,
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{functionExpression:(anonymous:0)}': {
 							type: ProgramStructureTreeType.FunctionExpression,
@@ -217,7 +217,7 @@ describe('ts.SyntaxKind.BinaryExpression', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{scope:(if:0)}': {
-					type: ProgramStructureTreeType.Scope,
+					type: ProgramStructureTreeType.IfStatement,
 					children: {
 						'{functionExpression:(anonymous:0)}': {
 							type: ProgramStructureTreeType.FunctionExpression,

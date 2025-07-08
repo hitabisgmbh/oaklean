@@ -33,10 +33,10 @@ describe('ts.SyntaxKind.IfStatement', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{scope:(if:0)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.IfStatement,
 						children: {
 							'{scope:then}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
 										type: ProgramStructureTreeType.ArrowFunctionExpression
@@ -46,10 +46,10 @@ describe('ts.SyntaxKind.IfStatement', () => {
 						}
 					},
 					'{scope:(if:1)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.IfStatement,
 						children: {
 							'{scope:then}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
 										type: ProgramStructureTreeType.ArrowFunctionExpression
@@ -59,16 +59,16 @@ describe('ts.SyntaxKind.IfStatement', () => {
 						}
 					},
 					'{scope:(if:2)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.IfStatement,
 						children: {
 							'{scope:then}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{scope:(if:0)}': {
-										type: ProgramStructureTreeType.Scope,
+										type: ProgramStructureTreeType.IfStatement,
 										children: {
 											'{scope:then}': {
-												type: ProgramStructureTreeType.Scope,
+												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
 														type: ProgramStructureTreeType.ArrowFunctionExpression
@@ -105,10 +105,10 @@ describe('ts.SyntaxKind.IfStatement', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{scope:(if:0)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.IfStatement,
 						children: {
 							'{scope:then}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
 										type: ProgramStructureTreeType.ArrowFunctionExpression
@@ -116,13 +116,13 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								}
 							},
 							'{scope:else}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfElseStatement,
 								children: {
 									'{scope:(if:0)}': {
-										type: ProgramStructureTreeType.Scope,
+										type: ProgramStructureTreeType.IfStatement,
 										children: {
 											'{scope:else}': {
-												type: ProgramStructureTreeType.Scope,
+												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
 														type: ProgramStructureTreeType.ArrowFunctionExpression
@@ -180,10 +180,10 @@ describe('ts.SyntaxKind.IfStatement', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{scope:(if:0)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.IfStatement,
 						children: {
 							'{scope:then}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
 										type: ProgramStructureTreeType.ArrowFunctionExpression,
@@ -191,13 +191,13 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								}
 							},
 							'{scope:else}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfElseStatement,
 								children: {
 									'{scope:(if:0)}': {
-										type: ProgramStructureTreeType.Scope,
+										type: ProgramStructureTreeType.IfStatement,
 										children: {
 											'{scope:then}': {
-												type: ProgramStructureTreeType.Scope,
+												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
 														type: ProgramStructureTreeType.ArrowFunctionExpression,
@@ -205,7 +205,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												}
 											},
 											'{scope:else}': {
-												type: ProgramStructureTreeType.Scope,
+												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
 														type: ProgramStructureTreeType.ArrowFunctionExpression,
@@ -219,10 +219,10 @@ describe('ts.SyntaxKind.IfStatement', () => {
 						}
 					},
 					'{scope:(if:1)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.IfStatement,
 						children: {
 							'{scope:then}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
 										type: ProgramStructureTreeType.ArrowFunctionExpression,
@@ -230,13 +230,13 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								}
 							},
 							'{scope:else}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfElseStatement,
 								children: {
 									'{scope:(if:0)}': {
-										type: ProgramStructureTreeType.Scope,
+										type: ProgramStructureTreeType.IfStatement,
 										children: {
 											'{scope:then}': {
-												type: ProgramStructureTreeType.Scope,
+												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
 														type: ProgramStructureTreeType.ArrowFunctionExpression,
@@ -244,7 +244,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												}
 											},
 											'{scope:else}': {
-												type: ProgramStructureTreeType.Scope,
+												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
 														type: ProgramStructureTreeType.ArrowFunctionExpression,
@@ -278,13 +278,13 @@ describe('ts.SyntaxKind.IfStatement', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{scope:(if:0)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.IfStatement,
 						children: {
 							'{functionExpression:(anonymous:0)}': {
 								type: ProgramStructureTreeType.ArrowFunctionExpression
 							},
 							'{scope:then}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
 										type: ProgramStructureTreeType.ArrowFunctionExpression

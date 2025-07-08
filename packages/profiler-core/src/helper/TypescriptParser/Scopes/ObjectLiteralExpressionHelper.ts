@@ -17,12 +17,12 @@ export class ObjectLiteralExpressionHelper {
 		node: ts.ObjectLiteralExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.Scope> {
+	): ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression> {
 		const scopeName = `scope:(anonymous:${traverseNodeInfo.anonymousScopeCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
-			ProgramStructureTreeType.Scope,
+			ProgramStructureTreeType.ObjectLiteralExpression,
 			IdentifierType.Anonymous,
 			`{${scopeName}}` as SourceNodeIdentifierPart_string,
 			TypescriptHelper.posToLoc(sourceFile, node.getStart()),

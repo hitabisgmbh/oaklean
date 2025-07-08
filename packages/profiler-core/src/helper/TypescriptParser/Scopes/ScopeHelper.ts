@@ -7,15 +7,19 @@ import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
 import {
-	IdentifierType,
-	ProgramStructureTreeType
+	ProgramStructureTreeType,
+	ProgramStructureTreeTypeScope
 } from '../../../types'
 
 type ClearEmptyScopesFunction = (traverseNodeInfo: TraverseNodeInfo) => void
 
-const CLEAR_EMPTY_SCOPES: Partial<Record<IdentifierType, ClearEmptyScopesFunction>> = {
-	[IdentifierType.IfStatement]: IfStatementHelper.clearEmptyScopes,
-	[IdentifierType.SwitchStatement]: SwitchStatementHelper.clearEmptyScopes,
+const CLEAR_EMPTY_SCOPES: Partial<Record<ProgramStructureTreeType, ClearEmptyScopesFunction | null>> = {
+	[ProgramStructureTreeType.ObjectLiteralExpression]: null, 
+	[ProgramStructureTreeType.IfStatement]: IfStatementHelper.clearEmptyScopes,
+	[ProgramStructureTreeType.IfThenStatement]: null,
+	[ProgramStructureTreeType.IfElseStatement]: null,
+	[ProgramStructureTreeType.SwitchStatement]: SwitchStatementHelper.clearEmptyScopes,
+	[ProgramStructureTreeType.SwitchCaseClause]: null,
 }
 
 type ParseIntermediateFunction = (
@@ -23,7 +27,7 @@ type ParseIntermediateFunction = (
 	parent: any,
 	sourceFile: ts.SourceFile,
 	traverseNodeInfo: TraverseNodeInfo
-) => ProgramStructureTree<ProgramStructureTreeType.Scope> | undefined
+) => ProgramStructureTree<ProgramStructureTreeTypeScope> | undefined
 
 const PARSE_INTERMEDIATE_NODE: Partial<Record<ts.SyntaxKind, ParseIntermediateFunction>> = {
 	[ts.SyntaxKind.IfStatement]: IfStatementHelper.ifCase,
@@ -40,17 +44,17 @@ export class ScopeHelper {
 		traverseNodeInfo: TraverseNodeInfo
 	) {
 		if (
-			traverseNodeInfo.tree.type === ProgramStructureTreeType.Scope &&
 			traverseNodeInfo.tree.children.size === 0
 		) {
-			const clearEmptyScopeFunction = CLEAR_EMPTY_SCOPES[traverseNodeInfo.tree.identifierType]
+			const clearEmptyScopeFunction = CLEAR_EMPTY_SCOPES[traverseNodeInfo.tree.type]
 			if (clearEmptyScopeFunction !== undefined) {
-				clearEmptyScopeFunction(traverseNodeInfo)
+				if (clearEmptyScopeFunction !== null) {
+					clearEmptyScopeFunction(traverseNodeInfo)
+				}
+				// remove empty scopes since scopes are only used as a hierarchy level to distinguish between
+				// functions, methods, etc.
+				traverseNodeInfo.tree.parent?.children.delete(traverseNodeInfo.tree.identifier)
 			}
-
-			// remove empty scopes since scopes are only used as a hierarchy level to distinguish between
-			// functions, methods, etc.
-			traverseNodeInfo.tree.parent?.children.delete(traverseNodeInfo.tree.identifier)
 		}
 	}
 

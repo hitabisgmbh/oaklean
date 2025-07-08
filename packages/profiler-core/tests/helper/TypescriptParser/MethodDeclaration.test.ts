@@ -174,7 +174,7 @@ describe('ts.SyntaxKind.ObjectLiteralExpression', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{scope:(anonymous:0)}': {
-					type: ProgramStructureTreeType.Scope,
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{method:method}': {
 							type: ProgramStructureTreeType.MethodDefinition

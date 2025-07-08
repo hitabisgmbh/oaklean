@@ -18,13 +18,13 @@ export class SwitchStatementHelper {
 		node: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.Scope> {
+	): ProgramStructureTree<ProgramStructureTreeType.SwitchStatement> {
 		const statementName =`(switch:${traverseNodeInfo.switchCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
-			ProgramStructureTreeType.Scope,
-			IdentifierType.SwitchStatement,
+			ProgramStructureTreeType.SwitchStatement,
+			IdentifierType.Statement,
 			`{scope:${statementName}}` as SourceNodeIdentifierPart_string,
 			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
@@ -36,13 +36,13 @@ export class SwitchStatementHelper {
 		parent: ts.CaseBlock,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.Scope> | undefined {
+	): ProgramStructureTree<ProgramStructureTreeType.SwitchCaseClause> | undefined {
 		if (node.kind === ts.SyntaxKind.DefaultClause) {
 			return new ProgramStructureTree(
 				traverseNodeInfo.tree,
 				traverseNodeInfo.idCounter++,
-				ProgramStructureTreeType.Scope,
-				IdentifierType.SwitchCase,
+				ProgramStructureTreeType.SwitchCaseClause,
+				IdentifierType.KeyWord,
 				'{scope:(case:default)}' as SourceNodeIdentifierPart_string,
 				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 				TypescriptHelper.posToLoc(sourceFile, node.getEnd())
@@ -57,8 +57,8 @@ export class SwitchStatementHelper {
 			return new ProgramStructureTree(
 				traverseNodeInfo.tree,
 				traverseNodeInfo.idCounter++,
-				ProgramStructureTreeType.Scope,
-				IdentifierType.SwitchCase,
+				ProgramStructureTreeType.SwitchCaseClause,
+				IdentifierType.Hash,
 				`{scope:(case:${expressionHash})}` as SourceNodeIdentifierPart_string,
 				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 				TypescriptHelper.posToLoc(sourceFile, node.getEnd())

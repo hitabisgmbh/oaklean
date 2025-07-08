@@ -310,7 +310,7 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{scope:(anonymous:0)}': {
-					type: ProgramStructureTreeType.Scope,
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{classExpression:(anonymous:0)}': {
 							type: ProgramStructureTreeType.ClassExpression,

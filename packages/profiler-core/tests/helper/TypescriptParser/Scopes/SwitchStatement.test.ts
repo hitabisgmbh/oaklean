@@ -74,10 +74,10 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{scope:(switch:0)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.SwitchStatement,
 						children: {
 							'{scope:(case:356a192b)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -85,7 +85,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 								}
 							},
 							'{scope:(case:77de68da)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -95,10 +95,10 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 						}
 					},
 					'{scope:(switch:1)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.SwitchStatement,
 						children: {
 							'{scope:(case:356a192b)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -106,7 +106,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 								}
 							},
 							'{scope:(case:77de68da)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -169,10 +169,10 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{scope:(switch:0)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.SwitchStatement,
 						children: {
 							'{scope:(case:356a192b)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -180,7 +180,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 								}
 							},
 							'{scope:(case:77de68da)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -188,7 +188,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 								}
 							},
 							'{scope:(case:default)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -198,10 +198,10 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 						}
 					},
 					'{scope:(switch:1)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.SwitchStatement,
 						children: {
 							'{scope:(case:356a192b)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -209,7 +209,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 								}
 							},
 							'{scope:(case:77de68da)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -217,7 +217,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 								}
 							},
 							'{scope:(case:default)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -279,16 +279,16 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{scope:(switch:0)}': {
-						type: ProgramStructureTreeType.Scope,
+						type: ProgramStructureTreeType.SwitchStatement,
 						children: {
 							'{scope:(case:b6589fc6)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{scope:(switch:0)}': {
-										type: ProgramStructureTreeType.Scope,
+										type: ProgramStructureTreeType.SwitchStatement,
 										children: {
 											'{scope:(case:b6589fc6)}': {
-												type: ProgramStructureTreeType.Scope,
+												type: ProgramStructureTreeType.SwitchCaseClause,
 												children: {
 													'{function:a}': {
 														type: ProgramStructureTreeType.FunctionDeclaration
@@ -296,7 +296,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 												}
 											},
 											'{scope:(case:default)}': {
-												type: ProgramStructureTreeType.Scope,
+												type: ProgramStructureTreeType.SwitchCaseClause,
 												children: {
 													'{function:a}': {
 														type: ProgramStructureTreeType.FunctionDeclaration
@@ -308,7 +308,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 								}
 							},
 							'{scope:(case:356a192b)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration
@@ -316,7 +316,7 @@ describe('ts.SyntaxKind.SwitchStatement', () => {
 								}
 							},
 							'{scope:(case:77de68da)}': {
-								type: ProgramStructureTreeType.Scope,
+								type: ProgramStructureTreeType.SwitchCaseClause,
 								children: {
 									'{function:a}': {
 										type: ProgramStructureTreeType.FunctionDeclaration

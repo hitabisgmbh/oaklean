@@ -36,7 +36,7 @@ describe('with executable children', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{scope:(anonymous:0)}': {
-					type: ProgramStructureTreeType.Scope,
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{method:method}': {
 							type: ProgramStructureTreeType.MethodDefinition
@@ -71,10 +71,10 @@ describe('with deep nested executable children', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{scope:(anonymous:0)}': {
-					type: ProgramStructureTreeType.Scope,
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{scope:(anonymous:0)}': {
-							type: ProgramStructureTreeType.Scope,
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{method:method}': {
 									type: ProgramStructureTreeType.MethodDefinition
@@ -82,7 +82,7 @@ describe('with deep nested executable children', () => {
 							}
 						},
 						'{scope:(anonymous:1)}': {
-							type: ProgramStructureTreeType.Scope,
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{method:method}': {
 									type: ProgramStructureTreeType.MethodDefinition

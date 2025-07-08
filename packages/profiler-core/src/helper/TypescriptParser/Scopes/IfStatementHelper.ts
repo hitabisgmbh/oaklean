@@ -17,16 +17,16 @@ export class IfStatementHelper {
 		node: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.Scope> {
-		const statementName =`(if:${traverseNodeInfo.ifStatementCounter++})`
+	): ProgramStructureTree<ProgramStructureTreeType.IfStatement> {
+		const statementName = `(if:${traverseNodeInfo.ifStatementCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
-			ProgramStructureTreeType.Scope,
-			IdentifierType.IfStatement,
+			ProgramStructureTreeType.IfStatement,
+			IdentifierType.Statement,
 			`{scope:${statementName}}` as SourceNodeIdentifierPart_string,
 			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
+			TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 		)
 	}
 
@@ -35,13 +35,17 @@ export class IfStatementHelper {
 		parent: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.Scope> | undefined {
+	):
+		| ProgramStructureTree<
+		ProgramStructureTreeType.IfThenStatement | ProgramStructureTreeType.IfElseStatement
+		>
+		| undefined {
 		if (parent.thenStatement === node) {
 			return new ProgramStructureTree(
 				traverseNodeInfo.tree,
 				traverseNodeInfo.idCounter++,
-				ProgramStructureTreeType.Scope,
-				IdentifierType.ThenStatement,
+				ProgramStructureTreeType.IfThenStatement,
+				IdentifierType.Statement,
 				'{scope:then}' as SourceNodeIdentifierPart_string,
 				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 				TypescriptHelper.posToLoc(sourceFile, node.getEnd())
@@ -51,8 +55,8 @@ export class IfStatementHelper {
 			return new ProgramStructureTree(
 				traverseNodeInfo.tree,
 				traverseNodeInfo.idCounter++,
-				ProgramStructureTreeType.Scope,
-				IdentifierType.ElseStatement,
+				ProgramStructureTreeType.IfElseStatement,
+				IdentifierType.Statement,
 				'{scope:else}' as SourceNodeIdentifierPart_string,
 				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 				TypescriptHelper.posToLoc(sourceFile, node.getEnd())
@@ -60,9 +64,7 @@ export class IfStatementHelper {
 		}
 	}
 
-	static clearEmptyScopes(
-		traverseNodeInfo: TraverseNodeInfo
-	) {
+	static clearEmptyScopes(traverseNodeInfo: TraverseNodeInfo) {
 		if (traverseNodeInfo.parent) {
 			traverseNodeInfo.parent.ifStatementCounter--
 		}

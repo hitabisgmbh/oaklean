@@ -8,11 +8,8 @@ export enum IdentifierType {
 	Literal = 'Literal',
 	Anonymous = 'Anonymous',
 	KeyWord = 'Keyword',
-	IfStatement = 'IfStatement',
-	ThenStatement = 'ThenStatement',
-	ElseStatement = 'ElseStatement',
-	SwitchStatement = 'SwitchStatement',
-	SwitchCase = 'SwitchCase',
+	Statement = 'Statement',
+	Hash = 'Hash',
 }
 
 export enum ProgramStructureTreeType {
@@ -24,8 +21,21 @@ export enum ProgramStructureTreeType {
 	FunctionDeclaration = 'FunctionDeclaration',
 	FunctionExpression = 'FunctionExpression',
 	ArrowFunctionExpression = 'ArrowFunctionExpression',
-	Scope = 'Scope'
+	ObjectLiteralExpression = 'ObjectLiteralExpression',
+	IfStatement = 'IfStatement',
+	IfThenStatement = 'IfThenStatement',
+	IfElseStatement = 'IfElseStatement',
+	SwitchStatement = 'SwitchStatement',
+	SwitchCaseClause = 'SwitchCaseClause',
 }
+
+export type ProgramStructureTreeTypeScope = 
+	ProgramStructureTreeType.ObjectLiteralExpression |
+	ProgramStructureTreeType.IfStatement |
+	ProgramStructureTreeType.IfThenStatement |
+	ProgramStructureTreeType.IfElseStatement |
+	ProgramStructureTreeType.SwitchStatement |
+	ProgramStructureTreeType.SwitchCaseClause
 
 export type PSTIdentifierHierarchy = {
 	type: ProgramStructureTreeType,
