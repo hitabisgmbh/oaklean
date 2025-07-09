@@ -19,7 +19,7 @@ export class SwitchStatementHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.SwitchStatement> {
-		const statementName =`(switch:${traverseNodeInfo.switchCounter++})`
+		const statementName =`(switch:${traverseNodeInfo.counters.switchCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
@@ -70,7 +70,7 @@ export class SwitchStatementHelper {
 		traverseNodeInfo: TraverseNodeInfo
 	) {
 		if (traverseNodeInfo.parent) {
-			traverseNodeInfo.parent.switchCounter--
+			traverseNodeInfo.parent.counters.switchCounter--
 		}
 	}
 }

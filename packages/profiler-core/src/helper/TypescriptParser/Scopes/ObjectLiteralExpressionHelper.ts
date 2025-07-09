@@ -18,7 +18,7 @@ export class ObjectLiteralExpressionHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression> {
-		const scopeName = `scope:(anonymous:${traverseNodeInfo.anonymousScopeCounter++})`
+		const scopeName = `scope:(anonymous:${traverseNodeInfo.counters.anonymousScopeCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,

@@ -8,16 +8,20 @@ import {
 } from '../../types'
 
 
-export type TraverseNodeInfo = {
-	parent: TraverseNodeInfo | null
-	node: ts.Node
-	filePath: UnifiedPath | UnifiedPath_string
-	idCounter: number
-	tree: ProgramStructureTree,
+export type TraverseNodeInfoCounters = {
 	switchCounter: number
 	ifStatementCounter: number
 	anonymousScopeCounter: number
 	anonymousFunctionCounter: number
 	expressionFunctionCounter: number
 	literalFunctionCounter: number
+}
+
+export type TraverseNodeInfo = {
+	parent: TraverseNodeInfo | null
+	node: ts.Node
+	filePath: UnifiedPath | UnifiedPath_string
+	idCounter: number
+	tree: ProgramStructureTree,
+	counters: TraverseNodeInfoCounters
 }

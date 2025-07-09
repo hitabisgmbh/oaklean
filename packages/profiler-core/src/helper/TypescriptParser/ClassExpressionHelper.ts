@@ -30,7 +30,7 @@ export class ClassExpressionHelper {
 			)
 		}
 
-		const className = `classExpression:(anonymous:${traverseNodeInfo.anonymousFunctionCounter++})`
+		const className = `classExpression:(anonymous:${traverseNodeInfo.counters.anonymousFunctionCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
@@ -48,7 +48,7 @@ export class ClassExpressionHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.ClassExpression> {
-		const className = `classExpression:(expression:${traverseNodeInfo.literalFunctionCounter++})`
+		const className = `classExpression:(expression:${traverseNodeInfo.counters.literalFunctionCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
@@ -84,7 +84,7 @@ export class ClassExpressionHelper {
 			case ts.SyntaxKind.FirstLiteralToken: {
 				const className =
 					'classExpression:(literal:' +
-					`${traverseNodeInfo.literalFunctionCounter++})`
+					`${traverseNodeInfo.counters.literalFunctionCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.tree,
 					traverseNodeInfo.idCounter++,
@@ -98,7 +98,7 @@ export class ClassExpressionHelper {
 			case ts.SyntaxKind.ComputedPropertyName: {
 				const className =
 					'classExpression:(expression:' +
-					`${traverseNodeInfo.literalFunctionCounter++})`
+					`${traverseNodeInfo.counters.literalFunctionCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.tree,
 					traverseNodeInfo.idCounter++,

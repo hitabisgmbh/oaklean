@@ -70,7 +70,7 @@ export class MethodDeclarationHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	) {
-		const methodName = `method${staticSuffix}:(literal:${traverseNodeInfo.literalFunctionCounter++})`
+		const methodName = `method${staticSuffix}:(literal:${traverseNodeInfo.counters.literalFunctionCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
@@ -90,7 +90,7 @@ export class MethodDeclarationHelper {
 		traverseNodeInfo: TraverseNodeInfo
 	) {
 		const methodName =
-			`method${staticSuffix}:(expression:${traverseNodeInfo.expressionFunctionCounter++})`
+			`method${staticSuffix}:(expression:${traverseNodeInfo.counters.expressionFunctionCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,

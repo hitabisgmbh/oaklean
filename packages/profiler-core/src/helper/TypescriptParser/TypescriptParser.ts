@@ -174,12 +174,14 @@ export class TypescriptParser {
 			filePath,
 			idCounter: 1, // root node has id 0
 			tree: root,
-			ifStatementCounter: 0,
-			switchCounter: 0,
-			anonymousScopeCounter: 0,
-			anonymousFunctionCounter: 0,
-			expressionFunctionCounter: 0,
-			literalFunctionCounter: 0
+			counters: {
+				ifStatementCounter: 0,
+				switchCounter: 0,
+				anonymousScopeCounter: 0,
+				anonymousFunctionCounter: 0,
+				expressionFunctionCounter: 0,
+				literalFunctionCounter: 0
+			}
 		}
 
 		const addSubTree = (
@@ -246,12 +248,14 @@ export class TypescriptParser {
 					filePath,
 					idCounter: currentTraverseNodeInfo.idCounter,
 					tree: intermediateNode,
-					ifStatementCounter: 0,
-					switchCounter: 0,
-					anonymousScopeCounter: 0,
-					anonymousFunctionCounter: 0,
-					expressionFunctionCounter: 0,
-					literalFunctionCounter: 0
+					counters: {
+						ifStatementCounter: 0,
+						switchCounter: 0,
+						anonymousScopeCounter: 0,
+						anonymousFunctionCounter: 0,
+						expressionFunctionCounter: 0,
+						literalFunctionCounter: 0
+					}
 				}
 			}
 
@@ -265,10 +269,6 @@ export class TypescriptParser {
 				// there is no parser for this node type
 				return
 			}
-			
-			// if (ts.isBlock(node)) {
-				
-			// }
 
 			if (subTree) {
 				// adds the subtree to the current tree
@@ -285,12 +285,14 @@ export class TypescriptParser {
 					filePath,
 					idCounter: currentTraverseNodeInfo.idCounter,
 					tree: subTree,
-					ifStatementCounter: 0,
-					switchCounter: 0,
-					anonymousScopeCounter: 0,
-					anonymousFunctionCounter: 0,
-					expressionFunctionCounter: 0,
-					literalFunctionCounter: 0
+					counters: {
+						ifStatementCounter: 0,
+						switchCounter: 0,
+						anonymousScopeCounter: 0,
+						anonymousFunctionCounter: 0,
+						expressionFunctionCounter: 0,
+						literalFunctionCounter: 0
+					}
 				}
 			} else {
 				LoggerHelper.error(

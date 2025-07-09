@@ -18,7 +18,7 @@ export class IfStatementHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.IfStatement> {
-		const statementName = `(if:${traverseNodeInfo.ifStatementCounter++})`
+		const statementName = `(if:${traverseNodeInfo.counters.ifStatementCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
@@ -66,7 +66,7 @@ export class IfStatementHelper {
 
 	static clearEmptyScopes(traverseNodeInfo: TraverseNodeInfo) {
 		if (traverseNodeInfo.parent) {
-			traverseNodeInfo.parent.ifStatementCounter--
+			traverseNodeInfo.parent.counters.ifStatementCounter--
 		}
 	}
 }
