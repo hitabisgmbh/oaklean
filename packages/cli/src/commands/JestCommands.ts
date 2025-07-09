@@ -73,6 +73,10 @@ export default class JestCommands {
 
 		const reports: ProjectReport[] = []
 		if (options.deep !== undefined) {
+			if (fs.existsSync(verifyExportAssetHelper.outputDir().toString())) {
+				fs.rmSync(verifyExportAssetHelper.outputDir().toString(), { recursive: true })
+			}
+
 			for (const reportPath of reportPaths) {
 				const expectedReport = ProjectReport.loadFromFile(reportPath, 'bin')
 				if (!expectedReport) {
