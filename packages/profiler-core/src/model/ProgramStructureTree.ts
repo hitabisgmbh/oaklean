@@ -6,7 +6,6 @@ import { ModelMap } from './ModelMap'
 import { UnifiedPath } from '../system'
 import { PermissionHelper } from '../helper/PermissionHelper'
 import { SourceNodeIdentifierHelper } from '../helper/SourceNodeIdentifierHelper'
-import { memoize } from '../helper/memoize'
 // Types
 import {
 	ProgramStructureTreeType,
@@ -28,6 +27,10 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 	endLoc: NodeLocation
 	children: ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>
 	parent: T extends ProgramStructureTreeType.Root ? null : ProgramStructureTree
+
+	private identifierBySourceLocationCache: Map<string, SourceNodeIdentifier_string>
+	private containsLocationCache: Map<string, boolean>
+	private sourceLocationOfIdentifierCache: Map<SourceNodeIdentifier_string, NodeLocationRange | null>
 
 	constructor(
 		parent: T extends ProgramStructureTreeType.Root ?
@@ -54,9 +57,10 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		this.endLoc = endLoc
 		this.children = new ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>('string')
 
-		this.containsLocation = memoize(this.containsLocation.bind(this))
-		this.identifierBySourceLocation = memoize(this.identifierBySourceLocation.bind(this))
-		this.sourceLocationOfIdentifier = memoize(this.sourceLocationOfIdentifier.bind(this))
+		// Cache initialization
+		this.identifierBySourceLocationCache = new Map()
+		this.containsLocationCache = new Map()
+		this.sourceLocationOfIdentifierCache = new Map()
 	}
 
 	numberOfLeafs(): number {
@@ -167,15 +171,24 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 	}
 
 	containsLocation(loc: NodeLocation) {
+		const lookupKey = `${loc.line}:${loc.column}`
+		const cacheResult = this.containsLocationCache.get(lookupKey)
+		if (cacheResult !== undefined) {
+			return cacheResult
+		}
 		if (loc.line >= this.beginLoc.line && loc.line <= this.endLoc.line) {
 			if (loc.line === this.beginLoc.line && loc.column < this.beginLoc.column) {
+				this.containsLocationCache.set(lookupKey, false)
 				return false
 			}
 			if (loc.line === this.endLoc.line && loc.column > this.endLoc.column) {
+				this.containsLocationCache.set(lookupKey, false)
 				return false
 			}
+			this.containsLocationCache.set(lookupKey, true)
 			return true
 		}
+		this.containsLocationCache.set(lookupKey, false)
 		return false
 	}
 
@@ -216,15 +229,26 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 	}
 
 	identifierBySourceLocation(targetLoc: NodeLocation): SourceNodeIdentifier_string {
+		const lookupKey = `${targetLoc.line}:${targetLoc.column}`
+		const cacheResult = this.identifierBySourceLocationCache.get(lookupKey)
+		if (cacheResult !== undefined) {
+			return cacheResult
+		}
 		const { identifier } = this.identifierNodeBySourceLocation(targetLoc) || {
 			identifier: '' as SourceNodeIdentifier_string
 		}
+		this.identifierBySourceLocationCache.set(lookupKey, identifier)
 		return identifier
 	}
 
-	sourceLocationOfIdentifier(identifier: SourceNodeIdentifier_string): NodeLocationRange | undefined{
+	sourceLocationOfIdentifier(identifier: SourceNodeIdentifier_string): NodeLocationRange | null {
+		const cacheResult = this.sourceLocationOfIdentifierCache.get(identifier)
+		if (cacheResult !== undefined) {
+			return cacheResult
+		}
+		
 		const traverse = (identifierStack: SourceNodeIdentifierPart_string[], currentNode: ProgramStructureTree):
-		NodeLocationRange | undefined => {
+		NodeLocationRange | null => {
 			if (identifierStack[0] === currentNode.identifier) {
 				if (identifierStack.length === 1) {
 					return {
@@ -241,10 +265,12 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 					}
 				}
 			}
-			return undefined
+			return null
 		}
 		
 		const identifierStack = SourceNodeIdentifierHelper.split(identifier)
-		return traverse(identifierStack, this)
+		const result = traverse(identifierStack, this)
+		this.sourceLocationOfIdentifierCache.set(identifier, result)
+		return result
 	}
 }

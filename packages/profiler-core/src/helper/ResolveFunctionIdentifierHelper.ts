@@ -84,7 +84,7 @@ export class ResolveFunctionIdentifierHelper {
 		sourceLocation: CPUProfileSourceLocation
 	): Promise<ResolveFunctionIdentifierResult> {
 		// check wether the given source location was already resolved by checking the cache
-		let functionIdentifierCacheResult = this.functionIdentifierCache.get(sourceLocation.index)
+		const functionIdentifierCacheResult = this.functionIdentifierCache.get(sourceLocation.index)
 		if (functionIdentifierCacheResult !== undefined) {
 			return functionIdentifierCacheResult
 		}
@@ -175,7 +175,7 @@ export class ResolveFunctionIdentifierHelper {
 					)
 					functionIdentifierPresentInOriginalFile = programStructureTreeOriginal.sourceLocationOfIdentifier(
 						functionIdentifier
-					) !== undefined
+					) !== null
 					sourceNodeLocation = {
 						relativeFilePath: relativeOriginalSourcePath,
 						functionIdentifier: originalFunctionIdentifier
@@ -248,7 +248,7 @@ export class ResolveFunctionIdentifierHelper {
 		}
 
 
-		functionIdentifierCacheResult = {
+		const result = {
 			sourceNodeLocation,
 			functionIdentifierPresentInOriginalFile,
 			relativeNodeModulePath,
@@ -257,10 +257,10 @@ export class ResolveFunctionIdentifierHelper {
 		// cache result
 		this.functionIdentifierCache.set(
 			sourceLocation.index,
-			functionIdentifierCacheResult
+			result
 		)
 
-		return functionIdentifierCacheResult
+		return result
 	}
 
 	/**

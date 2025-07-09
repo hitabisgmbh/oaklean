@@ -155,7 +155,7 @@ export default class ReportCommands {
 
 				for (const sourceNodeIndex of pathIndex.reverseSourceNodeMap.values()) {
 					if (sourceNodeIndex.presentInOriginalSourceCode) {
-						if (pst.sourceLocationOfIdentifier(sourceNodeIndex.identifier) === undefined) {
+						if (pst.sourceLocationOfIdentifier(sourceNodeIndex.identifier) === null) {
 							notFoundSourceNodes.push(sourceNodeIndex.identifier)
 						}
 					}
