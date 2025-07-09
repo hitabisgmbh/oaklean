@@ -298,7 +298,7 @@ export class Profiler {
 		const outFileMetricsDataCollection = this.exportAssetHelper.outputMetricsDataCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportV8Profile')
-			CPUProfileHelper.storeToFile(
+			await CPUProfileHelper.storeToFile(
 				cpuProfile,
 				outFileCPUProfile,
 			)

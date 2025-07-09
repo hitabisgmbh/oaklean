@@ -5,8 +5,8 @@ import type { Protocol as Cdp } from 'devtools-protocol'
 import { CPUProfileSourceLocation } from './CPUProfileSourceLocation'
 
 import { UnifiedPath } from '../../system/UnifiedPath'
-import { PermissionHelper } from '../PermissionHelper'
 import { LoggerHelper } from '../LoggerHelper'
+import { JSONHelper } from '../JSONHelper'
 
 export class CPUProfileHelper {
 	/**
@@ -49,7 +49,7 @@ export class CPUProfileHelper {
 				node.callFrame.url = location.relativeUrl.toString()
 			}
 		}
-		CPUProfileHelper.storeToFile(
+		await CPUProfileHelper.storeToFile(
 			cpuProfile,
 			outPath
 		)
@@ -67,13 +67,13 @@ export class CPUProfileHelper {
 		)
 	}
 
-	static storeToFile(
+	static async storeToFile(
 		cpuProfile: Cdp.Profiler.Profile,
 		cpuProfilePath: UnifiedPath
-	): void {
-		PermissionHelper.writeFileWithUserPermission(
-			cpuProfilePath,
-			JSON.stringify(cpuProfile, null, 2),
+	): Promise<void> {
+		await JSONHelper.storeBigJSON(
+			cpuProfile,
+			cpuProfilePath
 		)
 	}
 }
