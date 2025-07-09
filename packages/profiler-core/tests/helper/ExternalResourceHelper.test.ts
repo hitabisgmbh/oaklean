@@ -9,6 +9,7 @@ import { GitHelper } from '../../src/helper/GitHelper'
 // Types
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import { ScriptID_string } from '../../src/types'
+import { GlobalIndex } from '../../src'
 
 const ROOT_DIR = new UnifiedPath(__dirname).join('..', '..', '..', '..')
 
@@ -21,6 +22,12 @@ describe('ExternalResourceHelper', () => {
 		let instance: ExternalResourceHelper
 
 		beforeEach(async () => {
+			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+			const moduleIndex = globalIndex.getModuleIndex('upsert')
+			moduleIndex.getFilePathIndex('upsert', ROOT_DIR.pathTo(SCRIPT_01_PATH).toString())
+			moduleIndex.getFilePathIndex('upsert', ROOT_DIR.pathTo(SCRIPT_02_PATH).toString())
+			moduleIndex.getFilePathIndex('upsert', ROOT_DIR.pathTo(SCRIPT_03_PATH).toString())
+
 			instance = new ExternalResourceHelper(ROOT_DIR)
 			await instance.connect()
 			await instance.listen()
@@ -55,7 +62,7 @@ describe('ExternalResourceHelper', () => {
 			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
 				() => [SCRIPT_01_PATH]
 			)
-			instance.trackUncommittedFiles(ROOT_DIR)
+			instance.trackUncommittedFiles(ROOT_DIR, globalIndex)
 			uncommittedFilesMock.mockRestore()
 		})
 
@@ -97,6 +104,26 @@ describe('ExternalResourceHelper', () => {
 
 		it('should have a method fileInfoFromPath()', () => {
 			expect(instance.fileInfoFromPath).toBeTruthy()
+
+			expect(instance.fileInfoFromPath(
+				ROOT_DIR.pathTo(SCRIPT_01_PATH),
+				SCRIPT_01_PATH
+			)).toEqual({
+				sourceCode: inspector.SCRIPT_SOURCES['1'],
+				cucc: true
+			})
+			expect(instance.fileInfoFromPath(
+				ROOT_DIR.pathTo(SCRIPT_02_PATH),
+				SCRIPT_02_PATH
+			)).toEqual({
+				sourceCode: inspector.SCRIPT_SOURCES['2']
+			})
+			expect(instance.fileInfoFromPath(
+				ROOT_DIR.pathTo(SCRIPT_03_PATH),
+				SCRIPT_03_PATH
+			)).toEqual({
+				sourceCode: inspector.SCRIPT_SOURCES['3']
+			})
 		})
 
 		it('should have a method sourceCodeFromPath()', () => {
@@ -243,6 +270,55 @@ describe('ExternalResourceHelper', () => {
 				SCRIPT_01_PATH,
 				inspector.SCRIPT_SOURCES['1']
 			) as SourceMap)?.toJSON())
+		})
+	})
+
+	describe('trackUncommittedFiles', () => {
+		test('returns null if git is not available', () => {
+			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
+				() => null
+			)
+			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+			const instance = new ExternalResourceHelper(ROOT_DIR)
+			expect(instance.trackUncommittedFiles(ROOT_DIR, globalIndex)).toBe(null)
+			uncommittedFilesMock.mockRestore()
+
+			expect(instance.uncommittedFiles).toEqual(null)
+			expect(instance.loadedFilePaths).toEqual([])
+		})
+
+		test('does not load files that were not included in the global index', () => {
+			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
+				() => [SCRIPT_01_PATH]
+			)
+			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+			const instance = new ExternalResourceHelper(ROOT_DIR)
+			expect(instance.trackUncommittedFiles(ROOT_DIR, globalIndex)).toBe(false)
+			uncommittedFilesMock.mockRestore()
+
+			expect(instance.uncommittedFiles).toEqual([])
+			expect(instance.loadedFilePaths).toEqual([])
+		})
+
+		test('loads files that were uncommitted and included in the global index but not loaded yet', () => {
+			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
+				() => [SCRIPT_01_PATH]
+			)
+			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+			const moduleIndex = globalIndex.getModuleIndex('upsert')
+			moduleIndex.getFilePathIndex('upsert', ROOT_DIR.pathTo(SCRIPT_01_PATH).toString())
+			const instance = new ExternalResourceHelper(ROOT_DIR)
+			expect(instance.trackUncommittedFiles(ROOT_DIR, globalIndex)).toBe(true)
+			uncommittedFilesMock.mockRestore()
+
+			expect(instance.uncommittedFiles).toEqual([ROOT_DIR.pathTo(SCRIPT_01_PATH).toString()])
+			expect(instance.fileInfoFromPath(
+				ROOT_DIR.pathTo(SCRIPT_01_PATH),
+				SCRIPT_01_PATH
+			)).toEqual({
+				sourceCode: inspector.SCRIPT_SOURCES['1'],
+				cucc: true
+			})
 		})
 	})
 
