@@ -213,23 +213,16 @@ export class ProjectReport extends Report {
 	) {
 		// if git is not available, set default value of uncommitted changes to undefined
 		this.executionDetails.uncommittedChanges = undefined
-		const uncommittedFiles = externalResourceHelper.trackUncommittedFiles(rootDir)
+		const containsUncommittedChanges = externalResourceHelper.trackUncommittedFiles(
+			rootDir,
+			this.globalIndex
+		)
 
-		if (uncommittedFiles === null) {
+		if (containsUncommittedChanges === null) {
+			// git is not available
 			return
 		}
-
-		// git is available, set default value of uncommitted changes to false
-		this.executionDetails.uncommittedChanges = false
-		for (const uncommittedFile of uncommittedFiles) {
-			const pathIndex = this.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', uncommittedFile)
-			if (pathIndex === undefined) {
-				continue
-			}
-			pathIndex.containsUncommittedChanges = true
-			// if one file has uncommitted changes, the whole project has uncommitted changes
-			this.executionDetails.uncommittedChanges = true
-		}
+		this.executionDetails.uncommittedChanges = containsUncommittedChanges
 	}
 
 	async insertCPUProfile(
