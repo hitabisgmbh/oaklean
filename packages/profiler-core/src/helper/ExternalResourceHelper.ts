@@ -198,6 +198,9 @@ export class ExternalResourceHelper {
 			data = json
 		}
 		const result = new ExternalResourceHelper(rootDir)
+		if (!result._uncommittedFiles) {
+			result._uncommittedFiles = []
+		}
 
 		for (const [key, value] of Object.entries(data.fileInfoPerScriptID)) {
 			let fileInfo: ExternalResourceFileInfo | null = null
@@ -222,9 +225,6 @@ export class ExternalResourceHelper {
 				if (value.cucc !== undefined) {
 					fileInfo.cucc = value.cucc
 					if (value.cucc === true) {
-						if (!result._uncommittedFiles) {
-							result._uncommittedFiles = []
-						}
 						result._uncommittedFiles.push(key as UnifiedPath_string)
 					}
 				}

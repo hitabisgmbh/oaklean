@@ -246,6 +246,19 @@ describe('ExternalResourceHelper', () => {
 		})
 	})
 
+	describe('deserialization', () => {
+		test('empty uncommittedFiles', () => {
+			const instance = new ExternalResourceHelper(ROOT_DIR)
+			const json = instance.toJSON()
+			const newInstance = ExternalResourceHelper.fromJSON(ROOT_DIR, json)
+			
+			expect(instance.uncommittedFiles).toBe(undefined)
+			expect(newInstance.uncommittedFiles).toEqual([])
+
+			expect(newInstance.toJSON()).toEqual(json)
+		})
+	})
+
 	describe('debug connection', () => {
 		test('not enabled debugger', async () => {
 			const instance = new ExternalResourceHelper(ROOT_DIR)
