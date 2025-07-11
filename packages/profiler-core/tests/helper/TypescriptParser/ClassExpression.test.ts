@@ -371,7 +371,7 @@ describe('ts.SyntaxKind.ArrowFunction', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:fn}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 					children: {
 						'{classExpression:(anonymous:0)}': {
 							type: ProgramStructureTreeType.ClassExpression,

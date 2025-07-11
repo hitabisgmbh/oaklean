@@ -2,25 +2,28 @@ export const SourceNodeNameRegexString = '[a-zA-Z0-9_$#]+'
 export const SourceNodeNameExpressionRegexString =
 	`(?:${SourceNodeNameRegexString}|\\((?:literal|expression):${SourceNodeNameRegexString}\\))`
 
-export const RootRegexString = '{root}'
-export const ConstructorDeclarationRegexString = '{constructor:constructor}'
-export const ClassDeclarationRegexString = `{class:${SourceNodeNameRegexString}}`
-export const MethodDefinitionRegexString = `{method(?:@static)?:${SourceNodeNameExpressionRegexString}}`
-export const FunctionDeclarationRegexString = `{function:${SourceNodeNameExpressionRegexString}}`
+export const RootRegexString = '{(root)}'
+export const ConstructorDeclarationRegexString = '{constructor:(constructor)}'
+export const ClassDeclarationRegexString = `{class:(${SourceNodeNameRegexString})}`
+export const MethodDefinitionRegexString = `{method(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
+export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString})}`
 export const FunctionExpressionRegexString =
-	`{functionExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
+	`{functionExpression:(${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
 export const ClassExpressionRegexString =
-	`{classExpression:(?:${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
+	`{classExpression:(${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
 // Scopes
 export const ExpressionHashRegexString = '[A-Za-z0-9]+'
 
-export const ObjectLiteralExpressionRegexString = '{scope:\\(anonymous:[0-9]+\\)}'
-export const IfStatementRegexString = '{scope:(?:then|else|\\(if:[0-9]+\\))}'
+export const ObjectLiteralExpressionRegexString = '{scope:(\\(anonymous:[0-9]+\\))}'
+export const IfStatementRegexString = '{scope:(\\(if:[0-9]+\\))}'
+export const IfThenStatementRegexString = '{scope:(then)}'
+export const IfElseStatementRegexString = '{scope:(else)}'
 // eslint-disable-next-line max-len
-export const SwitchStatementRegexString = `{scope:(?:\\(switch:[0-9]+\\)|\\(case:(?:${ExpressionHashRegexString}|default)\\))}`
+export const SwitchStatementRegexString = '{scope:(\\(switch:[0-9]+\\))}'
+export const SwitchCaseClauseRegexString = `{scope:(\\(case:(?:${ExpressionHashRegexString}|default)\\))}`
 
 // eslint-disable-next-line max-len
-export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${IfStatementRegexString}|${SwitchStatementRegexString})`
+export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${IfStatementRegexString}|${IfThenStatementRegexString}|${IfElseStatementRegexString}|${SwitchStatementRegexString}|${SwitchCaseClauseRegexString})`
 
 export const LangInternalSourceNodeRegExpRegexString = 'RegExp: .*'
 export const LangInternalSourceNodeNameRegexString = '[^{}]+'
@@ -42,14 +45,21 @@ export const LangInternalPathRegexString = 'node:(?:[^\\/{}]*)(?:\\/[^\\/{}]*)*'
 
 // Source Node Identifier-Part Regex
 export const RootRegex = new RegExp(`^${RootRegexString}$`)
-export const MethodDefinitionRegex = new RegExp(`^${MethodDefinitionRegexString}$`)
+export const ConstructorDeclarationRegex = new RegExp(`^${ConstructorDeclarationRegexString}$`)
 export const ClassDeclarationRegex = new RegExp(`^${ClassDeclarationRegexString}$`)
+export const MethodDefinitionRegex = new RegExp(`^${MethodDefinitionRegexString}$`)
 export const FunctionDeclarationRegex = new RegExp(`^${FunctionDeclarationRegexString}$`)
 export const FunctionExpressionRegex = new RegExp(`^${FunctionExpressionRegexString}$`)
 export const ClassExpressionRegex = new RegExp(`^${ClassExpressionRegexString}$`)
-export const ConstructorDeclarationRegex = new RegExp(`^${ConstructorDeclarationRegexString}$`)
-export const LangInternalSourceNodeRegExpRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
+export const ObjectLiteralExpressionRegex = new RegExp(`^${ObjectLiteralExpressionRegexString}$`)
+export const IfStatementRegex = new RegExp(`^${IfStatementRegexString}$`)
+export const IfThenStatementRegex = new RegExp(`^${IfThenStatementRegexString}$`)
+export const IfElseStatementRegex = new RegExp(`^${IfElseStatementRegexString}$`)
+export const SwitchStatementRegex = new RegExp(`^${SwitchStatementRegexString}$`)
+export const SwitchCaseClauseRegex = new RegExp(`^${SwitchCaseClauseRegexString}$`)
 export const ScopeRegex = new RegExp(`^${ScopeRegexString}$`)
+
+export const LangInternalSourceNodeRegExpRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
 
 // Source Node Identifier Regex
 export const LangInternalSourceNodeIdentifierRegex = new RegExp(`^${LangInternalSourceNodeIdentifierRegexString}$`)

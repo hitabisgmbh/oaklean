@@ -56,7 +56,7 @@
 							"children": {
 								"{functionExpression:arrowFunction}": {
 									"id": 4,
-									"type": "ArrowFunctionExpression",
+									"type": "FunctionExpression",
 									"identifierType": "Name",
 									"identifier": "{functionExpression:arrowFunction}",
 									"beginLoc": {
@@ -85,7 +85,7 @@
 										},
 										"{functionExpression:b}": {
 											"id": 6,
-											"type": "ArrowFunctionExpression",
+											"type": "FunctionExpression",
 											"identifierType": "Name",
 											"identifier": "{functionExpression:b}",
 											"beginLoc": {
@@ -100,7 +100,7 @@
 										},
 										"{functionExpression:c}": {
 											"id": 7,
-											"type": "ArrowFunctionExpression",
+											"type": "FunctionExpression",
 											"identifierType": "Name",
 											"identifier": "{functionExpression:c}",
 											"beginLoc": {
@@ -115,7 +115,7 @@
 										},
 										"{functionExpression:d}": {
 											"id": 8,
-											"type": "ArrowFunctionExpression",
+											"type": "FunctionExpression",
 											"identifierType": "Name",
 											"identifier": "{functionExpression:d}",
 											"beginLoc": {

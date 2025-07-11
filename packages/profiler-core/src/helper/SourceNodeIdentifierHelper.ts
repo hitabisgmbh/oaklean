@@ -6,7 +6,17 @@ import {
 	FunctionExpressionRegex,
 	ConstructorDeclarationRegex,
 	SourceNodeIdentifierPartRegex,
-	SourceNodeIdentifierPathRegexString
+	SourceNodeIdentifierPathRegexString,
+	ObjectLiteralExpressionRegexString,
+	IfStatementRegexString,
+	SwitchStatementRegexString,
+	ObjectLiteralExpressionRegex,
+	IfStatementRegex,
+	SwitchStatementRegex,
+	ClassExpressionRegex,
+	IfThenStatementRegex,
+	IfElseStatementRegex,
+	SwitchCaseClauseRegex
 } from '../constants/SourceNodeRegex'
 // Types
 import {
@@ -19,6 +29,22 @@ import {
 
 const SourceNodeIdentifierPathRegex_match = new RegExp(`{${SourceNodeIdentifierPathRegexString}}`, 'g')
 
+const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
+	[ProgramStructureTreeType.Root]: RootRegex,
+	[ProgramStructureTreeType.ConstructorDeclaration]: ConstructorDeclarationRegex,
+	[ProgramStructureTreeType.ClassDeclaration]: ClassDeclarationRegex,
+	[ProgramStructureTreeType.ClassExpression]: ClassExpressionRegex,
+	[ProgramStructureTreeType.MethodDefinition]: MethodDefinitionRegex,
+	[ProgramStructureTreeType.FunctionDeclaration]: FunctionDeclarationRegex,
+	[ProgramStructureTreeType.FunctionExpression]: FunctionExpressionRegex,
+	[ProgramStructureTreeType.ObjectLiteralExpression]: ObjectLiteralExpressionRegex,
+	[ProgramStructureTreeType.IfStatement]: IfStatementRegex,
+	[ProgramStructureTreeType.IfThenStatement]: IfThenStatementRegex,
+	[ProgramStructureTreeType.IfElseStatement]: IfElseStatementRegex,
+	[ProgramStructureTreeType.SwitchStatement]: SwitchStatementRegex,
+	[ProgramStructureTreeType.SwitchCaseClause]: SwitchCaseClauseRegex
+}
+
 export class SourceNodeIdentifierHelper {
 	static split(identifier: SourceNodeIdentifier_string): SourceNodeIdentifierPart_string[] {
 		if (identifier[0] && identifier[0] === '{') {
@@ -30,6 +56,29 @@ export class SourceNodeIdentifierHelper {
 		}
 		// case RegExp:
 		return [identifier] as unknown as SourceNodeIdentifierPart_string[]
+	}
+
+	static getNameFromIdentifierPart(
+		identifierPart: SourceNodeIdentifierPart_string
+	): string | null {
+		for (const regex of [
+			RootRegex,
+			ConstructorDeclarationRegex,
+			ClassDeclarationRegex,
+			MethodDefinitionRegex,
+			FunctionDeclarationRegex,
+			FunctionExpressionRegex,
+			ObjectLiteralExpressionRegexString,
+			IfStatementRegexString,
+			SwitchStatementRegexString
+		]
+		) {
+			const match = identifierPart.match(regex)
+			if (match && match[1]) {
+				return match[1]
+			}
+		}
+		return null
 	}
 
 	static join(identifierParts: SourceNodeIdentifierPart_string[]): SourceNodeIdentifier_string {
@@ -46,26 +95,17 @@ export class SourceNodeIdentifierHelper {
 		return (RootRegex.test(identifierPart) || SourceNodeIdentifierPartRegex.test(identifierPart))
 	}
 
-	static getTypeOfSourceNodeIdentifierPart(
+	static parseSourceNodeIdentifierPart(
 		identifierPart: SourceNodeIdentifierPart_string
-	): ProgramStructureTreeType | null {
-		if (RootRegex.test(identifierPart)) {
-			return ProgramStructureTreeType.Root
-		}
-		if (MethodDefinitionRegex.test(identifierPart)) {
-			return ProgramStructureTreeType.MethodDefinition
-		}
-		if (FunctionDeclarationRegex.test(identifierPart)) {
-			return ProgramStructureTreeType.FunctionDeclaration
-		}
-		if (ClassDeclarationRegex.test(identifierPart)) {
-			return ProgramStructureTreeType.ClassDeclaration
-		}
-		if (FunctionExpressionRegex.test(identifierPart)) {
-			return ProgramStructureTreeType.FunctionExpression
-		}
-		if (ConstructorDeclarationRegex.test(identifierPart)) {
-			return ProgramStructureTreeType.ConstructorDeclaration
+	): { type: ProgramStructureTreeType, name: string } | null {
+		for (const [type, regex] of Object.entries(REGEX_PER_PST_TYPE)) {
+			const match = identifierPart.match(regex)
+			if (match && match[1]) {
+				return {
+					type: type as ProgramStructureTreeType,
+					name: match[1]
+				}
+			}
 		}
 		return null
 	}

@@ -80,7 +80,7 @@ describe('ts.SyntaxKind.ArrowFunction', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:ArrowFunction}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 					children: {
 						'{functionExpression:(anonymous:0)}': {
 							type: ProgramStructureTreeType.FunctionExpression,

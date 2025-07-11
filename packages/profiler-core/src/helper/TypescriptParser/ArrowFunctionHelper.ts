@@ -19,7 +19,7 @@ export class ArrowFunctionHelper {
 		node: ts.ArrowFunction,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression> {
+	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
 		const parseNodeFunction = PARSE_NODE_FUNCTIONS[node.parent.kind]
 		if (parseNodeFunction !== undefined) {
 			return parseNodeFunction(
@@ -35,7 +35,7 @@ export class ArrowFunctionHelper {
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
-			ProgramStructureTreeType.ArrowFunctionExpression,
+			ProgramStructureTreeType.FunctionExpression,
 			IdentifierType.Anonymous,
 			`{${functionName}}` as SourceNodeIdentifierPart_string,
 			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
@@ -48,7 +48,7 @@ export class ArrowFunctionHelper {
 		parent: ts.PropertyDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression> {
+	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
 		switch (parent.name.kind) {
 			case ts.SyntaxKind.Identifier:
 			case ts.SyntaxKind.PrivateIdentifier: {
@@ -56,7 +56,7 @@ export class ArrowFunctionHelper {
 				return new ProgramStructureTree(
 					traverseNodeInfo.tree,
 					traverseNodeInfo.idCounter++,
-					ProgramStructureTreeType.ArrowFunctionExpression,
+					ProgramStructureTreeType.FunctionExpression,
 					IdentifierType.Name,
 					`{${functionName}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
@@ -70,7 +70,7 @@ export class ArrowFunctionHelper {
 				return new ProgramStructureTree(
 					traverseNodeInfo.tree,
 					traverseNodeInfo.idCounter++,
-					ProgramStructureTreeType.ArrowFunctionExpression,
+					ProgramStructureTreeType.FunctionExpression,
 					IdentifierType.Literal,
 					`{${functionName}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
@@ -83,7 +83,7 @@ export class ArrowFunctionHelper {
 				return new ProgramStructureTree(
 					traverseNodeInfo.tree,
 					traverseNodeInfo.idCounter++,
-					ProgramStructureTreeType.ArrowFunctionExpression,
+					ProgramStructureTreeType.FunctionExpression,
 					IdentifierType.Expression,
 					`{${functionName}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
@@ -107,13 +107,13 @@ export class ArrowFunctionHelper {
 		parent: ts.ParenthesizedExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression> {
+	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
 		const functionName =
 		`functionExpression:(expression:${traverseNodeInfo.counters.literalFunctionCounter++})`
 		return new ProgramStructureTree(
 			traverseNodeInfo.tree,
 			traverseNodeInfo.idCounter++,
-			ProgramStructureTreeType.ArrowFunctionExpression,
+			ProgramStructureTreeType.FunctionExpression,
 			IdentifierType.Expression,
 			`{${functionName}}` as SourceNodeIdentifierPart_string,
 			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
@@ -126,13 +126,13 @@ export class ArrowFunctionHelper {
 		parent: ts.VariableDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression> {
+	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
 		if (ts.isIdentifier(parent.name)) {
 			const functionName = `functionExpression:${parent.name.escapedText}`
 			return new ProgramStructureTree(
 				traverseNodeInfo.tree,
 				traverseNodeInfo.idCounter++,
-				ProgramStructureTreeType.ArrowFunctionExpression,
+				ProgramStructureTreeType.FunctionExpression,
 				IdentifierType.Name,
 				`{${functionName}}` as SourceNodeIdentifierPart_string,
 				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
@@ -156,7 +156,7 @@ type ParseNodeFunction = (
 	parent: any,
 	sourceFile: ts.SourceFile,
 	traverseNodeInfo: TraverseNodeInfo
-) => ProgramStructureTree<ProgramStructureTreeType.ArrowFunctionExpression>
+) => ProgramStructureTree<ProgramStructureTreeType.FunctionExpression>
 
 const PARSE_NODE_FUNCTIONS: Partial<Record<ts.SyntaxKind, ParseNodeFunction>> = {
 	[ts.SyntaxKind.PropertyDeclaration]: ArrowFunctionHelper.parseWithParentPropertyDeclaration,

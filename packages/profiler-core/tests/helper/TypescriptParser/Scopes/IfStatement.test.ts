@@ -39,7 +39,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
-										type: ProgramStructureTreeType.ArrowFunctionExpression
+										type: ProgramStructureTreeType.FunctionExpression
 									}
 								}
 							}
@@ -52,7 +52,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
-										type: ProgramStructureTreeType.ArrowFunctionExpression
+										type: ProgramStructureTreeType.FunctionExpression
 									}
 								}
 							}
@@ -71,7 +71,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.ArrowFunctionExpression
+														type: ProgramStructureTreeType.FunctionExpression
 													}
 												}
 											}
@@ -111,7 +111,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
-										type: ProgramStructureTreeType.ArrowFunctionExpression
+										type: ProgramStructureTreeType.FunctionExpression
 									}
 								}
 							},
@@ -125,7 +125,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.ArrowFunctionExpression
+														type: ProgramStructureTreeType.FunctionExpression
 													}
 												}
 											}
@@ -186,7 +186,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
-										type: ProgramStructureTreeType.ArrowFunctionExpression,
+										type: ProgramStructureTreeType.FunctionExpression,
 									}
 								}
 							},
@@ -200,7 +200,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.ArrowFunctionExpression,
+														type: ProgramStructureTreeType.FunctionExpression,
 													}
 												}
 											},
@@ -208,7 +208,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.ArrowFunctionExpression,
+														type: ProgramStructureTreeType.FunctionExpression,
 													}
 												}
 											}
@@ -225,7 +225,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
-										type: ProgramStructureTreeType.ArrowFunctionExpression,
+										type: ProgramStructureTreeType.FunctionExpression,
 									}
 								}
 							},
@@ -239,7 +239,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.ArrowFunctionExpression,
+														type: ProgramStructureTreeType.FunctionExpression,
 													}
 												}
 											},
@@ -247,7 +247,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.ArrowFunctionExpression,
+														type: ProgramStructureTreeType.FunctionExpression,
 													}
 												}
 											}
@@ -281,13 +281,13 @@ describe('ts.SyntaxKind.IfStatement', () => {
 						type: ProgramStructureTreeType.IfStatement,
 						children: {
 							'{functionExpression:(anonymous:0)}': {
-								type: ProgramStructureTreeType.ArrowFunctionExpression
+								type: ProgramStructureTreeType.FunctionExpression
 							},
 							'{scope:then}': {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
-										type: ProgramStructureTreeType.ArrowFunctionExpression
+										type: ProgramStructureTreeType.FunctionExpression
 									}
 								}
 							}

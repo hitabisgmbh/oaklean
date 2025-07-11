@@ -20,7 +20,6 @@ export enum ProgramStructureTreeType {
 	MethodDefinition = 'MethodDefinition',
 	FunctionDeclaration = 'FunctionDeclaration',
 	FunctionExpression = 'FunctionExpression',
-	ArrowFunctionExpression = 'ArrowFunctionExpression',
 	ObjectLiteralExpression = 'ObjectLiteralExpression',
 	IfStatement = 'IfStatement',
 	IfThenStatement = 'IfThenStatement',

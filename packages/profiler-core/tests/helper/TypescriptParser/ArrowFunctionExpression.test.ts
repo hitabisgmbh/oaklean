@@ -37,7 +37,7 @@ describe('exports', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{functionExpression:(anonymous:0)}': {
-						type: ProgramStructureTreeType.ArrowFunctionExpression,
+						type: ProgramStructureTreeType.FunctionExpression,
 					}
 				}
 			})
@@ -58,7 +58,7 @@ describe('exports', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{functionExpression:(anonymous:0)}': {
-						type: ProgramStructureTreeType.ArrowFunctionExpression,
+						type: ProgramStructureTreeType.FunctionExpression,
 					}
 				}
 			})
@@ -79,7 +79,7 @@ describe('exports', () => {
 				type: ProgramStructureTreeType.Root,
 				children: {
 					'{functionExpression:(anonymous:0)}': {
-						type: ProgramStructureTreeType.ArrowFunctionExpression,
+						type: ProgramStructureTreeType.FunctionExpression,
 					}
 				}
 			})
@@ -101,10 +101,10 @@ describe('ts.SyntaxKind.ArrowFunction', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:ArrowFunction}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 					children: {
 						'{functionExpression:(anonymous:0)}': {
-							type: ProgramStructureTreeType.ArrowFunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression,
 						}
 					}
 				}
@@ -127,7 +127,7 @@ describe('ts.SyntaxKind.VariableDeclaration', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:VariableDeclaration}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				}
 			}
 		})
@@ -149,7 +149,7 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:(expression:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				}
 			}
 		})
@@ -173,7 +173,7 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{functionExpression:(anonymous:0)}': {
-							type: ProgramStructureTreeType.ArrowFunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression,
 						}
 					}
 				}
@@ -196,7 +196,7 @@ describe('ts.SyntaxKind.CallExpression', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				}
 			}
 		})
@@ -221,7 +221,7 @@ describe('ts.SyntaxKind.BinaryExpression', () => {
 					type: ProgramStructureTreeType.IfStatement,
 					children: {
 						'{functionExpression:(anonymous:0)}': {
-							type: ProgramStructureTreeType.ArrowFunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression,
 						}
 					}
 				}
@@ -247,7 +247,7 @@ describe('ts.SyntaxKind.Parameter', () => {
 					type: ProgramStructureTreeType.FunctionDeclaration,
 					children: {
 						'{functionExpression:(anonymous:0)}': {
-							type: ProgramStructureTreeType.ArrowFunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression,
 						}
 					}
 				}
@@ -270,7 +270,7 @@ describe('ts.SyntaxKind.ForInStatement', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				}
 			}
 		})
@@ -291,7 +291,7 @@ describe('ts.SyntaxKind.ArrayLiteralExpression', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				}
 			}
 		})
@@ -312,10 +312,10 @@ describe('ts.SyntaxKind.ConditionalExpression', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				},
 				'{functionExpression:(anonymous:1)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				}
 			}
 		})
@@ -341,7 +341,7 @@ describe('ts.SyntaxKind.ReturnStatement', () => {
 					type: ProgramStructureTreeType.FunctionDeclaration,
 					children: {
 						'{functionExpression:(anonymous:0)}': {
-							type: ProgramStructureTreeType.ArrowFunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression,
 						
 						}
 					}
@@ -365,7 +365,7 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				
 				}
 			}
@@ -387,7 +387,7 @@ describe('ts.SyntaxKind.NewExpression', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				
 				}
 			}
@@ -409,7 +409,7 @@ describe('ts.SyntaxKind.ThrowStatement', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.ArrowFunctionExpression,
+					type: ProgramStructureTreeType.FunctionExpression,
 				
 				}
 			}
@@ -437,7 +437,7 @@ describe('ArrowFunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:#private}': {
-								type: ProgramStructureTreeType.ArrowFunctionExpression
+								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
 					}
@@ -467,7 +467,7 @@ describe('ArrowFunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:PropertyDeclaration}': {
-								type: ProgramStructureTreeType.ArrowFunctionExpression
+								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
 					}
@@ -496,10 +496,10 @@ describe('ArrowFunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:(literal:0)}': {
-								type: ProgramStructureTreeType.ArrowFunctionExpression
+								type: ProgramStructureTreeType.FunctionExpression
 							},
 							'{functionExpression:(literal:1)}': {
-								type: ProgramStructureTreeType.ArrowFunctionExpression
+								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
 					}
@@ -528,10 +528,10 @@ describe('ArrowFunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:(literal:0)}': {
-								type: ProgramStructureTreeType.ArrowFunctionExpression
+								type: ProgramStructureTreeType.FunctionExpression
 							},
 							'{functionExpression:(literal:1)}': {
-								type: ProgramStructureTreeType.ArrowFunctionExpression
+								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
 					}
@@ -561,10 +561,10 @@ describe('ArrowFunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:(expression:0)}': {
-								type: ProgramStructureTreeType.ArrowFunctionExpression
+								type: ProgramStructureTreeType.FunctionExpression
 							},
 							'{functionExpression:(expression:1)}': {
-								type: ProgramStructureTreeType.ArrowFunctionExpression
+								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
 					}
