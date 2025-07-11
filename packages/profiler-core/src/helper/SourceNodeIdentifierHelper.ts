@@ -58,29 +58,6 @@ export class SourceNodeIdentifierHelper {
 		return [identifier] as unknown as SourceNodeIdentifierPart_string[]
 	}
 
-	static getNameFromIdentifierPart(
-		identifierPart: SourceNodeIdentifierPart_string
-	): string | null {
-		for (const regex of [
-			RootRegex,
-			ConstructorDeclarationRegex,
-			ClassDeclarationRegex,
-			MethodDefinitionRegex,
-			FunctionDeclarationRegex,
-			FunctionExpressionRegex,
-			ObjectLiteralExpressionRegexString,
-			IfStatementRegexString,
-			SwitchStatementRegexString
-		]
-		) {
-			const match = identifierPart.match(regex)
-			if (match && match[1]) {
-				return match[1]
-			}
-		}
-		return null
-	}
-
 	static join(identifierParts: SourceNodeIdentifierPart_string[]): SourceNodeIdentifier_string {
 		return identifierParts.join('.') as SourceNodeIdentifier_string
 	}
