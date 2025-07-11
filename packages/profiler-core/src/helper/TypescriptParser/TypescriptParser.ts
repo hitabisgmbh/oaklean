@@ -187,11 +187,15 @@ export class TypescriptParser {
 		const addSubTree = (
 			node: ts.Node,
 			subTree: ProgramStructureTree,
-			tree: ProgramStructureTree,
 		) => {
-			const found = tree.children.get(subTree.identifier)
+			if (subTree.parent === null) {
+				throw new Error(
+					'TypescriptParser.parseFile: subTree.parent is null, this should never happen'
+				)
+			}
+			const found = subTree.parent.children.get(subTree.identifier)
 			if (found !== undefined && onDuplicateIdentifier !== undefined) {
-				const identifier = tree.identifierPath() + '.' + subTree.identifier
+				const identifier = subTree.parent.identifierPath() + '.' + subTree.identifier
 
 				onDuplicateIdentifier(
 					filePath,
@@ -226,7 +230,7 @@ export class TypescriptParser {
 				// 	}, undefined, 2)
 				// )
 			}
-			tree.children.set(subTree.identifier, subTree)
+			subTree.parent.children.set(subTree.identifier, subTree)
 		}
 
 		const enterNode = (node: ts.Node) => {
@@ -302,8 +306,7 @@ export class TypescriptParser {
 				if (currentTraverseNodeInfo.parent !== null) {
 					addSubTree(
 						node,
-						currentTraverseNodeInfo.tree,
-						currentTraverseNodeInfo.parent.tree
+						currentTraverseNodeInfo.tree
 					)
 				}
 				ScopeHelper.clearEmptyScopes(currentTraverseNodeInfo)
