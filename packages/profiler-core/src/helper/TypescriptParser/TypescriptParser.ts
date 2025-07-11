@@ -236,12 +236,6 @@ export class TypescriptParser {
 
 			const intermediateNode = ScopeHelper.parseIntermediateNode(node, sourceFile, currentTraverseNodeInfo)
 			if (intermediateNode !== undefined) {
-				// if the node is an if-case, we add the if case as an intermediate scope
-				addSubTree(
-					node,
-					intermediateNode,
-					currentTraverseNodeInfo.tree
-				)
 				currentTraverseNodeInfo = {
 					parent: currentTraverseNodeInfo, // store last visited node
 					node,
@@ -271,13 +265,6 @@ export class TypescriptParser {
 			}
 
 			if (subTree) {
-				// adds the subtree to the current tree
-				addSubTree(
-					node,
-					subTree,
-					currentTraverseNodeInfo.tree
-				)
-
 				// set current node to newly traversed node
 				currentTraverseNodeInfo = {
 					parent: currentTraverseNodeInfo, // store last visited node
@@ -312,6 +299,13 @@ export class TypescriptParser {
 				currentTraverseNodeInfo.node !== sourceFile &&
 				currentTraverseNodeInfo.node === node
 			) {
+				if (currentTraverseNodeInfo.parent !== null) {
+					addSubTree(
+						node,
+						currentTraverseNodeInfo.tree,
+						currentTraverseNodeInfo.parent.tree
+					)
+				}
 				ScopeHelper.clearEmptyScopes(currentTraverseNodeInfo)
 				if (currentTraverseNodeInfo.parent !== null) {
 					currentTraverseNodeInfo = currentTraverseNodeInfo.parent
