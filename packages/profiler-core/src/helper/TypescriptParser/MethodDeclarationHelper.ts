@@ -53,8 +53,8 @@ export class MethodDeclarationHelper {
 	) {
 		const methodName = `method${staticSuffix}:` + identifier.escapedText.toString()
 		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
+			traverseNodeInfo.resolvedTree(),
+			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.MethodDefinition,
 			IdentifierType.Name,
 			`{${methodName}}` as SourceNodeIdentifierPart_string,
@@ -72,8 +72,8 @@ export class MethodDeclarationHelper {
 	) {
 		const methodName = `method${staticSuffix}:(literal:${traverseNodeInfo.counters.literalFunctionCounter++})`
 		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
+			traverseNodeInfo.resolvedTree(),
+			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.MethodDefinition,
 			IdentifierType.Literal,
 			`{${methodName}}` as SourceNodeIdentifierPart_string,
@@ -92,8 +92,8 @@ export class MethodDeclarationHelper {
 		const methodName =
 			`method${staticSuffix}:(expression:${traverseNodeInfo.counters.expressionFunctionCounter++})`
 		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
+			traverseNodeInfo.resolvedTree(),
+			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.MethodDefinition,
 			IdentifierType.Expression,
 			`{${methodName}}` as SourceNodeIdentifierPart_string,

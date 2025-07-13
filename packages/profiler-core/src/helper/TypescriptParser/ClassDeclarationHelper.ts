@@ -23,8 +23,8 @@ export class ClassDeclarationHelper {
 		if (node.name?.kind === ts.SyntaxKind.Identifier) {
 			const className = node.name.escapedText
 			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
+				traverseNodeInfo.resolvedTree(),
+				traverseNodeInfo.nextId(),
 				ProgramStructureTreeType.ClassDeclaration,
 				IdentifierType.Name,
 				('{class:' + className + '}') as SourceNodeIdentifierPart_string,
@@ -34,8 +34,8 @@ export class ClassDeclarationHelper {
 		}
 		if (TypescriptHelper.hasDefaultKeywordModifier(node)) {
 			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
+				traverseNodeInfo.resolvedTree(),
+				traverseNodeInfo.nextId(),
 				ProgramStructureTreeType.ClassDeclaration,
 				IdentifierType.KeyWord,
 				('{class:default}') as SourceNodeIdentifierPart_string,

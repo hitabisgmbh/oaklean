@@ -17,22 +17,20 @@ export class ObjectLiteralExpressionHelper {
 		node: ts.ObjectLiteralExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression> {
-		const scopeName = `scope:(anonymous:${traverseNodeInfo.counters.anonymousScopeCounter++})`
-		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
-			ProgramStructureTreeType.ObjectLiteralExpression,
-			IdentifierType.Anonymous,
-			`{${scopeName}}` as SourceNodeIdentifierPart_string,
-			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-			TypescriptHelper.posToLoc(sourceFile, node.getEnd())
-		)
-	}
-
-	static clearEmptyScopes(traverseNodeInfo: TraverseNodeInfo) {
-		if (traverseNodeInfo.parent) {
-			traverseNodeInfo.parent.counters.anonymousScopeCounter--
+	): { resolve: () => ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression> } {
+		return {
+			resolve: () => {
+				const scopeName = `scope:(anonymous:${traverseNodeInfo.counters.anonymousScopeCounter++})`
+				return new ProgramStructureTree(
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
+					ProgramStructureTreeType.ObjectLiteralExpression,
+					IdentifierType.Anonymous,
+					`{${scopeName}}` as SourceNodeIdentifierPart_string,
+					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+				)
+			}
 		}
 	}
 }

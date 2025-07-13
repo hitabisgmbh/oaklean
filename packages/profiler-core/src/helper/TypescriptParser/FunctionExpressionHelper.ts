@@ -24,8 +24,8 @@ export class FunctionExpressionHelper {
 		if (emitHelperName !== undefined) {
 			const functionName = `functionExpression:${emitHelperName}`
 			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
+				traverseNodeInfo.resolvedTree(),
+				traverseNodeInfo.nextId(),
 				ProgramStructureTreeType.FunctionExpression,
 				IdentifierType.Name,
 				`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -47,8 +47,8 @@ export class FunctionExpressionHelper {
 		const functionName =
 			`functionExpression:(anonymous:${traverseNodeInfo.counters.anonymousFunctionCounter++})`
 		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
+			traverseNodeInfo.resolvedTree(),
+			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.FunctionExpression,
 			IdentifierType.Anonymous,
 			`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -68,8 +68,8 @@ export class FunctionExpressionHelper {
 			case ts.SyntaxKind.PrivateIdentifier: {
 				const functionName = `functionExpression:${parent.name.escapedText}`
 				return new ProgramStructureTree(
-					traverseNodeInfo.tree,
-					traverseNodeInfo.idCounter++,
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.FunctionExpression,
 					IdentifierType.Name,
 					`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -83,8 +83,8 @@ export class FunctionExpressionHelper {
 					'functionExpression:(literal:' +
 					`${traverseNodeInfo.counters.literalFunctionCounter++})`
 				return new ProgramStructureTree(
-					traverseNodeInfo.tree,
-					traverseNodeInfo.idCounter++,
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.FunctionExpression,
 					IdentifierType.Literal,
 					`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -97,8 +97,8 @@ export class FunctionExpressionHelper {
 					'functionExpression:(expression:' +
 					`${traverseNodeInfo.counters.literalFunctionCounter++})`
 				return new ProgramStructureTree(
-					traverseNodeInfo.tree,
-					traverseNodeInfo.idCounter++,
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.FunctionExpression,
 					IdentifierType.Expression,
 					`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -126,8 +126,8 @@ export class FunctionExpressionHelper {
 	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
 		const functionName = `functionExpression:(expression:${traverseNodeInfo.counters.literalFunctionCounter++})`
 		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
+			traverseNodeInfo.resolvedTree(),
+			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.FunctionExpression,
 			IdentifierType.Expression,
 			`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -145,8 +145,8 @@ export class FunctionExpressionHelper {
 		if (ts.isIdentifier(parent.name)) {
 			const functionName = `functionExpression:${parent.name.escapedText}`
 			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
+				traverseNodeInfo.resolvedTree(),
+				traverseNodeInfo.nextId(),
 				ProgramStructureTreeType.FunctionExpression,
 				IdentifierType.Name,
 				`{${functionName}}` as SourceNodeIdentifierPart_string,

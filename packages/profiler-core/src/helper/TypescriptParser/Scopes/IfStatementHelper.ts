@@ -17,17 +17,21 @@ export class IfStatementHelper {
 		node: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.IfStatement> {
-		const statementName = `(if:${traverseNodeInfo.counters.ifStatementCounter++})`
-		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
-			ProgramStructureTreeType.IfStatement,
-			IdentifierType.Statement,
-			`{scope:${statementName}}` as SourceNodeIdentifierPart_string,
-			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-			TypescriptHelper.posToLoc(sourceFile, node.getEnd())
-		)
+	): { resolve: () => ProgramStructureTree<ProgramStructureTreeType.IfStatement> } {
+		return {
+			resolve: () => {
+				const statementName = `(if:${traverseNodeInfo.counters.ifStatementCounter++})`
+				return new ProgramStructureTree(
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
+					ProgramStructureTreeType.IfStatement,
+					IdentifierType.Statement,
+					`{scope:${statementName}}` as SourceNodeIdentifierPart_string,
+					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+				)
+			}
+		}
 	}
 
 	static ifCase(
@@ -35,38 +39,41 @@ export class IfStatementHelper {
 		parent: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	):
-		| ProgramStructureTree<
+	): { resolve: () => ProgramStructureTree<
 		ProgramStructureTreeType.IfThenStatement | ProgramStructureTreeType.IfElseStatement
-		>
+		> } | undefined
 		| undefined {
 		if (parent.thenStatement === node) {
-			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
-				ProgramStructureTreeType.IfThenStatement,
-				IdentifierType.Statement,
-				'{scope:then}' as SourceNodeIdentifierPart_string,
-				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-				TypescriptHelper.posToLoc(sourceFile, node.getEnd())
-			)
+			return {
+				resolve: () => {
+					const tree = traverseNodeInfo.resolvedTree()
+					return new ProgramStructureTree(
+						tree,
+						traverseNodeInfo.nextId(),
+						ProgramStructureTreeType.IfThenStatement,
+						IdentifierType.Statement,
+						'{scope:then}' as SourceNodeIdentifierPart_string,
+						TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+					)
+				}
+			}
 		}
 		if (parent.elseStatement === node) {
-			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
-				ProgramStructureTreeType.IfElseStatement,
-				IdentifierType.Statement,
-				'{scope:else}' as SourceNodeIdentifierPart_string,
-				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-				TypescriptHelper.posToLoc(sourceFile, node.getEnd())
-			)
-		}
-	}
-
-	static clearEmptyScopes(traverseNodeInfo: TraverseNodeInfo) {
-		if (traverseNodeInfo.parent) {
-			traverseNodeInfo.parent.counters.ifStatementCounter--
+			return {
+				resolve: () => {
+					const tree = traverseNodeInfo.resolvedTree()
+					return new ProgramStructureTree(
+						tree,
+						traverseNodeInfo.nextId(),
+						ProgramStructureTreeType.IfElseStatement,
+						IdentifierType.Statement,
+						'{scope:else}' as SourceNodeIdentifierPart_string,
+						TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+					)
+				}
+			}
 		}
 	}
 }

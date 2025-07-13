@@ -168,26 +168,19 @@ export class TypescriptParser {
 			TypescriptHelper.posToLoc(sourceFile, sourceFile.getEnd())
 		)
 
-		let currentTraverseNodeInfo: TraverseNodeInfo = {
-			parent: null,
-			node: sourceFile,
+		let currentTraverseNodeInfo = new TraverseNodeInfo(
+			null,
+			sourceFile,
 			filePath,
-			idCounter: 1, // root node has id 0
-			tree: root,
-			counters: {
-				ifStatementCounter: 0,
-				switchCounter: 0,
-				anonymousScopeCounter: 0,
-				anonymousFunctionCounter: 0,
-				expressionFunctionCounter: 0,
-				literalFunctionCounter: 0
-			}
-		}
+			{ resolve: () => root }
+		)
 
 		const addSubTree = (
 			node: ts.Node,
-			subTree: ProgramStructureTree,
+			currentTraverseNodeInfo: TraverseNodeInfo,
+			parentTraverseNodeInfo: TraverseNodeInfo,
 		) => {
+			const subTree = currentTraverseNodeInfo.resolvedTree()
 			if (subTree.parent === null) {
 				throw new Error(
 					'TypescriptParser.parseFile: subTree.parent is null, this should never happen'
@@ -230,6 +223,7 @@ export class TypescriptParser {
 				// 	}, undefined, 2)
 				// )
 			}
+			parentTraverseNodeInfo.counters.childrenCounter++
 			subTree.parent.children.set(subTree.identifier, subTree)
 		}
 
@@ -240,21 +234,12 @@ export class TypescriptParser {
 
 			const intermediateNode = ScopeHelper.parseIntermediateNode(node, sourceFile, currentTraverseNodeInfo)
 			if (intermediateNode !== undefined) {
-				currentTraverseNodeInfo = {
-					parent: currentTraverseNodeInfo, // store last visited node
+				currentTraverseNodeInfo = new TraverseNodeInfo(
+					currentTraverseNodeInfo, // store last visited node
 					node,
 					filePath,
-					idCounter: currentTraverseNodeInfo.idCounter,
-					tree: intermediateNode,
-					counters: {
-						ifStatementCounter: 0,
-						switchCounter: 0,
-						anonymousScopeCounter: 0,
-						anonymousFunctionCounter: 0,
-						expressionFunctionCounter: 0,
-						literalFunctionCounter: 0
-					}
-				}
+					intermediateNode
+				)
 			}
 
 			const subTree = TypescriptParser.parseNode(
@@ -270,21 +255,12 @@ export class TypescriptParser {
 
 			if (subTree) {
 				// set current node to newly traversed node
-				currentTraverseNodeInfo = {
-					parent: currentTraverseNodeInfo, // store last visited node
+				currentTraverseNodeInfo = new TraverseNodeInfo(
+					currentTraverseNodeInfo, // store last visited node
 					node,
 					filePath,
-					idCounter: currentTraverseNodeInfo.idCounter,
-					tree: subTree,
-					counters: {
-						ifStatementCounter: 0,
-						switchCounter: 0,
-						anonymousScopeCounter: 0,
-						anonymousFunctionCounter: 0,
-						expressionFunctionCounter: 0,
-						literalFunctionCounter: 0
-					}
-				}
+					subTree
+				)
 			} else {
 				LoggerHelper.error(
 					'TypescriptParser.parseFile: subTree is undefined, unexpected behaviour',
@@ -304,12 +280,17 @@ export class TypescriptParser {
 				currentTraverseNodeInfo.node === node
 			) {
 				if (currentTraverseNodeInfo.parent !== null) {
-					addSubTree(
-						node,
-						currentTraverseNodeInfo.tree
-					)
+					if (
+						currentTraverseNodeInfo.isTreeResolved() ||
+						currentTraverseNodeInfo.counters.childrenCounter !== 0
+					) {
+						addSubTree(
+							node,
+							currentTraverseNodeInfo,
+							currentTraverseNodeInfo.parent
+						)
+					}
 				}
-				ScopeHelper.clearEmptyScopes(currentTraverseNodeInfo)
 				if (currentTraverseNodeInfo.parent !== null) {
 					currentTraverseNodeInfo = currentTraverseNodeInfo.parent
 				}
@@ -325,7 +306,7 @@ export class TypescriptParser {
 		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree | null {
+	): ProgramStructureTree | { resolve: () => ProgramStructureTree } | null {
 		const parseNodeFunction = PARSE_NODE_FUNCTIONS[node.kind]
 		if (parseNodeFunction !== undefined) {
 			return parseNodeFunction(

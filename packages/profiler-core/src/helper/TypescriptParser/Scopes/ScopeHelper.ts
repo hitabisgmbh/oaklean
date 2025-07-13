@@ -2,34 +2,22 @@ import * as ts from 'typescript'
 
 import { IfStatementHelper } from './IfStatementHelper'
 import { SwitchStatementHelper } from './SwitchStatementHelper'
-import { ObjectLiteralExpressionHelper } from './ObjectLiteralExpressionHelper'
 
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
 import {
-	ProgramStructureTreeType,
 	ProgramStructureTreeTypeScope
 } from '../../../types'
-
-
-type ClearEmptyScopesFunction = (traverseNodeInfo: TraverseNodeInfo) => void
-
-const CLEAR_EMPTY_SCOPES: Partial<Record<ProgramStructureTreeType, ClearEmptyScopesFunction | null>> = {
-	[ProgramStructureTreeType.ObjectLiteralExpression]: ObjectLiteralExpressionHelper.clearEmptyScopes,
-	[ProgramStructureTreeType.IfStatement]: IfStatementHelper.clearEmptyScopes,
-	[ProgramStructureTreeType.IfThenStatement]: null,
-	[ProgramStructureTreeType.IfElseStatement]: null,
-	[ProgramStructureTreeType.SwitchStatement]: SwitchStatementHelper.clearEmptyScopes,
-	[ProgramStructureTreeType.SwitchCaseClause]: null,
-}
 
 type ParseIntermediateFunction = (
 	node: ts.Node,
 	parent: any,
 	sourceFile: ts.SourceFile,
 	traverseNodeInfo: TraverseNodeInfo
-) => ProgramStructureTree<ProgramStructureTreeTypeScope> | undefined
+) => {
+	resolve: () => ProgramStructureTree<ProgramStructureTreeTypeScope>
+} | undefined
 
 const PARSE_INTERMEDIATE_NODE: Partial<Record<ts.SyntaxKind, ParseIntermediateFunction>> = {
 	[ts.SyntaxKind.IfStatement]: IfStatementHelper.ifCase,
@@ -42,29 +30,11 @@ const INTERMEDIATE_NODE_PARENT_TYPE = new Set([
 ])
 
 export class ScopeHelper {
-	static clearEmptyScopes(
-		traverseNodeInfo: TraverseNodeInfo
-	) {
-		if (
-			traverseNodeInfo.tree.children.size === 0
-		) {
-			const clearEmptyScopeFunction = CLEAR_EMPTY_SCOPES[traverseNodeInfo.tree.type]
-			if (clearEmptyScopeFunction !== undefined) {
-				if (clearEmptyScopeFunction !== null) {
-					clearEmptyScopeFunction(traverseNodeInfo)
-				}
-				// remove empty scopes since scopes are only used as a hierarchy level to distinguish between
-				// functions, methods, etc.
-				traverseNodeInfo.tree.parent?.children.delete(traverseNodeInfo.tree.identifier)
-			}
-		}
-	}
-
 	static parseIntermediateNode(
 		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	) {
+	): { resolve: () => ProgramStructureTree<ProgramStructureTreeTypeScope> } | undefined {
 		const parseFunction = PARSE_INTERMEDIATE_NODE[node.parent?.kind]
 		if (parseFunction !== undefined) {
 			return parseFunction(

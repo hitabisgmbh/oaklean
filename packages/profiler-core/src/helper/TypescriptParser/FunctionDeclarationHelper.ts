@@ -23,8 +23,8 @@ export class FunctionDeclarationHelper {
 		if (node.name !== undefined && ts.isIdentifier(node.name)) {
 			const functionName = node.name.escapedText
 			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
+				traverseNodeInfo.resolvedTree(),
+				traverseNodeInfo.nextId(),
 				ProgramStructureTreeType.FunctionDeclaration,
 				IdentifierType.Name,
 				('{function:' + functionName + '}') as SourceNodeIdentifierPart_string,
@@ -35,8 +35,8 @@ export class FunctionDeclarationHelper {
 		
 		if (TypescriptHelper.hasDefaultKeywordModifier(node)) {
 			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
+				traverseNodeInfo.resolvedTree(),
+				traverseNodeInfo.nextId(),
 				ProgramStructureTreeType.FunctionDeclaration,
 				IdentifierType.KeyWord,
 				'{function:default}' as SourceNodeIdentifierPart_string,

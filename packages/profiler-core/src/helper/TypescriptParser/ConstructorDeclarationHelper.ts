@@ -20,8 +20,8 @@ export class ConstructorDeclarationHelper {
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.ConstructorDeclaration> {
 		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
+			traverseNodeInfo.resolvedTree(),
+			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.ConstructorDeclaration,
 			IdentifierType.Name,
 			'{constructor:constructor}' as SourceNodeIdentifierPart_string,

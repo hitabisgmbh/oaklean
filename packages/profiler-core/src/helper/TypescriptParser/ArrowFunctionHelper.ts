@@ -33,8 +33,8 @@ export class ArrowFunctionHelper {
 		const functionName =
 			`functionExpression:(anonymous:${traverseNodeInfo.counters.anonymousFunctionCounter++})`
 		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
+			traverseNodeInfo.resolvedTree(),
+			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.FunctionExpression,
 			IdentifierType.Anonymous,
 			`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -54,8 +54,8 @@ export class ArrowFunctionHelper {
 			case ts.SyntaxKind.PrivateIdentifier: {
 				const functionName = `functionExpression:${parent.name.escapedText}`
 				return new ProgramStructureTree(
-					traverseNodeInfo.tree,
-					traverseNodeInfo.idCounter++,
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.FunctionExpression,
 					IdentifierType.Name,
 					`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -68,8 +68,8 @@ export class ArrowFunctionHelper {
 				const functionName =
 					`functionExpression:(literal:${traverseNodeInfo.counters.literalFunctionCounter++})`
 				return new ProgramStructureTree(
-					traverseNodeInfo.tree,
-					traverseNodeInfo.idCounter++,
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.FunctionExpression,
 					IdentifierType.Literal,
 					`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -81,8 +81,8 @@ export class ArrowFunctionHelper {
 				const functionName =
 				`functionExpression:(expression:${traverseNodeInfo.counters.literalFunctionCounter++})`
 				return new ProgramStructureTree(
-					traverseNodeInfo.tree,
-					traverseNodeInfo.idCounter++,
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.FunctionExpression,
 					IdentifierType.Expression,
 					`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -111,8 +111,8 @@ export class ArrowFunctionHelper {
 		const functionName =
 		`functionExpression:(expression:${traverseNodeInfo.counters.literalFunctionCounter++})`
 		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
+			traverseNodeInfo.resolvedTree(),
+			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.FunctionExpression,
 			IdentifierType.Expression,
 			`{${functionName}}` as SourceNodeIdentifierPart_string,
@@ -130,8 +130,8 @@ export class ArrowFunctionHelper {
 		if (ts.isIdentifier(parent.name)) {
 			const functionName = `functionExpression:${parent.name.escapedText}`
 			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
+				traverseNodeInfo.resolvedTree(),
+				traverseNodeInfo.nextId(),
 				ProgramStructureTreeType.FunctionExpression,
 				IdentifierType.Name,
 				`{${functionName}}` as SourceNodeIdentifierPart_string,

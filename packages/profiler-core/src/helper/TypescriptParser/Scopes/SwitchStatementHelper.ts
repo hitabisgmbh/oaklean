@@ -18,17 +18,21 @@ export class SwitchStatementHelper {
 		node: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.SwitchStatement> {
-		const statementName =`(switch:${traverseNodeInfo.counters.switchCounter++})`
-		return new ProgramStructureTree(
-			traverseNodeInfo.tree,
-			traverseNodeInfo.idCounter++,
-			ProgramStructureTreeType.SwitchStatement,
-			IdentifierType.Statement,
-			`{scope:${statementName}}` as SourceNodeIdentifierPart_string,
-			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
-		)
+	): { resolve: () => ProgramStructureTree<ProgramStructureTreeType.SwitchStatement> } {
+		return {
+			resolve: () => {
+				const statementName =`(switch:${traverseNodeInfo.counters.switchCounter++})`
+				return new ProgramStructureTree(
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
+					ProgramStructureTreeType.SwitchStatement,
+					IdentifierType.Statement,
+					`{scope:${statementName}}` as SourceNodeIdentifierPart_string,
+					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+					TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
+				)
+			}
+		}
 	}
 
 	static switchCase(
@@ -36,41 +40,43 @@ export class SwitchStatementHelper {
 		parent: ts.CaseBlock,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.SwitchCaseClause> | undefined {
+	): { resolve: () => ProgramStructureTree<ProgramStructureTreeType.SwitchCaseClause> } | undefined {
 		if (node.kind === ts.SyntaxKind.DefaultClause) {
-			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
-				ProgramStructureTreeType.SwitchCaseClause,
-				IdentifierType.KeyWord,
-				'{scope:(case:default)}' as SourceNodeIdentifierPart_string,
-				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-				TypescriptHelper.posToLoc(sourceFile, node.getEnd())
-			)
+			return {
+				resolve: () => {
+					const tree = traverseNodeInfo.resolvedTree()
+					return new ProgramStructureTree(
+						tree,
+						traverseNodeInfo.nextId(),
+						ProgramStructureTreeType.SwitchCaseClause,
+						IdentifierType.KeyWord,
+						'{scope:(case:default)}' as SourceNodeIdentifierPart_string,
+						TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+					)
+				}
+			}
 		}
 
 		if (node.kind === ts.SyntaxKind.CaseClause) {
-			const expressionHash = ExpressionHelper.hashExpression(
-				(node as ts.CaseClause).expression,
-				sourceFile
-			)
-			return new ProgramStructureTree(
-				traverseNodeInfo.tree,
-				traverseNodeInfo.idCounter++,
-				ProgramStructureTreeType.SwitchCaseClause,
-				IdentifierType.Hash,
-				`{scope:(case:${expressionHash})}` as SourceNodeIdentifierPart_string,
-				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-				TypescriptHelper.posToLoc(sourceFile, node.getEnd())
-			)
-		}
-	}
-
-	static clearEmptyScopes(
-		traverseNodeInfo: TraverseNodeInfo
-	) {
-		if (traverseNodeInfo.parent) {
-			traverseNodeInfo.parent.counters.switchCounter--
+			return {
+				resolve: () => {
+					const tree = traverseNodeInfo.resolvedTree()
+					const expressionHash = ExpressionHelper.hashExpression(
+						(node as ts.CaseClause).expression,
+						sourceFile
+					)
+					return new ProgramStructureTree(
+						tree,
+						traverseNodeInfo.nextId(),
+						ProgramStructureTreeType.SwitchCaseClause,
+						IdentifierType.Hash,
+						`{scope:(case:${expressionHash})}` as SourceNodeIdentifierPart_string,
+						TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+					)
+				}
+			}
 		}
 	}
 }
