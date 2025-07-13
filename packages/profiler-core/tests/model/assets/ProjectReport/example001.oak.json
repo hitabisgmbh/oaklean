@@ -757,7 +757,7 @@
             "file": {
               "{root}": {
                 "children": {
-                  "{scope:(anonymous:1)}": {
+                  "{scope:(anonymous:0)}": {
                     "children": {
                       "{functionExpression:(anonymous:9)}": {
                         "id": 118
