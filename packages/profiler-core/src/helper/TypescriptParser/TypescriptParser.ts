@@ -276,24 +276,20 @@ export class TypescriptParser {
 
 		const leaveNode = (node: ts.Node) => {
 			while (
-				currentTraverseNodeInfo.node !== sourceFile &&
+				currentTraverseNodeInfo.parent !== null &&
 				currentTraverseNodeInfo.node === node
 			) {
-				if (currentTraverseNodeInfo.parent !== null) {
-					if (
-						currentTraverseNodeInfo.isTreeResolved() ||
-						currentTraverseNodeInfo.counters.childrenCounter !== 0
-					) {
-						addSubTree(
-							node,
-							currentTraverseNodeInfo,
-							currentTraverseNodeInfo.parent
-						)
-					}
+				if (
+					currentTraverseNodeInfo.isTreeResolved() ||
+					currentTraverseNodeInfo.counters.childrenCounter !== 0
+				) {
+					addSubTree(
+						node,
+						currentTraverseNodeInfo,
+						currentTraverseNodeInfo.parent
+					)
 				}
-				if (currentTraverseNodeInfo.parent !== null) {
-					currentTraverseNodeInfo = currentTraverseNodeInfo.parent
-				}
+				currentTraverseNodeInfo = currentTraverseNodeInfo.parent
 			}
 		}
 
