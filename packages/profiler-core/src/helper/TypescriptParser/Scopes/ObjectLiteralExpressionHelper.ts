@@ -29,4 +29,10 @@ export class ObjectLiteralExpressionHelper {
 			TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 		)
 	}
+
+	static clearEmptyScopes(traverseNodeInfo: TraverseNodeInfo) {
+		if (traverseNodeInfo.parent) {
+			traverseNodeInfo.parent.counters.anonymousScopeCounter--
+		}
+	}
 }

@@ -2,6 +2,7 @@ import * as ts from 'typescript'
 
 import { IfStatementHelper } from './IfStatementHelper'
 import { SwitchStatementHelper } from './SwitchStatementHelper'
+import { ObjectLiteralExpressionHelper } from './ObjectLiteralExpressionHelper'
 
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
@@ -11,10 +12,11 @@ import {
 	ProgramStructureTreeTypeScope
 } from '../../../types'
 
+
 type ClearEmptyScopesFunction = (traverseNodeInfo: TraverseNodeInfo) => void
 
 const CLEAR_EMPTY_SCOPES: Partial<Record<ProgramStructureTreeType, ClearEmptyScopesFunction | null>> = {
-	[ProgramStructureTreeType.ObjectLiteralExpression]: null, 
+	[ProgramStructureTreeType.ObjectLiteralExpression]: ObjectLiteralExpressionHelper.clearEmptyScopes,
 	[ProgramStructureTreeType.IfStatement]: IfStatementHelper.clearEmptyScopes,
 	[ProgramStructureTreeType.IfThenStatement]: null,
 	[ProgramStructureTreeType.IfElseStatement]: null,
