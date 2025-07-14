@@ -137,6 +137,7 @@ describe('ts.SyntaxKind.VariableDeclaration', () => {
 describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 	const code = `
 		;(() => {})()
+		;(() => {})()
 	`
 
 	it.todo('Maybe we should not include the parenthesized expression in the hierarchy?')
@@ -148,7 +149,10 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{functionExpression:(expression:0)}': {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+				},
+				'{functionExpression:(anonymous:1)}': {
 					type: ProgramStructureTreeType.FunctionExpression,
 				}
 			}

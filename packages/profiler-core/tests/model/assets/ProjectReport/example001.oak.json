@@ -556,7 +556,7 @@
                                           }
                                         }
                                       },
-                                      "{functionExpression:(expression:0)}": {
+                                      "{functionExpression:(anonymous:0)}": {
                                         "children": {
                                           "{scope:(if:0)}": {
                                             "children": {

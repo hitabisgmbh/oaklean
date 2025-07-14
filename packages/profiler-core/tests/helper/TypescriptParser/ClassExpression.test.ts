@@ -211,6 +211,9 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 		const code = `
 		new (class {
 			constructor(args: any) {}
+		})(0);
+		new (class {
+			constructor(args: any) {}
 		})(0)
 	`
 
@@ -222,7 +225,15 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 			expect(hierarchy).toEqual({
 				type: ProgramStructureTreeType.Root,
 				children: {
-					'{classExpression:(expression:0)}': {
+					'{classExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.ClassExpression,
+						children: {
+							'{constructor:constructor}': {
+								type: ProgramStructureTreeType.ConstructorDeclaration,
+							}
+						}
+					},
+					'{classExpression:(anonymous:1)}': {
 						type: ProgramStructureTreeType.ClassExpression,
 						children: {
 							'{constructor:constructor}': {
@@ -239,7 +250,10 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 		const code = `
 		typeof(class {
 			constructor(args: any) {}
-		})
+		});
+		typeof(class {
+			constructor(args: any) {}
+		});
 	`
 
 		test('expected identifier', () => {
@@ -250,7 +264,15 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 			expect(hierarchy).toEqual({
 				type: ProgramStructureTreeType.Root,
 				children: {
-					'{classExpression:(expression:0)}': {
+					'{classExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.ClassExpression,
+						children: {
+							'{constructor:constructor}': {
+								type: ProgramStructureTreeType.ConstructorDeclaration,
+							}
+						}
+					},
+					'{classExpression:(anonymous:1)}': {
 						type: ProgramStructureTreeType.ClassExpression,
 						children: {
 							'{constructor:constructor}': {

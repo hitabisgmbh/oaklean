@@ -23,17 +23,6 @@ export class NamingHelper {
 		}
 	}
 
-	static getParenthesizedExpressionName(
-		node: ts.ParenthesizedExpression,
-		sourceFile: ts.SourceFile,
-		traverseNodeInfo: TraverseNodeInfo
-	): { identifier: string; identifierType: IdentifierType } {
-		return {
-			identifier: `(expression:${traverseNodeInfo.counters.literalFunctionCounter++})`,
-			identifierType: IdentifierType.Expression
-		}
-	}
-
 	static getPropertyAssignmentName(
 		node: ts.PropertyAssignment,
 		sourceFile: ts.SourceFile,
@@ -146,7 +135,6 @@ type GetNameFunction = (
 
 const GET_NAME_FUNCTIONS: Partial<Record<ts.SyntaxKind, GetNameFunction>> = {
 	[ts.SyntaxKind.PropertyDeclaration]: NamingHelper.getPropertyDeclarationName,
-	[ts.SyntaxKind.ParenthesizedExpression]: NamingHelper.getParenthesizedExpressionName,
 	[ts.SyntaxKind.VariableDeclaration]: NamingHelper.getVariableName,
 	[ts.SyntaxKind.PropertyAssignment]: NamingHelper.getPropertyAssignmentName,
 
