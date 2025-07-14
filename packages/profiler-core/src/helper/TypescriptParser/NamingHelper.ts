@@ -34,7 +34,31 @@ export class NamingHelper {
 		}
 	}
 
-	static getPropertyName(
+	static getPropertyAssignmentName(
+		node: ts.PropertyAssignment,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	): { identifier: string; identifierType: IdentifierType } {
+		const getNameFunction = GET_NAME_FUNCTIONS[node.name.kind]
+		if (getNameFunction !== undefined) {
+			return getNameFunction(node.name, sourceFile, traverseNodeInfo)
+		}
+		LoggerHelper.error(
+			'NamingHelper (getPropertyAssignmentName): unhandled case: node.name.kind === ' +
+				node.name.kind,
+			{
+				filePath: traverseNodeInfo.filePath,
+				kind: node.name.kind,
+				pos: TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
+			}
+		)
+		throw new Error(
+			'NamingHelper (getPropertyAssignmentName): unhandled case: node.name.kind === ' +
+				node.name.kind
+		)
+	}
+
+	static getPropertyDeclarationName(
 		node: ts.PropertyDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
@@ -44,7 +68,7 @@ export class NamingHelper {
 			return getNameFunction(node.name, sourceFile, traverseNodeInfo)
 		}
 		LoggerHelper.error(
-			'NamingHelper (getPropertyName): unhandled case: node.name.kind === ' +
+			'NamingHelper (getPropertyDeclarationName): unhandled case: node.name.kind === ' +
 				node.name.kind,
 			{
 				filePath: traverseNodeInfo.filePath,
@@ -53,10 +77,12 @@ export class NamingHelper {
 			}
 		)
 		throw new Error(
-			'NamingHelper (getPropertyName): unhandled case: node.name.kind === ' +
+			'NamingHelper (getPropertyDeclarationName): unhandled case: node.name.kind === ' +
 				node.name.kind
 		)
 	}
+
+
 
 	static getVariableName(
 		node: ts.VariableDeclaration,
@@ -119,9 +145,10 @@ type GetNameFunction = (
 ) => { identifier: string; identifierType: IdentifierType }
 
 const GET_NAME_FUNCTIONS: Partial<Record<ts.SyntaxKind, GetNameFunction>> = {
-	[ts.SyntaxKind.PropertyDeclaration]: NamingHelper.getPropertyName,
+	[ts.SyntaxKind.PropertyDeclaration]: NamingHelper.getPropertyDeclarationName,
 	[ts.SyntaxKind.ParenthesizedExpression]: NamingHelper.getParenthesizedExpressionName,
 	[ts.SyntaxKind.VariableDeclaration]: NamingHelper.getVariableName,
+	[ts.SyntaxKind.PropertyAssignment]: NamingHelper.getPropertyAssignmentName,
 
 	[ts.SyntaxKind.Identifier]: NamingHelper.getIdentifierName,
 	[ts.SyntaxKind.PrivateIdentifier]: NamingHelper.getIdentifierName,

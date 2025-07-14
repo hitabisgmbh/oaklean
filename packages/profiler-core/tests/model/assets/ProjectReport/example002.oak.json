@@ -529,31 +529,21 @@
                           "{functionExpression:(anonymous:1)}": {
                             "id": 73
                           },
-                          "{scope:(anonymous:0)}": {
+                          "{scope:(anonymous:2)}": {
                             "children": {
-                              "{functionExpression:(anonymous:0)}": {
+                              "{functionExpression:chars}": {
                                 "id": 76
                               },
-                              "{functionExpression:(anonymous:2)}": {
-                                "id": 79
+                              "{functionExpression:start}": {
+                                "id": 78
                               }
                             }
                           }
                         }
                       },
-                      "{function:normalizeAttr}": {
-                        "id": 77
-                      },
                       "{function:processOptions}": {
                         "id": 81,
                         "children": {
-                          "{scope:(anonymous:0)}": {
-                            "children": {
-                              "{functionExpression:(anonymous:0)}": {
-                                "id": 78
-                              }
-                            }
-                          },
                           "{functionExpression:(anonymous:0)}": {
                             "id": 82,
                             "children": {
@@ -570,7 +560,7 @@
                                                   "{scope:(then)}": {
                                                     "children": {
                                                       "{functionExpression:(anonymous:0)}": {
-                                                        "id": 80
+                                                        "id": 77
                                                       }
                                                     }
                                                   }
@@ -585,8 +575,18 @@
                                 }
                               }
                             }
+                          },
+                          "{scope:options}": {
+                            "children": {
+                              "{functionExpression:name}": {
+                                "id": 80
+                              }
+                            }
                           }
                         }
+                      },
+                      "{function:normalizeAttr}": {
+                        "id": 79
                       }
                     }
                   }
@@ -649,12 +649,12 @@
             "file": {
               "{root}": {
                 "children": {
-                  "{scope:(anonymous:0)}": {
+                  "{scope:profiler}": {
                     "children": {
-                      "{functionExpression:(anonymous:9)}": {
+                      "{functionExpression:startProfiling}": {
                         "id": 56
                       },
-                      "{functionExpression:(anonymous:10)}": {
+                      "{functionExpression:stopProfiling}": {
                         "id": 58
                       }
                     }
@@ -1996,79 +1996,14 @@
               "id": 76,
               "type": 0,
               "sensorValues": {
-                "profilerHits": 42,
-                "selfCPUTime": 126,
-                "aggregatedCPUTime": 500,
-                "internCPUTime": 374
-              },
-              "intern": {
-                "66": {
-                  "id": 66,
-                  "type": 3,
-                  "sensorValues": {
-                    "profilerHits": 2,
-                    "selfCPUTime": 41,
-                    "aggregatedCPUTime": 41
-                  }
-                },
-                "77": {
-                  "id": 77,
-                  "type": 3,
-                  "sensorValues": {
-                    "profilerHits": 24,
-                    "selfCPUTime": 83,
-                    "aggregatedCPUTime": 333
-                  }
-                },
-                "78": {
-                  "id": 78,
-                  "type": 3,
-                  "sensorValues": {
-                    "profilerHits": 1
-                  }
-                }
-              }
-            },
-            "77": {
-              "id": 77,
-              "type": 0,
-              "sensorValues": {
-                "profilerHits": 24,
-                "selfCPUTime": 83,
-                "aggregatedCPUTime": 333,
-                "internCPUTime": 250
-              },
-              "intern": {
-                "67": {
-                  "id": 67,
-                  "type": 3,
-                  "sensorValues": {
-                    "profilerHits": 39,
-                    "selfCPUTime": 124,
-                    "aggregatedCPUTime": 250
-                  }
-                }
-              }
-            },
-            "78": {
-              "id": 78,
-              "type": 0,
-              "sensorValues": {
-                "profilerHits": 1
-              }
-            },
-            "79": {
-              "id": 79,
-              "type": 0,
-              "sensorValues": {
                 "profilerHits": 29,
                 "selfCPUTime": 167,
                 "aggregatedCPUTime": 7875,
                 "internCPUTime": 7708
               },
               "intern": {
-                "80": {
-                  "id": 80,
+                "77": {
+                  "id": 77,
                   "type": 3,
                   "sensorValues": {
                     "profilerHits": 42,
@@ -2078,8 +2013,8 @@
                 }
               }
             },
-            "80": {
-              "id": 80,
+            "77": {
+              "id": 77,
               "type": 0,
               "sensorValues": {
                 "profilerHits": 42,
@@ -2106,6 +2041,71 @@
                     "aggregatedCPUTime": 7041
                   }
                 }
+              }
+            },
+            "78": {
+              "id": 78,
+              "type": 0,
+              "sensorValues": {
+                "profilerHits": 42,
+                "selfCPUTime": 126,
+                "aggregatedCPUTime": 500,
+                "internCPUTime": 374
+              },
+              "intern": {
+                "66": {
+                  "id": 66,
+                  "type": 3,
+                  "sensorValues": {
+                    "profilerHits": 2,
+                    "selfCPUTime": 41,
+                    "aggregatedCPUTime": 41
+                  }
+                },
+                "79": {
+                  "id": 79,
+                  "type": 3,
+                  "sensorValues": {
+                    "profilerHits": 24,
+                    "selfCPUTime": 83,
+                    "aggregatedCPUTime": 333
+                  }
+                },
+                "80": {
+                  "id": 80,
+                  "type": 3,
+                  "sensorValues": {
+                    "profilerHits": 1
+                  }
+                }
+              }
+            },
+            "79": {
+              "id": 79,
+              "type": 0,
+              "sensorValues": {
+                "profilerHits": 24,
+                "selfCPUTime": 83,
+                "aggregatedCPUTime": 333,
+                "internCPUTime": 250
+              },
+              "intern": {
+                "67": {
+                  "id": 67,
+                  "type": 3,
+                  "sensorValues": {
+                    "profilerHits": 39,
+                    "selfCPUTime": 124,
+                    "aggregatedCPUTime": 250
+                  }
+                }
+              }
+            },
+            "80": {
+              "id": 80,
+              "type": 0,
+              "sensorValues": {
+                "profilerHits": 1
               }
             },
             "81": {
@@ -2157,8 +2157,8 @@
                 }
               },
               "intern": {
-                "79": {
-                  "id": 79,
+                "76": {
+                  "id": 76,
                   "type": 3,
                   "sensorValues": {
                     "profilerHits": 3
@@ -2246,8 +2246,8 @@
                 "internCPUTime": 542
               },
               "intern": {
-                "76": {
-                  "id": 76,
+                "78": {
+                  "id": 78,
                   "type": 3,
                   "sensorValues": {
                     "profilerHits": 42,
@@ -2303,8 +2303,8 @@
                 "internCPUTime": 7875
               },
               "intern": {
-                "79": {
-                  "id": 79,
+                "76": {
+                  "id": 76,
                   "type": 3,
                   "sensorValues": {
                     "profilerHits": 26,

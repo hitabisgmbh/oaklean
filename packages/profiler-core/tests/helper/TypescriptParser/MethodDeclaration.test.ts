@@ -173,7 +173,7 @@ describe('ts.SyntaxKind.ObjectLiteralExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{scope:(anonymous:0)}': {
+				'{scope:obj}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{method:method}': {

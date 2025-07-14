@@ -168,10 +168,10 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{scope:(anonymous:0)}': {
+				'{scope:obj}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
-						'{functionExpression:(anonymous:0)}': {
+						'{functionExpression:method}': {
 							type: ProgramStructureTreeType.FunctionExpression,
 						}
 					}

@@ -23,8 +23,11 @@ describe('with no executable children', () => {
 describe('with executable children', () => {
 	const code = `
 		const obj = {
-			method() {}
-		}
+			method() {},
+			a: {
+				method() {}
+			}
+		};
 	`
 
 	test('expected identifier', () => {
@@ -35,11 +38,19 @@ describe('with executable children', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{scope:(anonymous:0)}': {
+				'{scope:obj}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{method:method}': {
 							type: ProgramStructureTreeType.MethodDefinition
+						},
+						'{scope:a}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{method:method}': {
+									type: ProgramStructureTreeType.MethodDefinition
+								}
+							}
 						}
 					}
 				}
@@ -70,10 +81,10 @@ describe('with deep nested executable children', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{scope:(anonymous:0)}': {
+				'{scope:obj}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
-						'{scope:(anonymous:0)}': {
+						'{scope:a}': {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{method:method}': {
@@ -81,7 +92,7 @@ describe('with deep nested executable children', () => {
 								}
 							}
 						},
-						'{scope:(anonymous:1)}': {
+						'{scope:b}': {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{method:method}': {

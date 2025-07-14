@@ -227,7 +227,7 @@
                                                 "children": {
                                                   "{scope:(anonymous:0)}": {
                                                     "children": {
-                                                      "{functionExpression:(anonymous:0)}": {
+                                                      "{functionExpression:get}": {
                                                         "id": 100
                                                       }
                                                     }
@@ -795,12 +795,12 @@
             "file": {
               "{root}": {
                 "children": {
-                  "{scope:(anonymous:0)}": {
+                  "{scope:profiler}": {
                     "children": {
-                      "{functionExpression:(anonymous:9)}": {
+                      "{functionExpression:startProfiling}": {
                         "id": 126
                       },
-                      "{functionExpression:(anonymous:10)}": {
+                      "{functionExpression:stopProfiling}": {
                         "id": 127
                       }
                     }
@@ -830,13 +830,13 @@
                           "{functionExpression:(anonymous:1)}": {
                             "id": 146
                           },
-                          "{scope:(anonymous:0)}": {
+                          "{scope:(anonymous:2)}": {
                             "children": {
-                              "{functionExpression:(anonymous:0)}": {
+                              "{functionExpression:chars}": {
                                 "id": 149
                               },
-                              "{functionExpression:(anonymous:2)}": {
-                                "id": 152
+                              "{functionExpression:start}": {
+                                "id": 155
                               }
                             }
                           }
@@ -845,13 +845,6 @@
                       "{function:processOptions}": {
                         "id": 139,
                         "children": {
-                          "{scope:(anonymous:0)}": {
-                            "children": {
-                              "{functionExpression:(anonymous:0)}": {
-                                "id": 151
-                              }
-                            }
-                          },
                           "{functionExpression:(anonymous:0)}": {
                             "id": 158,
                             "children": {
@@ -868,7 +861,7 @@
                                                   "{scope:(then)}": {
                                                     "children": {
                                                       "{functionExpression:(anonymous:0)}": {
-                                                        "id": 153
+                                                        "id": 150
                                                       }
                                                     }
                                                   }
@@ -881,6 +874,13 @@
                                     }
                                   }
                                 }
+                              }
+                            }
+                          },
+                          "{scope:options}": {
+                            "children": {
+                              "{functionExpression:name}": {
+                                "id": 157
                               }
                             }
                           }
@@ -905,7 +905,7 @@
                         "id": 145
                       },
                       "{function:normalizeAttr}": {
-                        "id": 150
+                        "id": 156
                       }
                     }
                   }
@@ -961,20 +961,20 @@
         }
       },
       "clean-css@4.2.4": {
-        "id": 154,
+        "id": 151,
         "children": {
           "lib": {
             "children": {
               "clean.js": {
-                "id": 155,
+                "id": 152,
                 "file": {
                   "{root}": {
                     "children": {
                       "{functionExpression:(anonymous:0)}": {
-                        "id": 156
+                        "id": 153
                       },
                       "{functionExpression:(anonymous:2)}": {
-                        "id": 157
+                        "id": 154
                       },
                       "{function:minify}": {
                         "id": 172,
@@ -3078,6 +3078,57 @@
               "id": 149,
               "type": 0,
               "sensorValues": {
+                "profilerHits": 29,
+                "selfCPUTime": 167,
+                "aggregatedCPUTime": 7875,
+                "internCPUTime": 7708
+              },
+              "intern": {
+                "150": {
+                  "id": 150,
+                  "type": 3,
+                  "sensorValues": {
+                    "profilerHits": 42,
+                    "selfCPUTime": 125,
+                    "aggregatedCPUTime": 7708
+                  }
+                }
+              }
+            },
+            "150": {
+              "id": 150,
+              "type": 0,
+              "sensorValues": {
+                "profilerHits": 42,
+                "selfCPUTime": 125,
+                "aggregatedCPUTime": 7708,
+                "externCPUTime": 7583
+              },
+              "extern": {
+                "153": {
+                  "id": 153,
+                  "type": 4,
+                  "sensorValues": {
+                    "profilerHits": 83,
+                    "selfCPUTime": 334,
+                    "aggregatedCPUTime": 542
+                  }
+                },
+                "154": {
+                  "id": 154,
+                  "type": 4,
+                  "sensorValues": {
+                    "profilerHits": 13,
+                    "selfCPUTime": 83,
+                    "aggregatedCPUTime": 7041
+                  }
+                }
+              }
+            },
+            "155": {
+              "id": 155,
+              "type": 0,
+              "sensorValues": {
                 "profilerHits": 42,
                 "selfCPUTime": 126,
                 "aggregatedCPUTime": 500,
@@ -3093,8 +3144,8 @@
                     "aggregatedCPUTime": 41
                   }
                 },
-                "150": {
-                  "id": 150,
+                "156": {
+                  "id": 156,
                   "type": 3,
                   "sensorValues": {
                     "profilerHits": 24,
@@ -3102,8 +3153,8 @@
                     "aggregatedCPUTime": 333
                   }
                 },
-                "151": {
-                  "id": 151,
+                "157": {
+                  "id": 157,
                   "type": 3,
                   "sensorValues": {
                     "profilerHits": 1
@@ -3111,8 +3162,8 @@
                 }
               }
             },
-            "150": {
-              "id": 150,
+            "156": {
+              "id": 156,
               "type": 0,
               "sensorValues": {
                 "profilerHits": 24,
@@ -3132,62 +3183,11 @@
                 }
               }
             },
-            "151": {
-              "id": 151,
+            "157": {
+              "id": 157,
               "type": 0,
               "sensorValues": {
                 "profilerHits": 1
-              }
-            },
-            "152": {
-              "id": 152,
-              "type": 0,
-              "sensorValues": {
-                "profilerHits": 29,
-                "selfCPUTime": 167,
-                "aggregatedCPUTime": 7875,
-                "internCPUTime": 7708
-              },
-              "intern": {
-                "153": {
-                  "id": 153,
-                  "type": 3,
-                  "sensorValues": {
-                    "profilerHits": 42,
-                    "selfCPUTime": 125,
-                    "aggregatedCPUTime": 7708
-                  }
-                }
-              }
-            },
-            "153": {
-              "id": 153,
-              "type": 0,
-              "sensorValues": {
-                "profilerHits": 42,
-                "selfCPUTime": 125,
-                "aggregatedCPUTime": 7708,
-                "externCPUTime": 7583
-              },
-              "extern": {
-                "156": {
-                  "id": 156,
-                  "type": 4,
-                  "sensorValues": {
-                    "profilerHits": 83,
-                    "selfCPUTime": 334,
-                    "aggregatedCPUTime": 542
-                  }
-                },
-                "157": {
-                  "id": 157,
-                  "type": 4,
-                  "sensorValues": {
-                    "profilerHits": 13,
-                    "selfCPUTime": 83,
-                    "aggregatedCPUTime": 7041
-                  }
-                }
               }
             },
             "158": {
@@ -3221,8 +3221,8 @@
                 }
               },
               "intern": {
-                "152": {
-                  "id": 152,
+                "149": {
+                  "id": 149,
                   "type": 3,
                   "sensorValues": {
                     "profilerHits": 3
@@ -3303,8 +3303,8 @@
                 "internCPUTime": 542
               },
               "intern": {
-                "149": {
-                  "id": 149,
+                "155": {
+                  "id": 155,
                   "type": 3,
                   "sensorValues": {
                     "profilerHits": 42,
@@ -3360,8 +3360,8 @@
                 "internCPUTime": 7875
               },
               "intern": {
-                "152": {
-                  "id": 152,
+                "149": {
+                  "id": 149,
                   "type": 3,
                   "sensorValues": {
                     "profilerHits": 26,
@@ -3391,7 +3391,7 @@
         }
       },
       "extern": {
-        "154": {
+        "151": {
           "nodeModule": {
             "name": "clean-css",
             "version": "4.2.4"
@@ -3400,11 +3400,11 @@
           "kind": 1,
           "lang_internalHeadlessSensorValues": {},
           "intern": {
-            "155": {
+            "152": {
               "path": "./lib/clean.js",
               "functions": {
-                "156": {
-                  "id": 156,
+                "153": {
+                  "id": 153,
                   "type": 0,
                   "sensorValues": {
                     "profilerHits": 83,
@@ -3440,8 +3440,8 @@
                     }
                   }
                 },
-                "157": {
-                  "id": 157,
+                "154": {
+                  "id": 154,
                   "type": 0,
                   "sensorValues": {
                     "profilerHits": 13,

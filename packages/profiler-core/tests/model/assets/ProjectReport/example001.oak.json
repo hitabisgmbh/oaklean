@@ -564,7 +564,7 @@
                                                 "children": {
                                                   "{scope:(anonymous:0)}": {
                                                     "children": {
-                                                      "{functionExpression:(anonymous:0)}": {
+                                                      "{functionExpression:get}": {
                                                         "id": 98
                                                       }
                                                     }
@@ -757,12 +757,12 @@
             "file": {
               "{root}": {
                 "children": {
-                  "{scope:(anonymous:0)}": {
+                  "{scope:profiler}": {
                     "children": {
-                      "{functionExpression:(anonymous:9)}": {
+                      "{functionExpression:startProfiling}": {
                         "id": 118
                       },
-                      "{functionExpression:(anonymous:10)}": {
+                      "{functionExpression:stopProfiling}": {
                         "id": 120
                       }
                     }

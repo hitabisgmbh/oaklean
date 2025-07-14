@@ -1,5 +1,6 @@
 import * as ts from 'typescript'
 
+import { NamingHelper } from '../NamingHelper'
 import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
@@ -20,13 +21,18 @@ export class ObjectLiteralExpressionHelper {
 	): { resolve: () => ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression> } {
 		return {
 			resolve: () => {
-				const scopeName = `scope:(anonymous:${traverseNodeInfo.counters.anonymousScopeCounter++})`
+				const { identifier, identifierType } = NamingHelper.getName(
+					node.parent,
+					sourceFile,
+					traverseNodeInfo
+				)
+
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
 					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.ObjectLiteralExpression,
-					IdentifierType.Anonymous,
-					`{${scopeName}}` as SourceNodeIdentifierPart_string,
+					identifierType,
+					`{scope:${identifier}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 				)
