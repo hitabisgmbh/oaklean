@@ -1,5 +1,6 @@
 import * as ts from 'typescript'
 
+import { NamingHelper } from './NamingHelper'
 import { TypescriptHelper } from './TypescriptHelper'
 import { TraverseNodeInfo } from './TraverseNodeInfo'
 
@@ -20,14 +21,18 @@ export class FunctionDeclarationHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.FunctionDeclaration> {
-		if (node.name !== undefined && ts.isIdentifier(node.name)) {
-			const functionName = node.name.escapedText
+		if (node.name !== undefined) {
+			const { identifier, identifierType } = NamingHelper.getName(
+				node.name,
+				sourceFile,
+				traverseNodeInfo
+			)
 			return new ProgramStructureTree(
 				traverseNodeInfo.resolvedTree(),
 				traverseNodeInfo.nextId(),
 				ProgramStructureTreeType.FunctionDeclaration,
-				IdentifierType.Name,
-				('{function:' + functionName + '}') as SourceNodeIdentifierPart_string,
+				identifierType,
+				`{function:${identifier}}` as SourceNodeIdentifierPart_string,
 				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 				TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
 			)

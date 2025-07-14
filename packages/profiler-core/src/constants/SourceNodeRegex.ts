@@ -1,16 +1,14 @@
 export const SourceNodeNameRegexString = '[a-zA-Z0-9_$#]+'
 export const SourceNodeNameExpressionRegexString =
-	`(?:${SourceNodeNameRegexString}|\\((?:literal|expression):${SourceNodeNameRegexString}\\))`
+	`(?:${SourceNodeNameRegexString}|\\((?:literal|expression):${SourceNodeNameRegexString}\\)|\\(anonymous:[0-9]+\\))`
 
 export const RootRegexString = '{(root)}'
 export const ConstructorDeclarationRegexString = '{constructor:(constructor)}'
 export const ClassDeclarationRegexString = `{class:(${SourceNodeNameRegexString})}`
 export const MethodDefinitionRegexString = `{method(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
 export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString})}`
-export const FunctionExpressionRegexString =
-	`{functionExpression:(${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
-export const ClassExpressionRegexString =
-	`{classExpression:(${SourceNodeNameExpressionRegexString}|\\(anonymous:[0-9]+\\))}`
+export const FunctionExpressionRegexString = `{functionExpression:(${SourceNodeNameExpressionRegexString})}`
+export const ClassExpressionRegexString = `{classExpression:(${SourceNodeNameExpressionRegexString})}`
 // Scopes
 export const ExpressionHashRegexString = '[A-Za-z0-9]+'
 

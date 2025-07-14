@@ -1,5 +1,6 @@
 import * as ts from 'typescript'
 
+import { NamingHelper } from './NamingHelper'
 import { TypescriptHelper } from './TypescriptHelper'
 import { TraverseNodeInfo } from './TraverseNodeInfo'
 
@@ -21,13 +22,17 @@ export class ClassDeclarationHelper {
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.ClassDeclaration> {
 		if (node.name?.kind === ts.SyntaxKind.Identifier) {
-			const className = node.name.escapedText
+			const { identifier, identifierType } = NamingHelper.getIdentifierName(
+				node.name,
+				sourceFile,
+				traverseNodeInfo
+			)
 			return new ProgramStructureTree(
 				traverseNodeInfo.resolvedTree(),
 				traverseNodeInfo.nextId(),
 				ProgramStructureTreeType.ClassDeclaration,
-				IdentifierType.Name,
-				('{class:' + className + '}') as SourceNodeIdentifierPart_string,
+				identifierType,
+				`{class:${identifier}}` as SourceNodeIdentifierPart_string,
 				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 				TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
 			)
