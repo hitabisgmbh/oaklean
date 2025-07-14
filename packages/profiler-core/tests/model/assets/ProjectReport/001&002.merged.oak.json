@@ -223,7 +223,7 @@
                                         "children": {
                                           "{scope:(if:0)}": {
                                             "children": {
-                                              "{scope:then}": {
+                                              "{scope:(then)}": {
                                                 "children": {
                                                   "{scope:(anonymous:0)}": {
                                                     "children": {
@@ -857,15 +857,15 @@
                             "children": {
                               "{scope:(if:0)}": {
                                 "children": {
-                                  "{scope:else}": {
+                                  "{scope:(else)}": {
                                     "children": {
                                       "{scope:(if:0)}": {
                                         "children": {
-                                          "{scope:else}": {
+                                          "{scope:(else)}": {
                                             "children": {
                                               "{scope:(if:0)}": {
                                                 "children": {
-                                                  "{scope:then}": {
+                                                  "{scope:(then)}": {
                                                     "children": {
                                                       "{functionExpression:(anonymous:0)}": {
                                                         "id": 153
@@ -935,7 +935,7 @@
                           },
                           "{scope:(if:0)}": {
                             "children": {
-                              "{scope:else}": {
+                              "{scope:(else)}": {
                                 "children": {
                                   "{functionExpression:(anonymous:0)}": {
                                     "id": 163

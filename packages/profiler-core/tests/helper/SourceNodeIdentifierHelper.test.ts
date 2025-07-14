@@ -59,12 +59,12 @@ ProgramStructureTreeType,
 		expectedName: '(if:0)'
 	},
 	[ProgramStructureTreeType.IfThenStatement]: {
-		input: '{scope:then}',
-		expectedName: 'then'
+		input: '{scope:(then)}',
+		expectedName: '(then)'
 	},
 	[ProgramStructureTreeType.IfElseStatement]: {
-		input: '{scope:else}',
-		expectedName: 'else'
+		input: '{scope:(else)}',
+		expectedName: '(else)'
 	},
 	[ProgramStructureTreeType.SwitchStatement]: {
 		input: '{scope:(switch:0)}',

@@ -559,15 +559,15 @@
                             "children": {
                               "{scope:(if:0)}": {
                                 "children": {
-                                  "{scope:else}": {
+                                  "{scope:(else)}": {
                                     "children": {
                                       "{scope:(if:0)}": {
                                         "children": {
-                                          "{scope:else}": {
+                                          "{scope:(else)}": {
                                             "children": {
                                               "{scope:(if:0)}": {
                                                 "children": {
-                                                  "{scope:then}": {
+                                                  "{scope:(then)}": {
                                                     "children": {
                                                       "{functionExpression:(anonymous:0)}": {
                                                         "id": 80
@@ -616,7 +616,7 @@
                           },
                           "{scope:(if:0)}": {
                             "children": {
-                              "{scope:else}": {
+                              "{scope:(else)}": {
                                 "children": {
                                   "{functionExpression:(anonymous:0)}": {
                                     "id": 92

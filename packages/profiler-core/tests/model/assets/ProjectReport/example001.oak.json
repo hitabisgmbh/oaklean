@@ -560,7 +560,7 @@
                                         "children": {
                                           "{scope:(if:0)}": {
                                             "children": {
-                                              "{scope:then}": {
+                                              "{scope:(then)}": {
                                                 "children": {
                                                   "{scope:(anonymous:0)}": {
                                                     "children": {

@@ -35,7 +35,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 					'{scope:(if:0)}': {
 						type: ProgramStructureTreeType.IfStatement,
 						children: {
-							'{scope:then}': {
+							'{scope:(then)}': {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
@@ -48,7 +48,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 					'{scope:(if:1)}': {
 						type: ProgramStructureTreeType.IfStatement,
 						children: {
-							'{scope:then}': {
+							'{scope:(then)}': {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
@@ -61,13 +61,13 @@ describe('ts.SyntaxKind.IfStatement', () => {
 					'{scope:(if:2)}': {
 						type: ProgramStructureTreeType.IfStatement,
 						children: {
-							'{scope:then}': {
+							'{scope:(then)}': {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{scope:(if:0)}': {
 										type: ProgramStructureTreeType.IfStatement,
 										children: {
-											'{scope:then}': {
+											'{scope:(then)}': {
 												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
@@ -107,7 +107,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 					'{scope:(if:0)}': {
 						type: ProgramStructureTreeType.IfStatement,
 						children: {
-							'{scope:then}': {
+							'{scope:(then)}': {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
@@ -115,13 +115,13 @@ describe('ts.SyntaxKind.IfStatement', () => {
 									}
 								}
 							},
-							'{scope:else}': {
+							'{scope:(else)}': {
 								type: ProgramStructureTreeType.IfElseStatement,
 								children: {
 									'{scope:(if:0)}': {
 										type: ProgramStructureTreeType.IfStatement,
 										children: {
-											'{scope:else}': {
+											'{scope:(else)}': {
 												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
@@ -182,7 +182,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 					'{scope:(if:0)}': {
 						type: ProgramStructureTreeType.IfStatement,
 						children: {
-							'{scope:then}': {
+							'{scope:(then)}': {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
@@ -190,13 +190,13 @@ describe('ts.SyntaxKind.IfStatement', () => {
 									}
 								}
 							},
-							'{scope:else}': {
+							'{scope:(else)}': {
 								type: ProgramStructureTreeType.IfElseStatement,
 								children: {
 									'{scope:(if:0)}': {
 										type: ProgramStructureTreeType.IfStatement,
 										children: {
-											'{scope:then}': {
+											'{scope:(then)}': {
 												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
@@ -204,7 +204,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 													}
 												}
 											},
-											'{scope:else}': {
+											'{scope:(else)}': {
 												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
@@ -221,7 +221,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 					'{scope:(if:1)}': {
 						type: ProgramStructureTreeType.IfStatement,
 						children: {
-							'{scope:then}': {
+							'{scope:(then)}': {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
@@ -229,13 +229,13 @@ describe('ts.SyntaxKind.IfStatement', () => {
 									}
 								}
 							},
-							'{scope:else}': {
+							'{scope:(else)}': {
 								type: ProgramStructureTreeType.IfElseStatement,
 								children: {
 									'{scope:(if:0)}': {
 										type: ProgramStructureTreeType.IfStatement,
 										children: {
-											'{scope:then}': {
+											'{scope:(then)}': {
 												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
@@ -243,7 +243,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 													}
 												}
 											},
-											'{scope:else}': {
+											'{scope:(else)}': {
 												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
@@ -283,7 +283,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 							'{functionExpression:(anonymous:0)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{scope:then}': {
+							'{scope:(then)}': {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
