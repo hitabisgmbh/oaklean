@@ -52,7 +52,7 @@ export class IfStatementHelper {
 						traverseNodeInfo.nextId(),
 						ProgramStructureTreeType.IfThenStatement,
 						IdentifierType.Statement,
-						'{scope:then}' as SourceNodeIdentifierPart_string,
+						'{scope:(then)}' as SourceNodeIdentifierPart_string,
 						TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 					)
@@ -68,7 +68,7 @@ export class IfStatementHelper {
 						traverseNodeInfo.nextId(),
 						ProgramStructureTreeType.IfElseStatement,
 						IdentifierType.Statement,
-						'{scope:else}' as SourceNodeIdentifierPart_string,
+						'{scope:(else)}' as SourceNodeIdentifierPart_string,
 						TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 					)

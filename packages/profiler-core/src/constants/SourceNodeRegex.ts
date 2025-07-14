@@ -14,8 +14,8 @@ export const ExpressionHashRegexString = '[A-Za-z0-9]+'
 
 export const ObjectLiteralExpressionRegexString = '{scope:(\\(anonymous:[0-9]+\\))}'
 export const IfStatementRegexString = '{scope:(\\(if:[0-9]+\\))}'
-export const IfThenStatementRegexString = '{scope:(then)}'
-export const IfElseStatementRegexString = '{scope:(else)}'
+export const IfThenStatementRegexString = '{scope:(\\(then\\))}'
+export const IfElseStatementRegexString = '{scope:(\\(else\\))}'
 // eslint-disable-next-line max-len
 export const SwitchStatementRegexString = '{scope:(\\(switch:[0-9]+\\))}'
 export const SwitchCaseClauseRegexString = `{scope:(\\(case:(?:${ExpressionHashRegexString}|default)\\))}`
