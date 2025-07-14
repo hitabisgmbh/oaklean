@@ -174,7 +174,7 @@ export default class CodeParsingCommands {
 		if (resourceFile.scriptIDs.includes(file as ScriptID_string)) {
 			code = await resourceFile.sourceCodeFromScriptID(file as ScriptID_string)
 		} else if (resourceFile.loadedFilePaths.includes(file as UnifiedPath_string)) {
-			code = await resourceFile.sourceCodeFromScriptID(file as ScriptID_string)
+			code = await resourceFile.sourceCodeFromPath(file as UnifiedPath_string, file as UnifiedPath_string)
 		} else {
 			LoggerHelper.error(`File ${file} not found in resource file: ${relativeInputPath.toPlatformString()}`)
 		}
