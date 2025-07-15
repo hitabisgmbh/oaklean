@@ -228,7 +228,7 @@ export class TypescriptParser {
 		}
 
 		const enterNode = (node: ts.Node) => {
-			if (SkipHelper.nodeShouldBeSkipped(node)) {
+			if (SkipHelper.nodeShouldBeSkipped(node, sourceFile)) {
 				return
 			}
 

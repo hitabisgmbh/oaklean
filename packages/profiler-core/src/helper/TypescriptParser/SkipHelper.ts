@@ -2,9 +2,13 @@ import * as ts from 'typescript'
 
 export class SkipHelper {
 	static nodeShouldBeSkipped(
-		node: ts.Node
+		node: ts.Node,
+		sourceFile: ts.SourceFile
 	): boolean {
-		if (node.parent !== undefined && ts.isCallExpression(node.parent)) {
+		if (node.parent === undefined) {
+			return false
+		}
+		if (ts.isCallExpression(node.parent)) {
 			if (ts.isIdentifier(node.parent.expression)) {
 				if (node.parent.expression.escapedText === '___awaiter') {
 					/**
@@ -30,6 +34,22 @@ export class SkipHelper {
 			}
 		}
 
-		return false
+		if (node.kind === ts.SyntaxKind.FunctionExpression && node.parent?.parent?.parent === sourceFile) {
+			if ((node as ts.FunctionExpression).parameters.length === 5) {
+				if (
+					((node as ts.FunctionExpression).parameters[0].name as ts.Identifier).escapedText === 'exports' &&
+					((node as ts.FunctionExpression).parameters[1].name as ts.Identifier).escapedText === 'require' &&
+					((node as ts.FunctionExpression).parameters[2].name as ts.Identifier).escapedText === 'module' &&
+					((node as ts.FunctionExpression).parameters[3].name as ts.Identifier).escapedText === '___filename' &&
+					((node as ts.FunctionExpression).parameters[4].name as ts.Identifier).escapedText === '___dirname'
+				) {
+					/**
+					 * This is how CommonJS wraps modules.
+					 * We need to skip this function expression to keep the hierarchy clean.
+					 */
+					return true
+				}
+			}
+		}
 	}
 }
