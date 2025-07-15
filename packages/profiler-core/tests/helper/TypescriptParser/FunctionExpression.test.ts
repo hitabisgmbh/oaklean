@@ -500,10 +500,10 @@ describe('FunctionExpression in Class', () => {
 					'{class:FunctionExpression}': {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
-							'{functionExpression:(literal:0)}': {
+							'{functionExpression:(literal:92cfceb3)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{functionExpression@static:(literal:1)}': {
+							'{functionExpression@static:(literal:92cfceb3)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
@@ -532,10 +532,10 @@ describe('FunctionExpression in Class', () => {
 					'{class:FunctionExpression}': {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
-							'{functionExpression:(literal:0)}': {
+							'{functionExpression:(literal:7e2b9fea)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{functionExpression@static:(literal:1)}': {
+							'{functionExpression@static:(literal:7e2b9fea)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
@@ -566,10 +566,10 @@ describe('FunctionExpression in Class', () => {
 					'{class:FunctionExpression}': {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
-							'{functionExpression:(expression:0)}': {
+							'{functionExpression:(expression:34832631)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{functionExpression@static:(expression:1)}': {
+							'{functionExpression@static:(expression:34832631)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}

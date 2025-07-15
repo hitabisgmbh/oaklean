@@ -1,5 +1,6 @@
 import * as ts from 'typescript'
 
+import { ExpressionHelper } from './ExpressionHelper'
 import { TraverseNodeInfo } from './TraverseNodeInfo'
 import { TypescriptHelper } from './TypescriptHelper'
 
@@ -111,14 +112,18 @@ export class NamingHelper {
 	}
 
 	static getLiteralName(
-		node: ts.Identifier,
+		node: ts.StringLiteral | ts.NumericLiteral,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
+		const expressionHash = ExpressionHelper.hashExpression(
+			node,
+			sourceFile
+		)
+
 		return {
 			suffix: '',
-			identifier: `(literal:${traverseNodeInfo.counters
-				.literalFunctionCounter++})`,
+			identifier: `(literal:${expressionHash})`,
 			identifierType: IdentifierType.Literal
 		}
 	}
@@ -128,9 +133,13 @@ export class NamingHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
+		const expressionHash = ExpressionHelper.hashExpression(
+			node.expression,
+			sourceFile
+		)
 		return {
 			suffix: '',
-			identifier: `(expression:${traverseNodeInfo.counters.literalFunctionCounter++})`,
+			identifier: `(expression:${expressionHash})`,
 			identifierType: IdentifierType.Expression
 		}
 	}

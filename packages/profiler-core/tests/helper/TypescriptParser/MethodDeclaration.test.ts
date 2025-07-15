@@ -82,10 +82,10 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 				'{class:MethodDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(literal:0)}': {
+						'{method:(literal:92cfceb3)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						},
-						'{method@static:(literal:1)}': {
+						'{method@static:(literal:92cfceb3)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						}
 					}
@@ -114,10 +114,10 @@ describe('ts.SyntaxKind.FunctionExpression', () => {
 				'{class:MethodDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(literal:0)}': {
+						'{method:(literal:7e2b9fea)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						},
-						'{method@static:(literal:1)}': {
+						'{method@static:(literal:7e2b9fea)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						}
 					}
@@ -147,10 +147,10 @@ describe('ts.SyntaxKind.ComputedPropertyName', () => {
 				'{class:MethodDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(expression:0)}': {
+						'{method:(expression:34832631)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						},
-						'{method@static:(expression:1)}': {
+						'{method@static:(expression:34832631)}': {
 							type: ProgramStructureTreeType.MethodDefinition,
 						}
 					}
