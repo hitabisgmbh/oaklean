@@ -51,5 +51,6 @@ export class SkipHelper {
 				}
 			}
 		}
+		return false
 	}
 }
