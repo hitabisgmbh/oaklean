@@ -19,6 +19,7 @@ export class ArrowFunctionHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
+		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
 		const { identifier, identifierType } = NamingHelper.getName(
 			node.parent,
 			sourceFile,
@@ -30,7 +31,7 @@ export class ArrowFunctionHelper {
 			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.FunctionExpression,
 			identifierType,
-			`{functionExpression:${identifier}}` as SourceNodeIdentifierPart_string,
+			`{functionExpression${staticSuffix}:${identifier}}` as SourceNodeIdentifierPart_string,
 			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
 		)

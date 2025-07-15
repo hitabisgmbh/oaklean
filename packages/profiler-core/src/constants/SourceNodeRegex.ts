@@ -7,7 +7,7 @@ export const ConstructorDeclarationRegexString = '{constructor:(constructor)}'
 export const ClassDeclarationRegexString = `{class:(${SourceNodeNameRegexString})}`
 export const MethodDefinitionRegexString = `{method(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
 export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString})}`
-export const FunctionExpressionRegexString = `{functionExpression:(${SourceNodeNameExpressionRegexString})}`
+export const FunctionExpressionRegexString = `{functionExpression(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
 export const ClassExpressionRegexString = `{classExpression:(${SourceNodeNameExpressionRegexString})}`
 // Scopes
 export const ExpressionHashRegexString = '[A-Za-z0-9]+'
