@@ -457,7 +457,6 @@ describe('FunctionExpression in Class', () => {
 			}
 		`
 
-		it.todo('should include static version in identifier hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -470,6 +469,9 @@ describe('FunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:PropertyDeclaration}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							},
+							'{functionExpression@static:PropertyDeclaration}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
@@ -501,7 +503,7 @@ describe('FunctionExpression in Class', () => {
 							'{functionExpression:(literal:0)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{functionExpression:(literal:1)}': {
+							'{functionExpression@static:(literal:1)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
@@ -533,7 +535,7 @@ describe('FunctionExpression in Class', () => {
 							'{functionExpression:(literal:0)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{functionExpression:(literal:1)}': {
+							'{functionExpression@static:(literal:1)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
@@ -567,7 +569,7 @@ describe('FunctionExpression in Class', () => {
 							'{functionExpression:(expression:0)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{functionExpression:(expression:1)}': {
+							'{functionExpression@static:(expression:1)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}

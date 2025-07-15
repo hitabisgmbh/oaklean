@@ -18,6 +18,7 @@ export class NamingHelper {
 			return getNameFunction(node, sourceFile, traverseNodeInfo)
 		}
 		return {
+			suffix: '',
 			identifier: `(anonymous:${traverseNodeInfo.counters.anonymousFunctionCounter++})`,
 			identifierType: IdentifierType.Anonymous
 		}
@@ -27,7 +28,7 @@ export class NamingHelper {
 		node: ts.PropertyAssignment,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { identifier: string; identifierType: IdentifierType } {
+	): ReturnType<GetNameFunction> {
 		const getNameFunction = GET_NAME_FUNCTIONS[node.name.kind]
 		if (getNameFunction !== undefined) {
 			return getNameFunction(node.name, sourceFile, traverseNodeInfo)
@@ -51,10 +52,15 @@ export class NamingHelper {
 		node: ts.PropertyDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { identifier: string; identifierType: IdentifierType } {
+	): ReturnType<GetNameFunction> {
+		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
 		const getNameFunction = GET_NAME_FUNCTIONS[node.name.kind]
 		if (getNameFunction !== undefined) {
-			return getNameFunction(node.name, sourceFile, traverseNodeInfo)
+			const result = getNameFunction(node.name, sourceFile, traverseNodeInfo)
+			return {
+				...result,
+				suffix: staticSuffix
+			}
 		}
 		LoggerHelper.error(
 			'NamingHelper (getPropertyDeclarationName): unhandled case: node.name.kind === ' +
@@ -77,7 +83,7 @@ export class NamingHelper {
 		node: ts.VariableDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { identifier: string; identifierType: IdentifierType } {
+	): ReturnType<GetNameFunction> {
 		const getNameFunction = GET_NAME_FUNCTIONS[node.name.kind]
 		if (getNameFunction !== undefined) {
 			return getNameFunction(node.name, sourceFile, traverseNodeInfo)
@@ -96,8 +102,9 @@ export class NamingHelper {
 		node: ts.Identifier,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { identifier: string; identifierType: IdentifierType } {
+	): ReturnType<GetNameFunction> {
 		return {
+			suffix: '',
 			identifier: node.escapedText.toString(),
 			identifierType: IdentifierType.Name
 		}
@@ -107,8 +114,9 @@ export class NamingHelper {
 		node: ts.Identifier,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { identifier: string; identifierType: IdentifierType } {
+	): ReturnType<GetNameFunction> {
 		return {
+			suffix: '',
 			identifier: `(literal:${traverseNodeInfo.counters
 				.literalFunctionCounter++})`,
 			identifierType: IdentifierType.Literal
@@ -119,8 +127,9 @@ export class NamingHelper {
 		node: ts.ComputedPropertyName,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { identifier: string; identifierType: IdentifierType } {
+	): ReturnType<GetNameFunction> {
 		return {
+			suffix: '',
 			identifier: `(expression:${traverseNodeInfo.counters.literalFunctionCounter++})`,
 			identifierType: IdentifierType.Expression
 		}
@@ -131,7 +140,11 @@ type GetNameFunction = (
 	node: any,
 	sourceFile: ts.SourceFile,
 	traverseNodeInfo: TraverseNodeInfo
-) => { identifier: string; identifierType: IdentifierType }
+) => {
+	suffix: string;
+	identifier: string;
+	identifierType: IdentifierType
+}
 
 const GET_NAME_FUNCTIONS: Partial<Record<ts.SyntaxKind, GetNameFunction>> = {
 	[ts.SyntaxKind.PropertyDeclaration]: NamingHelper.getPropertyDeclarationName,

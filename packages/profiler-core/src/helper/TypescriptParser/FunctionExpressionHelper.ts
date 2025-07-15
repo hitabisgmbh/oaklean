@@ -33,8 +33,7 @@ export class FunctionExpressionHelper {
 				TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
 			)
 		}
-		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
-		const { identifier, identifierType } = NamingHelper.getName(
+		const { suffix, identifier, identifierType } = NamingHelper.getName(
 			node.parent,
 			sourceFile,
 			traverseNodeInfo
@@ -45,7 +44,7 @@ export class FunctionExpressionHelper {
 			traverseNodeInfo.nextId(),
 			ProgramStructureTreeType.FunctionExpression,
 			identifierType,
-			`{functionExpression${staticSuffix}:${identifier}}` as SourceNodeIdentifierPart_string,
+			`{functionExpression${suffix}:${identifier}}` as SourceNodeIdentifierPart_string,
 			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
 		)

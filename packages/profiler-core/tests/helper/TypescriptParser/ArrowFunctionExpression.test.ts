@@ -458,7 +458,6 @@ describe('ArrowFunctionExpression in Class', () => {
 			}
 		`
 
-		it.todo('Should include the static version in the identifier hierarchy')
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -471,6 +470,9 @@ describe('ArrowFunctionExpression in Class', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{functionExpression:PropertyDeclaration}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							},
+							'{functionExpression@static:PropertyDeclaration}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
@@ -502,7 +504,7 @@ describe('ArrowFunctionExpression in Class', () => {
 							'{functionExpression:(literal:0)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{functionExpression:(literal:1)}': {
+							'{functionExpression@static:(literal:1)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
@@ -534,7 +536,7 @@ describe('ArrowFunctionExpression in Class', () => {
 							'{functionExpression:(literal:0)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{functionExpression:(literal:1)}': {
+							'{functionExpression@static:(literal:1)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}
@@ -567,7 +569,7 @@ describe('ArrowFunctionExpression in Class', () => {
 							'{functionExpression:(expression:0)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							},
-							'{functionExpression:(expression:1)}': {
+							'{functionExpression@static:(expression:1)}': {
 								type: ProgramStructureTreeType.FunctionExpression
 							}
 						}

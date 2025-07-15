@@ -94,7 +94,7 @@ export class TypescriptHelper {
 		return false
 	}
 
-	static hasStaticKeywordModifier(node: ts.MethodDeclaration | ts.FunctionExpression | ts.ArrowFunction): boolean {
+	static hasStaticKeywordModifier(node: ts.MethodDeclaration | ts.PropertyDeclaration): boolean {
 		if (node.modifiers === undefined || node.modifiers.length === 0) {
 			return false
 		}
