@@ -32,7 +32,7 @@ export class ObjectLiteralExpressionHelper {
 					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.ObjectLiteralExpression,
 					identifierType,
-					`{scope:${identifier}}` as SourceNodeIdentifierPart_string,
+					`{scope:(obj:${identifier})}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 				)

@@ -12,7 +12,7 @@ export const ClassExpressionRegexString = `{classExpression:(${SourceNodeNameExp
 // Scopes
 export const ExpressionHashRegexString = '[A-Za-z0-9]+'
 
-export const ObjectLiteralExpressionRegexString = `{scope:(${SourceNodeNameExpressionRegexString})}`
+export const ObjectLiteralExpressionRegexString = `{scope:\\(obj:(${SourceNodeNameExpressionRegexString})\\)}`
 export const IfStatementRegexString = '{scope:(\\(if:[0-9]+\\))}'
 export const IfThenStatementRegexString = '{scope:(\\(then\\))}'
 export const IfElseStatementRegexString = '{scope:(\\(else\\))}'

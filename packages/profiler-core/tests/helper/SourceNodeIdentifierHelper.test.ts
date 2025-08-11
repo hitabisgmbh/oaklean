@@ -51,7 +51,7 @@ ProgramStructureTreeType,
 		expectedName: 'constructor'
 	},
 	[ProgramStructureTreeType.ObjectLiteralExpression]: {
-		input: '{scope:(anonymous:1234)}',
+		input: '{scope:(obj:(anonymous:1234))}',
 		expectedName: '(anonymous:1234)'
 	},
 	[ProgramStructureTreeType.IfStatement]: {

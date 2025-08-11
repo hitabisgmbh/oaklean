@@ -38,13 +38,13 @@ describe('with executable children', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{scope:obj}': {
+				'{scope:(obj:obj)}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{method:method}': {
 							type: ProgramStructureTreeType.MethodDefinition
 						},
-						'{scope:a}': {
+						'{scope:(obj:a)}': {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{method:method}': {
@@ -81,10 +81,10 @@ describe('with deep nested executable children', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{scope:obj}': {
+				'{scope:(obj:obj)}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
-						'{scope:a}': {
+						'{scope:(obj:a)}': {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{method:method}': {
@@ -92,7 +92,7 @@ describe('with deep nested executable children', () => {
 								}
 							}
 						},
-						'{scope:b}': {
+						'{scope:(obj:b)}': {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{method:method}': {

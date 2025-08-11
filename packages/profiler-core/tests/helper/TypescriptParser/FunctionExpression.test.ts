@@ -172,7 +172,7 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{scope:obj}': {
+				'{scope:(obj:obj)}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{functionExpression:method}': {

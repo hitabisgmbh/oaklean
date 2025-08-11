@@ -5895,7 +5895,7 @@
                           "{functionExpression:(anonymous:1)}": {
                             "id": 73
                           },
-                          "{scope:(anonymous:2)}": {
+                          "{scope:(obj:(anonymous:2))}": {
                             "children": {
                               "{functionExpression:chars}": {
                                 "id": 76
@@ -5942,7 +5942,7 @@
                               }
                             }
                           },
-                          "{scope:options}": {
+                          "{scope:(obj:options)}": {
                             "children": {
                               "{functionExpression:name}": {
                                 "id": 80
@@ -6015,7 +6015,7 @@
             "file": {
               "{root}": {
                 "children": {
-                  "{scope:profiler}": {
+                  "{scope:(obj:profiler)}": {
                     "children": {
                       "{functionExpression:startProfiling}": {
                         "id": 56

@@ -225,7 +225,7 @@
                                             "children": {
                                               "{scope:(then)}": {
                                                 "children": {
-                                                  "{scope:(anonymous:0)}": {
+                                                  "{scope:(obj:(anonymous:0))}": {
                                                     "children": {
                                                       "{functionExpression:get}": {
                                                         "id": 100
@@ -795,7 +795,7 @@
             "file": {
               "{root}": {
                 "children": {
-                  "{scope:profiler}": {
+                  "{scope:(obj:profiler)}": {
                     "children": {
                       "{functionExpression:startProfiling}": {
                         "id": 126
@@ -830,7 +830,7 @@
                           "{functionExpression:(anonymous:1)}": {
                             "id": 146
                           },
-                          "{scope:(anonymous:2)}": {
+                          "{scope:(obj:(anonymous:2))}": {
                             "children": {
                               "{functionExpression:chars}": {
                                 "id": 149
@@ -877,7 +877,7 @@
                               }
                             }
                           },
-                          "{scope:options}": {
+                          "{scope:(obj:options)}": {
                             "children": {
                               "{functionExpression:name}": {
                                 "id": 157
