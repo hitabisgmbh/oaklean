@@ -62,6 +62,34 @@ export class SkipHelper {
 				}
 			}
 		}
+		// skip jest module wrapper
+		if (depth === 6 && node.kind === ts.SyntaxKind.Block) {
+			if (node.parent.kind === ts.SyntaxKind.FunctionExpression) {
+				const parent = node.parent as ts.FunctionExpression
+				if (parent.parameters.length === 6) {
+					if (
+						(parent.parameters[0].name as ts.Identifier)
+							.escapedText === 'module' &&
+						(parent.parameters[1].name as ts.Identifier)
+							.escapedText === 'exports' &&
+						(parent.parameters[2].name as ts.Identifier)
+							.escapedText === 'require' &&
+						(parent.parameters[3].name as ts.Identifier)
+							.escapedText === '___dirname' &&
+						(parent.parameters[4].name as ts.Identifier)
+							.escapedText === '___filename' &&
+						(parent.parameters[5].name as ts.Identifier)
+							.escapedText === 'jest'
+					) {
+						/**
+						 * This is how jest wraps modules.
+						 * We need to skip all parent nodes until the root node to keep the hierarchy clean.
+						 */
+						return currentTraverseNodeInfo.root
+					}
+				}
+			}
+		}
 
 		return undefined
 	}

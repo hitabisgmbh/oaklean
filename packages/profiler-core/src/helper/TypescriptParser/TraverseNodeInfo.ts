@@ -38,6 +38,10 @@ export class TraverseNodeInfo {
 		return tree
 	}
 
+	get root(): TraverseNodeInfo {
+		return this._root
+	}
+
 	nextId() {
 		return this._root._idCounter++
 	}
