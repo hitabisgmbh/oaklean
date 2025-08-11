@@ -26,6 +26,7 @@ describe('JestScope', () => {
 		const code = `({"Object.<anonymous>":function(module,exports,require,__dirname,__filename,jest) {
 			function a() {}
 			function b() {}
+			var xyz = (() => {})();
 		}})`
 
 		test('expected identifier', () => {
@@ -41,6 +42,9 @@ describe('JestScope', () => {
 					},
 					'{function:b}': {
 						type: ProgramStructureTreeType.FunctionDeclaration
+					},
+					'{functionExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.FunctionExpression
 					}
 				}
 			})

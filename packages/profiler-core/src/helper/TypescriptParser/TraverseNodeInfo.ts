@@ -22,8 +22,15 @@ export class TraverseNodeInfo {
 	public node: ts.Node
 	public filePath: UnifiedPath | UnifiedPath_string
 	private _idCounter: number
-	public tree: ProgramStructureTree | { resolve: () => ProgramStructureTree }
+	public tree: ProgramStructureTree | {
+		resolve(): ProgramStructureTree
+		resolveWithNoChildren?: boolean
+	}
 	public counters: TraverseNodeInfoCounters
+
+	shouldResolveTreeWithZeroChildren(): boolean {
+		return this.tree instanceof ProgramStructureTree || this.tree.resolveWithNoChildren === true
+	}
 
 	isTreeResolved(): boolean {
 		return this.tree instanceof ProgramStructureTree
@@ -50,7 +57,7 @@ export class TraverseNodeInfo {
 		parent: TraverseNodeInfo | null = null,
 		node: ts.Node,
 		filePath: UnifiedPath | UnifiedPath_string,
-		tree: ProgramStructureTree | { resolve: () => ProgramStructureTree }
+		tree: ProgramStructureTree | { resolve(): ProgramStructureTree }
 	) {
 		this.parent = parent
 		this._idCounter = 1 // root node has id 0

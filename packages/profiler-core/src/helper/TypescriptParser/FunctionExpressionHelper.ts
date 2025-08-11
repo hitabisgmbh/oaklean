@@ -19,34 +19,42 @@ export class FunctionExpressionHelper {
 		node: ts.FunctionExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
-		const emitHelperName = TypescriptHelper.getEmitHelperName(node)
-		if (emitHelperName !== undefined) {
-			const functionName = `functionExpression:${emitHelperName}`
-			return new ProgramStructureTree(
-				traverseNodeInfo.resolvedTree(),
-				traverseNodeInfo.nextId(),
-				ProgramStructureTreeType.FunctionExpression,
-				IdentifierType.Name,
-				`{${functionName}}` as SourceNodeIdentifierPart_string,
-				TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-				TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
-			)
-		}
-		const { suffix, identifier, identifierType } = NamingHelper.getName(
-			node.parent,
-			sourceFile,
-			traverseNodeInfo
-		)
+	): {
+			resolve(): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression>
+			resolveWithNoChildren: true
+		} {
+		return {
+			resolveWithNoChildren: true,
+			resolve() {
+				const emitHelperName = TypescriptHelper.getEmitHelperName(node)
+				if (emitHelperName !== undefined) {
+					const functionName = `functionExpression:${emitHelperName}`
+					return new ProgramStructureTree(
+						traverseNodeInfo.resolvedTree(),
+						traverseNodeInfo.nextId(),
+						ProgramStructureTreeType.FunctionExpression,
+						IdentifierType.Name,
+						`{${functionName}}` as SourceNodeIdentifierPart_string,
+						TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+					)
+				}
+				const { suffix, identifier, identifierType } = NamingHelper.getName(
+					node.parent,
+					sourceFile,
+					traverseNodeInfo
+				)
 
-		return new ProgramStructureTree(
-			traverseNodeInfo.resolvedTree(),
-			traverseNodeInfo.nextId(),
-			ProgramStructureTreeType.FunctionExpression,
-			identifierType,
-			`{functionExpression${suffix}:${identifier}}` as SourceNodeIdentifierPart_string,
-			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
-		)
+				return new ProgramStructureTree(
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
+					ProgramStructureTreeType.FunctionExpression,
+					identifierType,
+					`{functionExpression${suffix}:${identifier}}` as SourceNodeIdentifierPart_string,
+					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+				)
+			}
+		}
 	}
 }

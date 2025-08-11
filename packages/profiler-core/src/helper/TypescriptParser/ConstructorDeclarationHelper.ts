@@ -18,15 +18,23 @@ export class ConstructorDeclarationHelper {
 		node: ts.ConstructorDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ConstructorDeclaration> {
-		return new ProgramStructureTree(
-			traverseNodeInfo.resolvedTree(),
-			traverseNodeInfo.nextId(),
-			ProgramStructureTreeType.ConstructorDeclaration,
-			IdentifierType.Name,
-			'{constructor:constructor}' as SourceNodeIdentifierPart_string,
-			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
-		)
+	): {
+			resolve(): ProgramStructureTree<ProgramStructureTreeType.ConstructorDeclaration>,
+			resolveWithNoChildren: true
+		} {
+		return {
+			resolveWithNoChildren: true,
+			resolve() {
+				return new ProgramStructureTree(
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
+					ProgramStructureTreeType.ConstructorDeclaration,
+					IdentifierType.Name,
+					'{constructor:constructor}' as SourceNodeIdentifierPart_string,
+					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+				)
+			}
+		}
 	}
 }

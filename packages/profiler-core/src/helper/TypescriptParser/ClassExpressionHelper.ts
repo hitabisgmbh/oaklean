@@ -18,21 +18,29 @@ export class ClassExpressionHelper {
 		node: ts.ClassExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.ClassExpression> {
-		const { identifier, identifierType } = NamingHelper.getName(
-			node.parent,
-			sourceFile,
-			traverseNodeInfo
-		)
+	): {
+			resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassExpression>
+			resolveWithNoChildren: true
+		} {
+		return {
+			resolveWithNoChildren: true,
+			resolve() {
+				const { identifier, identifierType } = NamingHelper.getName(
+					node.parent,
+					sourceFile,
+					traverseNodeInfo
+				)
 
-		return new ProgramStructureTree(
-			traverseNodeInfo.resolvedTree(),
-			traverseNodeInfo.nextId(),
-			ProgramStructureTreeType.ClassExpression,
-			identifierType,
-			`{classExpression:${identifier}}` as SourceNodeIdentifierPart_string,
-			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
-		)
+				return new ProgramStructureTree(
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
+					ProgramStructureTreeType.ClassExpression,
+					identifierType,
+					`{classExpression:${identifier}}` as SourceNodeIdentifierPart_string,
+					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+				)
+			}
+		}
 	}
 }

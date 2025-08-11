@@ -50,7 +50,12 @@ type OnDuplicateIdentifierCallback = (
 	}
 ) => void
 
-const PARSE_NODE_FUNCTIONS = {
+const PARSE_NODE_FUNCTIONS: Record<number, (
+	...args: any
+) => {
+	resolve(): ProgramStructureTree,
+	resolveWithNoChildren?: true
+}> = {
 	[ClassDeclarationHelper.syntaxKind]: ClassDeclarationHelper.parseNode,
 	[ClassExpressionHelper.syntaxKind]: ClassExpressionHelper.parseNode,
 	[ConstructorDeclarationHelper.syntaxKind]: ConstructorDeclarationHelper.parseNode,
@@ -172,7 +177,11 @@ export class TypescriptParser {
 			null,
 			sourceFile,
 			filePath,
-			{ resolve: () => root }
+			{
+				resolve() {
+					return root
+				}
+			}
 		)
 
 		const addSubTree = (
@@ -291,7 +300,8 @@ export class TypescriptParser {
 			) {
 				if (
 					currentTraverseNodeInfo.isTreeResolved() ||
-					currentTraverseNodeInfo.counters.childrenCounter !== 0
+					currentTraverseNodeInfo.counters.childrenCounter !== 0 ||
+					currentTraverseNodeInfo.shouldResolveTreeWithZeroChildren()
 				) {
 					addSubTree(
 						node,
@@ -312,7 +322,10 @@ export class TypescriptParser {
 		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree | { resolve: () => ProgramStructureTree } | null {
+	): ProgramStructureTree | {
+			resolve(): ProgramStructureTree,
+			resolveWithNoChildren?: true
+		} | null {
 		const parseNodeFunction = PARSE_NODE_FUNCTIONS[node.kind]
 		if (parseNodeFunction !== undefined) {
 			return parseNodeFunction(

@@ -18,21 +18,29 @@ export class ArrowFunctionHelper {
 		node: ts.ArrowFunction,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression> {
-		const { suffix, identifier, identifierType } = NamingHelper.getName(
-			node.parent,
-			sourceFile,
-			traverseNodeInfo
-		)
+	): {
+			resolve(): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression>
+			resolveWithNoChildren: true
+		} {
+		return {
+			resolveWithNoChildren: true,
+			resolve() {
+				const { suffix, identifier, identifierType } = NamingHelper.getName(
+					node.parent,
+					sourceFile,
+					traverseNodeInfo
+				)
 
-		return new ProgramStructureTree(
-			traverseNodeInfo.resolvedTree(),
-			traverseNodeInfo.nextId(),
-			ProgramStructureTreeType.FunctionExpression,
-			identifierType,
-			`{functionExpression${suffix}:${identifier}}` as SourceNodeIdentifierPart_string,
-			TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-			TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
-		)
+				return new ProgramStructureTree(
+					traverseNodeInfo.resolvedTree(),
+					traverseNodeInfo.nextId(),
+					ProgramStructureTreeType.FunctionExpression,
+					identifierType,
+					`{functionExpression${suffix}:${identifier}}` as SourceNodeIdentifierPart_string,
+					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+				)
+			}
+		}
 	}
 }

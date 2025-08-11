@@ -16,7 +16,7 @@ type ParseIntermediateFunction = (
 	sourceFile: ts.SourceFile,
 	traverseNodeInfo: TraverseNodeInfo
 ) => {
-	resolve: () => ProgramStructureTree<ProgramStructureTreeTypeScope>
+	resolve(): ProgramStructureTree<ProgramStructureTreeTypeScope>
 } | undefined
 
 const PARSE_INTERMEDIATE_NODE: Partial<Record<ts.SyntaxKind, ParseIntermediateFunction>> = {
@@ -34,7 +34,7 @@ export class ScopeHelper {
 		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve: () => ProgramStructureTree<ProgramStructureTreeTypeScope> } | undefined {
+	): { resolve(): ProgramStructureTree<ProgramStructureTreeTypeScope> } | undefined {
 		const parseFunction = PARSE_INTERMEDIATE_NODE[node.parent?.kind]
 		if (parseFunction !== undefined) {
 			return parseFunction(

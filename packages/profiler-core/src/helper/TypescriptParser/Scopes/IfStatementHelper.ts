@@ -17,9 +17,9 @@ export class IfStatementHelper {
 		node: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve: () => ProgramStructureTree<ProgramStructureTreeType.IfStatement> } {
+	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.IfStatement> } {
 		return {
-			resolve: () => {
+			resolve() {
 				const statementName = `(if:${traverseNodeInfo.counters.ifStatementCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
@@ -39,13 +39,13 @@ export class IfStatementHelper {
 		parent: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve: () => ProgramStructureTree<
+	): { resolve(): ProgramStructureTree<
 		ProgramStructureTreeType.IfThenStatement | ProgramStructureTreeType.IfElseStatement
 		> } | undefined
 		| undefined {
 		if (parent.thenStatement === node) {
 			return {
-				resolve: () => {
+				resolve() {
 					const tree = traverseNodeInfo.resolvedTree()
 					return new ProgramStructureTree(
 						tree,
@@ -61,7 +61,7 @@ export class IfStatementHelper {
 		}
 		if (parent.elseStatement === node) {
 			return {
-				resolve: () => {
+				resolve() {
 					const tree = traverseNodeInfo.resolvedTree()
 					return new ProgramStructureTree(
 						tree,

@@ -18,9 +18,9 @@ export class SwitchStatementHelper {
 		node: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve: () => ProgramStructureTree<ProgramStructureTreeType.SwitchStatement> } {
+	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.SwitchStatement> } {
 		return {
-			resolve: () => {
+			resolve() {
 				const statementName =`(switch:${traverseNodeInfo.counters.switchCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
@@ -40,10 +40,10 @@ export class SwitchStatementHelper {
 		parent: ts.CaseBlock,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve: () => ProgramStructureTree<ProgramStructureTreeType.SwitchCaseClause> } | undefined {
+	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.SwitchCaseClause> } | undefined {
 		if (node.kind === ts.SyntaxKind.DefaultClause) {
 			return {
-				resolve: () => {
+				resolve() {
 					const tree = traverseNodeInfo.resolvedTree()
 					return new ProgramStructureTree(
 						tree,
@@ -60,7 +60,7 @@ export class SwitchStatementHelper {
 
 		if (node.kind === ts.SyntaxKind.CaseClause) {
 			return {
-				resolve: () => {
+				resolve() {
 					const tree = traverseNodeInfo.resolvedTree()
 					const expressionHash = ExpressionHelper.hashExpression(
 						(node as ts.CaseClause).expression,

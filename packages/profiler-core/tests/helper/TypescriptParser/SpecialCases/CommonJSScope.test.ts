@@ -26,6 +26,7 @@ describe('CommonJS', () => {
 		const code = `(function (exports, require, module, __filename, __dirname) {
 			function a() {}
 			function b() {}
+			var xyz = (() => {})();
 		})`
 
 		test('expected identifier', () => {
@@ -41,6 +42,9 @@ describe('CommonJS', () => {
 					},
 					'{function:b}': {
 						type: ProgramStructureTreeType.FunctionDeclaration
+					},
+					'{functionExpression:(anonymous:0)}': {
+						type: ProgramStructureTreeType.FunctionExpression
 					}
 				}
 			})
