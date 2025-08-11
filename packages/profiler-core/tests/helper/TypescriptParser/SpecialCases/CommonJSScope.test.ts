@@ -1,5 +1,4 @@
 import { TypescriptParser } from '../../../../src/helper/TypescriptParser'
-import { SourceNodeIdentifierHelper } from '../../../../src/helper/SourceNodeIdentifierHelper'
 import { UnifiedPath } from '../../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../../src/types'

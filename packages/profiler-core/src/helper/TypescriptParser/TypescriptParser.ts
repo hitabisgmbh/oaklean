@@ -74,18 +74,18 @@ export class TypescriptParser {
 	static traverseSourceFile(
 		sourceFile: ts.SourceFile,
 		callback: {
-			enter: (node: ts.Node) => void,
-			leave: (node: ts.Node) => void
+			enter: (node: ts.Node, depth: number) => void,
+			leave: (node: ts.Node, depth: number) => void
 		}
 	) {
 		const { enter, leave } = callback
 
-		traverseNode(sourceFile)
+		traverseNode(0, sourceFile)
 
-		function traverseNode(node: ts.Node) {
-			enter(node)
-			ts.forEachChild(node, traverseNode)
-			leave(node)
+		function traverseNode(depth: number, node: ts.Node) {
+			enter(node, depth)
+			ts.forEachChild(node, traverseNode.bind(null, depth + 1))
+			leave(node, depth)
 		}
 	}
 
@@ -227,8 +227,18 @@ export class TypescriptParser {
 			subTree.parent.children.set(subTree.identifier, subTree)
 		}
 
-		const enterNode = (node: ts.Node) => {
-			if (SkipHelper.nodeShouldBeSkipped(node, sourceFile)) {
+		const enterNode = (node: ts.Node, depth: number) => {
+			const revertToTraverseNodeInfo = SkipHelper.nodeShouldBeSkipped(
+				node,
+				sourceFile,
+				currentTraverseNodeInfo,
+				depth
+			)
+			if (revertToTraverseNodeInfo !== undefined) {
+				// skip this node and revert to a previous traverse node info
+				// the revert is needed if multiple nodes are skipped in a row (that where previously traversed)
+				// but the necessity of skipping was determined with the current node
+				currentTraverseNodeInfo = revertToTraverseNodeInfo
 				return
 			}
 
