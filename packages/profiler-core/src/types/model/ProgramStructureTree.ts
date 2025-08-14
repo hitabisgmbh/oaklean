@@ -26,6 +26,7 @@ export enum ProgramStructureTreeType {
 	IfElseStatement = 'IfElseStatement',
 	SwitchStatement = 'SwitchStatement',
 	SwitchCaseClause = 'SwitchCaseClause',
+	ModuleDeclaration = 'ModuleDeclaration',
 }
 
 export type ProgramStructureTreeTypeScope = 
@@ -34,7 +35,8 @@ export type ProgramStructureTreeTypeScope =
 	ProgramStructureTreeType.IfThenStatement |
 	ProgramStructureTreeType.IfElseStatement |
 	ProgramStructureTreeType.SwitchStatement |
-	ProgramStructureTreeType.SwitchCaseClause
+	ProgramStructureTreeType.SwitchCaseClause |
+	ProgramStructureTreeType.ModuleDeclaration
 
 export type PSTIdentifierHierarchy = {
 	type: ProgramStructureTreeType,

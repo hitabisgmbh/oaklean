@@ -6,7 +6,6 @@ import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
 import {
-	IdentifierType,
 	ProgramStructureTreeType,
 	SourceNodeIdentifierPart_string
 } from '../../../types'

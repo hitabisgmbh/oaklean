@@ -13,6 +13,9 @@ export const ClassExpressionRegexString = `{classExpression:(${SourceNodeNameExp
 export const ExpressionHashRegexString = '[A-Za-z0-9]+'
 
 export const ObjectLiteralExpressionRegexString = `{scope:\\(obj:(${SourceNodeNameExpressionRegexString})\\)}`
+export const ModuleDeclarationRegexString =
+// eslint-disable-next-line max-len
+	`{scope:\\(namespace:(${SourceNodeNameExpressionRegexString}(?:.${SourceNodeNameExpressionRegexString})*):[0-9]+\\)}`
 export const IfStatementRegexString = '{scope:(\\(if:[0-9]+\\))}'
 export const IfThenStatementRegexString = '{scope:(\\(then\\))}'
 export const IfElseStatementRegexString = '{scope:(\\(else\\))}'
@@ -21,7 +24,7 @@ export const SwitchStatementRegexString = '{scope:(\\(switch:[0-9]+\\))}'
 export const SwitchCaseClauseRegexString = `{scope:(\\(case:(?:${ExpressionHashRegexString}|default)\\))}`
 
 // eslint-disable-next-line max-len
-export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${IfStatementRegexString}|${IfThenStatementRegexString}|${IfElseStatementRegexString}|${SwitchStatementRegexString}|${SwitchCaseClauseRegexString})`
+export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${ModuleDeclarationRegexString}|${IfStatementRegexString}|${IfThenStatementRegexString}|${IfElseStatementRegexString}|${SwitchStatementRegexString}|${SwitchCaseClauseRegexString})`
 
 export const LangInternalSourceNodeRegExpRegexString = 'RegExp: .*'
 export const LangInternalSourceNodeNameRegexString = '[^{}]+'
@@ -50,6 +53,7 @@ export const FunctionDeclarationRegex = new RegExp(`^${FunctionDeclarationRegexS
 export const FunctionExpressionRegex = new RegExp(`^${FunctionExpressionRegexString}$`)
 export const ClassExpressionRegex = new RegExp(`^${ClassExpressionRegexString}$`)
 export const ObjectLiteralExpressionRegex = new RegExp(`^${ObjectLiteralExpressionRegexString}$`)
+export const ModuleDeclarationRegex = new RegExp(`^${ModuleDeclarationRegexString}$`)
 export const IfStatementRegex = new RegExp(`^${IfStatementRegexString}$`)
 export const IfThenStatementRegex = new RegExp(`^${IfThenStatementRegexString}$`)
 export const IfElseStatementRegex = new RegExp(`^${IfElseStatementRegexString}$`)

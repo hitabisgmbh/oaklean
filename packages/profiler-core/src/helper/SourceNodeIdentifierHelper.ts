@@ -13,7 +13,8 @@ import {
 	ClassExpressionRegex,
 	IfThenStatementRegex,
 	IfElseStatementRegex,
-	SwitchCaseClauseRegex
+	SwitchCaseClauseRegex,
+	ModuleDeclarationRegex
 } from '../constants/SourceNodeRegex'
 // Types
 import {
@@ -39,7 +40,8 @@ const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
 	[ProgramStructureTreeType.IfThenStatement]: IfThenStatementRegex,
 	[ProgramStructureTreeType.IfElseStatement]: IfElseStatementRegex,
 	[ProgramStructureTreeType.SwitchStatement]: SwitchStatementRegex,
-	[ProgramStructureTreeType.SwitchCaseClause]: SwitchCaseClauseRegex
+	[ProgramStructureTreeType.SwitchCaseClause]: SwitchCaseClauseRegex,
+	[ProgramStructureTreeType.ModuleDeclaration]: ModuleDeclarationRegex,
 }
 
 export class SourceNodeIdentifierHelper {

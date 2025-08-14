@@ -1,4 +1,5 @@
 export * from './IfStatementHelper'
+export * from './ModuleDeclarationHelper'
 export * from './ObjectLiteralExpressionHelper'
 export * from './ScopeHelper'
 export * from './SwitchStatementHelper'

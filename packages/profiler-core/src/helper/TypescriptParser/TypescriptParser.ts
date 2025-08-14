@@ -16,6 +16,7 @@ import {
 	ObjectLiteralExpressionHelper,
 	IfStatementHelper,
 	SwitchStatementHelper,
+	ModuleDeclarationHelper
 } from './index'
 
 import { TypescriptHelper } from './TypescriptHelper'
@@ -55,7 +56,7 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 ) => {
 	resolve(): ProgramStructureTree,
 	resolveWithNoChildren?: true
-}> = {
+} | null> = {
 	[ClassDeclarationHelper.syntaxKind]: ClassDeclarationHelper.parseNode,
 	[ClassExpressionHelper.syntaxKind]: ClassExpressionHelper.parseNode,
 	[ConstructorDeclarationHelper.syntaxKind]: ConstructorDeclarationHelper.parseNode,
@@ -66,6 +67,7 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 	[ObjectLiteralExpressionHelper.syntaxKind]: ObjectLiteralExpressionHelper.parseNode,
 	[IfStatementHelper.syntaxKind]: IfStatementHelper.parseNode,
 	[SwitchStatementHelper.syntaxKind]: SwitchStatementHelper.parseNode,
+	[ModuleDeclarationHelper.syntaxKind]: ModuleDeclarationHelper.parseNode
 }
 
 export class TypescriptParser {

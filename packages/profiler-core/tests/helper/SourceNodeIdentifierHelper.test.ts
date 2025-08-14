@@ -6,9 +6,10 @@ import {
 import { ProgramStructureTreeType } from '../../src/types/model/ProgramStructureTree'
 
 const EXAMPLE_IDENTIFIER =
-	'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}' as SourceNodeIdentifier_string
+	'{root}.{scope:(namespace:A_1.B_2:0)}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}' as SourceNodeIdentifier_string
 const EXAMPLE_IDENTIFIER_PARTS = [
 	'{root}',
+	'{scope:(namespace:A_1.B_2:0)}',
 	'{class:ExampleClass}',
 	'{method:memberFunction1}',
 	'{function:nestedFunction}',
@@ -73,6 +74,10 @@ ProgramStructureTreeType,
 	[ProgramStructureTreeType.SwitchCaseClause]: {
 		input: '{scope:(case:default)}',
 		expectedName: '(case:default)'
+	},
+	[ProgramStructureTreeType.ModuleDeclaration]: {
+		input: '{scope:(namespace:A_1.B_2:0)}',
+		expectedName: 'A_1.B_2'
 	}
 }
 

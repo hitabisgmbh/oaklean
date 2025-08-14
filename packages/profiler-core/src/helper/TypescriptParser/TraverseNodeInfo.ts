@@ -28,6 +28,21 @@ export class TraverseNodeInfo {
 	}
 	public counters: TraverseNodeInfoCounters
 
+	private _moduleIdentificationCounter?: Map<string, number>
+	get moduleIdentificationCounter(): Map<string, number> {
+		if (this._moduleIdentificationCounter !== undefined) {
+			return this._moduleIdentificationCounter
+		}
+		this._moduleIdentificationCounter = new Map<string, number>()
+		return this._moduleIdentificationCounter
+	}
+
+	requestModuleIdentificationCounter(identifier: string): number {
+		const currentCount = this.moduleIdentificationCounter.get(identifier) ?? 0
+		this.moduleIdentificationCounter.set(identifier, currentCount + 1)
+		return currentCount
+	}
+
 	shouldResolveTreeWithZeroChildren(): boolean {
 		return this.tree instanceof ProgramStructureTree || this.tree.resolveWithNoChildren === true
 	}
