@@ -16,16 +16,17 @@ export const ObjectLiteralExpressionRegexString = `{scope:\\(obj:(${SourceNodeNa
 export const ModuleDeclarationRegexString =
 // eslint-disable-next-line max-len
 	`{scope:\\(namespace:(${SourceNodeNameExpressionRegexString}(?:.${SourceNodeNameExpressionRegexString})*):[0-9]+\\)}`
-export const ForStatementRegexString = '{scope:(\\(for:[0-9]+\\))}'
 export const IfStatementRegexString = '{scope:(\\(if:[0-9]+\\))}'
 export const IfThenStatementRegexString = '{scope:(\\(then\\))}'
 export const IfElseStatementRegexString = '{scope:(\\(else\\))}'
+export const ForStatementRegexString = '{scope:(\\(for:[0-9]+\\))}'
+export const WhileStatementRegexString = '{scope:(\\(while:[0-9]+\\))}'
 // eslint-disable-next-line max-len
 export const SwitchStatementRegexString = '{scope:(\\(switch:[0-9]+\\))}'
 export const SwitchCaseClauseRegexString = `{scope:(\\(case:(?:${ExpressionHashRegexString}|default)\\))}`
 
 // eslint-disable-next-line max-len
-export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${ModuleDeclarationRegexString}|${IfStatementRegexString}|${IfThenStatementRegexString}|${IfElseStatementRegexString}|${ForStatementRegexString}|${SwitchStatementRegexString}|${SwitchCaseClauseRegexString})`
+export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${ModuleDeclarationRegexString}|${IfStatementRegexString}|${IfThenStatementRegexString}|${IfElseStatementRegexString}|${ForStatementRegexString}|${WhileStatementRegexString}|${SwitchStatementRegexString}|${SwitchCaseClauseRegexString})`
 
 export const LangInternalSourceNodeRegExpRegexString = 'RegExp: .*'
 export const LangInternalSourceNodeNameRegexString = '[^{}]+'
@@ -59,6 +60,7 @@ export const IfStatementRegex = new RegExp(`^${IfStatementRegexString}$`)
 export const IfThenStatementRegex = new RegExp(`^${IfThenStatementRegexString}$`)
 export const IfElseStatementRegex = new RegExp(`^${IfElseStatementRegexString}$`)
 export const ForStatementRegex = new RegExp(`^${ForStatementRegexString}$`)
+export const WhileStatementRegex = new RegExp(`^${WhileStatementRegexString}$`)
 export const SwitchStatementRegex = new RegExp(`^${SwitchStatementRegexString}$`)
 export const SwitchCaseClauseRegex = new RegExp(`^${SwitchCaseClauseRegexString}$`)
 export const ScopeRegex = new RegExp(`^${ScopeRegexString}$`)

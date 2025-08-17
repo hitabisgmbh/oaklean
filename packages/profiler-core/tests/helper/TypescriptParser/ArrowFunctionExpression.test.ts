@@ -296,6 +296,37 @@ describe('ForStatement', () => {
 	}
 })
 
+const whileCodes = {
+	'ts.SyntaxKind.WhileStatement': 'while (typeof (() => {}) === \'function\') {}',
+	'ts.SyntaxKind.DoStatement': 'do {} while (typeof (() => {}) === \'function\')'
+}
+
+describe('WhileStatement', () => {
+	for (const [kind, code] of Object.entries(whileCodes)) {
+		describe(kind, () => {
+			test('expected identifier', () => {
+				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+				const hierarchy = pst.identifierHierarchy()
+
+				expect(hierarchy).toEqual({
+					type: ProgramStructureTreeType.Root,
+					children: {
+						'{scope:(while:0)}': {
+							type: ProgramStructureTreeType.ForStatement,
+							children: {
+								'{functionExpression:(anonymous:0)}': {
+									type: ProgramStructureTreeType.FunctionExpression,
+								}
+							}
+						}
+					}
+				})
+			})
+		})
+	}
+})
+
 
 describe('ts.SyntaxKind.ArrayLiteralExpression', () => {
 	const code = `

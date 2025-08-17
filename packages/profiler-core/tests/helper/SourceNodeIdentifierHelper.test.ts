@@ -71,6 +71,10 @@ ProgramStructureTreeType,
 		input: '{scope:(for:0)}',
 		expectedName: '(for:0)'
 	},
+	[ProgramStructureTreeType.WhileStatement]: {
+		input: '{scope:(while:0)}',
+		expectedName: '(while:0)'
+	},
 	[ProgramStructureTreeType.SwitchStatement]: {
 		input: '{scope:(switch:0)}',
 		expectedName: '(switch:0)'

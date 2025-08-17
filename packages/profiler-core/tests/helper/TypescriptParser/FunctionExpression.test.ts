@@ -260,9 +260,9 @@ describe('ts.SyntaxKind.Parameter', () => {
 
 const forDeclarations = {
 	'ts.SyntaxKind.ForStatement':
-		'let i = 0; i < 10; i = (function ForInStatement() { return i+1 })()',
+		'let i = 0; i < 10; i = (function ForStatement() { return i+1 })()',
 	'ts.SyntaxKind.ForOfStatement':
-		'const ForInStatement of function ForInStatement() {}',
+		'const ForInStatement of function ForOfStatement() {}',
 	'ts.SyntaxKind.ForInStatement':
 		'const ForInStatement in function ForInStatement() {}'
 }
@@ -289,6 +289,37 @@ describe('ForStatement', () => {
 							children: {
 								'{functionExpression:(anonymous:0)}': {
 									type: ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						}
+					}
+				})
+			})
+		})
+	}
+})
+
+const whileCodes = {
+	'ts.SyntaxKind.WhileStatement': 'while (typeof (function WhileStatement() {}) === \'function\') {}',
+	'ts.SyntaxKind.DoStatement': 'do {} while (typeof (function DoStatement() {}) === \'function\')'
+}
+
+describe('WhileStatement', () => {
+	for (const [kind, code] of Object.entries(whileCodes)) {
+		describe(kind, () => {
+			test('expected identifier', () => {
+				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+				const hierarchy = pst.identifierHierarchy()
+
+				expect(hierarchy).toEqual({
+					type: ProgramStructureTreeType.Root,
+					children: {
+						'{scope:(while:0)}': {
+							type: ProgramStructureTreeType.ForStatement,
+							children: {
+								'{functionExpression:(anonymous:0)}': {
+									type: ProgramStructureTreeType.FunctionExpression,
 								}
 							}
 						}
