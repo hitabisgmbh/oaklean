@@ -21,7 +21,7 @@ export class ForStatementHelper {
 		return {
 			resolve() {
 				const statementName = `(for:${traverseNodeInfo.counters
-					.ifStatementCounter++})`
+					.forStatementCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
 					traverseNodeInfo.nextId(),
