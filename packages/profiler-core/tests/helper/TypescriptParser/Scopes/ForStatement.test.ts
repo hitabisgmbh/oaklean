@@ -3,17 +3,24 @@ import { UnifiedPath } from '../../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../../src/types'
 
-const declarations = {
-	'ts.SyntaxKind.ForStatement': 'let i = 0; i < 10; i++',
-	'ts.SyntaxKind.ForOfStatement': 'const i of [1, 2, 3]',
-	'ts.SyntaxKind.ForInStatement': 'const i in [1, 2, 3]'
+const examples = {
+	'ts.SyntaxKind.ForStatement': 'for(let i = 0; i < 10; i++) { $innerCode }',
+	'ts.SyntaxKind.ForStatement without block':
+		'for(let i = 0; i < 10; i++) $innerCode',
+	'ts.SyntaxKind.ForOfStatement': 'for(const i of [1, 2, 3]) { $innerCode }',
+	'ts.SyntaxKind.ForOfStatement without block':
+		'for(const i of [1, 2, 3]) $innerCode',
+	'ts.SyntaxKind.ForInStatement': 'for(const i in [1, 2, 3]) { $innerCode }',
+	'ts.SyntaxKind.ForInStatement without block':
+		'for(const i in [1, 2, 3]) $innerCode'
 }
-for (const [kind, declaration] of Object.entries(declarations)) {
+
+for (const [kind, example] of Object.entries(examples)) {
 	describe(kind, () => {
 		describe('empty', () => {
 			const code = `
-				const a = () => {}
-				for (${declaration}) {}
+				function a {}
+				${example.replace('$innerCode', '')}
 			`
 
 			test('expected identifier', () => {
@@ -27,8 +34,8 @@ for (const [kind, declaration] of Object.entries(declarations)) {
 				expect(hierarchy).toEqual({
 					type: ProgramStructureTreeType.Root,
 					children: {
-						'{functionExpression:a}': {
-							type: ProgramStructureTreeType.FunctionExpression
+						'{function:a}': {
+							type: ProgramStructureTreeType.FunctionDeclaration
 						}
 					}
 				})
@@ -37,10 +44,8 @@ for (const [kind, declaration] of Object.entries(declarations)) {
 
 		describe('non empty', () => {
 			const code = `
-				const a = () => {}
-				for (${declaration}) {
-					const a = () => {}
-				}
+				function a {}
+				${example.replace('$innerCode', 'function a {}')}
 			`
 
 			test('expected identifier', () => {
@@ -54,14 +59,14 @@ for (const [kind, declaration] of Object.entries(declarations)) {
 				expect(hierarchy).toEqual({
 					type: ProgramStructureTreeType.Root,
 					children: {
-						'{functionExpression:a}': {
-							type: ProgramStructureTreeType.FunctionExpression
+						'{function:a}': {
+							type: ProgramStructureTreeType.FunctionDeclaration
 						},
 						'{scope:(for:0)}': {
 							type: ProgramStructureTreeType.ForStatement,
 							children: {
-								'{functionExpression:a}': {
-									type: ProgramStructureTreeType.FunctionExpression
+								'{function:a}': {
+									type: ProgramStructureTreeType.FunctionDeclaration
 								}
 							}
 						}
@@ -72,11 +77,71 @@ for (const [kind, declaration] of Object.entries(declarations)) {
 	})
 }
 
-describe('all declarations', () => {
+describe('ts.SyntaxKind.ForStatement in condition', () => {
+	const code = `
+		function a {}
+		for(function a() {}; i < 10; i++) { }
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{function:a}': {
+					type: ProgramStructureTreeType.FunctionDeclaration
+				},
+				'{scope:(for:0)}': {
+					type: ProgramStructureTreeType.ForStatement,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				}
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.ForOfStatement in condition', () => {
+	const code = `
+		function a {}
+		for(const i of function a() {}) { }
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{function:a}': {
+					type: ProgramStructureTreeType.FunctionDeclaration
+				},
+				'{scope:(for:0)}': {
+					type: ProgramStructureTreeType.ForStatement,
+					children: {
+						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				}
+			}
+		})
+	})
+})
+
+describe('all examples', () => {
 	describe('empty', () => {
-		let code = 'const a = () => {}\n'
-		for (const declaration of Object.values(declarations)) {
-			code += `for (${declaration}) {}\n`
+		let code = 'function a {}\n'
+		for (const example of Object.values(examples)) {
+			code += `${example.replace('$innerCode', '')}\n`
 		}
 
 		test('expected identifier', () => {
@@ -87,8 +152,8 @@ describe('all declarations', () => {
 			expect(hierarchy).toEqual({
 				type: ProgramStructureTreeType.Root,
 				children: {
-					'{functionExpression:a}': {
-						type: ProgramStructureTreeType.FunctionExpression
+					'{function:a}': {
+						type: ProgramStructureTreeType.FunctionDeclaration
 					}
 				}
 			})
@@ -96,11 +161,9 @@ describe('all declarations', () => {
 	})
 
 	describe('non empty', () => {
-		let code = 'const a = () => {}\n'
-		for (const declaration of Object.values(declarations)) {
-			code += `for (${declaration}) {
-					const a = () => {}
-				}\n`
+		let code = 'function a {}\n'
+		for (const example of Object.values(examples)) {
+			code += `${example.replace('$innerCode', 'function a {}')}\n`
 		}
 
 		test('expected identifier', () => {
@@ -111,30 +174,54 @@ describe('all declarations', () => {
 			expect(hierarchy).toEqual({
 				type: ProgramStructureTreeType.Root,
 				children: {
-					'{functionExpression:a}': {
-						type: ProgramStructureTreeType.FunctionExpression
+					'{function:a}': {
+						type: ProgramStructureTreeType.FunctionDeclaration
 					},
 					'{scope:(for:0)}': {
 						type: ProgramStructureTreeType.ForStatement,
 						children: {
-							'{functionExpression:a}': {
-								type: ProgramStructureTreeType.FunctionExpression
+							'{function:a}': {
+								type: ProgramStructureTreeType.FunctionDeclaration
 							}
 						}
 					},
 					'{scope:(for:1)}': {
 						type: ProgramStructureTreeType.ForStatement,
 						children: {
-							'{functionExpression:a}': {
-								type: ProgramStructureTreeType.FunctionExpression
+							'{function:a}': {
+								type: ProgramStructureTreeType.FunctionDeclaration
 							}
 						}
 					},
 					'{scope:(for:2)}': {
 						type: ProgramStructureTreeType.ForStatement,
 						children: {
-							'{functionExpression:a}': {
-								type: ProgramStructureTreeType.FunctionExpression
+							'{function:a}': {
+								type: ProgramStructureTreeType.FunctionDeclaration
+							}
+						}
+					},
+					'{scope:(for:3)}': {
+						type: ProgramStructureTreeType.ForStatement,
+						children: {
+							'{function:a}': {
+								type: ProgramStructureTreeType.FunctionDeclaration
+							}
+						}
+					},
+					'{scope:(for:4)}': {
+						type: ProgramStructureTreeType.ForStatement,
+						children: {
+							'{function:a}': {
+								type: ProgramStructureTreeType.FunctionDeclaration
+							}
+						}
+					},
+					'{scope:(for:5)}': {
+						type: ProgramStructureTreeType.ForStatement,
+						children: {
+							'{function:a}': {
+								type: ProgramStructureTreeType.FunctionDeclaration
 							}
 						}
 					}
