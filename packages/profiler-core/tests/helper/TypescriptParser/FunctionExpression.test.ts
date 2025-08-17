@@ -316,7 +316,7 @@ describe('WhileStatement', () => {
 					type: ProgramStructureTreeType.Root,
 					children: {
 						'{scope:(while:0)}': {
-							type: ProgramStructureTreeType.ForStatement,
+							type: ProgramStructureTreeType.WhileStatement,
 							children: {
 								'{functionExpression:(anonymous:0)}': {
 									type: ProgramStructureTreeType.FunctionExpression,
