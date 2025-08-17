@@ -614,12 +614,16 @@
                           "{function:parseStartTag}": {
                             "id": 91
                           },
-                          "{scope:(if:0)}": {
+                          "{scope:(while:0)}": {
                             "children": {
-                              "{scope:(else)}": {
+                              "{scope:(if:0)}": {
                                 "children": {
-                                  "{functionExpression:(anonymous:0)}": {
-                                    "id": 92
+                                  "{scope:(else)}": {
+                                    "children": {
+                                      "{functionExpression:(anonymous:0)}": {
+                                        "id": 92
+                                      }
+                                    }
                                   }
                                 }
                               }
