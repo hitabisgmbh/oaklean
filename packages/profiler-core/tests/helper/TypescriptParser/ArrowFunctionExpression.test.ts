@@ -260,26 +260,42 @@ describe('ts.SyntaxKind.Parameter', () => {
 	})
 })
 
-describe('ts.SyntaxKind.ForInStatement', () => {
-	const code = `
-		for(const ForInStatement in () => {}) {}
-	`
+const forDeclarations = {
+	'ts.SyntaxKind.ForStatement': 'let i = 0; i < 10; i = (() => { return i+1 })()',
+	'ts.SyntaxKind.ForOfStatement': 'const ForInStatement of () => {}',
+	'ts.SyntaxKind.ForInStatement': 'const ForInStatement in () => {}'
+}
 
-	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+describe('ForStatement', () => {
+	for (const [kind, declaration] of Object.entries(forDeclarations)) {
+		describe(kind, () => {
+			const code = `
+				for(${declaration}) {}
+			`
 
-		const hierarchy = pst.identifierHierarchy()
+			test('expected identifier', () => {
+				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{functionExpression:(anonymous:0)}': {
-					type: ProgramStructureTreeType.FunctionExpression,
-				}
-			}
+				const hierarchy = pst.identifierHierarchy()
+
+				expect(hierarchy).toEqual({
+					type: ProgramStructureTreeType.Root,
+					children: {
+						'{scope:(for:0)}': {
+							type: ProgramStructureTreeType.ForStatement,
+							children: {
+								'{functionExpression:(anonymous:0)}': {
+									type: ProgramStructureTreeType.FunctionExpression,
+								}
+							}
+						}
+					}
+				})
+			})
 		})
-	})
+	}
 })
+
 
 describe('ts.SyntaxKind.ArrayLiteralExpression', () => {
 	const code = `

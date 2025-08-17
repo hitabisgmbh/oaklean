@@ -67,6 +67,10 @@ ProgramStructureTreeType,
 		input: '{scope:(else)}',
 		expectedName: '(else)'
 	},
+	[ProgramStructureTreeType.ForStatement]: {
+		input: '{scope:(for:0)}',
+		expectedName: '(for:0)'
+	},
 	[ProgramStructureTreeType.SwitchStatement]: {
 		input: '{scope:(switch:0)}',
 		expectedName: '(switch:0)'
