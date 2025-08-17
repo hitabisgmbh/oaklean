@@ -26,19 +26,22 @@ export enum ProgramStructureTreeType {
 	IfElseStatement = 'IfElseStatement',
 	ForStatement = 'ForStatement',
 	WhileStatement = 'WhileStatement',
+	TryStatement = 'TryStatement',
+	TryBlock = 'TryBlock',
+	CatchClause = 'CatchClause',
+	FinallyBlock = 'FinallyBlock',
 	SwitchStatement = 'SwitchStatement',
 	SwitchCaseClause = 'SwitchCaseClause',
 	ModuleDeclaration = 'ModuleDeclaration',
 }
 
-export type ProgramStructureTreeTypeScope = 
-	ProgramStructureTreeType.ObjectLiteralExpression |
-	ProgramStructureTreeType.IfStatement |
+export type ProgramStructureTreeTypeIntermediateScope = 
 	ProgramStructureTreeType.IfThenStatement |
 	ProgramStructureTreeType.IfElseStatement |
-	ProgramStructureTreeType.SwitchStatement |
 	ProgramStructureTreeType.SwitchCaseClause |
-	ProgramStructureTreeType.ModuleDeclaration
+	ProgramStructureTreeType.TryBlock |
+	ProgramStructureTreeType.CatchClause |
+	ProgramStructureTreeType.FinallyBlock
 
 export type PSTIdentifierHierarchy = {
 	type: ProgramStructureTreeType,

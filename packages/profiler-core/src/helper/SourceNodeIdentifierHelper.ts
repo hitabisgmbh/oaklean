@@ -16,7 +16,11 @@ import {
 	SwitchStatementRegex,
 	ClassExpressionRegex,
 	SwitchCaseClauseRegex,
-	ModuleDeclarationRegex
+	ModuleDeclarationRegex,
+	TryStatementRegex,
+	TryBlockStatementRegex,
+	CatchClauseStatementRegex,
+	FinallyBlockStatementRegex
 } from '../constants/SourceNodeRegex'
 // Types
 import {
@@ -43,6 +47,10 @@ const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
 	[ProgramStructureTreeType.IfElseStatement]: IfElseStatementRegex,
 	[ProgramStructureTreeType.ForStatement]: ForStatementRegex,
 	[ProgramStructureTreeType.WhileStatement]: WhileStatementRegex,
+	[ProgramStructureTreeType.TryStatement]: TryStatementRegex,
+	[ProgramStructureTreeType.TryBlock]: TryBlockStatementRegex,
+	[ProgramStructureTreeType.CatchClause]: CatchClauseStatementRegex,
+	[ProgramStructureTreeType.FinallyBlock]: FinallyBlockStatementRegex,
 	[ProgramStructureTreeType.SwitchStatement]: SwitchStatementRegex,
 	[ProgramStructureTreeType.SwitchCaseClause]: SwitchCaseClauseRegex,
 	[ProgramStructureTreeType.ModuleDeclaration]: ModuleDeclarationRegex,

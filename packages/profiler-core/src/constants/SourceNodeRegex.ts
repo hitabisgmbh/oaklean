@@ -21,12 +21,16 @@ export const IfThenStatementRegexString = '{scope:(\\(then\\))}'
 export const IfElseStatementRegexString = '{scope:(\\(else\\))}'
 export const ForStatementRegexString = '{scope:(\\(for:[0-9]+\\))}'
 export const WhileStatementRegexString = '{scope:(\\(while:[0-9]+\\))}'
+export const TryStatementRegexString = '{scope:(\\(try:[0-9]+\\))}'
+export const TryBlockStatementRegexString = '{scope:(\\(try\\))}'
+export const CatchClauseStatementRegexString = '{scope:(\\(catch\\))}'
+export const FinallyBlockStatementRegexString = '{scope:(\\(finally\\))}'
 // eslint-disable-next-line max-len
 export const SwitchStatementRegexString = '{scope:(\\(switch:[0-9]+\\))}'
 export const SwitchCaseClauseRegexString = `{scope:(\\(case:(?:${ExpressionHashRegexString}|default)\\))}`
 
 // eslint-disable-next-line max-len
-export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${ModuleDeclarationRegexString}|${IfStatementRegexString}|${IfThenStatementRegexString}|${IfElseStatementRegexString}|${ForStatementRegexString}|${WhileStatementRegexString}|${SwitchStatementRegexString}|${SwitchCaseClauseRegexString})`
+export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${ModuleDeclarationRegexString}|${IfStatementRegexString}|${IfThenStatementRegexString}|${IfElseStatementRegexString}|${ForStatementRegexString}|${WhileStatementRegexString}|${SwitchStatementRegexString}|${SwitchCaseClauseRegexString}|${TryStatementRegexString}|${TryBlockStatementRegexString}|${CatchClauseStatementRegexString}|${FinallyBlockStatementRegexString})`
 
 export const LangInternalSourceNodeRegExpRegexString = 'RegExp: .*'
 export const LangInternalSourceNodeNameRegexString = '[^{}]+'
@@ -61,6 +65,10 @@ export const IfThenStatementRegex = new RegExp(`^${IfThenStatementRegexString}$`
 export const IfElseStatementRegex = new RegExp(`^${IfElseStatementRegexString}$`)
 export const ForStatementRegex = new RegExp(`^${ForStatementRegexString}$`)
 export const WhileStatementRegex = new RegExp(`^${WhileStatementRegexString}$`)
+export const TryStatementRegex = new RegExp(`^${TryStatementRegexString}$`)
+export const TryBlockStatementRegex = new RegExp(`^${TryBlockStatementRegexString}$`)
+export const CatchClauseStatementRegex = new RegExp(`^${CatchClauseStatementRegexString}$`)
+export const FinallyBlockStatementRegex = new RegExp(`^${FinallyBlockStatementRegexString}$`)
 export const SwitchStatementRegex = new RegExp(`^${SwitchStatementRegexString}$`)
 export const SwitchCaseClauseRegex = new RegExp(`^${SwitchCaseClauseRegexString}$`)
 export const ScopeRegex = new RegExp(`^${ScopeRegexString}$`)

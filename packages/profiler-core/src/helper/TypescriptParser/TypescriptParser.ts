@@ -17,6 +17,7 @@ import {
 	IfStatementHelper,
 	ForStatementHelper,
 	WhileStatementHelper,
+	TryStatementHelper,
 	SwitchStatementHelper,
 	ModuleDeclarationHelper
 } from './index'
@@ -73,6 +74,7 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 	[ForStatementHelper.syntaxKind[2]]: ForStatementHelper.parseNode,
 	[WhileStatementHelper.syntaxKind[0]]: WhileStatementHelper.parseNode,
 	[WhileStatementHelper.syntaxKind[1]]: WhileStatementHelper.parseNode,
+	[TryStatementHelper.syntaxKind]: TryStatementHelper.parseNode,
 	[SwitchStatementHelper.syntaxKind]: SwitchStatementHelper.parseNode,
 	[ModuleDeclarationHelper.syntaxKind]: ModuleDeclarationHelper.parseNode
 }

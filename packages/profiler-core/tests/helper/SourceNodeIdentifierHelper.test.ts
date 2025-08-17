@@ -75,6 +75,22 @@ ProgramStructureTreeType,
 		input: '{scope:(while:0)}',
 		expectedName: '(while:0)'
 	},
+	[ProgramStructureTreeType.TryStatement]: {
+		input: '{scope:(try:0)}',
+		expectedName: '(try:0)'
+	},
+	[ProgramStructureTreeType.TryBlock]: {
+		input: '{scope:(try)}',
+		expectedName: '(try)'
+	},
+	[ProgramStructureTreeType.CatchClause]: {
+		input: '{scope:(catch)}',
+		expectedName: '(catch)'
+	},
+	[ProgramStructureTreeType.FinallyBlock]: {
+		input: '{scope:(finally)}',
+		expectedName: '(finally)'
+	},
 	[ProgramStructureTreeType.SwitchStatement]: {
 		input: '{scope:(switch:0)}',
 		expectedName: '(switch:0)'

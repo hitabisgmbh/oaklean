@@ -2,12 +2,13 @@ import * as ts from 'typescript'
 
 import { IfStatementHelper } from './IfStatementHelper'
 import { SwitchStatementHelper } from './SwitchStatementHelper'
+import { TryStatementHelper } from './TryStatementHelper'
 
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
 import {
-	ProgramStructureTreeTypeScope
+	ProgramStructureTreeTypeIntermediateScope
 } from '../../../types'
 
 type ParseIntermediateFunction = (
@@ -16,17 +17,19 @@ type ParseIntermediateFunction = (
 	sourceFile: ts.SourceFile,
 	traverseNodeInfo: TraverseNodeInfo
 ) => {
-	resolve(): ProgramStructureTree<ProgramStructureTreeTypeScope>
+	resolve(): ProgramStructureTree<ProgramStructureTreeTypeIntermediateScope>
 } | undefined
 
 const PARSE_INTERMEDIATE_NODE: Partial<Record<ts.SyntaxKind, ParseIntermediateFunction>> = {
 	[ts.SyntaxKind.IfStatement]: IfStatementHelper.ifCase,
 	[ts.SyntaxKind.CaseBlock]: SwitchStatementHelper.switchCase,
+	[ts.SyntaxKind.TryStatement]: TryStatementHelper.tryCatchFinally,
 }
 
 const INTERMEDIATE_NODE_PARENT_TYPE = new Set([
 	ts.SyntaxKind.IfStatement,
-	ts.SyntaxKind.CaseBlock
+	ts.SyntaxKind.CaseBlock,
+	ts.SyntaxKind.TryStatement
 ])
 
 export class ScopeHelper {
@@ -34,7 +37,7 @@ export class ScopeHelper {
 		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeTypeScope> } | undefined {
+	): { resolve(): ProgramStructureTree<ProgramStructureTreeTypeIntermediateScope> } | undefined {
 		const parseFunction = PARSE_INTERMEDIATE_NODE[node.parent?.kind]
 		if (parseFunction !== undefined) {
 			return parseFunction(
