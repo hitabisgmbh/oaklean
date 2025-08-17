@@ -29,7 +29,7 @@ describe('ts.SyntaxKind.TryStatement', () => {
 		})
 	})
 
-	describe('non empty empty', () => {
+	describe('non empty', () => {
 		const code = `
 			function a() {}
 			try { function a() {} }
@@ -144,6 +144,186 @@ describe('ts.SyntaxKind.TryStatement', () => {
 									}
 								}
 							},
+							'{scope:(catch)}': {
+								type: ProgramStructureTreeType.CatchClause,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							},
+							'{scope:(finally)}': {
+								type: ProgramStructureTreeType.FinallyBlock,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
+	describe('partially empty', () => {
+		const code = `
+			function a() {}
+			try { function a() {} }
+			catch { }
+
+			try { }
+			catch { function a() {} }
+
+			try { function a() {} }
+			catch { }
+			finally { }
+
+			try { }
+			catch { function a() {} }
+			finally { }
+
+			try { function a() {} }
+			catch { function a() {} }
+			finally { }
+
+			try { }
+			catch { }
+			finally { function a() {} }
+
+			try { function a() {} }
+			catch { }
+			finally { function a() {} }
+
+			try { }
+			catch { function a() {} }
+			finally { function a() {} }
+
+		`
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			console.log(JSON.stringify(hierarchy, null, 2))
+
+			expect(hierarchy).toEqual({
+				type: 'Root',
+				children: {
+					'{function:a}': {
+						type: ProgramStructureTreeType.FunctionDeclaration
+					},
+					'{scope:(try:0)}': {
+						type: ProgramStructureTreeType.TryStatement,
+						children: {
+							'{scope:(try)}': {
+								type: ProgramStructureTreeType.TryBlock,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							}
+						}
+					},
+					'{scope:(try:1)}': {
+						type: ProgramStructureTreeType.TryStatement,
+						children: {
+							'{scope:(catch)}': {
+								type: ProgramStructureTreeType.CatchClause,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							}
+						}
+					},
+					'{scope:(try:2)}': {
+						type: ProgramStructureTreeType.TryStatement,
+						children: {
+							'{scope:(try)}': {
+								type: ProgramStructureTreeType.TryBlock,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							}
+						}
+					},
+					'{scope:(try:3)}': {
+						type: ProgramStructureTreeType.TryStatement,
+						children: {
+							'{scope:(catch)}': {
+								type: ProgramStructureTreeType.CatchClause,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							}
+						}
+					},
+					'{scope:(try:4)}': {
+						type: ProgramStructureTreeType.TryStatement,
+						children: {
+							'{scope:(try)}': {
+								type: ProgramStructureTreeType.TryBlock,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							},
+							'{scope:(catch)}': {
+								type: ProgramStructureTreeType.CatchClause,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							}
+						}
+					},
+					'{scope:(try:5)}': {
+						type: ProgramStructureTreeType.TryStatement,
+						children: {
+							'{scope:(finally)}': {
+								type: ProgramStructureTreeType.FinallyBlock,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							}
+						}
+					},
+					'{scope:(try:6)}': {
+						type: ProgramStructureTreeType.TryStatement,
+						children: {
+							'{scope:(try)}': {
+								type: ProgramStructureTreeType.TryBlock,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							},
+							'{scope:(finally)}': {
+								type: ProgramStructureTreeType.FinallyBlock,
+								children: {
+									'{function:a}': {
+										type: ProgramStructureTreeType.FunctionDeclaration
+									}
+								}
+							}
+						}
+					},
+					'{scope:(try:7)}': {
+						type: ProgramStructureTreeType.TryStatement,
+						children: {
 							'{scope:(catch)}': {
 								type: ProgramStructureTreeType.CatchClause,
 								children: {
