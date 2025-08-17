@@ -24,6 +24,7 @@ export enum ProgramStructureTreeType {
 	IfStatement = 'IfStatement',
 	IfThenStatement = 'IfThenStatement',
 	IfElseStatement = 'IfElseStatement',
+	ForStatement = 'ForStatement',
 	SwitchStatement = 'SwitchStatement',
 	SwitchCaseClause = 'SwitchCaseClause',
 	ModuleDeclaration = 'ModuleDeclaration',

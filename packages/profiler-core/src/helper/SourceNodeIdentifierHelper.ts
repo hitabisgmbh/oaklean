@@ -9,10 +9,11 @@ import {
 	SourceNodeIdentifierPathRegexString,
 	ObjectLiteralExpressionRegex,
 	IfStatementRegex,
-	SwitchStatementRegex,
-	ClassExpressionRegex,
 	IfThenStatementRegex,
 	IfElseStatementRegex,
+	ForStatementRegex,
+	SwitchStatementRegex,
+	ClassExpressionRegex,
 	SwitchCaseClauseRegex,
 	ModuleDeclarationRegex
 } from '../constants/SourceNodeRegex'
@@ -37,6 +38,7 @@ const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
 	[ProgramStructureTreeType.FunctionExpression]: FunctionExpressionRegex,
 	[ProgramStructureTreeType.ObjectLiteralExpression]: ObjectLiteralExpressionRegex,
 	[ProgramStructureTreeType.IfStatement]: IfStatementRegex,
+	[ProgramStructureTreeType.ForStatement]: ForStatementRegex,
 	[ProgramStructureTreeType.IfThenStatement]: IfThenStatementRegex,
 	[ProgramStructureTreeType.IfElseStatement]: IfElseStatementRegex,
 	[ProgramStructureTreeType.SwitchStatement]: SwitchStatementRegex,

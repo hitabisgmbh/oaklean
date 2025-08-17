@@ -14,6 +14,7 @@ import {
 	SkipHelper,
 	ScopeHelper,
 	ObjectLiteralExpressionHelper,
+	ForStatementHelper,
 	IfStatementHelper,
 	SwitchStatementHelper,
 	ModuleDeclarationHelper
@@ -66,6 +67,9 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 	[ArrowFunctionHelper.syntaxKind]: ArrowFunctionHelper.parseNode,
 	[ObjectLiteralExpressionHelper.syntaxKind]: ObjectLiteralExpressionHelper.parseNode,
 	[IfStatementHelper.syntaxKind]: IfStatementHelper.parseNode,
+	[ForStatementHelper.syntaxKind[0]]: ForStatementHelper.parseNode,
+	[ForStatementHelper.syntaxKind[1]]: ForStatementHelper.parseNode,
+	[ForStatementHelper.syntaxKind[2]]: ForStatementHelper.parseNode,
 	[SwitchStatementHelper.syntaxKind]: SwitchStatementHelper.parseNode,
 	[ModuleDeclarationHelper.syntaxKind]: ModuleDeclarationHelper.parseNode
 }

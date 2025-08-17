@@ -1,3 +1,4 @@
+export * from './ForStatementHelper'
 export * from './IfStatementHelper'
 export * from './ModuleDeclarationHelper'
 export * from './ObjectLiteralExpressionHelper'
