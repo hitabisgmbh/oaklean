@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 
+import { sync } from 'glob'
 import {
 	UnifiedPath,
 	TypescriptParser,
@@ -25,6 +26,13 @@ export default class CodeParsingCommands {
 			.argument('<input>', 'input file path')
 			.argument('<output>', 'output file path')
 			.action(this.convertToProgramStructureTree.bind(this))
+
+		parseCommand
+			.command('verify-identifiers')
+			.alias('vi')
+			.description('Parses all source files (.js, .ts, .jsx, .tsx) within a given path and verifies that all identifiers are valid and unique')
+			.argument('<input>', 'input file path')
+			.action(this.verifySourceFilesIdentifiers.bind(this))
 
 		const externalResourceCommand = program
 			.command('external-resource')
@@ -97,6 +105,35 @@ export default class CodeParsingCommands {
 				duplicate: duplicateLoc,
 			})
 		})
+	}
+
+	async verifySourceFilesIdentifiers(
+		input: string
+	) {
+		let inputPath = new UnifiedPath(input)
+		if (inputPath.isRelative()) {
+			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
+		}
+		const globPattern = inputPath.join('**', '*.{js,ts,jsx,tsx}').toPlatformString()
+		if (fs.existsSync(inputPath.toPlatformString())) {
+			const filePaths = sync(globPattern.toString())
+			filePaths.map((filePath) => new UnifiedPath(filePath))
+
+			for (const filePath of filePaths) {
+				if (filePath.endsWith('.d.ts')) {
+					continue // Skip declaration files
+				}
+				const sourceFilePath = new UnifiedPath(filePath)
+				const code = fs.readFileSync(sourceFilePath.toPlatformString(), 'utf-8')
+				this.verifyCode(code, {
+					resourceFile: inputPath.toPlatformString(),
+					filePath: sourceFilePath.toString()
+				})
+			}
+		} else {
+			LoggerHelper.error(`Input path does not exist: ${inputPath.toPlatformString()}`)
+			return
+		}
 	}
 
 	async verifyIdentifiers(
