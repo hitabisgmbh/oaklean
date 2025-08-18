@@ -31,10 +31,10 @@ describe('ts.SyntaxKind.ClassStaticBlockDeclaration', () => {
 					'{classExpression:c}': {
 						type: ProgramStructureTreeType.ClassExpression,
 						children: {
-							'{scope:(static:0)}': {
+							'{static:0}': {
 								type: ProgramStructureTreeType.ClassStaticBlockDeclaration
 							},
-							'{scope:(static:1)}': {
+							'{static:1}': {
 								type: ProgramStructureTreeType.ClassStaticBlockDeclaration
 							}
 						}
@@ -42,10 +42,10 @@ describe('ts.SyntaxKind.ClassStaticBlockDeclaration', () => {
 					'{class:A}': {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
-							'{scope:(static:0)}': {
+							'{static:0}': {
 								type: ProgramStructureTreeType.ClassStaticBlockDeclaration
 							},
-							'{scope:(static:1)}': {
+							'{static:1}': {
 								type: ProgramStructureTreeType.ClassStaticBlockDeclaration
 							}
 						}
@@ -90,7 +90,7 @@ describe('ts.SyntaxKind.ClassStaticBlockDeclaration', () => {
 					'{classExpression:c}': {
 						type: ProgramStructureTreeType.ClassExpression,
 						children: {
-							'{scope:(static:0)}': {
+							'{static:0}': {
 								type: ProgramStructureTreeType.ClassStaticBlockDeclaration,
 								children: {
 									'{function:a}': {
@@ -98,7 +98,7 @@ describe('ts.SyntaxKind.ClassStaticBlockDeclaration', () => {
 									}
 								}
 							},
-							'{scope:(static:1)}': {
+							'{static:1}': {
 								type: ProgramStructureTreeType.ClassStaticBlockDeclaration,
 								children: {
 									'{function:a}': {
@@ -111,7 +111,7 @@ describe('ts.SyntaxKind.ClassStaticBlockDeclaration', () => {
 					'{class:A}': {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
-							'{scope:(static:0)}': {
+							'{static:0}': {
 								type: ProgramStructureTreeType.ClassStaticBlockDeclaration,
 								children: {
 									'{function:a}': {
@@ -119,7 +119,7 @@ describe('ts.SyntaxKind.ClassStaticBlockDeclaration', () => {
 									}
 								}
 							},
-							'{scope:(static:1)}': {
+							'{static:1}': {
 								type: ProgramStructureTreeType.ClassStaticBlockDeclaration,
 								children: {
 									'{function:a}': {

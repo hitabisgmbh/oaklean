@@ -25,15 +25,13 @@ export class ClassStaticBlockDeclarationHelper {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {
-				const statementName = `(static:${traverseNodeInfo.counters
-					.staticBlockCounter++})`
 				const tree = traverseNodeInfo.resolvedTree()
 				return new ProgramStructureTree(
 					tree,
 					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.ClassStaticBlockDeclaration,
 					IdentifierType.Statement,
-					`{scope:${statementName}}` as SourceNodeIdentifierPart_string,
+					`{static:${traverseNodeInfo.counters.staticBlockCounter++}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 				)

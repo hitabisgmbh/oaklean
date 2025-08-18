@@ -36,8 +36,16 @@ ProgramStructureTreeType,
 		expectedName: '(anonymous:1234)'
 	},
 	[ProgramStructureTreeType.MethodDefinition]: {
-		input: '{method:memberFunction1}',
+		input: '{method@static:memberFunction1}',
 		expectedName: 'memberFunction1'
+	},
+	[ProgramStructureTreeType.GetAccessorDeclaration]: {
+		input: '{get@static:a}',
+		expectedName: 'a'
+	},
+	[ProgramStructureTreeType.SetAccessorDeclaration]: {
+		input: '{set@static:a}',
+		expectedName: 'a'
 	},
 	[ProgramStructureTreeType.FunctionDeclaration]: {
 		input: '{function:nestedFunction}',
@@ -96,8 +104,8 @@ ProgramStructureTreeType,
 		expectedName: '(block:0)'
 	},
 	[ProgramStructureTreeType.ClassStaticBlockDeclaration]: {
-		input: '{scope:(static:0)}',
-		expectedName: '(static:0)'
+		input: '{static:0}',
+		expectedName: 'static:0'
 	},
 	[ProgramStructureTreeType.SwitchStatement]: {
 		input: '{scope:(switch:0)}',

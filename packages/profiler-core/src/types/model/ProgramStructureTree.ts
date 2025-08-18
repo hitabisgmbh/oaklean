@@ -18,6 +18,8 @@ export enum ProgramStructureTreeType {
 	ClassDeclaration = 'ClassDeclaration',
 	ClassExpression = 'ClassExpression',
 	MethodDefinition = 'MethodDefinition',
+	SetAccessorDeclaration = 'SetAccessorDeclaration',
+	GetAccessorDeclaration = 'GetAccessorDeclaration',
 	FunctionDeclaration = 'FunctionDeclaration',
 	FunctionExpression = 'FunctionExpression',
 	ObjectLiteralExpression = 'ObjectLiteralExpression',

@@ -7,6 +7,7 @@ describe('ts.SyntaxKind.PrivateIdentifier', () => {
 	const code = `
 		class MethodDeclaration {
 			#private () {}
+			static #private () {}
 		}
 	`
 
@@ -23,6 +24,9 @@ describe('ts.SyntaxKind.PrivateIdentifier', () => {
 					children: {
 						'{method:#private}': {
 							type: ProgramStructureTreeType.MethodDefinition,
+						},
+						'{method@static:#private}': {
+							type: ProgramStructureTreeType.MethodDefinition
 						}
 					}
 				}

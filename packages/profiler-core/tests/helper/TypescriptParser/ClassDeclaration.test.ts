@@ -61,7 +61,7 @@ describe('ts.SyntaxKind.ClassDeclaration', () => {
 						'{constructor:constructor}': {
 							type: ProgramStructureTreeType.ConstructorDeclaration,
 						},
-						'{scope:(static:0)}': {
+						'{static:0}': {
 							type: ProgramStructureTreeType.ClassStaticBlockDeclaration,
 							children: {
 								'{function:foo}': {
