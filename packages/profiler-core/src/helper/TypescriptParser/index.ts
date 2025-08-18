@@ -1,6 +1,7 @@
 export * from './ArrowFunctionHelper'
 export * from './ClassDeclarationHelper'
 export * from './ClassExpressionHelper'
+export * from './ClassStaticBlockDeclarationHelper'
 export * from './ConstructorDeclarationHelper'
 export * from './FunctionDeclarationHelper'
 export * from './FunctionExpressionHelper'

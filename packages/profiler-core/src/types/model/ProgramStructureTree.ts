@@ -31,6 +31,7 @@ export enum ProgramStructureTreeType {
 	CatchClause = 'CatchClause',
 	FinallyBlock = 'FinallyBlock',
 	Block = 'Block',
+	ClassStaticBlockDeclaration = 'ClassStaticBlockDeclaration',
 	SwitchStatement = 'SwitchStatement',
 	SwitchCaseClause = 'SwitchCaseClause',
 	ModuleDeclaration = 'ModuleDeclaration',

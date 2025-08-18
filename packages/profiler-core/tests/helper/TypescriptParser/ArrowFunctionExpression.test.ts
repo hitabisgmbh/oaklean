@@ -140,7 +140,6 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 		;(() => {})()
 	`
 
-	it.todo('Maybe we should not include the parenthesized expression in the hierarchy?')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 

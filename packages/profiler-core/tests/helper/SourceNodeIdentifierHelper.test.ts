@@ -95,6 +95,10 @@ ProgramStructureTreeType,
 		input: '{scope:(block:0)}',
 		expectedName: '(block:0)'
 	},
+	[ProgramStructureTreeType.ClassStaticBlockDeclaration]: {
+		input: '{scope:(static:0)}',
+		expectedName: '(static:0)'
+	},
 	[ProgramStructureTreeType.SwitchStatement]: {
 		input: '{scope:(switch:0)}',
 		expectedName: '(switch:0)'

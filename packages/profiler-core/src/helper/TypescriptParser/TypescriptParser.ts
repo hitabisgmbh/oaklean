@@ -15,6 +15,7 @@ import {
 	ScopeHelper,
 	ObjectLiteralExpressionHelper,
 	BlockHelper,
+	ClassStaticBlockDeclarationHelper,
 	ForStatementHelper,
 	IfStatementHelper,
 	WhileStatementHelper,
@@ -77,6 +78,7 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 	[WhileStatementHelper.syntaxKind[1]]: WhileStatementHelper.parseNode,
 	[TryStatementHelper.syntaxKind]: TryStatementHelper.parseNode,
 	[BlockHelper.syntaxKind]: BlockHelper.parseNode,
+	[ClassStaticBlockDeclarationHelper.syntaxKind]: ClassStaticBlockDeclarationHelper.parseNode,
 	[SwitchStatementHelper.syntaxKind]: SwitchStatementHelper.parseNode,
 	[ModuleDeclarationHelper.syntaxKind]: ModuleDeclarationHelper.parseNode
 }
