@@ -20,7 +20,8 @@ import {
 	TryStatementRegex,
 	TryBlockStatementRegex,
 	CatchClauseStatementRegex,
-	FinallyBlockStatementRegex
+	FinallyBlockStatementRegex,
+	BlockStatementRegex
 } from '../constants/SourceNodeRegex'
 // Types
 import {
@@ -52,6 +53,7 @@ const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
 	[ProgramStructureTreeType.CatchClause]: CatchClauseStatementRegex,
 	[ProgramStructureTreeType.FinallyBlock]: FinallyBlockStatementRegex,
 	[ProgramStructureTreeType.SwitchStatement]: SwitchStatementRegex,
+	[ProgramStructureTreeType.Block]: BlockStatementRegex,
 	[ProgramStructureTreeType.SwitchCaseClause]: SwitchCaseClauseRegex,
 	[ProgramStructureTreeType.ModuleDeclaration]: ModuleDeclarationRegex,
 }

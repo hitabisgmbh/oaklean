@@ -91,6 +91,10 @@ ProgramStructureTreeType,
 		input: '{scope:(finally)}',
 		expectedName: '(finally)'
 	},
+	[ProgramStructureTreeType.Block]: {
+		input: '{scope:(block:0)}',
+		expectedName: '(block:0)'
+	},
 	[ProgramStructureTreeType.SwitchStatement]: {
 		input: '{scope:(switch:0)}',
 		expectedName: '(switch:0)'

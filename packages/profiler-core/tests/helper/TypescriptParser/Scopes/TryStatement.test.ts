@@ -206,8 +206,6 @@ describe('ts.SyntaxKind.TryStatement', () => {
 
 			const hierarchy = pst.identifierHierarchy()
 
-			console.log(JSON.stringify(hierarchy, null, 2))
-
 			expect(hierarchy).toEqual({
 				type: 'Root',
 				children: {
