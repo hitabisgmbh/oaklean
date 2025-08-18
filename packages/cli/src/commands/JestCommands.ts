@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 
+import { Profiler } from '@oaklean/profiler'
 import {
 	ProfilerConfig,
 	GlobalIndex,
@@ -36,6 +37,10 @@ export default class JestCommands {
 				'-d, --deep',
 				'also check wether each report would be generated the same way'
 			)
+			.option(
+				'-m, --measure',
+				'also measure the reproduction of the reports and outputs a report (this will take longer, but is useful for performance comparisons)'
+			)
 			.action(this.verify.bind(this))
 	}
 
@@ -43,7 +48,7 @@ export default class JestCommands {
 		return new JestCommands()
 	}
 
-	async verify(options: { output?: string; deep?: string }) {
+	async verify(options: { output?: string; deep?: string; measure?: boolean }) {
 		const profilerConfig = ProfilerConfig.autoResolve()
 		const rootDir = profilerConfig.getRootDir()
 
@@ -71,12 +76,20 @@ export default class JestCommands {
 			return
 		}
 
+		let profiler: Profiler | undefined
+		if (options.measure !== undefined) {
+			LoggerHelper.success('Measuring the reproduction of the reports.')
+			profiler = new Profiler('verfify')
+			await profiler.start('latest')
+		}
+
 		const reports: ProjectReport[] = []
 		if (options.deep !== undefined) {
 			if (fs.existsSync(verifyExportAssetHelper.outputDir().toString())) {
-				fs.rmSync(verifyExportAssetHelper.outputDir().toString(), { recursive: true })
+				fs.rmSync(verifyExportAssetHelper.outputDir().toString(), {
+					recursive: true
+				})
 			}
-
 			for (const reportPath of reportPaths) {
 				const expectedReport = ProjectReport.loadFromFile(reportPath, 'bin')
 				if (!expectedReport) {
@@ -134,7 +147,7 @@ export default class JestCommands {
 					)
 					continue
 				}
-
+				LoggerHelper.log(`[REPRODUCE] ${reportPath.toPlatformString()}`)
 				await report.insertCPUProfile(
 					rootDir,
 					cpuProfile,
@@ -162,7 +175,9 @@ export default class JestCommands {
 						profilerConfig
 					)
 				} else {
-					LoggerHelper.success(`[REPRODUCIBLE] ${reportPath.toPlatformString()}`)
+					LoggerHelper.success(
+						`[REPRODUCIBLE] ${reportPath.toPlatformString()}`
+					)
 				}
 				reports.push(report)
 			}
@@ -189,6 +204,13 @@ export default class JestCommands {
 			moduleIndex,
 			...reports
 		)
+		if (profiler !== undefined) {
+			await profiler.finish('latest')
+			LoggerHelper.success(
+				'Stored performance report at',
+				profiler.exportAssetHelper.outputReportPath('latest').toPlatformString()
+			)
+		}
 
 		if (options.output) {
 			accumulatedProjectReport.storeToFile(
