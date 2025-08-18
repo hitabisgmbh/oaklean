@@ -1,7 +1,8 @@
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 import {
-	SourceNodeMetaData
+	SourceNodeMetaData,
+	SourceNodeMetaDataTypeNotAggregate
 } from './SourceNodeMetaData'
 import { WASM_NODE_MODULE } from './NodeModule'
 import { SensorValues } from './SensorValues'
@@ -114,11 +115,25 @@ export class SourceFileMetaData extends BaseModel {
 	}
 
 	normalize(newGlobalIndex: GlobalIndex) {
+		function sortIDsByIdentifier(
+			input: ModelMap<SourceNodeID_number, SourceNodeMetaData<
+			SourceNodeMetaDataTypeNotAggregate
+			>>
+		): SourceNodeID_number[] {
+			return Array.from(input.values())
+				.map((value) => ({
+					identifier: value.sourceNodeIndex.identifier,
+					id: value.id
+				})) // Pair identifier with id
+				.sort((a, b) => a.identifier.localeCompare(b.identifier)) // Sort by identifier
+				.map(pair => pair.id) // Extract sorted ids
+		}
+
 		const newPathIndex = this.pathIndex.insertToOtherIndex(newGlobalIndex)
 		const newFunctions = new ModelMap<
 		SourceNodeID_number,
 		SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>>('number')
-		for (const sourceNodeID of Array.from(this.functions.keys()).sort()) {
+		for (const sourceNodeID of sortIDsByIdentifier(this.functions)) {
 			const sourceNodeMetaData = this.functions.get(sourceNodeID)!
 			sourceNodeMetaData.normalize(newGlobalIndex)
 			newFunctions.set(sourceNodeMetaData.id, sourceNodeMetaData)

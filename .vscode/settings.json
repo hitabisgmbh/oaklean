@@ -6,8 +6,9 @@
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"editor.tabSize": 2,
 	"editor.insertSpaces": false,
-	"editor.formatOnSave": false,
 	"editor.detectIndentation": false,
 	"javascript.preferences.quoteStyle": "single",
-	"typescript.preferences.quoteStyle": "single"
+	"typescript.preferences.quoteStyle": "single",
+	"editor.formatOnPaste": false,
+	"editor.formatOnSave": false,
 }

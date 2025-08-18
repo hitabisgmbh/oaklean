@@ -10,6 +10,32 @@
 - Fixed a bug related to the correct resolving of source maps.
 - Fixed a bug that occasionally resolved an incorrect node module path.
 - Fixed a bug that falsely increased the profiler hits.
+- Fixed a bug that made some SourceMaps not parsable by the profiler.
+- Fixed a bug that prevented the profiler from distinguishing methods from static methods that share the same name like this:
+	```
+	class Test {
+		foo() {}
+		static foo() {}
+	}
+	```
+- Fixed a bug that made functions and methods indistinguishable when they were defined in ObjectLiteralExpressions in the same scope like this:
+	```
+	const foo = {
+		f() {}
+	}
+	const bar = {
+		f() {}
+	}
+	```
+- Fixed a bug that made methods indistinguishable when they were defined in ClassExpressions like:
+	```
+	const foo = class {
+		constructor() {}
+	}
+	const bar = {
+		constructor() {}
+	}
+	```
 
 ### Removed
 - Removed all transform adapters, as the transpiled source code is now directly retrieved from the V8 engine.

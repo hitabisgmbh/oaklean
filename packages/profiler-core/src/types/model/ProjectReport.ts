@@ -39,12 +39,22 @@ export type IProjectReportExecutionDetails = {
 	commitTimestamp: number | undefined,
 	uncommittedChanges: boolean | undefined
 	timestamp: number
-	highResolutionBeginTime?: string // value is stored in nano seconds(NanoSeconds_BigInt), but for serialization purposes it is a string
-	highResolutionStopTime?: string // value is stored in nano seconds(NanoSeconds_BigInt), but for serialization purposes it is a string
+	highResolutionBeginTime: string // value is stored in nano seconds(NanoSeconds_BigInt), but for serialization purposes it is a string
+	highResolutionStopTime: string // value is stored in nano seconds(NanoSeconds_BigInt), but for serialization purposes it is a string
 	systemInformation: ISystemInformation,
 	languageInformation: ILanguageInformation
 	runTimeOptions: RuntimeOptions
 }
+
+export type IProjectReportExecutionDetailsDuringMeasurement = Omit<
+IProjectReportExecutionDetails,
+'highResolutionBeginTime' |
+'highResolutionStopTime'
+> & {
+	highResolutionBeginTime?: string,
+	highResolutionStopTime?: string
+}
+	
 
 export interface IProjectReport extends IReport {
 	projectMetaData: IProjectMetaData

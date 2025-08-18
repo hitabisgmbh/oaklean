@@ -1,9 +1,9 @@
 import { CPUModel } from './CPUProfile/CPUModel'
 import { CPUNode } from './CPUProfile/CPUNode'
-import { TypeScriptHelper } from './TypescriptHelper'
 import { LoggerHelper } from './LoggerHelper'
 import { ExternalResourceHelper } from './ExternalResourceHelper'
 import { ResolveFunctionIdentifierHelper } from './ResolveFunctionIdentifierHelper'
+import { TypescriptHelper } from './TypescriptParser/TypescriptHelper'
 
 import { ProjectReport } from '../model/ProjectReport'
 import { ModuleReport } from '../model/ModuleReport'
@@ -381,7 +381,7 @@ export class InsertCPUProfileHelper {
 			firstTimeVisitedSourceNode_CallIdentifier = currentCallIdentifier
 		}
 
-		if (sourceNodeLocation.functionIdentifier === TypeScriptHelper.awaiterSourceNodeIdentifier()) {
+		if (sourceNodeLocation.functionIdentifier === TypescriptHelper.awaiterSourceNodeIdentifier()) {
 			isAwaiterSourceNode = true
 
 			// add the awaiter to the stack and the corresponding async function parent
@@ -578,9 +578,6 @@ export class InsertCPUProfileHelper {
 		externalResourceHelper: ExternalResourceHelper,
 		metricsDataCollection?: MetricsDataCollection,
 	) {
-		if (reportToApply.executionDetails.highResolutionBeginTime === undefined) {
-			throw new Error('InsertCPUProfileHelper.insertCPUProfile: executionDetails.highResolutionBeginTime is undefined')
-		}
 		const cpuModel = new CPUModel(
 			rootDir,
 			profile,

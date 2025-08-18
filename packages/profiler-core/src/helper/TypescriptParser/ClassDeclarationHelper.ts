@@ -1,0 +1,75 @@
+import * as ts from 'typescript'
+
+import { NamingHelper } from './NamingHelper'
+import { TypescriptHelper } from './TypescriptHelper'
+import { TraverseNodeInfo } from './TraverseNodeInfo'
+
+import { LoggerHelper } from '../LoggerHelper'
+import { ProgramStructureTree } from '../../model/ProgramStructureTree'
+// Types
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../types'
+
+export class ClassDeclarationHelper {
+	static syntaxKind = ts.SyntaxKind.ClassDeclaration
+
+	static parseNode(
+		node: ts.ClassDeclaration,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	): {
+			resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassDeclaration>
+			resolveWithNoChildren: true
+		} {
+		return {
+			resolveWithNoChildren: true,
+			resolve() {
+				if (node.name?.kind === ts.SyntaxKind.Identifier) {
+					const { identifier, identifierType } = NamingHelper.getIdentifierName(
+						node.name,
+						sourceFile,
+						traverseNodeInfo
+					)
+					return new ProgramStructureTree(
+						traverseNodeInfo.resolvedTree(),
+						traverseNodeInfo.nextId(),
+						ProgramStructureTreeType.ClassDeclaration,
+						identifierType,
+						`{class:${identifier}}` as SourceNodeIdentifierPart_string,
+						TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+					)
+				}
+				if (TypescriptHelper.hasDefaultKeywordModifier(node)) {
+					return new ProgramStructureTree(
+						traverseNodeInfo.resolvedTree(),
+						traverseNodeInfo.nextId(),
+						ProgramStructureTreeType.ClassDeclaration,
+						IdentifierType.KeyWord,
+						'{class:default}' as SourceNodeIdentifierPart_string,
+						TypescriptHelper.posToLoc(sourceFile, node.getStart()),
+						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
+					)
+				}
+				LoggerHelper.error(
+					'ClassDeclarationHelper (parseNode): unhandled case: node.name.kind === ' +
+						node.name?.kind,
+					{
+						filePath: traverseNodeInfo.filePath,
+						kind: node.name?.kind ? ts.SyntaxKind[node.name?.kind] : undefined,
+						pos: node.name
+							? TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
+							: undefined
+					}
+				)
+				throw new Error(
+					'ClassDeclarationHelper (parseNode): unhandled case: node.name.kind === ' +
+						node.name?.kind
+				)
+			}
+		}
+	}
+}

@@ -79,20 +79,42 @@ export class PermissionHelper {
 		} catch { }
 	}
 
-	static mkdirRecursivelyWithUserPermission(path: UnifiedPath | string) {
-		const dirPath = typeof path === 'string' ? path : path.toPlatformString()
-
-		const createdDirs = createDirectoriesRecursively(dirPath)
+	static mkdirRecursivelyWithUserPermission(path: UnifiedPath) {
+		const createdDirs = createDirectoriesRecursively(path.toPlatformString())
 		for (const dir of createdDirs) {
 			PermissionHelper.changeFileOwnershipBackToUser(dir)
 		}
 	}
 
-	static writeFileWithUserPermission(file: string, data: string | NodeJS.ArrayBufferView) {
-		fs.writeFileSync(file, data)
-		PermissionHelper.changeFileOwnershipBackToUser(file)
+	static async writeFileWithStorageFunctionWithUserPermissionAsync(
+		path: UnifiedPath,
+		storeFunction: () => Promise<unknown>
+	) {
+		const dirPath = path.dirName()
+		if (!fs.existsSync(dirPath.toPlatformString())) {
+			PermissionHelper.mkdirRecursivelyWithUserPermission(dirPath)
+		}
+		await storeFunction()
+		const filePath = path.toPlatformString()
+		PermissionHelper.changeFileOwnershipBackToUser(filePath)
 	}
 
+	static writeFileWithStorageFunctionWithUserPermission(path: UnifiedPath, storeFunction: () => void) {
+		const dirPath = path.dirName()
+		if (!fs.existsSync(dirPath.toPlatformString())) {
+			PermissionHelper.mkdirRecursivelyWithUserPermission(dirPath)
+		}
+		storeFunction()
+		const filePath = path.toPlatformString()
+		PermissionHelper.changeFileOwnershipBackToUser(filePath)
+	}
+
+	static writeFileWithUserPermission(path: UnifiedPath, data: string | NodeJS.ArrayBufferView) {
+		PermissionHelper.writeFileWithStorageFunctionWithUserPermission(path, () => {
+			const filePath = path.toPlatformString()
+			fs.writeFileSync(filePath, data)
+		})
+	}
 
 	static checkWindowsAdminRights(): Promise<boolean> {
 		return new Promise(resolve => {

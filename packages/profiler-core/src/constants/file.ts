@@ -1,0 +1,7 @@
+export const REPORT_FILE_EXTENSION = '.oak'
+export const METRICS_DATA_COLLECTION_FILE_EXTENSION = '.mcollection'
+export const CPU_PROFILE_FILE_EXTENSION = '.cpuprofile'
+export const EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION = '.resources.json'
+export const PERFORMANCE_FILE_NAME = 'performance.json'
+export const EXECUTION_DETAILS_FILE_NAME = 'execution-details.json'
+export const ACCUMULATED_REPORT_FILE_NAME = 'accumulated.oak'

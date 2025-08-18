@@ -2,8 +2,9 @@ import * as ts from 'typescript'
 
 // Types
 import {
-	SourceNodeIdentifier_string
-} from '../types'
+	SourceNodeIdentifier_string,
+	NodeLocation
+} from '../../types'
 
 export enum EmitHelperNames {
 	// TypeScript Helpers
@@ -36,7 +37,16 @@ export enum EmitHelperNames {
 
 export const EmitHelperNameStrings = Object.values(EmitHelperNames)
 
-export class TypeScriptHelper {
+export class TypescriptHelper {
+	static posToLoc(sourceFile: ts.SourceFile, pos: number): NodeLocation {
+		const lineAndChar = sourceFile.getLineAndCharacterOfPosition(pos)
+
+		return {
+			line: lineAndChar.line + 1,
+			column: lineAndChar.character
+		}
+	}
+
 	static isUseStrict(node: ts.Node) {
 		if (ts.isStringLiteral(node)) {
 			if (node.text === 'use strict') {
@@ -70,5 +80,29 @@ export class TypeScriptHelper {
 
 	static awaiterSourceNodeIdentifier(): SourceNodeIdentifier_string {
 		return '{root}.{functionExpression:__awaiter}' as SourceNodeIdentifier_string
+	}
+
+	static hasDefaultKeywordModifier(node: ts.ClassDeclaration | ts.ClassExpression | ts.FunctionDeclaration): boolean {
+		if (node.modifiers === undefined || node.modifiers.length === 0) {
+			return false
+		}
+		for (const modifier of node.modifiers) {
+			if (modifier.kind === ts.SyntaxKind.DefaultKeyword) {
+				return true
+			}
+		}
+		return false
+	}
+
+	static hasStaticKeywordModifier(node: ts.MethodDeclaration | ts.PropertyDeclaration): boolean {
+		if (node.modifiers === undefined || node.modifiers.length === 0) {
+			return false
+		}
+		for (const modifier of node.modifiers) {
+			if (modifier.kind === ts.SyntaxKind.StaticKeyword) {
+				return true
+			}
+		}
+		return false
 	}
 }

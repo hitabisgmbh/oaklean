@@ -101,7 +101,7 @@ export class PathIndex extends BaseModel {
 		this.moduleIndex.addToPathMap(this)
 	}
 
-	toJSON() {
+	toJSON(): IPathIndex {
 		const containsUncommittedChanges = this.containsUncommittedChanges ? { cucc: true } : {}
 
 		return {

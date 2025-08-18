@@ -9,12 +9,15 @@ import { UnifiedPath } from '../system/UnifiedPath'
 import { GitHelper } from '../helper/GitHelper'
 import { TimeHelper } from '../helper/TimeHelper'
 // Types
-import { IProjectReportExecutionDetails, ProjectReportOrigin } from '../types'
+import {
+	IProjectReportExecutionDetailsDuringMeasurement,
+	ProjectReportOrigin
+} from '../types'
 
 export class ExecutionDetails {
 	static async resolveExecutionDetails(
 		config?: ProfilerConfig
-	): Promise<IProjectReportExecutionDetails> {
+	): Promise<IProjectReportExecutionDetailsDuringMeasurement> {
 		const commitHash = GitHelper.currentCommitHash()
 		const commitTimestamp = GitHelper.currentCommitTimestamp()
 		const timestamp = TimeHelper.getCurrentTimestamp()
@@ -44,7 +47,7 @@ export class ExecutionDetails {
 		}
 	}
 
-	static loadFromFile(filePath: UnifiedPath): IProjectReportExecutionDetails | undefined{
+	static loadFromFile(filePath: UnifiedPath): IProjectReportExecutionDetailsDuringMeasurement | undefined{
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
@@ -53,14 +56,11 @@ export class ExecutionDetails {
 	}
 
 	static storeToFile(
-		executionDetails: IProjectReportExecutionDetails,
+		executionDetails: IProjectReportExecutionDetailsDuringMeasurement,
 		filePath: UnifiedPath
 	): void {
-		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName().toPlatformString())
-		}
 		PermissionHelper.writeFileWithUserPermission(
-			filePath.toPlatformString(),
+			filePath,
 			JSON.stringify(executionDetails)
 		)
 	}

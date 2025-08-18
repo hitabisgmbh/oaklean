@@ -8,6 +8,7 @@ import {
 	ProfilerConfig,
 	ProjectReport,
 	IProjectReportExecutionDetails,
+	IProjectReportExecutionDetailsDuringMeasurement,
 	TimeHelper,
 	NanoSeconds_BigInt,
 	MicroSeconds_number,
@@ -17,7 +18,9 @@ import {
 	ExecutionDetails,
 	PerformanceHelper,
 	ExternalResourceHelper,
-	RegistryHelper
+	RegistryHelper,
+	ExportAssetHelper,
+	CPUProfileHelper
 } from '@oaklean/profiler-core'
 
 import { V8Profiler } from './model/V8Profiler'
@@ -42,7 +45,8 @@ interface TraceEventParams {
 export class Profiler {
 	subOutputDir: string | undefined
 	config: ProfilerConfig
-	executionDetails?: IProjectReportExecutionDetails
+	exportAssetHelper: ExportAssetHelper
+	executionDetails?: IProjectReportExecutionDetailsDuringMeasurement
 
 	private _externalResourceHelper: ExternalResourceHelper
 	private _sensorInterface: BaseSensorInterface | undefined
@@ -57,6 +61,9 @@ export class Profiler {
 		this.loadSensorInterface()
 		this._externalResourceHelper = new ExternalResourceHelper(
 			this.config.getRootDir()
+		)
+		this.exportAssetHelper = new ExportAssetHelper(
+			this.config.getOutDir().join(this.subOutputDir || '')
 		)
 	}
 
@@ -178,11 +185,11 @@ export class Profiler {
 		return this._profilerStartTime
 	}
 
-	async start(title: string, executionDetails?: IProjectReportExecutionDetails) {
+	async start(title: string, executionDetails?: IProjectReportExecutionDetailsDuringMeasurement) {
 		const performance = new PerformanceHelper()
 		performance.start('Profiler.start')
 
-		const outFileReport = this.outputReportPath(title)
+		const outFileReport = this.exportAssetHelper.outputReportPath(title)
 		const outDir = outFileReport.dirName()
 
 		performance.start('Profiler.start.createOutDir')
@@ -248,38 +255,19 @@ export class Profiler {
 		performance.stop('Profiler.start.V8Profiler.startProfiling')
 		performance.stop('Profiler.start')
 		performance.printReport('Profiler.start')
-		performance.exportAndSum(this.outputDir().join('performance.json'))
-	}
-
-	outputDir(): UnifiedPath {
-		return this.config.getOutDir().join(this.subOutputDir || '')
-	}
-
-	outputReportPath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}.oak`)
-	}
-
-	outputMetricCollectionPath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}.mcollection`)
-	}
-
-	outputProfilePath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}.cpuprofile`)
-	}
-
-	outputExternalResourceHelperPath(title: string): UnifiedPath {
-		return this.outputDir().join(`${title}.resources.json`)
+		performance.exportAndSum(this.exportAssetHelper.outputPerformancePath())
 	}
 
 	async finish(title: string, highResolutionStopTime?: NanoSeconds_BigInt): Promise<ProjectReport> {
+		const highResolutionStopTimeToUse = highResolutionStopTime !== undefined
+			? highResolutionStopTime.toString()
+			: TimeHelper.getCurrentHighResolutionTime().toString()
+		
 		const performance = new PerformanceHelper()
 		
 		performance.start('Profiler.finish')
 		if (this.executionDetails === undefined) {
 			throw new Error('Profiler.finish: Profiler was not started yet')
-		}
-		if (highResolutionStopTime !== undefined) {
-			this.executionDetails.highResolutionStopTime = highResolutionStopTime.toString()
 		}
 
 		performance.start('Profiler.finish.stopProfiling')
@@ -295,29 +283,24 @@ export class Profiler {
 		performance.stop('Profiler.finish.sensorInterface.stopProfiling')
 
 		const CPUProfilerBeginTime = BigInt(await this.getCPUProfilerBeginTime()) * BigInt(1000) as NanoSeconds_BigInt
-		this.executionDetails.highResolutionBeginTime = CPUProfilerBeginTime.toString()
+		const highResolutionBeginTimeToUse = CPUProfilerBeginTime.toString()
 
-		const exportData = {
+		const cpuProfile = {
 			nodes: profile.nodes,
 			startTime: profile.startTime,
 			endTime: profile.endTime,
 			samples: profile.samples,
 			timeDeltas: profile.timeDeltas
 		}
-		const outFileCPUProfile = this.outputProfilePath(title)
-		const outFileExternalResourceHelper = this.outputExternalResourceHelperPath(title)
-		const outFileReport = this.outputReportPath(title)
-		const outFileMetricCollection = this.outputMetricCollectionPath(title)
+		const outFileCPUProfile = this.exportAssetHelper.outputCPUProfilePath(title)
+		const outFileExternalResourceHelper = this.exportAssetHelper.outputExternalResourceHelperPath(title)
+		const outFileReport = this.exportAssetHelper.outputReportPath(title)
+		const outFileMetricsDataCollection = this.exportAssetHelper.outputMetricsDataCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportV8Profile')
-			// create parent directories if they do not exist
-			const dir = outFileCPUProfile.dirName()
-			if (!fs.existsSync(dir.toPlatformString())) {
-				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
-			}
-			PermissionHelper.writeFileWithUserPermission(
-				outFileCPUProfile.toPlatformString(),
-				JSON.stringify(exportData, null, 2),
+			await CPUProfileHelper.storeToFile(
+				cpuProfile,
+				outFileCPUProfile,
 			)
 			performance.stop('Profiler.finish.exportV8Profile')
 		}
@@ -325,12 +308,18 @@ export class Profiler {
 		const metricsDataCollection = await this._sensorInterface?.readSensorValues(process.pid)
 		performance.stop('Profiler.finish.sensorInterface.readSensorValues')
 
+		const executionDetailsFull: IProjectReportExecutionDetails = {
+			...this.executionDetails,
+			highResolutionBeginTime: highResolutionBeginTimeToUse,
+			highResolutionStopTime: highResolutionStopTimeToUse
+		}
+
 		const rootDir = this.config.getRootDir()
-		const report = new ProjectReport(this.executionDetails, ReportKind.measurement)
+		const report = new ProjectReport(executionDetailsFull, ReportKind.measurement)
 		if (this.config.shouldExportSensorInterfaceData()) {
 			if (metricsDataCollection !== undefined) {
 				performance.start('Profiler.finish.exportMetricsDataCollection')
-				metricsDataCollection.storeToFile(outFileMetricCollection)
+				metricsDataCollection.storeToFile(outFileMetricsDataCollection)
 				performance.stop('Profiler.finish.exportMetricsDataCollection')
 			}
 		}
@@ -346,14 +335,9 @@ export class Profiler {
 
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportExternalResourceHelper')
-			// create parent directories if they do not exist
-			const dir = outFileExternalResourceHelper.dirName()
-			if (!fs.existsSync(dir.toPlatformString())) {
-				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
-			}
-			PermissionHelper.writeFileWithUserPermission(
-				outFileExternalResourceHelper.toPlatformString(),
-				JSON.stringify(this._externalResourceHelper, null, 2),
+			this._externalResourceHelper.storeToFile(
+				outFileExternalResourceHelper,
+				'pretty-json'
 			)
 			performance.stop('Profiler.finish.exportExternalResourceHelper')
 		}
@@ -361,7 +345,7 @@ export class Profiler {
 		performance.start('Profiler.finish.insertCPUProfile')
 		await report.insertCPUProfile(
 			rootDir,
-			profile,
+			cpuProfile,
 			this._externalResourceHelper,
 			metricsDataCollection
 		)
@@ -373,14 +357,9 @@ export class Profiler {
 
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportExternalResourceHelper')
-			// create parent directories if they do not exist
-			const dir = outFileExternalResourceHelper.dirName()
-			if (!fs.existsSync(dir.toPlatformString())) {
-				PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
-			}
-			PermissionHelper.writeFileWithUserPermission(
-				outFileExternalResourceHelper.toPlatformString(),
-				JSON.stringify(this._externalResourceHelper, null, 2),
+			this._externalResourceHelper.storeToFile(
+				outFileExternalResourceHelper,
+				'pretty-json'
 			)
 			performance.stop('Profiler.finish.exportExternalResourceHelper')
 		}
@@ -396,7 +375,7 @@ export class Profiler {
 		}
 		performance.stop('Profiler.finish')
 		performance.printReport('Profiler.finish')
-		performance.exportAndSum(this.outputDir().join('performance.json'))
+		performance.exportAndSum(this.exportAssetHelper.outputPerformancePath())
 
 		return report
 	}

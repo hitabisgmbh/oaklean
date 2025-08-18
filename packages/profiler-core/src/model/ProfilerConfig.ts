@@ -297,11 +297,8 @@ export class ProfilerConfig implements IProfilerConfig {
 	}
 
 	storeToFile(filePath: UnifiedPath) {
-		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName().toPlatformString())
-		}
 		PermissionHelper.writeFileWithUserPermission(
-			filePath.toPlatformString(),
+			filePath,
 			JSON.stringify(this, null, 2)
 		)
 	}

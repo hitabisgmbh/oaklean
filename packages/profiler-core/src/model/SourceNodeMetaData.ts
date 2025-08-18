@@ -30,7 +30,7 @@ function areNumbersClose(a: number, b: number, epsilon = 1e-10) {
 	return Math.abs(a - b) < epsilon
 }
 
-type SourceNodeMetaDataTypeNotAggregate = Exclude<SourceNodeMetaDataType, SourceNodeMetaDataType.Aggregate>
+export type SourceNodeMetaDataTypeNotAggregate = Exclude<SourceNodeMetaDataType, SourceNodeMetaDataType.Aggregate>
 
 type SourceNodeMetaDataTypeWithChildren =
 SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
@@ -89,6 +89,18 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 	}
 
 	normalize(newGlobalIndex: GlobalIndex) {
+		function sortIDsByIdentifier(
+			input: ModelMap<SourceNodeID_number, SourceNodeMetaData<SourceNodeMetaDataTypeNotAggregate>>
+		): SourceNodeID_number[] {
+			return Array.from(input.values())
+				.map((value) => ({
+					identifier: value.sourceNodeIndex.globalIdentifier().identifier,
+					id: value.id
+				})) // Pair identifier with id
+				.sort((a, b) => a.identifier.localeCompare(b.identifier)) // Sort by identifier
+				.map(pair => pair.id) // Extract sorted ids
+		}
+
 		if (this.isAggregate()) {
 			throw new Error('SourceNodeMetaData.normalize: can only be executed for non aggregate SourceNodeMetaData')
 		}
@@ -105,7 +117,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			SourceNodeMetaDataType.LangInternalSourceNodeReference
 			>>('number')
 			// remap all lang_internal nodes
-			for (const sourceNodeID of Array.from(self.lang_internal.keys()).sort()) {
+			for (const sourceNodeID of sortIDsByIdentifier(self.lang_internal)) {
 				const sourceNodeMetaData = self.lang_internal.get(sourceNodeID)!
 				sourceNodeMetaData.normalize(newGlobalIndex)
 				new_lang_internal.set(sourceNodeMetaData.id, sourceNodeMetaData)
@@ -114,7 +126,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			SourceNodeMetaDataType.InternSourceNodeReference
 			>>('number')
 			// remap all intern nodes
-			for (const sourceNodeID of Array.from(self.intern.keys()).sort()) {
+			for (const sourceNodeID of sortIDsByIdentifier(self.intern)) {
 				const sourceNodeMetaData = self.intern.get(sourceNodeID)!
 				sourceNodeMetaData.normalize(newGlobalIndex)
 				new_intern.set(sourceNodeMetaData.id, sourceNodeMetaData)
@@ -123,7 +135,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			SourceNodeMetaDataType.ExternSourceNodeReference
 			>>('number')
 			// remap all extern nodes
-			for (const sourceNodeID of Array.from(self.extern.keys()).sort()) {
+			for (const sourceNodeID of sortIDsByIdentifier(self.extern)) {
 				const sourceNodeMetaData = self.extern.get(sourceNodeID)!
 				sourceNodeMetaData.normalize(newGlobalIndex)
 				new_extern.set(sourceNodeMetaData.id, sourceNodeMetaData)

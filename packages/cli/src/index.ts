@@ -9,6 +9,7 @@ import CPUProfileCommands from './commands/CPUProfileCommands'
 import CodeParsingCommands from './commands/CodeParsingCommands'
 import InitCommands from './commands/InitCommands'
 import JestCommands from './commands/JestCommands'
+import MetricsDataCommands from './commands/MetricsDataCommands'
 
 program
 	.version(VERSION)
@@ -21,6 +22,7 @@ CPUProfileCommands.init()
 CodeParsingCommands.init()
 BackendCommands.init()
 JestCommands.init()
+MetricsDataCommands.init()
 
 program.configureHelp({
 	subcommandDescription: (cmd) => {
