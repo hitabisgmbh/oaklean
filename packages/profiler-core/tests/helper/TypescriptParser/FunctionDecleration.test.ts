@@ -93,3 +93,60 @@ describe('ts.SyntaxKind.AsteriskToken', () => {
 		})
 	})
 })
+
+describe('ts.SyntaxKind.FunctionDeclaration with signature', () => {
+	test('empty signature', () => {
+		const code = `
+			function FunctionDeclarationSignature(): void;
+		`
+
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root
+		})
+	})
+
+	test('signature with implementation', () => {
+		const code = `
+			function FunctionDeclarationSignature(): void;
+			function FunctionDeclarationSignature() {}
+		`
+
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{function:FunctionDeclarationSignature}': {
+					type: ProgramStructureTreeType.FunctionDeclaration,
+				}
+			}
+		})
+	})
+
+	test('multiple signatures with implementation', () => {
+		const code = `
+			function FunctionDeclarationSignature(): void;
+			function FunctionDeclarationSignature(a: number): void;
+			function FunctionDeclarationSignature(a?: number) {}
+		`
+
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{function:FunctionDeclarationSignature}': {
+					type: ProgramStructureTreeType.FunctionDeclaration,
+				}
+			}
+		})
+	})
+})

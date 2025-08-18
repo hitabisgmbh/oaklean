@@ -374,3 +374,43 @@ describe('defined within loop', () => {
 		expect(result.pst.numberOfLeafs()).toBe(2)
 	})
 })
+
+test('FunctionDeclaration signature', () => {
+	const code = `
+		function FunctionDeclarationSignature(): void;
+		function FunctionDeclarationSignature(a: number): void;
+		function FunctionDeclarationSignature(a?: number) {}
+	`
+
+	const result = duplicatesExist(code)
+	expect(result.hasDuplicates).toBe(false)
+	expect(result.pst.numberOfLeafs()).toBe(1)
+})
+
+test('MethodDeclaration signature', () => {
+	const code = `
+		class A {
+			MethodDeclaration(): void
+			MethodDeclaration(a: number): void
+			MethodDeclaration(a?: number) {}
+		}
+	`
+
+	const result = duplicatesExist(code)
+	expect(result.hasDuplicates).toBe(false)
+	expect(result.pst.numberOfLeafs()).toBe(1)
+})
+
+test('ConstructorDeclaration signature', () => {
+	const code = `
+		class A {
+			constructor()
+			constructor(a: number)
+			constructor(a?: number) {}
+		}
+	`
+
+	const result = duplicatesExist(code)
+	expect(result.hasDuplicates).toBe(false)
+	expect(result.pst.numberOfLeafs()).toBe(1)
+})

@@ -21,7 +21,10 @@ export class ConstructorDeclarationHelper {
 	): {
 			resolve(): ProgramStructureTree<ProgramStructureTreeType.ConstructorDeclaration>,
 			resolveWithNoChildren: true
-		} {
+		} | null {
+		if (node.body === undefined) {
+			return null
+		}
 		return {
 			resolveWithNoChildren: true,
 			resolve() {

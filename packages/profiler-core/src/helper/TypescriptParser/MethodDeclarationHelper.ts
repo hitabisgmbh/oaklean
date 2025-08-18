@@ -23,7 +23,10 @@ export class MethodDeclarationHelper {
 	): {
 			resolve(): ProgramStructureTree<ProgramStructureTreeType.MethodDefinition>
 			resolveWithNoChildren: true
-		} {
+		} | null {
+		if (node.body === undefined) {
+			return null
+		}
 		return {
 			resolveWithNoChildren: true,
 			resolve() {

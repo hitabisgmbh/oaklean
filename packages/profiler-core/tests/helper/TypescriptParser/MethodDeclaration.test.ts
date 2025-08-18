@@ -185,3 +185,81 @@ describe('ts.SyntaxKind.ObjectLiteralExpression', () => {
 		})
 	})
 })
+
+describe('ts.SyntaxKind.MethodDeclaration with signature', () => {
+	test('empty signature', () => {
+		const code = `
+			class A {
+				MethodDeclaration(): void
+			}
+		`
+
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{class:A}': {
+					type: ProgramStructureTreeType.ClassDeclaration
+				}
+			}
+		})
+	})
+
+	test('signature with implementation', () => {
+		const code = `
+			class A {
+				MethodDeclaration(): void
+				MethodDeclaration(a?: number) {}
+			}
+		`
+
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{class:A}': {
+					type: ProgramStructureTreeType.ClassDeclaration,
+					children: {
+						'{method:MethodDeclaration}': {
+							type: ProgramStructureTreeType.MethodDefinition,
+						}
+					}
+				}
+			}
+		})
+	})
+
+	test('multiple signatures with implementation', () => {
+		const code = `
+			class A {
+				MethodDeclaration(): void
+				MethodDeclaration(a: number): void
+				MethodDeclaration(a?: number) {}
+			}
+		`
+
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{class:A}': {
+					type: ProgramStructureTreeType.ClassDeclaration,
+					children: {
+						'{method:MethodDeclaration}': {
+							type: ProgramStructureTreeType.MethodDefinition,
+						}
+					}
+				}
+			}
+		})
+	})
+})
