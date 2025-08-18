@@ -81,6 +81,7 @@ describe('ts.SyntaxKind.ForStatement in condition', () => {
 	const code = `
 		function a {}
 		for(function a() {}; i < 10; i++) { }
+		for(let i = function a() {}; i < 10; i++) { }
 	`
 
 	test('expected identifier', () => {
@@ -98,6 +99,14 @@ describe('ts.SyntaxKind.ForStatement in condition', () => {
 					type: ProgramStructureTreeType.ForStatement,
 					children: {
 						'{functionExpression:(anonymous:0)}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				},
+				'{scope:(for:1)}': {
+					type: ProgramStructureTreeType.ForStatement,
+					children: {
+						'{functionExpression:i}': {
 							type: ProgramStructureTreeType.FunctionExpression
 						}
 					}
