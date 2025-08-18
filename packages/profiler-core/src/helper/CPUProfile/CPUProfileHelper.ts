@@ -5,7 +5,8 @@ import type { Protocol as Cdp } from 'devtools-protocol'
 import { CPUProfileSourceLocation } from './CPUProfileSourceLocation'
 
 import { UnifiedPath } from '../../system/UnifiedPath'
-import { PermissionHelper } from '../PermissionHelper'
+import { LoggerHelper } from '../LoggerHelper'
+import { JSONHelper } from '../JSONHelper'
 
 export class CPUProfileHelper {
 	/**
@@ -27,9 +28,15 @@ export class CPUProfileHelper {
 		cpuProfilePath: UnifiedPath,
 		outPath: UnifiedPath,
 	) {
-		const cpuProfile = JSON.parse(
-			fs.readFileSync(cpuProfilePath.toPlatformString(), 'utf-8').toString()
-		)
+		const cpuProfile = CPUProfileHelper.loadFromFile(cpuProfilePath)
+
+		if (cpuProfile === undefined) {
+			LoggerHelper.error(
+				`CPU profile could not be loaded from ${cpuProfilePath.toPlatformString()}. ` +
+				'Please make sure the file exists and is a valid CPU profile.'
+			)
+			return
+		}
 
 		const nodes = cpuProfile.nodes as Cdp.Profiler.ProfileNode[]
 		for (const node of nodes) {
@@ -42,9 +49,31 @@ export class CPUProfileHelper {
 				node.callFrame.url = location.relativeUrl.toString()
 			}
 		}
-		PermissionHelper.writeFileWithUserPermission(
-			outPath.toPlatformString(),
-			JSON.stringify(cpuProfile, null, 2),
+		await CPUProfileHelper.storeToFile(
+			cpuProfile,
+			outPath
+		)
+	}
+
+	static loadFromFile(
+		cpuProfilePath: UnifiedPath
+	): Cdp.Profiler.Profile | undefined {
+		if (!fs.existsSync(cpuProfilePath.toPlatformString())) {
+			return undefined
+		}
+
+		return JSON.parse(
+			fs.readFileSync(cpuProfilePath.toPlatformString(), 'utf-8').toString()
+		)
+	}
+
+	static async storeToFile(
+		cpuProfile: Cdp.Profiler.Profile,
+		cpuProfilePath: UnifiedPath
+	): Promise<void> {
+		await JSONHelper.storeBigJSON(
+			cpuProfile,
+			cpuProfilePath
 		)
 	}
 }

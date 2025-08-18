@@ -5,3 +5,4 @@ node_modules
 /profiles_history
 coverage
 /scripts
+.npmrc

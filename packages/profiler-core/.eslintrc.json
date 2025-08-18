@@ -4,6 +4,9 @@
 		"dist",
 		"**/*.d.ts",
 		"**/assets/**/*.js",
+		"**/assets/**/*.jsx",
+		"**/assets/**/*.ts",
+		"**/assets/**/*.tsx",
 		"**/__mocks__/**/*.js",
 		"lib/vscode-js-profile-core"
 	]

@@ -3,7 +3,7 @@ import { CallRelationTracker } from './CallRelationTracker'
 
 import { CPUModel } from '../CPUProfile/CPUModel'
 import { CPUNode } from '../CPUProfile/CPUNode'
-import { TypeScriptHelper } from '../TypescriptHelper'
+import { TypescriptHelper } from '../TypescriptParser/TypescriptHelper'
 import { LoggerHelper } from '../LoggerHelper'
 import { ExternalResourceHelper } from '../ExternalResourceHelper'
 import { ResolveFunctionIdentifierHelper } from '../ResolveFunctionIdentifierHelper'
@@ -271,7 +271,7 @@ export class InsertCPUProfileHelper {
 			currentCallIdentifier,
 			'intern')
 
-		if (sourceNodeLocation.functionIdentifier === TypeScriptHelper.awaiterSourceNodeIdentifier()) {
+		if (sourceNodeLocation.functionIdentifier === TypescriptHelper.awaiterSourceNodeIdentifier()) {
 			accountingType = 'intern_awaiter'
 			currentCallIdentifier.isAwaiterSourceNode = true
 

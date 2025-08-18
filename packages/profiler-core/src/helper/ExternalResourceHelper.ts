@@ -6,6 +6,7 @@ import { PermissionHelper } from './PermissionHelper'
 import { TypescriptParser } from './TypescriptParser'
 import { GitHelper } from './GitHelper'
 
+import { GlobalIndex } from '../model/indices/GlobalIndex'
 import { SourceMap, SourceMapRedirect } from '../model/SourceMap'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { NodeModule } from '../model/NodeModule'
@@ -74,27 +75,50 @@ export class ExternalResourceHelper {
 		return this._uncommittedFiles
 	}
 
-	trackUncommittedFiles(rootDir: UnifiedPath) {
-		if (this._uncommittedFiles === undefined) {
-			const uncommittedFiles = GitHelper.uncommittedFiles()
+	trackUncommittedFiles(
+		rootDir: UnifiedPath,
+		globalIndex: GlobalIndex
+	): boolean | null {
+		let uncommittedFiles:
+		UnifiedPath_string[]
+		| UnifiedPath[]
+		| null
+		| undefined = this._uncommittedFiles
 
-			if (uncommittedFiles === null) {
-				this._uncommittedFiles = null
-			} else {
-				this._uncommittedFiles = uncommittedFiles.map(
-					(file) => rootDir.pathTo(file).toString()
-				)
+		if (uncommittedFiles === undefined) {
+			uncommittedFiles = GitHelper.uncommittedFiles()
+		}
+		if (uncommittedFiles === null) {
+			// git is unavailable
+			this._uncommittedFiles = null
+			return null
+		}
+
+		const trackedUncommittedFiles = []
+		for (const file of uncommittedFiles) {
+			const uncommittedFile = rootDir.pathTo(file).toString()
+			// track only uncommitted files that are part of the global index
+			const pathIndex = globalIndex.getModuleIndex('get')?.getFilePathIndex('get', uncommittedFile)
+			if (pathIndex === undefined) {
+				continue
+			}
+			// mark the file as uncommitted in the global index
+			pathIndex.containsUncommittedChanges = true
+			// add the file to the uncommitted files list
+			trackedUncommittedFiles.push(uncommittedFile)
+			// also mark the file as uncommitted in the file info
+			const fileInfo = this.fileInfoFromPath(
+				uncommittedFile,
+				rootDir.join(uncommittedFile)
+			)
+
+			if (fileInfo !== null) {
+				fileInfo.cucc = true
 			}
 		}
-		if (this._uncommittedFiles !== null) {
-			for (const file of this._uncommittedFiles) {
-				const fileInfo = this.fileInfoPerPath.get(file)
-				if (fileInfo !== undefined && fileInfo !== null) {
-					fileInfo.cucc = true
-				}
-			}
-		}
-		return this._uncommittedFiles
+		this._uncommittedFiles = trackedUncommittedFiles
+		return trackedUncommittedFiles.length > 0
+		
 	}
 
 	async connect() {
@@ -109,20 +133,16 @@ export class ExternalResourceHelper {
 		filePath: UnifiedPath,
 		kind: 'pretty-json' | 'json'
 	) {
-		if (!fs.existsSync(filePath.dirName().toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(filePath.dirName().toPlatformString())
-		}
-
 		switch (kind) {
 			case 'pretty-json':
 				PermissionHelper.writeFileWithUserPermission(
-					filePath.toPlatformString(),
+					filePath,
 					JSON.stringify(this, null, 2)
 				)
 				break
 			case 'json':
 				PermissionHelper.writeFileWithUserPermission(
-					filePath.toPlatformString(),
+					filePath,
 					JSON.stringify(this)
 				)
 				break
@@ -202,6 +222,8 @@ export class ExternalResourceHelper {
 			data = json
 		}
 		const result = new ExternalResourceHelper(rootDir)
+		result._uncommittedFiles = []
+
 		for (const [key, value] of Object.entries(data.fileInfoPerScriptID)) {
 			let fileInfo: ExternalResourceFileInfo | null = null
 			if (value !== null) {
@@ -225,9 +247,6 @@ export class ExternalResourceHelper {
 				if (value.cucc !== undefined) {
 					fileInfo.cucc = value.cucc
 					if (value.cucc === true) {
-						if (!result._uncommittedFiles) {
-							result._uncommittedFiles = []
-						}
 						result._uncommittedFiles.push(key as UnifiedPath_string)
 					}
 				}

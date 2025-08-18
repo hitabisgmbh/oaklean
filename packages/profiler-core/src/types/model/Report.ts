@@ -1,9 +1,9 @@
 import {
 	ModuleID_number
-} from './index/ModuleIndex'
+} from './indices/ModuleIndex'
 import {
 	PathID_number
-} from './index/PathIndex'
+} from './indices/PathIndex'
 import {
 	ISourceFileMetaData
 } from './SourceFileMetaData'

@@ -1,0 +1,140 @@
+{
+	"id": 0,
+	"type": "Root",
+	"identifierType": "Name",
+	"identifier": "{root}",
+	"beginLoc": {
+		"line": 1,
+		"column": 0
+	},
+	"endLoc": {
+		"line": 12,
+		"column": 1
+	},
+	"children": {
+		"{class:ExampleClass}": {
+			"id": 1,
+			"type": "ClassDeclaration",
+			"identifierType": "Name",
+			"identifier": "{class:ExampleClass}",
+			"beginLoc": {
+				"line": 1,
+				"column": 0
+			},
+			"endLoc": {
+				"line": 12,
+				"column": 1
+			},
+			"children": {
+				"{method:memberFunction1}": {
+					"id": 2,
+					"type": "MethodDefinition",
+					"identifierType": "Name",
+					"identifier": "{method:memberFunction1}",
+					"beginLoc": {
+						"line": 2,
+						"column": 1
+					},
+					"endLoc": {
+						"line": 11,
+						"column": 2
+					},
+					"children": {
+						"{function:nestedFunction}": {
+							"id": 3,
+							"type": "FunctionDeclaration",
+							"identifierType": "Name",
+							"identifier": "{function:nestedFunction}",
+							"beginLoc": {
+								"line": 3,
+								"column": 2
+							},
+							"endLoc": {
+								"line": 10,
+								"column": 3
+							},
+							"children": {
+								"{functionExpression:arrowFunction}": {
+									"id": 4,
+									"type": "FunctionExpression",
+									"identifierType": "Name",
+									"identifier": "{functionExpression:arrowFunction}",
+									"beginLoc": {
+										"line": 4,
+										"column": 25
+									},
+									"endLoc": {
+										"line": 9,
+										"column": 4
+									},
+									"children": {
+										"{function:a}": {
+											"id": 5,
+											"type": "FunctionDeclaration",
+											"identifierType": "Name",
+											"identifier": "{function:a}",
+											"beginLoc": {
+												"line": 5,
+												"column": 4
+											},
+											"endLoc": {
+												"line": 5,
+												"column": 19
+											},
+											"children": {}
+										},
+										"{functionExpression:b}": {
+											"id": 6,
+											"type": "FunctionExpression",
+											"identifierType": "Name",
+											"identifier": "{functionExpression:b}",
+											"beginLoc": {
+												"line": 6,
+												"column": 14
+											},
+											"endLoc": {
+												"line": 6,
+												"column": 22
+											},
+											"children": {}
+										},
+										"{functionExpression:c}": {
+											"id": 7,
+											"type": "FunctionExpression",
+											"identifierType": "Name",
+											"identifier": "{functionExpression:c}",
+											"beginLoc": {
+												"line": 7,
+												"column": 14
+											},
+											"endLoc": {
+												"line": 7,
+												"column": 22
+											},
+											"children": {}
+										},
+										"{functionExpression:d}": {
+											"id": 8,
+											"type": "FunctionExpression",
+											"identifierType": "Name",
+											"identifier": "{functionExpression:d}",
+											"beginLoc": {
+												"line": 8,
+												"column": 14
+											},
+											"endLoc": {
+												"line": 8,
+												"column": 22
+											},
+											"children": {}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

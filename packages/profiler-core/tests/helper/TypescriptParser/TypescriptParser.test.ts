@@ -5,9 +5,9 @@ const tsMock = jest.mock('typescript', () => ({
 
 import * as ts from 'typescript'
 
-import { TypescriptParser } from '../../src/helper/TypescriptParser'
-import { UnifiedPath } from '../../src/system/UnifiedPath'
-import { LoggerHelper } from '../../src'
+import { TypescriptParser } from '../../../src/helper/TypescriptParser'
+import { UnifiedPath } from '../../../src/system/UnifiedPath'
+import { LoggerHelper } from '../../../src'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
@@ -15,36 +15,9 @@ describe('TypescriptParser', () => {
 	it('should have a static method traverseSourceFile()', () => {
 		expect(TypescriptParser.traverseSourceFile).toBeTruthy()
 	})
-	it('should have a static method posToLoc()', () => {
-		expect(TypescriptParser.posToLoc).toBeTruthy()
-	})
-
-	it('should have a static method isProgramStructureType()', () => {
-		expect(TypescriptParser.isProgramStructureType).toBeTruthy()
-	})
 
 	it('should have a static method parseFile()', () => {
 		expect(TypescriptParser.parseFile).toBeTruthy()
-	})
-
-	describe('posToLoc', () => {
-		const sourceFile = ts.createSourceFile(
-			'index.ts',
-			'const who = \'World\'\n\nconsole.log(\'Hello\')\nconsole.log(who)',
-			ts.ScriptTarget.ES2015,
-			/*setParentNodes */ true
-		)
-
-		it('should return the correct line and colum', () => {
-			expect(TypescriptParser.posToLoc(sourceFile, 42)).toEqual({
-				line: 4,
-				column: 0
-			})
-			expect(TypescriptParser.posToLoc(sourceFile, 41)).toEqual({
-				line: 3,
-				column: 20
-			})
-		})
 	})
 
 	describe('readConfigFile', () => {
@@ -64,7 +37,7 @@ describe('TypescriptParser', () => {
 				const parseConfigFileTextToJsonMock = jest.spyOn(ts, 'parseConfigFileTextToJson')
 				parseConfigFileTextToJsonMock.mockReturnValue({ config: undefined })
 
-				const configFilePath = CURRENT_DIR.join('typescriptParserAssets', 'subDir', 'tsconfig.json').toPlatformString()
+				const configFilePath = CURRENT_DIR.join('assets', 'subDir', 'tsconfig.json').toPlatformString()
 
 				const config = TypescriptParser.readConfigFile(configFilePath)
 				parseConfigFileTextToJsonMock.mockRestore()
@@ -88,7 +61,7 @@ describe('TypescriptParser', () => {
 				parseJsonConfigFileContentMock.mockReturnValue({
 					options: {}, errors: expectedErrors, fileNames: [] })
 
-				const configFilePath = CURRENT_DIR.join('typescriptParserAssets', 'subDir', 'tsconfig.json').toPlatformString()
+				const configFilePath = CURRENT_DIR.join('assets', 'subDir', 'tsconfig.json').toPlatformString()
 
 				const config = TypescriptParser.readConfigFile(configFilePath)
 				parseJsonConfigFileContentMock.mockRestore()
@@ -102,7 +75,7 @@ describe('TypescriptParser', () => {
 		
 
 		it('parses correctly case 1', () => {
-			const config = TypescriptParser.readConfigFile(CURRENT_DIR.join('typescriptParserAssets', 'subDir', 'tsconfig.json').toPlatformString())
+			const config = TypescriptParser.readConfigFile(CURRENT_DIR.join('assets', 'subDir', 'tsconfig.json').toPlatformString())
 
 			expect(config?.options).toEqual({
 				declaration: true,
@@ -120,11 +93,11 @@ describe('TypescriptParser', () => {
 				configFilePath: undefined
 			})
 
-			expect(config?.fileNames).toEqual([CURRENT_DIR.join('typescriptParserAssets', 'subDir', 'test.ts').toString()])
+			expect(config?.fileNames).toEqual([CURRENT_DIR.join('assets', 'subDir', 'test.ts').toString()])
 		})
 
 		it('parses correctly case 1', () => {
-			const config = TypescriptParser.readConfigFile(CURRENT_DIR.join('typescriptParserAssets', 'tsconfig.json').toPlatformString())
+			const config = TypescriptParser.readConfigFile(CURRENT_DIR.join('assets', 'tsconfig.json').toPlatformString())
 
 			expect(config?.options).toEqual({
 				declaration: true,
@@ -143,8 +116,8 @@ describe('TypescriptParser', () => {
 			})
 
 			expect(config?.fileNames).toEqual([
-				CURRENT_DIR.join('typescriptParserAssets', 'test.ts').toString(),
-				CURRENT_DIR.join('typescriptParserAssets', 'subDir', 'test.ts').toString()
+				CURRENT_DIR.join('assets', 'test.ts').toString(),
+				CURRENT_DIR.join('assets', 'subDir', 'test.ts').toString()
 			])
 		})
 	})
@@ -162,24 +135,24 @@ describe('TypescriptParser', () => {
 		})
 
 		it('resolves the correct tsconfig case 1', () => {
-			const configPath = TypescriptParser.tsConfigFilePathFromFile(CURRENT_DIR.join('typescriptParserAssets', 'test.ts').toPlatformString())
+			const configPath = TypescriptParser.tsConfigFilePathFromFile(CURRENT_DIR.join('assets', 'test.ts').toPlatformString())
 
 			expect(configPath).toBeDefined()
 			if (configPath) {
 				const relativePath = CURRENT_DIR.pathTo(configPath)
 
-				expect(relativePath.toString()).toEqual('./typescriptParserAssets/tsconfig.json')
+				expect(relativePath.toString()).toEqual('./assets/tsconfig.json')
 			}
 		})
 
 		it('resolves the correct tsconfig case 2', () => {
-			const configPath =  TypescriptParser.tsConfigFilePathFromFile(CURRENT_DIR.join('typescriptParserAssets', 'subDir', 'test.ts').toPlatformString())
+			const configPath =  TypescriptParser.tsConfigFilePathFromFile(CURRENT_DIR.join('assets', 'subDir', 'test.ts').toPlatformString())
 
 			expect(configPath).toBeDefined()
 			if (configPath) {
 				const relativePath = CURRENT_DIR.pathTo(configPath)
 
-				expect(relativePath.toString()).toEqual('./typescriptParserAssets/subDir/tsconfig.json')
+				expect(relativePath.toString()).toEqual('./assets/subDir/tsconfig.json')
 			}
 		})
 	})

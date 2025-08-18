@@ -7,13 +7,13 @@ import {
 import { Profiler } from '@oaklean/profiler'
 import {
 	UnifiedPath,
-	NanoSeconds_BigInt,
 	ProfilerConfig,
 	ProjectReportOrigin,
 	LoggerHelper,
 	ExecutionDetails,
-	IProjectReportExecutionDetails,
-	PerformanceHelper
+	IProjectReportExecutionDetailsDuringMeasurement,
+	PerformanceHelper,
+	TimeHelper
 } from '@oaklean/profiler-core'
 // Jest Environments
 import NodeEnvironment from 'jest-environment-node'
@@ -82,8 +82,12 @@ class CustomEnvironment implements JestEnvironment {
 		this.ranSuccessfully = true
 	}
 
-	private async getExecutionDetails(config: ProfilerConfig): Promise<IProjectReportExecutionDetails> {
-		const executionDetailsPath = config.getOutDir().join('jest', 'execution-details.json')
+	private async getExecutionDetails(
+		profiler: Profiler,
+		config: ProfilerConfig
+	): Promise<IProjectReportExecutionDetailsDuringMeasurement> {
+		const executionDetailsPath = profiler.exportAssetHelper.outputExecutionDetailsPath()
+
 		let executionDetails = ExecutionDetails.loadFromFile(executionDetailsPath)
 
 		if (executionDetails === undefined) {
@@ -105,12 +109,12 @@ class CustomEnvironment implements JestEnvironment {
 				performance.stop('jestEnv.env.resolveConfig')
 
 				performance.start('jestEnv.env.resolveExecutionDetails')
-				const executionDetails = await this.getExecutionDetails(config)
+				const executionDetails = await this.getExecutionDetails(this.profiler, config)
 				performance.stop('jestEnv.env.resolveExecutionDetails')
 
 				performance.stop('jestEnv.env.setup')
 				performance.printReport('jestEnv.env.setup')
-				performance.exportAndSum(this.profiler.outputDir().join('performance.json'))
+				performance.exportAndSum(this.profiler.exportAssetHelper.outputPerformancePath())
 
 				await this.profiler.start(
 					this.testPath.toString(),
@@ -128,10 +132,10 @@ class CustomEnvironment implements JestEnvironment {
 			const performance = new PerformanceHelper()
 			try {
 				performance.start('jestEnv.env.teardown')
-				const stopTime = process.hrtime.bigint() as NanoSeconds_BigInt
+				const stopTime = TimeHelper.getCurrentHighResolutionTime()
 				performance.stop('jestEnv.env.teardown')
 				performance.printReport('jestEnv.env.teardown')
-				performance.exportAndSum(this.profiler.outputDir().join('performance.json'))
+				performance.exportAndSum(this.profiler.exportAssetHelper.outputPerformancePath())
 
 				await this.profiler.finish(this.testPath.toString(), stopTime)
 			} catch (e) {

@@ -16,6 +16,7 @@ import { ExternalResourceHelper } from '../../src/helper/ExternalResourceHelper'
 import { LoggerHelper } from '../../src/helper/LoggerHelper'
 import {
 	UnifiedPath_string,
+	UnifiedPathPart_string,
 	IProjectReport,
 	ProjectIdentifier_string,
 	ProjectReportOrigin,
@@ -23,6 +24,7 @@ import {
 	ISourceNodeMetaData,
 	SourceNodeMetaDataType,
 	SourceNodeIdentifier_string,
+	SourceNodeIdentifierPart_string,
 	NodeModuleIdentifier_string,
 	ISystemInformation,
 	GitHash_string,
@@ -31,11 +33,11 @@ import {
 	MilliJoule_number,
 	PathID_number,
 	ModuleID_number,
-	ISourceNodeIndex,
 	SourceNodeID_number,
-	SourceNodeIndexType,
 	MicroSeconds_number,
-	ReportKind
+	ReportKind,
+	IGlobalIndex,
+	ISourceFileMetaData
 } from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
@@ -50,6 +52,8 @@ const EXAMPLE_EXECUTION_DETAILS = {
 	commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
 	commitTimestamp: 1687845481077,
 	timestamp: 1687845481077,
+	highResolutionBeginTime: '887518894424000',
+	highResolutionStopTime: '887518904424000',
 	uncommittedChanges: false,
 	systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 	languageInformation: {
@@ -90,29 +94,32 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 			['{self}' as NodeModuleIdentifier_string]: {
 				id: 0 as ModuleID_number,
 				children: {
-					'dist': {
+					['dist' as UnifiedPathPart_string]: {
 						children: {
-							'test.js': {
+							['test.js' as UnifiedPathPart_string]: {
 								id: 1 as PathID_number,
 								file: {
-									'{root}': {
+									['{root}' as SourceNodeIdentifierPart_string]: {
+										id: undefined,
 										children: {
-											'{class:Class}': {
+											['{class:Class}' as SourceNodeIdentifierPart_string]: {
+												id: undefined,
 												children: {
-													'{method:method}': {
+													['{method:method}' as SourceNodeIdentifierPart_string]: {
+														id: undefined,
 														children: {
-															'{functionExpression:0}': {
+															['{functionExpression:0}' as SourceNodeIdentifierPart_string]: {
 																id: 2 as SourceNodeID_number
 															}
 														}
-													} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>,
-													'{method:method2}': {
+													},
+													['{method:method2}' as SourceNodeIdentifierPart_string]: {
 														id: 6 as SourceNodeID_number
 													}
 												}
-											} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>
+											}
 										}
-									} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>
+									}
 								}
 							}
 						}
@@ -122,10 +129,10 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 			['{node}' as NodeModuleIdentifier_string]: {
 				id: 3 as ModuleID_number,
 				children: {
-					'': {
+					['' as UnifiedPathPart_string]: {
 						id: 4 as PathID_number,
 						file: {
-							'{root}': {
+							['{root}' as SourceNodeIdentifierPart_string]: {
 								id: 5 as SourceNodeID_number
 							}
 						}
@@ -135,29 +142,31 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 			['@oaklean/profiler-core@0.0.4' as NodeModuleIdentifier_string]: {
 				id: 7 as ModuleID_number,
 				children: {
-					'test.js': {
+					['test.js' as UnifiedPathPart_string]: {
 						id: 8 as PathID_number,
 						file: {
-							'{root}': {
+							['{root}' as SourceNodeIdentifierPart_string]: {
+								id: undefined,
 								children: {
-									'{class:Package}': {
+									['{class:Package}' as SourceNodeIdentifierPart_string]: {
+										id: undefined,
 										children: {
-											'{method:method}': {
+											['{method:method}' as SourceNodeIdentifierPart_string]: {
 												id: 9 as SourceNodeID_number
 											},
-											'{method:method2}': {
+											['{method:method2}' as SourceNodeIdentifierPart_string]: {
 												id: 10 as SourceNodeID_number
 											}
 										}
-									} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>
+									}
 								}
-							} as unknown as ISourceNodeIndex<SourceNodeIndexType.Intermediate>
+							}
 						}
 					}
 				}
 			}
 		}
-	},
+	} satisfies IGlobalIndex,
 	intern: {
 		[1 as PathID_number]: {
 			path: './dist/test.js' as UnifiedPath_string,
@@ -166,63 +175,63 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 					id: 2 as SourceNodeID_number,
 					type: SourceNodeMetaDataType.SourceNode,
 					sensorValues: {
-						selfCPUTime: 20,
-						aggregatedCPUTime: 30,
-						langInternalCPUTime: 10,
+						selfCPUTime: 20 as MicroSeconds_number,
+						aggregatedCPUTime: 30 as MicroSeconds_number,
+						langInternalCPUTime: 10 as MicroSeconds_number,
 
-						selfCPUEnergyConsumption: 40,
-						aggregatedCPUEnergyConsumption: 60,
-						langInternalCPUEnergyConsumption: 20,
+						selfCPUEnergyConsumption: 40 as MilliJoule_number,
+						aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
+						langInternalCPUEnergyConsumption: 20 as MilliJoule_number,
 
-						selfRAMEnergyConsumption: 40,
-						aggregatedRAMEnergyConsumption: 60,
-						langInternalRAMEnergyConsumption: 20
-					} as ISensorValues,
+						selfRAMEnergyConsumption: 40 as MilliJoule_number,
+						aggregatedRAMEnergyConsumption: 60 as MilliJoule_number,
+						langInternalRAMEnergyConsumption: 20 as MilliJoule_number,
+					},
 					lang_internal: {
 						[5 as SourceNodeID_number]: {
 							id: 5 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 							sensorValues: {
-								aggregatedCPUTime: 10,
-								aggregatedCPUEnergyConsumption: 20,
+								aggregatedCPUTime: 10 as MicroSeconds_number,
+								aggregatedCPUEnergyConsumption: 20 as MilliJoule_number,
 
-								aggregatedRAMEnergyConsumption: 20
-							} as ISensorValues
+								aggregatedRAMEnergyConsumption: 20 as MilliJoule_number,
+							}
 						}
 					}
-				} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+				},
 				[6 as SourceNodeID_number]: {
 					id: 6 as SourceNodeID_number,
 					type: SourceNodeMetaDataType.SourceNode,
 					sensorValues: {
-						selfCPUTime: 30,
-						aggregatedCPUTime: 60,
-						langInternalCPUTime: 30,
+						selfCPUTime: 30 as MicroSeconds_number,
+						aggregatedCPUTime: 60 as MicroSeconds_number,
+						langInternalCPUTime: 30 as MicroSeconds_number,
 
-						selfCPUEnergyConsumption: 60,
-						aggregatedCPUEnergyConsumption: 120,
-						langInternalCPUEnergyConsumption: 60,
+						selfCPUEnergyConsumption: 60 as MilliJoule_number,
+						aggregatedCPUEnergyConsumption: 120 as MilliJoule_number,
+						langInternalCPUEnergyConsumption: 60 as MilliJoule_number,
 
-						selfRAMEnergyConsumption: 60,
-						aggregatedRAMEnergyConsumption: 120,
-						langInternalRAMEnergyConsumption: 60
-					} as ISensorValues,
+						selfRAMEnergyConsumption: 60 as MilliJoule_number,
+						aggregatedRAMEnergyConsumption: 120 as MilliJoule_number,
+						langInternalRAMEnergyConsumption: 60 as MilliJoule_number
+					},
 					lang_internal: {
 						[5 as SourceNodeID_number]: {
 							id: 5 as SourceNodeID_number,
 							type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 							sensorValues: {
-								aggregatedCPUTime: 30,
+								aggregatedCPUTime: 30 as MicroSeconds_number,
 
-								aggregatedCPUEnergyConsumption: 60,
+								aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
 
-								aggregatedRAMEnergyConsumption: 60
-							} as ISensorValues
-						} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+								aggregatedRAMEnergyConsumption: 60 as MilliJoule_number
+							}
+						}
 					}
 				}
 			}
-		}
+		} satisfies ISourceFileMetaData
 	},
 	extern: {
 		[7 as ModuleID_number]: {
@@ -302,6 +311,9 @@ async function preprocess() {
 
 			if (sourceMap !== undefined && sourceMap !== null) {
 				const newSources = sourceMap.sources.map((source) => {
+					if (source === null) {
+						return null
+					}
 					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
 				})
 				sourceMap.sources = newSources
@@ -318,6 +330,9 @@ async function preprocess() {
 
 			if (sourceMap !== undefined && sourceMap !== null) {
 				const newSources = sourceMap.sources.map((source) => {
+					if (source === null) {
+						return null
+					}
 					return new UnifiedPath(new UnifiedPath(source).basename()).toString()
 				})
 				sourceMap.sources = newSources
@@ -542,7 +557,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			const bufferString = instance.toBuffer().toString('hex')
 			if (UPDATE_TEST_REPORTS && title === 'instance related') {
 				PermissionHelper.writeFileWithUserPermission(
-					CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer').toPlatformString(),
+					CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer'),
 					bufferString
 				)
 			}
@@ -554,7 +569,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			const hashString = instance.hash()
 			if (UPDATE_TEST_REPORTS && title === 'instance related') {
 				PermissionHelper.writeFileWithUserPermission(
-					CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash').toPlatformString(),
+					CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash'),
 					hashString
 				)
 			}
@@ -570,7 +585,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			}
 
 			instance.relativeRootDir = undefined
-			instance.storeToFile(projectReportFilePath, 'json')
+			instance.storeToFile(projectReportFilePath, 'pretty-json')
 
 			const config = ProfilerConfig.autoResolve()
 
@@ -654,6 +669,8 @@ describe('ProjectReport', () => {
 			commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
 			commitTimestamp: 1687845481077,
 			timestamp: 1687845481077,
+			highResolutionBeginTime: '887518894424000',
+			highResolutionStopTime: '887518904424000',
 			uncommittedChanges: false,
 			systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 			languageInformation: {
@@ -908,6 +925,7 @@ describe('ProjectReport', () => {
 				timestamp: 1706554909143,
 				uncommittedChanges: true,
 				highResolutionBeginTime: '887518894424000',
+				highResolutionStopTime: '887518904424000',
 				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 				languageInformation: {
 					name: 'node',
@@ -938,15 +956,11 @@ describe('ProjectReport', () => {
 			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
 			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
 			if (UPDATE_TEST_REPORTS) {
-				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
+				projectReport.storeToFile(expectedProjectReportFilePathJson, 'pretty-json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
 			}
 
 			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
-			if (expectedJson) {
-				expectedJson.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
-				expectedJson.executionDetails.highResolutionBeginTime = '887518894424000'
-			}
 
 			expect(
 				projectReport.toJSON()
@@ -955,10 +969,6 @@ describe('ProjectReport', () => {
 			)
 
 			const expectedBin = ProjectReport.loadFromFile(expectedProjectReportFilePathBin, 'bin')
-			if (expectedBin) {
-				expectedBin.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
-				expectedBin.executionDetails.highResolutionBeginTime = '887518894424000'
-			}
 
 			expect(
 				projectReport.toJSON()
@@ -982,6 +992,7 @@ describe('ProjectReport', () => {
 				timestamp: 1706556938476,
 				uncommittedChanges: true,
 				highResolutionBeginTime: '889548167236000',
+				highResolutionStopTime: '889548267236000',
 				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 				languageInformation: {
 					name: 'node',
@@ -1011,15 +1022,11 @@ describe('ProjectReport', () => {
 			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
 			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.bin')
 			if (UPDATE_TEST_REPORTS) {
-				projectReport.storeToFile(expectedProjectReportFilePathJson, 'json')
+				projectReport.storeToFile(expectedProjectReportFilePathJson, 'pretty-json')
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
 			}
 
 			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
-			if (expectedJson) {
-				expectedJson.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
-				expectedJson.executionDetails.highResolutionBeginTime = '889548167236000'
-			}
 
 			expect(
 				projectReport.toJSON()
@@ -1028,10 +1035,6 @@ describe('ProjectReport', () => {
 			)
 
 			const expectedBin = ProjectReport.loadFromFile(expectedProjectReportFilePathBin, 'bin')
-			if (expectedBin) {
-				expectedBin.executionDetails.systemInformation = EXAMPLE_SYSTEM_INFORMATION
-				expectedBin.executionDetails.highResolutionBeginTime = '889548167236000'
-			}
 
 			expect(
 				projectReport.toJSON()
@@ -1055,6 +1058,7 @@ describe('ProjectReport', () => {
 				timestamp: 1687845481077,
 				uncommittedChanges: false,
 				highResolutionBeginTime: '2345442642551333',
+				highResolutionStopTime: '2345443642551333',
 				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
 				languageInformation: {
 					name: 'node',
@@ -1156,7 +1160,7 @@ describe('ProjectReport', () => {
 			mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
 			if (UPDATE_TEST_REPORTS) {
-				mergedProjectReport.storeToFile(expectedPathJson, 'json')
+				mergedProjectReport.storeToFile(expectedPathJson, 'pretty-json')
 				mergedProjectReport.storeToFile(expectedPathBin, 'bin')
 			}
 

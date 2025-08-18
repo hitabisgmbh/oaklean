@@ -35,11 +35,10 @@ export class PerformanceHelper {
 	}
 
 	static storeToFile(path: UnifiedPath, data: IPerformanceHelper) {
-		const dir = path.dirName()
-		if (!fs.existsSync(dir.toPlatformString())) {
-			PermissionHelper.mkdirRecursivelyWithUserPermission(dir)
-		}
-		fs.writeFileSync(path.toPlatformString(), JSON.stringify(data, null, 2))
+		PermissionHelper.writeFileWithUserPermission(
+			path,
+			JSON.stringify(data, null, 2)
+		)
 	}
 
 	exportAndSum(path: UnifiedPath) {

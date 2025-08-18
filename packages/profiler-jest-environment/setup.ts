@@ -9,7 +9,8 @@ import {
 	APP_NAME,
 	SensorInterfaceType,
 	LoggerHelper,
-	PerformanceHelper
+	PerformanceHelper,
+	ExportAssetHelper
 } from '@oaklean/profiler-core'
 import { PerfEvent } from '@oaklean/profiler/dist/src/interfaces/perf/PerfSensorInterface'
 
@@ -27,7 +28,9 @@ export default async function () {
 	performance.start('jestEnv.setup.resolveConfig')
 	const profilerConfig = ProfilerConfig.autoResolve()
 	performance.stop('jestEnv.setup.resolveConfig')
-	const outDir = profilerConfig.getOutDir().join('jest')
+	const exportAssetHelper = new ExportAssetHelper(
+		profilerConfig.getOutDir().join('jest')
+	)
 
 	LoggerHelper.log(`(${APP_NAME} Profiler) V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
 	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
@@ -76,11 +79,11 @@ export default async function () {
 	}
 
 	performance.start('jestEnv.setup.clearOutDir')
-	if (fs.existsSync(outDir.toString())) {
-		fs.rmSync(outDir.toString(), { recursive: true })
+	if (fs.existsSync(exportAssetHelper.outputDir().toString())) {
+		fs.rmSync(exportAssetHelper.outputDir().toString(), { recursive: true })
 	}
 	performance.stop('jestEnv.setup.clearOutDir')
 	performance.stop('jestEnv.setup')
 	performance.printReport('jestEnv.setup')
-	performance.exportAndSum(outDir.join('performance.json'))
+	performance.exportAndSum(exportAssetHelper.outputPerformancePath())
 }

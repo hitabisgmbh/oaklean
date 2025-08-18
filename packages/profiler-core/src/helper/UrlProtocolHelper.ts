@@ -1,14 +1,17 @@
 import { LoggerHelper } from './LoggerHelper'
 
 import { UnifiedPath } from '../system/UnifiedPath'
-
-const KNOWN_PROTOCOLS = new Set(['file', 'webpack', 'webpack-internal'])
+// Types
+import {
+	KNOWN_URL_PROTOCOLS,
+	UrlProtocols
+} from '../types/helper/UrlProtocolHelper'
 
 const PROTOCOL_URL_REGEX = /^([^/]+):\/\//
 const WEBPACK_URL_REGEX = /(webpack:\/\/|webpack-internal:\/\/\/)(.*?[^/])?\/([^?]*)(?:\?(.*))?$/
 
 // prevent multiple warnings for the same protocol
-const PROTOCOL_WARNING_TRACKER = new Set<string>()
+const PROTOCOL_WARNING_TRACKER = new Set<UrlProtocols>()
 
 /**
  * This helper is used to transform source paths from different protocols to the actual file path.
@@ -25,8 +28,9 @@ export class UrlProtocolHelper {
 	static extractProtocol(url: string) {
 		const matches = PROTOCOL_URL_REGEX.exec(url)
 		if (matches && matches.length > 1) {
-			if (!KNOWN_PROTOCOLS.has(matches[1]) && !PROTOCOL_WARNING_TRACKER.has(matches[1])) {
-				PROTOCOL_WARNING_TRACKER.add(matches[1])
+			const protocol = matches[1] as UrlProtocols
+			if (!KNOWN_URL_PROTOCOLS.has(protocol) && !PROTOCOL_WARNING_TRACKER.has(protocol)) {
+				PROTOCOL_WARNING_TRACKER.add(protocol)
 				// prevent multiple warnings for the same protocol
 				LoggerHelper.warn(
 					`UNKNOWN_URL_PROTOCOL_WARNING unknown protocol detected: "${matches[1]}" \n`,
@@ -34,7 +38,7 @@ export class UrlProtocolHelper {
 					'Please report this issue to https://github.com/hitabisgmbh/oaklean/issues'
 				)
 			}
-			return matches[1]
+			return protocol
 		}
 		return null
 	}
@@ -59,7 +63,7 @@ export class UrlProtocolHelper {
 		originalSource: string
 	): {
 			url: UnifiedPath,
-			protocol: string | null
+			protocol: UrlProtocols | null
 		} {
 		const result = UrlProtocolHelper.parseWebpackSourceUrl(originalSource)
 		if (result === null) {
@@ -90,7 +94,12 @@ export class UrlProtocolHelper {
 	 * }
 	 * 
 	 */
-	static parseWebpackSourceUrl(url: string) {
+	static parseWebpackSourceUrl(url: string): {
+		protocol: UrlProtocols,
+		namespace: string,
+		filePath: string,
+		options: string
+	} | null {
 		const matches = WEBPACK_URL_REGEX.exec(url)
 
 		if (matches && matches.length > 3) {

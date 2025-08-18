@@ -10,11 +10,10 @@ import { ModuleIndex } from './indices/ModuleIndex'
 
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import {
-	NODE_ENV
-} from '../constants/env'
-import {
+	REPORT_FILE_EXTENSION,
+	NODE_ENV,
 	BIN_FILE_MAGIC
-} from '../constants/binary'
+} from '../constants'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
@@ -24,10 +23,10 @@ import { ExternalResourceHelper } from '../helper/ExternalResourceHelper'
 import {
 	ReportKind,
 	ReportType,
-	IProjectReportExecutionDetails,
 	IProjectMetaData,
 	ProjectReportOrigin,
-	IProjectReport
+	IProjectReport,
+	IProjectReportExecutionDetails
 } from '../types'
 
 export class ProjectReport extends Report {
@@ -90,14 +89,28 @@ export class ProjectReport extends Report {
 			throw new Error('ProjectReport.merge: no ProjectReports were given')
 		}
 
-		const systemInformationList = args.map((x) => x.executionDetails.systemInformation)
+		const sortedReports = [...args].sort((reportA, reportB) => {
+			const compared =
+				BigInt(reportA.executionDetails.highResolutionBeginTime) -
+				BigInt(reportB.executionDetails.highResolutionBeginTime)
+
+			if (compared > BigInt(0)) {
+				return 1
+			} else if (compared < BigInt(0)) {
+				return -1
+			}
+			return 0
+		})
+
+
+		const systemInformationList = sortedReports.map((x) => x.executionDetails.systemInformation)
 
 		if (!SystemInformation.sameSystem(...systemInformationList)) {
 			throw new Error('ProjectReport.merge: cannot merge ProjectReports from different systems')
 		}
-		const executionDetails = args[0].executionDetails
-
-		for (const currentProjectReport of args) {
+		const executionDetails = sortedReports[0].executionDetails
+		
+		for (const currentProjectReport of sortedReports) {
 			if (
 				currentProjectReport.executionDetails.commitHash !== executionDetails.commitHash
 			) {
@@ -121,7 +134,7 @@ export class ProjectReport extends Report {
 
 		const result = Object.assign(
 			new ProjectReport(executionDetails, ReportKind.accumulated),
-			Report.merge(moduleIndex, ...args)
+			Report.merge(moduleIndex, ...sortedReports)
 		)
 		result.globalIndex = moduleIndex.globalIndex
 		return result
@@ -200,23 +213,16 @@ export class ProjectReport extends Report {
 	) {
 		// if git is not available, set default value of uncommitted changes to undefined
 		this.executionDetails.uncommittedChanges = undefined
-		const uncommittedFiles = externalResourceHelper.trackUncommittedFiles(rootDir)
+		const containsUncommittedChanges = externalResourceHelper.trackUncommittedFiles(
+			rootDir,
+			this.globalIndex
+		)
 
-		if (uncommittedFiles === null) {
+		if (containsUncommittedChanges === null) {
+			// git is not available
 			return
 		}
-
-		// git is available, set default value of uncommitted changes to false
-		this.executionDetails.uncommittedChanges = false
-		for (const uncommittedFile of uncommittedFiles) {
-			const pathIndex = this.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', uncommittedFile)
-			if (pathIndex === undefined) {
-				continue
-			}
-			pathIndex.containsUncommittedChanges = true
-			// if one file has uncommitted changes, the whole project has uncommitted changes
-			this.executionDetails.uncommittedChanges = true
-		}
+		this.executionDetails.uncommittedChanges = containsUncommittedChanges
 	}
 
 	async insertCPUProfile(
@@ -277,7 +283,7 @@ export class ProjectReport extends Report {
 		}
 		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
 		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
-			throw new Error('ProjectReport.consumeFromBuffer: not a binary .oak format')
+			throw new Error(`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`)
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const {
@@ -299,7 +305,7 @@ export class ProjectReport extends Report {
 		}
 		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
 		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
-			throw new Error('ProjectReport.consumeFromBuffer: not a binary .oak format')
+			throw new Error(`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`)
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const {
