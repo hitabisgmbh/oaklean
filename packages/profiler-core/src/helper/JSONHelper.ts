@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 
+import oboe from 'oboe'
 import { JsonStreamStringify } from 'json-stream-stringify'
 
 import { PermissionHelper } from './PermissionHelper'
@@ -8,8 +9,10 @@ import { UnifiedPath } from '../system/UnifiedPath'
 
 export class JSONHelper {
 	static async storeBigJSON(
+		outputPath: UnifiedPath,
 		json: any,
-		outputPath: UnifiedPath
+		replacer?: any,
+		spaces?: string | number | undefined
 	): Promise<void> {
 		const outputStream = fs.createWriteStream(outputPath.toPlatformString())
 		const jsonStream = new JsonStreamStringify(json, undefined, 2)
@@ -23,5 +26,23 @@ export class JSONHelper {
 				})
 			})
 		)
+	}
+
+	static async loadBigJSON(
+		inputPath: UnifiedPath
+	): Promise<any> {
+		return new Promise((resolve, reject) => {
+			const fileStream = fs.createReadStream(inputPath.toPlatformString())
+
+			const jsonStream = oboe(fileStream)
+
+			jsonStream.done((data) => {
+				resolve(data)
+			})
+
+			jsonStream.fail((error) => {
+				reject(error)
+			})
+		})
 	}
 }
