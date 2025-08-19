@@ -45,8 +45,8 @@ export class TypescriptHelper {
 	}
 
 	static isUseStrict(node: ts.Node) {
-		if (ts.isStringLiteral(node)) {
-			if (node.text === 'use strict') {
+		if (node.kind === ts.SyntaxKind.StringLiteral) {
+			if ((node as ts.StringLiteral).text === 'use strict') {
 				return true
 			}
 		}
@@ -60,15 +60,15 @@ export class TypescriptHelper {
 
 		if (
 			varDeclaration !== undefined &&
-			ts.isVariableDeclaration(varDeclaration)
+			varDeclaration.kind === ts.SyntaxKind.VariableDeclaration
 		) {
-			if (ts.isIdentifier(varDeclaration.name)) {
+			if ((varDeclaration as ts.VariableDeclaration).name.kind === ts.SyntaxKind.Identifier) {
 				if (
 					EmitHelperNameStrings.includes(
-						varDeclaration.name.text as EmitHelperNames
+						((varDeclaration as ts.VariableDeclaration).name as ts.Identifier).text as EmitHelperNames
 					)
 				) {
-					return varDeclaration.name.text as EmitHelperNames
+					return ((varDeclaration as ts.VariableDeclaration).name as ts.Identifier).text as EmitHelperNames
 				}
 			}
 		}
@@ -76,10 +76,13 @@ export class TypescriptHelper {
 		const varDeclarationExtends = node?.parent?.parent?.parent?.parent
 		if (
 			varDeclarationExtends !== undefined &&
-			ts.isVariableDeclaration(varDeclarationExtends)
+			varDeclarationExtends.kind === ts.SyntaxKind.VariableDeclaration
 		) {
-			if (ts.isIdentifier(varDeclarationExtends.name)) {
-				if (varDeclarationExtends.name.text === EmitHelperNames.extends) {
+			if ((varDeclarationExtends as ts.VariableDeclaration).name.kind === ts.SyntaxKind.Identifier) {
+				if (
+					((varDeclarationExtends as ts.VariableDeclaration).name as ts.Identifier)
+						.text === EmitHelperNames.extends
+				) {
 					return EmitHelperNames.extends
 				}
 			}

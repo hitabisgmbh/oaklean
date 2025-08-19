@@ -120,15 +120,24 @@ export default class CodeParsingCommands {
 			filePaths.map((filePath) => new UnifiedPath(filePath))
 
 			for (const filePath of filePaths) {
+				if (fs.statSync(filePath).isDirectory()) {
+					continue
+				}
 				if (filePath.endsWith('.d.ts')) {
 					continue // Skip declaration files
 				}
 				const sourceFilePath = new UnifiedPath(filePath)
 				const code = fs.readFileSync(sourceFilePath.toPlatformString(), 'utf-8')
-				this.verifyCode(code, {
-					resourceFile: inputPath.toPlatformString(),
-					filePath: sourceFilePath.toString()
-				})
+				try {
+					this.verifyCode(code, {
+						resourceFile: inputPath.toPlatformString(),
+						filePath: sourceFilePath.toString()
+					})
+				} catch (error) {
+					Error.stackTraceLimit = Infinity
+					LoggerHelper.error(`Error parsing file ${sourceFilePath.toPlatformString()}:`, error)
+					continue
+				}
 			}
 		} else {
 			LoggerHelper.error(`Input path does not exist: ${inputPath.toPlatformString()}`)
