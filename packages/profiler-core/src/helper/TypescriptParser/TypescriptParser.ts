@@ -88,31 +88,6 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 }
 
 export class TypescriptParser {
-
-	/**
-	 * Method to traverse through a typescript source file
-	 * 
-	 * @param sourceFile typescript source file object
-	 * @param callback Argument with an enter and a leave method that are called when a source node is visited.
-	 */
-	static traverseSourceFile(
-		sourceFile: ts.SourceFile,
-		callback: {
-			enter: (node: ts.Node, depth: number) => void,
-			leave: (node: ts.Node, depth: number) => void
-		}
-	) {
-		const { enter, leave } = callback
-
-		traverseNode(0, sourceFile)
-
-		function traverseNode(depth: number, node: ts.Node) {
-			enter(node, depth)
-			ts.forEachChild(node, traverseNode.bind(null, depth + 1))
-			leave(node, depth)
-		}
-	}
-
 	/**
 	 * Method to transpile a file
 	 * it determines the tsconfig to use and transpiles the given file with the compiler options of its tsconfig
@@ -192,17 +167,6 @@ export class TypescriptParser {
 			TypescriptHelper.posToLoc(sourceFile, sourceFile.getEnd())
 		)
 
-		let currentTraverseNodeInfo = new TraverseNodeInfo(
-			null,
-			sourceFile,
-			filePath,
-			{
-				resolve() {
-					return root
-				}
-			}
-		)
-
 		const addSubTree = (
 			node: ts.Node,
 			currentTraverseNodeInfo: TraverseNodeInfo,
@@ -255,7 +219,12 @@ export class TypescriptParser {
 			subTree.parent.children.set(subTree.identifier, subTree)
 		}
 
-		const enterNode = (node: ts.Node, depth: number) => {
+		const enterNode = (
+			parentTraverseNodeInfo: TraverseNodeInfo,
+			node: ts.Node,
+			depth: number
+		): TraverseNodeInfo => {
+			let currentTraverseNodeInfo = parentTraverseNodeInfo
 			const revertToTraverseNodeInfo = SkipHelper.nodeShouldBeSkipped(
 				node,
 				sourceFile,
@@ -266,8 +235,7 @@ export class TypescriptParser {
 				// skip this node and revert to a previous traverse node info
 				// the revert is needed if multiple nodes are skipped in a row (that where previously traversed)
 				// but the necessity of skipping was determined with the current node
-				currentTraverseNodeInfo = revertToTraverseNodeInfo
-				return
+				return revertToTraverseNodeInfo
 			}
 
 			const intermediateNode = ScopeHelper.parseIntermediateNode(node, sourceFile, currentTraverseNodeInfo)
@@ -288,7 +256,7 @@ export class TypescriptParser {
 
 			if (subTree === null) {
 				// there is no parser for this node type
-				return
+				return currentTraverseNodeInfo
 			}
 
 			if (subTree) {
@@ -310,29 +278,54 @@ export class TypescriptParser {
 				)
 				throw new Error('TypescriptParser.parseFile: subTree is undefined, unexpected behaviour')
 			}
+			return currentTraverseNodeInfo
 		}
 
-		const leaveNode = (node: ts.Node) => {
+		const leaveNode = (
+			currentTraverseNodeInfo: TraverseNodeInfo,
+			node: ts.Node
+		) => {
+			let traverseNodeInfo = currentTraverseNodeInfo
 			while (
-				currentTraverseNodeInfo.parent !== null &&
-				currentTraverseNodeInfo.node === node
+				traverseNodeInfo.parent !== null &&
+				traverseNodeInfo.node === node
 			) {
 				if (
-					currentTraverseNodeInfo.isTreeResolved() ||
-					currentTraverseNodeInfo.counters.childrenCounter !== 0 ||
-					currentTraverseNodeInfo.shouldResolveTreeWithZeroChildren()
+					traverseNodeInfo.isTreeResolved() ||
+					traverseNodeInfo.counters.childrenCounter !== 0 ||
+					traverseNodeInfo.shouldResolveTreeWithZeroChildren()
 				) {
 					addSubTree(
 						node,
-						currentTraverseNodeInfo,
-						currentTraverseNodeInfo.parent
+						traverseNodeInfo,
+						traverseNodeInfo.parent
 					)
 				}
-				currentTraverseNodeInfo = currentTraverseNodeInfo.parent
+				traverseNodeInfo = traverseNodeInfo.parent
 			}
+			return traverseNodeInfo
 		}
 
-		TypescriptParser.traverseSourceFile(sourceFile, { enter: enterNode, leave: leaveNode })
+		const currentTraverseNodeInfo = new TraverseNodeInfo(
+			null,
+			sourceFile,
+			filePath,
+			{
+				resolve() {
+					return root
+				}
+			}
+		)
+
+		function traverseNode(currentTraverseNodeInfo: TraverseNodeInfo, depth: number, node: ts.Node) {
+			let newTraverseNodeInfo = enterNode(currentTraverseNodeInfo, node, depth)
+			ts.forEachChild(node, (child) => {
+				newTraverseNodeInfo = traverseNode(newTraverseNodeInfo, depth + 1, child)
+			})
+			return leaveNode(newTraverseNodeInfo, node)
+		}
+
+		traverseNode(currentTraverseNodeInfo, 0, sourceFile)
 
 		return root
 	}

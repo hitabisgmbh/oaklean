@@ -12,10 +12,6 @@ import { LoggerHelper } from '../../../src'
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
 describe('TypescriptParser', () => {
-	it('should have a static method traverseSourceFile()', () => {
-		expect(TypescriptParser.traverseSourceFile).toBeTruthy()
-	})
-
 	it('should have a static method parseFile()', () => {
 		expect(TypescriptParser.parseFile).toBeTruthy()
 	})
