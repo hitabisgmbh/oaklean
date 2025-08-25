@@ -328,3 +328,263 @@ describe('ObjectLiteralExpression in Class', () => {
 		})
 	})
 })
+
+describe('duplicates in code', () => {
+	const code = `
+	const obj = {
+		obj: {
+			prop: function() {}
+		},
+		obj: {
+			prop: function() {}
+		}
+	}
+
+	const ComputedPropertyName = 'ComputedPropertyName'
+	class ObjectLiteralExpression {
+		#private = {
+			prop: function() {}
+		}
+
+		PropertyDeclaration = {
+			prop: function() {}
+		};
+		static PropertyDeclaration = {
+			prop: function() {}
+		};
+		[ComputedPropertyName] = {
+			prop: function() {}
+		};
+		static [ComputedPropertyName] = {
+			prop: function() {}
+		};
+
+		'StringLiteral' = {
+			prop: function() {}
+		};
+		static 'StringLiteral' = {
+			prop: function() {}
+		};
+
+		42 = {
+			prop: function() {}
+		};
+		static 42 = {
+			prop: function() {}
+		};
+
+		#private = {
+			prop: function() {}
+		}
+
+		PropertyDeclaration = {
+			prop: function() {}
+		};
+		static PropertyDeclaration = {
+			prop: function() {}
+		};
+		[ComputedPropertyName] = {
+			prop: function() {}
+		};
+		static [ComputedPropertyName] = {
+			prop: function() {}
+		};
+
+		'StringLiteral' = {
+			prop: function() {}
+		};
+		static 'StringLiteral' = {
+			prop: function() {}
+		};
+		
+		42 = {
+			prop: function() {}
+		};
+		static 42 = {
+			prop: function() {}
+		};
+	}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{scope:(obj:obj)}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{scope:(obj:obj)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:obj:1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						}
+					}
+				},
+				'{class:ObjectLiteralExpression}': {
+					type: ProgramStructureTreeType.ClassDeclaration,
+					children: {
+						'{scope:(obj:#private)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:PropertyDeclaration)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj@static:PropertyDeclaration)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:(expression:34832631))}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj@static:(expression:34832631))}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:(literal:7e2b9fea))}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj@static:(literal:7e2b9fea))}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:(literal:92cfceb3))}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj@static:(literal:92cfceb3))}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:#private:1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:PropertyDeclaration:1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj@static:PropertyDeclaration:1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:(expression:34832631):1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj@static:(expression:34832631):1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:(literal:7e2b9fea):1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj@static:(literal:7e2b9fea):1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj:(literal:92cfceb3):1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+						'{scope:(obj@static:(literal:92cfceb3):1)}': {
+							type: ProgramStructureTreeType.ObjectLiteralExpression,
+							children: {
+								'{functionExpression:prop}': {
+									type:ProgramStructureTreeType.FunctionExpression
+								}
+							}
+						},
+					}
+				}
+			}
+		})
+	})
+})

@@ -97,6 +97,7 @@ export const HANDLE_DUPLICATE_IDENTIFIERS: Record<string, (
 	[ProgramStructureTreeType.SetAccessorDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
 	[ProgramStructureTreeType.FunctionExpression]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
 	[ProgramStructureTreeType.ClassExpression]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.ObjectLiteralExpression]: DuplicateIdentifierHelper.handleDuplicateIdentifier
 }
 
 export class TypescriptParser {

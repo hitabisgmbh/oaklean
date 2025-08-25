@@ -71,6 +71,16 @@ keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
 			input: '{classExpression@static:ce}' as SourceNodeIdentifierPart_string,
 			duplicateFormat: '{classExpression@static:ce:{counter}}' as SourceNodeIdentifierPart_string
 		},
+	],
+	[ProgramStructureTreeType.ObjectLiteralExpression]: [
+		{
+			input: '{scope:(obj:obj)}' as SourceNodeIdentifierPart_string,
+			duplicateFormat: '{scope:(obj:obj:{counter})}' as SourceNodeIdentifierPart_string
+		},
+		{
+			input: '{scope:(obj@static:(expression:34832631))}' as SourceNodeIdentifierPart_string,
+			duplicateFormat: '{scope:(obj@static:(expression:34832631):{counter})}' as SourceNodeIdentifierPart_string
+		},
 	]
 }
 
