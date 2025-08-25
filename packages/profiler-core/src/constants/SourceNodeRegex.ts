@@ -5,12 +5,13 @@ export const SourceNodeNameExpressionRegexString =
 export const RootRegexString = '{(root)}'
 export const ConstructorDeclarationRegexString = '{constructor:(constructor)}'
 export const ClassDeclarationRegexString = `{class:(${SourceNodeNameRegexString})}`
-export const MethodDefinitionRegexString = `{method(?:@static)?(?:@get|@set)?:(${SourceNodeNameExpressionRegexString})}`
+export const MethodDefinitionRegexString =
+	`{method(?:@static)?(?:@get|@set)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const GetAccessorDeclarationRegexString =
-	`{get(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
+	`{get(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const SetAccessorDeclarationRegexString =
-	`{set(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
-export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString})}`
+	`{set(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const FunctionExpressionRegexString = `{functionExpression(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
 export const ClassExpressionRegexString = `{classExpression:(${SourceNodeNameExpressionRegexString})}`
 export const ClassStaticBlockDeclarationRegexString = '{(static:[0-9]+)}'

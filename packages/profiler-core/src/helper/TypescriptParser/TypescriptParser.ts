@@ -23,7 +23,8 @@ import {
 	WhileStatementHelper,
 	TryStatementHelper,
 	SwitchStatementHelper,
-	ModuleDeclarationHelper
+	ModuleDeclarationHelper,
+	DuplicateIdentifierHelper
 } from './index'
 
 import { TypescriptHelper } from './TypescriptHelper'
@@ -85,6 +86,15 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 	[ClassStaticBlockDeclarationHelper.syntaxKind]: ClassStaticBlockDeclarationHelper.parseNode,
 	[SwitchStatementHelper.syntaxKind]: SwitchStatementHelper.parseNode,
 	[ModuleDeclarationHelper.syntaxKind]: ModuleDeclarationHelper.parseNode
+}
+
+const HANDLE_DUPLICATE_IDENTIFIERS: Record<string, (
+	tree: ProgramStructureTree
+) => void> = {
+	[ProgramStructureTreeType.FunctionDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.MethodDefinition]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.GetAccessorDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.SetAccessorDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
 }
 
 export class TypescriptParser {
@@ -179,41 +189,25 @@ export class TypescriptParser {
 				)
 			}
 			const found = subTree.parent.children.get(subTree.identifier)
-			if (found !== undefined && onDuplicateIdentifier !== undefined) {
-				const identifier = subTree.parent.identifierPath() + '.' + subTree.identifier
-
-				onDuplicateIdentifier(
-					filePath,
-					(node as any),
-					identifier,
-					{
-						begin: subTree.beginLoc,
-						end: subTree.endLoc
-					},
-					{
-						begin: found.beginLoc,
-						end: found.endLoc
-					}
-				)
-
-				// throw new Error(
-				// 	'TypescriptParser.parseFile: duplicate function identifier definition: ' +
-				// 	subTree.identifier + '\n' +
-				// 	JSON.stringify({
-				// 		filePath,
-				// 		identifierPath: [...identifierPath, subTree.identifier].join('.'),
-				// 		loc: {
-				// 			begin: subTree.beginLoc,
-				// 			end: subTree.endLoc
-				// 		},
-				// 		previouslyFound: {
-				// 			loc: {
-				// 				begin: found.beginLoc,
-				// 				end: found.endLoc
-				// 			}
-				// 		}
-				// 	}, undefined, 2)
-				// )
+			if (found !== undefined) {
+				if (HANDLE_DUPLICATE_IDENTIFIERS[subTree.type] !== undefined) {
+					HANDLE_DUPLICATE_IDENTIFIERS[subTree.type](subTree)
+				} else if (onDuplicateIdentifier !== undefined){
+					const identifier = subTree.parent.identifierPath() + '.' + subTree.identifier
+					onDuplicateIdentifier(
+						filePath,
+						(node as any),
+						identifier,
+						{
+							begin: subTree.beginLoc,
+							end: subTree.endLoc
+						},
+						{
+							begin: found.beginLoc,
+							end: found.endLoc
+						}
+					)
+				}
 			}
 			parentTraverseNodeInfo.counters.childrenCounter++
 			subTree.parent.children.set(subTree.identifier, subTree)
@@ -306,7 +300,7 @@ export class TypescriptParser {
 			return traverseNodeInfo
 		}
 
-		const currentTraverseNodeInfo = new TraverseNodeInfo(
+		let currentTraverseNodeInfo = new TraverseNodeInfo(
 			null,
 			sourceFile,
 			filePath,
@@ -317,15 +311,32 @@ export class TypescriptParser {
 			}
 		)
 
-		function traverseNode(currentTraverseNodeInfo: TraverseNodeInfo, depth: number, node: ts.Node) {
-			let newTraverseNodeInfo = enterNode(currentTraverseNodeInfo, node, depth)
-			ts.forEachChild(node, (child) => {
-				newTraverseNodeInfo = traverseNode(newTraverseNodeInfo, depth + 1, child)
-			})
-			return leaveNode(newTraverseNodeInfo, node)
+		type StackFrame = {
+			depth: number,
+			node: ts.Node,
+			visited: boolean
 		}
 
-		traverseNode(currentTraverseNodeInfo, 0, sourceFile)
+		const stack: StackFrame[] = [{ depth: 0, node: sourceFile, visited: false }]
+		while ( stack.length > 0) {
+			const currentStackFrame = stack[stack.length - 1]
+
+			if (!currentStackFrame.visited) {
+				currentTraverseNodeInfo = enterNode(
+					currentTraverseNodeInfo,
+					currentStackFrame.node,
+					currentStackFrame.depth
+				)
+				currentStackFrame.visited = true
+				const insertPos = stack.length
+				ts.forEachChild(currentStackFrame.node, (child) => {
+					stack.splice(insertPos, 0, { depth: currentStackFrame.depth + 1, node: child, visited: false })
+				})
+			} else {
+				currentTraverseNodeInfo = leaveNode(currentTraverseNodeInfo, currentStackFrame.node)
+				stack.pop()
+			}
+		}
 
 		return root
 	}

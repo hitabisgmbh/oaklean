@@ -1,7 +1,12 @@
-import { TypescriptParser } from '../../../src/helper/TypescriptParser'
+import { ProgramStructureTree } from '../../../src'
+import { DuplicateIdentifierHelper, TypescriptParser } from '../../../src/helper/TypescriptParser'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'
 // Types
-import { ProgramStructureTreeType } from '../../../src/types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../../src/types'
 
 describe('ts.SyntaxKind.PrivateIdentifier', () => {
 	const code = `
@@ -264,6 +269,270 @@ describe('ts.SyntaxKind.MethodDeclaration with signature', () => {
 					}
 				}
 			}
+		})
+	})
+})
+
+describe('handle duplicate identifier', () => {
+	const root = new ProgramStructureTree(
+		null,
+		0,
+		ProgramStructureTreeType.Root,
+		IdentifierType.Name,
+		'{root}' as SourceNodeIdentifierPart_string,
+		{
+			line: 1,
+			column: 1
+		},
+		{
+			line: 10,
+			column: 1
+		}
+	)
+
+	const child = new ProgramStructureTree(
+		root,
+		1,
+		ProgramStructureTreeType.MethodDefinition,
+		IdentifierType.Name,
+		'{method:method}' as SourceNodeIdentifierPart_string,
+		{
+			line: 2,
+			column: 1
+		},
+		{
+			line: 3,
+			column: 1
+		}
+	)
+	root.children.set(child.identifier, child)
+	
+	test('n duplicates', () => {
+		for (let i = 0; i < 10; i++) {
+			const duplicateChild = new ProgramStructureTree(
+				root,
+				2,
+				ProgramStructureTreeType.MethodDefinition,
+				IdentifierType.Name,
+				'{method:method}' as SourceNodeIdentifierPart_string,
+				{
+					line: 4,
+					column: 1
+				},
+				{
+					line: 5,
+					column: 1
+				}
+			)
+			DuplicateIdentifierHelper.handleDuplicateIdentifier(duplicateChild)
+			expect(duplicateChild.identifier).toBe(`{method:method:${i+1}}` as SourceNodeIdentifierPart_string)
+
+			root.children.set(duplicateChild.identifier, duplicateChild)
+		}
+	})
+
+	describe('duplicates in code', () => {
+		const code = `
+			class MethodDeclaration {
+				method() {
+					const a = class {
+						method() {
+							const a = class {
+								method() {}
+							}
+						}
+					}
+				}
+				static method() {
+					const a = class {
+						method() {
+							const a = class {
+								method() {}
+							}
+						}
+					}
+				}
+
+				method() {
+					const a = class {
+						method() {
+							const a = class {
+								method() {}
+								method2() {}
+							}
+						}
+						method() {
+							const a = class {
+								method() {}
+								method2() {}
+							}
+						}
+					}
+				}
+				static method() {
+					const a = class {
+						method() {
+							const a = class {
+								method() {}
+								method2() {}
+							}
+						}
+						method() {
+							const a = class {
+								method() {}
+								method2() {}
+							}
+						}
+					}
+				}
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:MethodDeclaration}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{method:method}': {
+								type: ProgramStructureTreeType.MethodDefinition,
+								children: {
+									'{classExpression:a}': {
+										type: ProgramStructureTreeType.ClassExpression,
+										children: {
+											'{method:method}': {
+												type: ProgramStructureTreeType.MethodDefinition,
+												children: {
+													'{classExpression:a}': {
+														type: ProgramStructureTreeType.ClassExpression,
+														children: {
+															'{method:method}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							},
+							'{method@static:method}': {
+								type: ProgramStructureTreeType.MethodDefinition,
+								children: {
+									'{classExpression:a}': {
+										type: ProgramStructureTreeType.ClassExpression,
+										children: {
+											'{method:method}': {
+												type: ProgramStructureTreeType.MethodDefinition,
+												children: {
+													'{classExpression:a}': {
+														type: ProgramStructureTreeType.ClassExpression,
+														children: {
+															'{method:method}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							},
+							'{method:method:1}': {
+								type: ProgramStructureTreeType.MethodDefinition,
+								children: {
+									'{classExpression:a}': {
+										type: ProgramStructureTreeType.ClassExpression,
+										children: {
+											'{method:method}': {
+												type: ProgramStructureTreeType.MethodDefinition,
+												children: {
+													'{classExpression:a}': {
+														type: ProgramStructureTreeType.ClassExpression,
+														children: {
+															'{method:method}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															},
+															'{method:method2}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															}
+														}
+													}
+												}
+											},
+											'{method:method:1}': {
+												type: ProgramStructureTreeType.MethodDefinition,
+												children: {
+													'{classExpression:a}': {
+														type: ProgramStructureTreeType.ClassExpression,
+														children: {
+															'{method:method}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															},
+															'{method:method2}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							},
+							'{method@static:method:1}': {
+								type: ProgramStructureTreeType.MethodDefinition,
+								children: {
+									'{classExpression:a}': {
+										type: ProgramStructureTreeType.ClassExpression,
+										children: {
+											'{method:method}': {
+												type: ProgramStructureTreeType.MethodDefinition,
+												children: {
+													'{classExpression:a}': {
+														type: ProgramStructureTreeType.ClassExpression,
+														children: {
+															'{method:method}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															},
+															'{method:method2}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															}
+														}
+													}
+												}
+											},
+											'{method:method:1}': {
+												type: ProgramStructureTreeType.MethodDefinition,
+												children: {
+													'{classExpression:a}': {
+														type: ProgramStructureTreeType.ClassExpression,
+														children: {
+															'{method:method}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															},
+															'{method:method2}': {
+																type: ProgramStructureTreeType.MethodDefinition
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			})
 		})
 	})
 })

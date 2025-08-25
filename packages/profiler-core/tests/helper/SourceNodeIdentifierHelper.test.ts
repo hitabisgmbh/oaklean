@@ -36,20 +36,20 @@ ProgramStructureTreeType,
 		expectedName: '(anonymous:1234)'
 	},
 	[ProgramStructureTreeType.MethodDefinition]: {
-		input: '{method@static:memberFunction1}',
-		expectedName: 'memberFunction1'
+		input: '{method@static:memberFunction1:1}',
+		expectedName: 'memberFunction1:1'
 	},
 	[ProgramStructureTreeType.GetAccessorDeclaration]: {
-		input: '{get@static:a}',
-		expectedName: 'a'
+		input: '{get@static:a:1}',
+		expectedName: 'a:1'
 	},
 	[ProgramStructureTreeType.SetAccessorDeclaration]: {
-		input: '{set@static:a}',
-		expectedName: 'a'
+		input: '{set@static:a:1}',
+		expectedName: 'a:1'
 	},
 	[ProgramStructureTreeType.FunctionDeclaration]: {
-		input: '{function:nestedFunction}',
-		expectedName: 'nestedFunction'
+		input: '{function:nestedFunction:1}',
+		expectedName: 'nestedFunction:1'
 	},
 	[ProgramStructureTreeType.FunctionExpression]: {
 		input: '{functionExpression:arrowFunction}',

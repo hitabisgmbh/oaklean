@@ -134,7 +134,6 @@ export default class CodeParsingCommands {
 						filePath: sourceFilePath.toString()
 					})
 				} catch (error) {
-					Error.stackTraceLimit = Infinity
 					LoggerHelper.error(`Error parsing file ${sourceFilePath.toPlatformString()}:`, error)
 					continue
 				}
