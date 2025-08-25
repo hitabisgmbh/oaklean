@@ -12,9 +12,10 @@ export const GetAccessorDeclarationRegexString =
 export const SetAccessorDeclarationRegexString =
 	`{set(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
-export const FunctionExpressionRegexString = `{functionExpression(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
+export const FunctionExpressionRegexString =
+	`{functionExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const ClassExpressionRegexString =
-	`{classExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}}`
+	`{classExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const ClassStaticBlockDeclarationRegexString = '{(static:[0-9]+)}'
 
 // Scopes

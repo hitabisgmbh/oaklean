@@ -32,8 +32,8 @@ ProgramStructureTreeType,
 		expectedName: 'ExampleClass'
 	},
 	[ProgramStructureTreeType.ClassExpression]: {
-		input: '{classExpression@static:(anonymous:1234)}',
-		expectedName: '(anonymous:1234)'
+		input: '{classExpression@static:(anonymous:1234):1}',
+		expectedName: '(anonymous:1234):1'
 	},
 	[ProgramStructureTreeType.MethodDefinition]: {
 		input: '{method@static:memberFunction1:1}',
@@ -52,8 +52,8 @@ ProgramStructureTreeType,
 		expectedName: 'nestedFunction:1'
 	},
 	[ProgramStructureTreeType.FunctionExpression]: {
-		input: '{functionExpression:arrowFunction}',
-		expectedName: 'arrowFunction'
+		input: '{functionExpression:arrowFunction:1}',
+		expectedName: 'arrowFunction:1'
 	},
 	[ProgramStructureTreeType.ConstructorDeclaration]: {
 		input: '{constructor:constructor}',

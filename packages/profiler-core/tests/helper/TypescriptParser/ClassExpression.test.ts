@@ -632,3 +632,123 @@ describe('ClassExpression in Class', () => {
 		})
 	})
 })
+
+describe('duplicates in code', () => {
+	const code = `
+	const obj = {
+		cls: class {},
+		cls: class {}
+	}
+
+	const ComputedPropertyName = 'ComputedPropertyName'
+	class ClassExpression {
+		#private = class {}
+
+		PropertyDeclaration = class {};
+		static PropertyDeclaration = class {};
+		[ComputedPropertyName] = class {};
+		static [ComputedPropertyName] = class {};
+
+		'StringLiteral' = class {};
+		static 'StringLiteral' = class {};
+
+		42 = class {};
+		static 42 = class {};
+
+		#private = class {}
+
+		PropertyDeclaration = class {};
+		static PropertyDeclaration = class {};
+		[ComputedPropertyName] = class {};
+		static [ComputedPropertyName] = class {};
+
+		'StringLiteral' = class {};
+		static 'StringLiteral' = class {};
+		
+		42 = class {};
+		static 42 = class {};
+	}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{scope:(obj:obj)}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{classExpression:cls}': {
+							type: ProgramStructureTreeType.ClassExpression
+						},
+						'{classExpression:cls:1}': {
+							type: ProgramStructureTreeType.ClassExpression
+						}
+					}
+				},
+				'{class:ClassExpression}': {
+					type: ProgramStructureTreeType.ClassDeclaration,
+					children: {
+						'{classExpression:#private}': {
+							type: ProgramStructureTreeType.ClassExpression
+						},
+						'{classExpression:PropertyDeclaration}': {
+							type: ProgramStructureTreeType.ClassExpression
+						},
+						'{classExpression@static:PropertyDeclaration}': {
+							type: ProgramStructureTreeType.ClassExpression
+						},
+						'{classExpression:(expression:34832631)}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression@static:(expression:34832631)}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression:(literal:7e2b9fea)}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression@static:(literal:7e2b9fea)}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression:(literal:92cfceb3)}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression@static:(literal:92cfceb3)}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression:#private:1}': {
+							type: ProgramStructureTreeType.ClassExpression
+						},
+						'{classExpression:PropertyDeclaration:1}': {
+							type: ProgramStructureTreeType.ClassExpression
+						},
+						'{classExpression@static:PropertyDeclaration:1}': {
+							type: ProgramStructureTreeType.ClassExpression
+						},
+						'{classExpression:(expression:34832631):1}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression@static:(expression:34832631):1}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression:(literal:7e2b9fea):1}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression@static:(literal:7e2b9fea):1}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression:(literal:92cfceb3):1}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+						'{classExpression@static:(literal:92cfceb3):1}': {
+							type: ProgramStructureTreeType.ClassExpression,
+						},
+					}
+				}
+			}
+		})
+	})
+})

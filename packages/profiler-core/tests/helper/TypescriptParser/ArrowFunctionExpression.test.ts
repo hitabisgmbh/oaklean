@@ -625,3 +625,123 @@ describe('ArrowFunctionExpression in Class', () => {
 		})
 	})
 })
+
+describe('duplicates in code', () => {
+	const code = `
+	const obj = {
+		method: () => {},
+		method: () => {}
+	}
+
+	const ComputedPropertyName = 'ComputedPropertyName'
+	class ArrowFunctionExpression {
+		#private = () => {}
+
+		PropertyDeclaration = () => {};
+		static PropertyDeclaration = () => {};
+		[ComputedPropertyName] = () => {};
+		static [ComputedPropertyName] = () => {};
+
+		'StringLiteral' = () => {};
+		static 'StringLiteral' = () => {};
+
+		42 = () => {};
+		static 42 = () => {};
+
+		#private = () => {}
+
+		PropertyDeclaration = () => {};
+		static PropertyDeclaration = () => {};
+		[ComputedPropertyName] = () => {};
+		static [ComputedPropertyName] = () => {};
+
+		'StringLiteral' = () => {};
+		static 'StringLiteral' = () => {};
+		
+		42 = () => {};
+		static 42 = () => {};
+	}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{scope:(obj:obj)}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{functionExpression:method}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+						'{functionExpression:method:1}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				},
+				'{class:ArrowFunctionExpression}': {
+					type: ProgramStructureTreeType.ClassDeclaration,
+					children: {
+						'{functionExpression:#private}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+						'{functionExpression:PropertyDeclaration}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+						'{functionExpression@static:PropertyDeclaration}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+						'{functionExpression:(expression:34832631)}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression@static:(expression:34832631)}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression:(literal:7e2b9fea)}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression@static:(literal:7e2b9fea)}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression:(literal:92cfceb3)}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression@static:(literal:92cfceb3)}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression:#private:1}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+						'{functionExpression:PropertyDeclaration:1}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+						'{functionExpression@static:PropertyDeclaration:1}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+						'{functionExpression:(expression:34832631):1}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression@static:(expression:34832631):1}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression:(literal:7e2b9fea):1}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression@static:(literal:7e2b9fea):1}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression:(literal:92cfceb3):1}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+						'{functionExpression@static:(literal:92cfceb3):1}': {
+							type: ProgramStructureTreeType.FunctionExpression,
+						},
+					}
+				}
+			}
+		})
+	})
+})
