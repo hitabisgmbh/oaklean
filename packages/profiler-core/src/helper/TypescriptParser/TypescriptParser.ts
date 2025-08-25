@@ -88,7 +88,7 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 	[ModuleDeclarationHelper.syntaxKind]: ModuleDeclarationHelper.parseNode
 }
 
-const HANDLE_DUPLICATE_IDENTIFIERS: Record<string, (
+export const HANDLE_DUPLICATE_IDENTIFIERS: Record<string, (
 	tree: ProgramStructureTree
 ) => void> = {
 	[ProgramStructureTreeType.FunctionDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
