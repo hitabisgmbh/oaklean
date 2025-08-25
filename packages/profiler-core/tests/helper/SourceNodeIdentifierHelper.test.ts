@@ -32,7 +32,7 @@ ProgramStructureTreeType,
 		expectedName: 'ExampleClass'
 	},
 	[ProgramStructureTreeType.ClassExpression]: {
-		input: '{classExpression:(anonymous:1234)}',
+		input: '{classExpression@static:(anonymous:1234)}',
 		expectedName: '(anonymous:1234)'
 	},
 	[ProgramStructureTreeType.MethodDefinition]: {
@@ -60,7 +60,7 @@ ProgramStructureTreeType,
 		expectedName: 'constructor'
 	},
 	[ProgramStructureTreeType.ObjectLiteralExpression]: {
-		input: '{scope:(obj:(anonymous:1234))}',
+		input: '{scope:(obj@static:(anonymous:1234))}',
 		expectedName: '(anonymous:1234)'
 	},
 	[ProgramStructureTreeType.IfStatement]: {

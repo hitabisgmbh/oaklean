@@ -13,13 +13,15 @@ export const SetAccessorDeclarationRegexString =
 	`{set(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const FunctionExpressionRegexString = `{functionExpression(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
-export const ClassExpressionRegexString = `{classExpression:(${SourceNodeNameExpressionRegexString})}`
+export const ClassExpressionRegexString =
+	`{classExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}}`
 export const ClassStaticBlockDeclarationRegexString = '{(static:[0-9]+)}'
 
 // Scopes
 export const ExpressionHashRegexString = '[A-Za-z0-9]+'
 
-export const ObjectLiteralExpressionRegexString = `{scope:\\(obj:(${SourceNodeNameExpressionRegexString})\\)}`
+export const ObjectLiteralExpressionRegexString =
+	`{scope:\\(obj(?:@static)?:(${SourceNodeNameExpressionRegexString})\\)}`
 export const ModuleDeclarationRegexString =
 // eslint-disable-next-line max-len
 	`{scope:\\(namespace:(${SourceNodeNameExpressionRegexString}(?:.${SourceNodeNameExpressionRegexString})*):[0-9]+\\)}`

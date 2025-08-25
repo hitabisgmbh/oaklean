@@ -473,3 +473,162 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 		})
 	})
 })
+
+describe('ClassExpression in Class', () => {
+	describe('ts.SyntaxKind.PrivateIdentifier', () => {
+		const code = `
+			class ClassExpression {
+				#private = class {}
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:ClassExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{classExpression:#private}': {
+								type: ProgramStructureTreeType.ClassExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
+	describe('ts.SyntaxKind.PropertyDeclaration', () => {
+		const code = `
+			class ClassExpression {
+				PropertyDeclaration = class {};
+				static PropertyDeclaration = class {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:ClassExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{classExpression:PropertyDeclaration}': {
+								type: ProgramStructureTreeType.ClassExpression
+							},
+							'{classExpression@static:PropertyDeclaration}': {
+								type: ProgramStructureTreeType.ClassExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
+	describe('ts.SyntaxKind.FirstLiteralToken', () => {
+		const code = `
+			class ClassExpression {
+				42 = class {};
+				static 42 = class {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:ClassExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{classExpression:(literal:92cfceb3)}': {
+								type: ProgramStructureTreeType.ClassExpression
+							},
+							'{classExpression@static:(literal:92cfceb3)}': {
+								type: ProgramStructureTreeType.ClassExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
+	describe('ts.SyntaxKind.StringLiteral', () => {
+		const code = `
+			class ClassExpression {
+				'StringLiteral' = class {};
+				static 'StringLiteral' = class {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:ClassExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{classExpression:(literal:7e2b9fea)}': {
+								type: ProgramStructureTreeType.ClassExpression
+							},
+							'{classExpression@static:(literal:7e2b9fea)}': {
+								type: ProgramStructureTreeType.ClassExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
+	describe(' ts.SyntaxKind.ComputedPropertyName', () => {
+		const code = `
+			const ComputedPropertyName = 'ComputedPropertyName'
+			class ClassExpression {
+				[ComputedPropertyName] = class {};
+				static [ComputedPropertyName] = class {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:ClassExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{classExpression:(expression:34832631)}': {
+								type: ProgramStructureTreeType.ClassExpression
+							},
+							'{classExpression@static:(expression:34832631)}': {
+								type: ProgramStructureTreeType.ClassExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+})

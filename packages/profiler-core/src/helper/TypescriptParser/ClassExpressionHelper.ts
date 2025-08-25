@@ -25,7 +25,7 @@ export class ClassExpressionHelper {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {
-				const { identifier, identifierType } = NamingHelper.getName(
+				const { suffix, identifier, identifierType } = NamingHelper.getName(
 					node.parent,
 					sourceFile,
 					traverseNodeInfo
@@ -36,7 +36,7 @@ export class ClassExpressionHelper {
 					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.ClassExpression,
 					identifierType,
-					`{classExpression:${identifier}}` as SourceNodeIdentifierPart_string,
+					`{classExpression${suffix}:${identifier}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 				)
