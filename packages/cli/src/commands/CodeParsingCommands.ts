@@ -116,7 +116,7 @@ export default class CodeParsingCommands {
 		}
 		const globPattern = inputPath.join('**', '*.{js,ts,jsx,tsx}').toPlatformString()
 		if (fs.existsSync(inputPath.toPlatformString())) {
-			const filePaths = sync(globPattern.toString())
+			const filePaths = sync(globPattern.toString(), { dot: true })
 			filePaths.map((filePath) => new UnifiedPath(filePath))
 
 			for (const filePath of filePaths) {
