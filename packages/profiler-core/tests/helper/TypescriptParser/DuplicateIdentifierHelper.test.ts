@@ -1,3 +1,5 @@
+import ts from 'typescript'
+
 import { ProgramStructureTree } from '../../../src/model/ProgramStructureTree'
 import { DuplicateIdentifierHelper } from '../../../src/helper/TypescriptParser'
 import { HANDLE_DUPLICATE_IDENTIFIERS } from '../../../src/helper/TypescriptParser/TypescriptParser'
@@ -129,7 +131,12 @@ describe('handle duplicate identifier', () => {
 								}
 							)
 							DuplicateIdentifierHelper.handleDuplicateIdentifier(
-								duplicateChild
+								duplicateChild,
+								{
+									parent: {
+										kind: ts.SyntaxKind.SourceFile
+									}
+								} as unknown as ts.Node
 							)
 							expect(duplicateChild.identifier).toBe(
 								duplicateFormat.replace(

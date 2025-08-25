@@ -635,6 +635,15 @@ describe('ClassExpression in Class', () => {
 
 describe('duplicates in code', () => {
 	const code = `
+	var cls = class {
+		methodA() {}
+	}
+	var cls = class {
+		methodB() {}
+	}, cls = class {
+		methodC() {}
+	}
+
 	const obj = {
 		cls: class {},
 		cls: class {}
@@ -678,6 +687,30 @@ describe('duplicates in code', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
+				'{classExpression:cls}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{method:methodA}': {
+							type: ProgramStructureTreeType.MethodDefinition
+						}
+					}
+				},
+				'{classExpression:cls:1}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{method:methodB}': {
+							type: ProgramStructureTreeType.MethodDefinition
+						}
+					}
+				},
+				'{classExpression:cls:2}': {
+					type: ProgramStructureTreeType.ClassExpression,
+					children: {
+						'{method:methodC}': {
+							type: ProgramStructureTreeType.MethodDefinition
+						}
+					}
+				},
 				'{scope:(obj:obj)}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {

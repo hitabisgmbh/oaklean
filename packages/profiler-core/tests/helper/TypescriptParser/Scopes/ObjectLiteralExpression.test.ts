@@ -331,6 +331,15 @@ describe('ObjectLiteralExpression in Class', () => {
 
 describe('duplicates in code', () => {
 	const code = `
+	var objE = {
+		prop: function() {}
+	}
+	var objE = {
+		prop: function() {}
+	}, objE = {
+		prop: function() {}
+	}
+
 	const obj = {
 		obj: {
 			prop: function() {}
@@ -414,6 +423,30 @@ describe('duplicates in code', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
+				'{scope:(obj:objE)}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{functionExpression:prop}': {
+							type:ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				},
+				'{scope:(obj:objE:1)}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{functionExpression:prop}': {
+							type:ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				},
+				'{scope:(obj:objE:2)}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{functionExpression:prop}': {
+							type:ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				},	
 				'{scope:(obj:obj)}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {

@@ -89,8 +89,9 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 }
 
 export const HANDLE_DUPLICATE_IDENTIFIERS: Record<string, (
-	tree: ProgramStructureTree
-) => void> = {
+	tree: ProgramStructureTree,
+	node: ts.Node
+) => boolean> = {
 	[ProgramStructureTreeType.FunctionDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
 	[ProgramStructureTreeType.MethodDefinition]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
 	[ProgramStructureTreeType.GetAccessorDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
@@ -193,9 +194,11 @@ export class TypescriptParser {
 			}
 			const found = subTree.parent.children.get(subTree.identifier)
 			if (found !== undefined) {
-				if (HANDLE_DUPLICATE_IDENTIFIERS[subTree.type] !== undefined) {
-					HANDLE_DUPLICATE_IDENTIFIERS[subTree.type](subTree)
-				} else if (onDuplicateIdentifier !== undefined){
+				const duplicatesAreExpected =
+					HANDLE_DUPLICATE_IDENTIFIERS[subTree.type] !== undefined &&
+					HANDLE_DUPLICATE_IDENTIFIERS[subTree.type](subTree, node)
+
+				if (!duplicatesAreExpected && onDuplicateIdentifier !== undefined){
 					const identifier = subTree.parent.identifierPath() + '.' + subTree.identifier
 					onDuplicateIdentifier(
 						filePath,

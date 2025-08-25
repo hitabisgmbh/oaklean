@@ -628,9 +628,18 @@ describe('ArrowFunctionExpression in Class', () => {
 
 describe('duplicates in code', () => {
 	const code = `
+	var func = () => {
+		const funcA = () => {}
+	}
+	var func = () => {
+		const funcB = () => {}
+	}, func = () => {
+		const funcC = () => {}
+	}
+
 	const obj = {
-		method: () => {},
-		method: () => {}
+		func: () => {},
+		func: () => {}
 	}
 
 	const ComputedPropertyName = 'ComputedPropertyName'
@@ -671,13 +680,37 @@ describe('duplicates in code', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
+				'{functionExpression:func}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+					children: {
+						'{functionExpression:funcA}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				},
+				'{functionExpression:func:1}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+					children: {
+						'{functionExpression:funcB}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				},
+				'{functionExpression:func:2}': {
+					type: ProgramStructureTreeType.FunctionExpression,
+					children: {
+						'{functionExpression:funcC}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						}
+					}
+				},
 				'{scope:(obj:obj)}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
-						'{functionExpression:method}': {
+						'{functionExpression:func}': {
 							type: ProgramStructureTreeType.FunctionExpression
 						},
-						'{functionExpression:method:1}': {
+						'{functionExpression:func:1}': {
 							type: ProgramStructureTreeType.FunctionExpression
 						}
 					}
