@@ -1,4 +1,4 @@
-export const SourceNodeNameRegexString = '[a-zA-Z0-9_$#]+'
+export const SourceNodeNameRegexString = '[^@:(){}]+'
 export const SourceNodeNameExpressionRegexString =
 	`(?:${SourceNodeNameRegexString}|\\((?:literal|expression):${SourceNodeNameRegexString}\\)|\\(anonymous:[0-9]+\\))`
 
