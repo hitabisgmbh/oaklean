@@ -107,3 +107,34 @@ describe('ts.SyntaxKind.Constructor with signatures', () => {
 		})
 	})
 })
+
+describe('static ', () => {
+	const code = `
+		class A {
+			constructor(args: any) {}
+			static constructor(args: any) {}
+		}
+	`
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{class:A}': {
+					type: ProgramStructureTreeType.ClassDeclaration,
+					children: {
+						'{constructor:constructor}': {
+							type: ProgramStructureTreeType.ConstructorDeclaration,
+						},
+						'{method@static:constructor}': {
+							type: ProgramStructureTreeType.MethodDefinition,
+						}
+					}
+				}
+			}
+		})
+	})
+})

@@ -114,6 +114,7 @@ export class TypescriptHelper {
 		| ts.PropertyDeclaration
 		| ts.SetAccessorDeclaration
 		| ts.GetAccessorDeclaration
+		| ts.ConstructorDeclaration
 	): boolean {
 		if (node.modifiers === undefined || node.modifiers.length === 0) {
 			return false
