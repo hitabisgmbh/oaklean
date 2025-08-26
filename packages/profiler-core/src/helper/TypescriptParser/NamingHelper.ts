@@ -18,6 +18,14 @@ export class NamingHelper {
 		if (getNameFunction !== undefined) {
 			return getNameFunction(node, sourceFile, traverseNodeInfo)
 		}
+		return NamingHelper.getAnonymousName(node, sourceFile, traverseNodeInfo)
+	}
+
+	static getAnonymousName(
+		node: ts.Node,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	) {
 		return {
 			suffix: '',
 			identifier: `(anonymous:${traverseNodeInfo.counters.anonymousFunctionCounter++})`,
@@ -165,5 +173,7 @@ const GET_NAME_FUNCTIONS: Partial<Record<ts.SyntaxKind, GetNameFunction>> = {
 	[ts.SyntaxKind.BigIntLiteral]: NamingHelper.getLiteralName,
 	[ts.SyntaxKind.StringLiteral]: NamingHelper.getLiteralName,
 	[ts.SyntaxKind.NumericLiteral]: NamingHelper.getLiteralName,
-	[ts.SyntaxKind.ComputedPropertyName]: NamingHelper.getComputedPropertyName
+	[ts.SyntaxKind.ComputedPropertyName]: NamingHelper.getComputedPropertyName,
+	[ts.SyntaxKind.ObjectBindingPattern]: NamingHelper.getAnonymousName,
+	[ts.SyntaxKind.ArrayBindingPattern]: NamingHelper.getAnonymousName
 }

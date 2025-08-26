@@ -474,6 +474,31 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 	})
 })
 
+describe('ts.SyntaxKind.ArrayBindingPattern', () => {
+	const code = `
+		const [ ArrayBindingPattern1 ] = [ class {} ]
+		const [ ArrayBindingPattern2 ] = [ class {} ]
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{classExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.ClassExpression
+				},
+				'{classExpression:(anonymous:1)}': {
+					type: ProgramStructureTreeType.ClassExpression
+				}
+			}
+		})
+	})
+})
+
 describe('ClassExpression in Class', () => {
 	describe('ts.SyntaxKind.PrivateIdentifier', () => {
 		const code = `

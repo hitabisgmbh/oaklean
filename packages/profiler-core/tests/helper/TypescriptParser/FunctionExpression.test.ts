@@ -470,6 +470,31 @@ describe('ts.SyntaxKind.ThrowStatement', () => {
 	})
 })
 
+describe('ts.SyntaxKind.ArrayBindingPattern', () => {
+	const code = `
+		const [ ArrayBindingPattern1 ] = [ function() {} ]
+		const [ ArrayBindingPattern2 ] = [ function() {} ]
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{functionExpression:(anonymous:0)}': {
+					type: ProgramStructureTreeType.FunctionExpression
+				},
+				'{functionExpression:(anonymous:1)}': {
+					type: ProgramStructureTreeType.FunctionExpression
+				}
+			}
+		})
+	})
+})
+
 describe('FunctionExpression in Class', () => {
 	describe('ts.SyntaxKind.PrivateIdentifier', () => {
 		const code = `

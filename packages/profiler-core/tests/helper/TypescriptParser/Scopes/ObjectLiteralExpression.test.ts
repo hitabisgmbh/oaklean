@@ -107,6 +107,85 @@ describe('with deep nested executable children', () => {
 	})
 })
 
+describe('ts.SyntaxKind.ArrayBindingPattern', () => {
+	const code = `
+		const [ ArrayBindingPattern1 ] = [ { ArrayBindingPattern: () => {} } ]
+		const [ ArrayBindingPattern2 ] = [ { ArrayBindingPattern: () => {} } ]
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{scope:(obj:(anonymous:0))}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{functionExpression:ArrayBindingPattern}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+					}
+				},
+				'{scope:(obj:(anonymous:1))}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{functionExpression:ArrayBindingPattern}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+					}
+				},
+			}
+		})
+	})
+})
+
+describe('ts.SyntaxKind.ObjectBindingPattern', () => {
+	const code = `
+		const { ObjectBindingPattern1 } = { ObjectBindingPattern: () => {} }
+		const { ObjectBindingPattern: a } = { ObjectBindingPattern: () => {} }
+		const { ...x } = { ObjectBindingPattern: () => {} }
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{scope:(obj:(anonymous:0))}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{functionExpression:ObjectBindingPattern}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+					}
+				},
+				'{scope:(obj:(anonymous:1))}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{functionExpression:ObjectBindingPattern}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+					}
+				},
+				'{scope:(obj:(anonymous:2))}': {
+					type: ProgramStructureTreeType.ObjectLiteralExpression,
+					children: {
+						'{functionExpression:ObjectBindingPattern}': {
+							type: ProgramStructureTreeType.FunctionExpression
+						},
+					}
+				}
+			}
+		})
+	})
+})
+
 describe('ObjectLiteralExpression in Class', () => {
 	describe('ts.SyntaxKind.PrivateIdentifier', () => {
 		const code = `
