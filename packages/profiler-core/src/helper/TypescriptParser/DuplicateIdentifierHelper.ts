@@ -57,7 +57,10 @@ export class DuplicateIdentifierHelper {
 			duplicatesAreExpected = false
 		}
 
-		if (tree.type === ProgramStructureTreeType.ObjectLiteralExpression) {
+		if (
+			tree.type === ProgramStructureTreeType.ObjectLiteralExpression ||
+			tree.type === ProgramStructureTreeType.SwitchCaseClause
+		) {
 			if (!currentIdentifier.endsWith(')}')) {
 				throw new Error('DuplicateIdentifierHelper (handleDuplicateIdentifier): invalid identifier format: ' + currentIdentifier)
 			}

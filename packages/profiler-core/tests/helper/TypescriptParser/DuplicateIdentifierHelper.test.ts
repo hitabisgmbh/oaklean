@@ -83,6 +83,16 @@ keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
 			input: '{scope:(obj@static:(expression:34832631))}' as SourceNodeIdentifierPart_string,
 			duplicateFormat: '{scope:(obj@static:(expression:34832631):{counter})}' as SourceNodeIdentifierPart_string
 		},
+	],
+	[ProgramStructureTreeType.SwitchCaseClause]: [
+		{
+			input: '{scope:(case:default)}' as SourceNodeIdentifierPart_string,
+			duplicateFormat: '{scope:(case:default:{counter})}' as SourceNodeIdentifierPart_string
+		},
+		{
+			input: '{scope:(case:34832631)}' as SourceNodeIdentifierPart_string,
+			duplicateFormat: '{scope:(case:34832631:{counter})}' as SourceNodeIdentifierPart_string
+		},
 	]
 }
 

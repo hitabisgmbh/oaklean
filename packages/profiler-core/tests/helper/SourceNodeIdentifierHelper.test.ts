@@ -112,8 +112,8 @@ ProgramStructureTreeType,
 		expectedName: '(switch:0)'
 	},
 	[ProgramStructureTreeType.SwitchCaseClause]: {
-		input: '{scope:(case:default)}',
-		expectedName: '(case:default)'
+		input: '{scope:(case:default:1)}',
+		expectedName: '(case:default:1)'
 	},
 	[ProgramStructureTreeType.ModuleDeclaration]: {
 		input: '{scope:(namespace:A_1.B_2:0)}',
