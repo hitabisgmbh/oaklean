@@ -99,6 +99,38 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 	})
 })
 
+describe('ts.SyntaxKind.BigIntLiteral', () => {
+	const code = `
+		class MethodDeclaration {
+			42n() {}
+			static 42n() {}
+		}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{class:MethodDeclaration}': {
+					type: ProgramStructureTreeType.ClassDeclaration,
+					children: {
+						'{method:(literal:40a3fd3b)}': {
+							type: ProgramStructureTreeType.MethodDefinition,
+						},
+						'{method@static:(literal:40a3fd3b)}': {
+							type: ProgramStructureTreeType.MethodDefinition,
+						}
+					}
+				}
+			}
+		})
+	})
+})
+
 describe('ts.SyntaxKind.FunctionExpression', () => {
 	const code = `
 		class MethodDeclaration {

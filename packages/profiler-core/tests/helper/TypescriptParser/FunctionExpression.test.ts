@@ -563,6 +563,38 @@ describe('FunctionExpression in Class', () => {
 		})
 	})
 
+	describe('ts.SyntaxKind.BigIntLiteral', () => {
+		const code = `
+			class FunctionExpression {
+				42n = function() {};
+				static 42n = function() {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:FunctionExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{functionExpression:(literal:40a3fd3b)}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							},
+							'{functionExpression@static:(literal:40a3fd3b)}': {
+								type: ProgramStructureTreeType.FunctionExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
 	describe('ts.SyntaxKind.StringLiteral', () => {
 		const code = `
 			class FunctionExpression {

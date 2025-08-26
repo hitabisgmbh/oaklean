@@ -112,7 +112,7 @@ export class NamingHelper {
 	}
 
 	static getLiteralName(
-		node: ts.StringLiteral | ts.NumericLiteral,
+		node: ts.StringLiteral | ts.NumericLiteral | ts.BigIntLiteral,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
@@ -162,6 +162,7 @@ const GET_NAME_FUNCTIONS: Partial<Record<ts.SyntaxKind, GetNameFunction>> = {
 
 	[ts.SyntaxKind.Identifier]: NamingHelper.getIdentifierName,
 	[ts.SyntaxKind.PrivateIdentifier]: NamingHelper.getIdentifierName,
+	[ts.SyntaxKind.BigIntLiteral]: NamingHelper.getLiteralName,
 	[ts.SyntaxKind.StringLiteral]: NamingHelper.getLiteralName,
 	[ts.SyntaxKind.NumericLiteral]: NamingHelper.getLiteralName,
 	[ts.SyntaxKind.ComputedPropertyName]: NamingHelper.getComputedPropertyName

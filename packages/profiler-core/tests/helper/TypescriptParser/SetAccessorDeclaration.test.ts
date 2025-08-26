@@ -99,6 +99,38 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 	})
 })
 
+describe('ts.SyntaxKind.BigIntLiteral', () => {
+	const code = `
+		class SetAccessorDeclaration {
+			set 42n() {}
+			static set 42n() {}
+		}
+	`
+
+	test('expected identifier', () => {
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+		const hierarchy = pst.identifierHierarchy()
+
+		expect(hierarchy).toEqual({
+			type: ProgramStructureTreeType.Root,
+			children: {
+				'{class:SetAccessorDeclaration}': {
+					type: ProgramStructureTreeType.ClassDeclaration,
+					children: {
+						'{set:(literal:40a3fd3b)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
+						},
+						'{set@static:(literal:40a3fd3b)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
+						}
+					}
+				}
+			}
+		})
+	})
+})
+
 describe('ts.SyntaxKind.FunctionExpression', () => {
 	const code = `
 		class SetAccessorDeclaration {

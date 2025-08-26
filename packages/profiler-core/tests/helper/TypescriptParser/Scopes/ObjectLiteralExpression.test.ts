@@ -235,6 +235,52 @@ describe('ObjectLiteralExpression in Class', () => {
 		})
 	})
 
+	describe('ts.SyntaxKind.BigIntLiteral', () => {
+		const code = `
+			class ObjectLiteralExpression {
+				42n = {
+					prop: function() {}
+				};
+				static 42n = {
+					prop: function() {}
+				};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:ObjectLiteralExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{scope:(obj:(literal:40a3fd3b))}': {
+								type: ProgramStructureTreeType.ObjectLiteralExpression,
+								children: {
+									'{functionExpression:prop}': {
+										type: ProgramStructureTreeType.FunctionExpression
+									}
+								}
+							},
+							'{scope:(obj@static:(literal:40a3fd3b))}': {
+								type: ProgramStructureTreeType.ObjectLiteralExpression,
+								children: {
+									'{functionExpression:prop}': {
+										type: ProgramStructureTreeType.FunctionExpression
+									}
+								}
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
 	describe('ts.SyntaxKind.StringLiteral', () => {
 		const code = `
 			class ObjectLiteralExpression {

@@ -567,6 +567,38 @@ describe('ClassExpression in Class', () => {
 		})
 	})
 
+	describe('ts.SyntaxKind.BigIntLiteral', () => {
+		const code = `
+			class ClassExpression {
+				42n = class {};
+				static 42n = class {};
+			}
+		`
+
+		test('expected identifier', () => {
+			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+
+			const hierarchy = pst.identifierHierarchy()
+
+			expect(hierarchy).toEqual({
+				type: ProgramStructureTreeType.Root,
+				children: {
+					'{class:ClassExpression}': {
+						type: ProgramStructureTreeType.ClassDeclaration,
+						children: {
+							'{classExpression:(literal:40a3fd3b)}': {
+								type: ProgramStructureTreeType.ClassExpression
+							},
+							'{classExpression@static:(literal:40a3fd3b)}': {
+								type: ProgramStructureTreeType.ClassExpression
+							}
+						}
+					}
+				}
+			})
+		})
+	})
+
 	describe('ts.SyntaxKind.StringLiteral', () => {
 		const code = `
 			class ClassExpression {
