@@ -32,6 +32,7 @@ export default class CodeParsingCommands {
 			.alias('vi')
 			.description('Parses all source files (.js, .ts, .jsx, .tsx) within a given path and verifies that all identifiers are valid and unique')
 			.argument('<input>', 'input file path')
+			.option('-t262, --t262', 'Specifies whether files should be ignored that contain a "$DONOTEVALUATE();", this is useful for test262 source files')
 			.action(this.verifySourceFilesIdentifiers.bind(this))
 
 		const externalResourceCommand = program
@@ -108,7 +109,8 @@ export default class CodeParsingCommands {
 	}
 
 	async verifySourceFilesIdentifiers(
-		input: string
+		input: string,
+		options: { t262?: boolean }
 	) {
 		let inputPath = new UnifiedPath(input)
 		if (inputPath.isRelative()) {
@@ -127,7 +129,10 @@ export default class CodeParsingCommands {
 					continue // Skip declaration files
 				}
 				const sourceFilePath = new UnifiedPath(filePath)
-				const code = fs.readFileSync(sourceFilePath.toPlatformString(), 'utf-8')
+				let code = fs.readFileSync(sourceFilePath.toPlatformString(), 'utf-8')
+				if (options.t262 !== undefined && code.includes('$DONOTEVALUATE();')) {
+					code = code.split('$DONOTEVALUATE();')[0]
+				}
 				try {
 					this.verifyCode(code, {
 						resourceFile: inputPath.toPlatformString(),
