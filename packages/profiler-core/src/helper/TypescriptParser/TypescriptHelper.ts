@@ -1,10 +1,7 @@
 import * as ts from 'typescript'
 
 // Types
-import {
-	SourceNodeIdentifier_string,
-	NodeLocation
-} from '../../types'
+import { SourceNodeIdentifier_string, NodeLocation } from '../../types'
 
 export enum EmitHelperNames {
 	// TypeScript Helpers
@@ -48,29 +45,44 @@ export class TypescriptHelper {
 	}
 
 	static isUseStrict(node: ts.Node) {
-		if (ts.isStringLiteral(node)) {
-			if (node.text === 'use strict') {
+		if (node.kind === ts.SyntaxKind.StringLiteral) {
+			if ((node as ts.StringLiteral).text === 'use strict') {
 				return true
 			}
 		}
 		return false
 	}
 
-	static getEmitHelperName(node: ts.FunctionExpression): EmitHelperNames | undefined {
+	static getEmitHelperName(
+		node: ts.FunctionExpression
+	): EmitHelperNames | undefined {
 		const varDeclaration = node?.parent?.parent
 
-		if (varDeclaration !== undefined && ts.isVariableDeclaration(varDeclaration)) {
-			if (ts.isIdentifier(varDeclaration.name)) {
-				if (EmitHelperNameStrings.includes(varDeclaration.name.text as EmitHelperNames)) {
-					return varDeclaration.name.text as EmitHelperNames
+		if (
+			varDeclaration !== undefined &&
+			varDeclaration.kind === ts.SyntaxKind.VariableDeclaration
+		) {
+			if ((varDeclaration as ts.VariableDeclaration).name.kind === ts.SyntaxKind.Identifier) {
+				if (
+					EmitHelperNameStrings.includes(
+						((varDeclaration as ts.VariableDeclaration).name as ts.Identifier).text as EmitHelperNames
+					)
+				) {
+					return ((varDeclaration as ts.VariableDeclaration).name as ts.Identifier).text as EmitHelperNames
 				}
 			}
 		}
 
 		const varDeclarationExtends = node?.parent?.parent?.parent?.parent
-		if (varDeclarationExtends !== undefined && ts.isVariableDeclaration(varDeclarationExtends)) {
-			if (ts.isIdentifier(varDeclarationExtends.name)) {
-				if (varDeclarationExtends.name.text === EmitHelperNames.extends) {
+		if (
+			varDeclarationExtends !== undefined &&
+			varDeclarationExtends.kind === ts.SyntaxKind.VariableDeclaration
+		) {
+			if ((varDeclarationExtends as ts.VariableDeclaration).name.kind === ts.SyntaxKind.Identifier) {
+				if (
+					((varDeclarationExtends as ts.VariableDeclaration).name as ts.Identifier)
+						.text === EmitHelperNames.extends
+				) {
 					return EmitHelperNames.extends
 				}
 			}
@@ -82,7 +94,9 @@ export class TypescriptHelper {
 		return '{root}.{functionExpression:__awaiter}' as SourceNodeIdentifier_string
 	}
 
-	static hasDefaultKeywordModifier(node: ts.ClassDeclaration | ts.ClassExpression | ts.FunctionDeclaration): boolean {
+	static hasDefaultKeywordModifier(
+		node: ts.ClassDeclaration | ts.ClassExpression | ts.FunctionDeclaration
+	): boolean {
 		if (node.modifiers === undefined || node.modifiers.length === 0) {
 			return false
 		}
@@ -94,7 +108,14 @@ export class TypescriptHelper {
 		return false
 	}
 
-	static hasStaticKeywordModifier(node: ts.MethodDeclaration | ts.PropertyDeclaration): boolean {
+	static hasStaticKeywordModifier(
+		node:
+		| ts.MethodDeclaration
+		| ts.PropertyDeclaration
+		| ts.SetAccessorDeclaration
+		| ts.GetAccessorDeclaration
+		| ts.ConstructorDeclaration
+	): boolean {
 		if (node.modifiers === undefined || node.modifiers.length === 0) {
 			return false
 		}

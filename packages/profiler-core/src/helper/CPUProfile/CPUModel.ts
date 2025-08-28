@@ -13,6 +13,7 @@ import {
 import { ICpuProfileRaw } from '../../../lib/vscode-js-profile-core/src/cpu/types'
 import { UnifiedPath } from '../../system/UnifiedPath'
 import { MetricsDataCollection } from '../../model/interfaces/MetricsDataCollection'
+import { JSONHelper } from '../JSONHelper'
 // Types
 import {
 	NanoSeconds_BigInt,
@@ -224,16 +225,21 @@ export class CPUModel {
 		
 	}
 
-	storeToFile(filePath: UnifiedPath) {
-		PermissionHelper.writeFileWithUserPermission(
+	async storeToFile(filePath: UnifiedPath) {
+		await PermissionHelper.writeFileWithStorageFunctionWithUserPermissionAsync(
 			filePath,
-			JSON.stringify(
-				this,
-				(key, value) =>
-					typeof value === 'bigint'
-						? value.toString()
-						: value // return everything else unchanged
-				, 2)
+			async () => {
+				await JSONHelper.storeBigJSON(
+					filePath,
+					this,
+					// eslint-disable-next-line
+					(key: any, value: any) =>
+						typeof value === 'bigint'
+							? value.toString()
+							: value // return everything else unchanged
+					, 2
+				)
+			}
 		)
 	}
 }

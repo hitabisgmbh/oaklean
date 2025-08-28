@@ -13,15 +13,15 @@ import {
 	SourceNodeIdentifierPart_string
 } from '../../types'
 
-export class MethodDeclarationHelper {
-	static syntaxKind = ts.SyntaxKind.MethodDeclaration
+export class GetAccessorDeclarationHelper {
+	static syntaxKind = ts.SyntaxKind.GetAccessor
 
 	static parseNode(
-		node: ts.MethodDeclaration,
+		node: ts.GetAccessorDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.MethodDefinition>
+			resolve(): ProgramStructureTree<ProgramStructureTreeType.GetAccessorDeclaration>
 			resolveWithNoChildren: true
 		} | null {
 		if (node.body === undefined) {
@@ -42,7 +42,7 @@ export class MethodDeclarationHelper {
 
 				if (identifierType === IdentifierType.Anonymous) {
 					LoggerHelper.error(
-						'MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' +
+						'GetAccessorDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' +
 							node.name.kind,
 						{
 							filePath: traverseNodeInfo.filePath,
@@ -51,7 +51,7 @@ export class MethodDeclarationHelper {
 						}
 					)
 					throw new Error(
-						'MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' +
+						'GetAccessorDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' +
 							node.name.kind
 					)
 				}
@@ -59,9 +59,9 @@ export class MethodDeclarationHelper {
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
 					traverseNodeInfo.nextId(),
-					ProgramStructureTreeType.MethodDefinition,
+					ProgramStructureTreeType.GetAccessorDeclaration,
 					identifierType,
-					`{method${staticSuffix}:${identifier}}` as SourceNodeIdentifierPart_string,
+					`{get${staticSuffix}:${identifier}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 				)

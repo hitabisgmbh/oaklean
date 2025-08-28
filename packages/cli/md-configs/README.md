@@ -34,6 +34,7 @@ Commands:
 
   parse                 commands to parse javascript or typescript files
      - toPST Converts a given javascript/typescript file and extracts the ProgramStructureTree from it and stores it into a file
+     - verify-identifiers Parses all source files (.js, .ts, .jsx, .tsx) within a given path and verifies that all identifiers are valid and unique
 
   external-resource|er  commands to interact with external resource files (.resources.json)
      - verify-identifiers Parses all source files in all resource files within a given path and verifies that all identifiers are valid and unique

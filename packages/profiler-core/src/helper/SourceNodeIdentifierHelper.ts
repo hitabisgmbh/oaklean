@@ -1,6 +1,8 @@
 import {
 	RootRegex,
 	MethodDefinitionRegex,
+	GetAccessorDeclarationRegex,
+	SetAccessorDeclarationRegex,
 	ClassDeclarationRegex,
 	FunctionDeclarationRegex,
 	FunctionExpressionRegex,
@@ -21,7 +23,8 @@ import {
 	TryBlockStatementRegex,
 	CatchClauseStatementRegex,
 	FinallyBlockStatementRegex,
-	BlockStatementRegex
+	BlockStatementRegex,
+	ClassStaticBlockDeclarationRegex
 } from '../constants/SourceNodeRegex'
 // Types
 import {
@@ -40,6 +43,8 @@ const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
 	[ProgramStructureTreeType.ClassDeclaration]: ClassDeclarationRegex,
 	[ProgramStructureTreeType.ClassExpression]: ClassExpressionRegex,
 	[ProgramStructureTreeType.MethodDefinition]: MethodDefinitionRegex,
+	[ProgramStructureTreeType.GetAccessorDeclaration]: GetAccessorDeclarationRegex,
+	[ProgramStructureTreeType.SetAccessorDeclaration]: SetAccessorDeclarationRegex,
 	[ProgramStructureTreeType.FunctionDeclaration]: FunctionDeclarationRegex,
 	[ProgramStructureTreeType.FunctionExpression]: FunctionExpressionRegex,
 	[ProgramStructureTreeType.ObjectLiteralExpression]: ObjectLiteralExpressionRegex,
@@ -54,6 +59,7 @@ const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
 	[ProgramStructureTreeType.FinallyBlock]: FinallyBlockStatementRegex,
 	[ProgramStructureTreeType.SwitchStatement]: SwitchStatementRegex,
 	[ProgramStructureTreeType.Block]: BlockStatementRegex,
+	[ProgramStructureTreeType.ClassStaticBlockDeclaration]: ClassStaticBlockDeclarationRegex,
 	[ProgramStructureTreeType.SwitchCaseClause]: SwitchCaseClauseRegex,
 	[ProgramStructureTreeType.ModuleDeclaration]: ModuleDeclarationRegex,
 }

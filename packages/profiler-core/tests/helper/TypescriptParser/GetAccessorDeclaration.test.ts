@@ -5,9 +5,9 @@ import { ProgramStructureTreeType } from '../../../src/types'
 
 describe('ts.SyntaxKind.PrivateIdentifier', () => {
 	const code = `
-		class MethodDeclaration {
-			#private () {}
-			static #private () {}
+		class GetAccessorDeclaration {
+			get #private () {}
+			static get #private () {}
 		}
 	`
 
@@ -19,14 +19,14 @@ describe('ts.SyntaxKind.PrivateIdentifier', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:GetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:#private}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get:#private}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						},
-						'{method@static:#private}': {
-							type: ProgramStructureTreeType.MethodDefinition
+						'{get@static:#private}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						}
 					}
 				}
@@ -37,9 +37,9 @@ describe('ts.SyntaxKind.PrivateIdentifier', () => {
 
 describe('ts.SyntaxKind.Identifier', () => {
 	const code = `
-		class MethodDeclaration {
-			method() {}
-			static method() {}
+		class GetAccessorDeclaration {
+			get a() {}
+			static get a() {}
 		}
 	`
 
@@ -51,14 +51,14 @@ describe('ts.SyntaxKind.Identifier', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:GetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get:a}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						},
-						'{method@static:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get@static:a}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						}
 					}
 				}
@@ -69,9 +69,9 @@ describe('ts.SyntaxKind.Identifier', () => {
 
 describe('ts.SyntaxKind.FirstLiteralToken', () => {
 	const code = `
-		class MethodDeclaration {
-			42() {}
-			static 42() {}
+		class GetAccessorDeclaration {
+			get 42() {}
+			static get 42() {}
 		}
 	`
 
@@ -83,14 +83,14 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:GetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get:(literal:92cfceb3)}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						},
-						'{method@static:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get@static:(literal:92cfceb3)}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						}
 					}
 				}
@@ -101,9 +101,9 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 
 describe('ts.SyntaxKind.BigIntLiteral', () => {
 	const code = `
-		class MethodDeclaration {
-			42n() {}
-			static 42n() {}
+		class GetAccessorDeclaration {
+			get 42n() {}
+			static get 42n() {}
 		}
 	`
 
@@ -115,14 +115,14 @@ describe('ts.SyntaxKind.BigIntLiteral', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:GetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(literal:40a3fd3b)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get:(literal:40a3fd3b)}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						},
-						'{method@static:(literal:40a3fd3b)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get@static:(literal:40a3fd3b)}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						}
 					}
 				}
@@ -133,9 +133,9 @@ describe('ts.SyntaxKind.BigIntLiteral', () => {
 
 describe('ts.SyntaxKind.FunctionExpression', () => {
 	const code = `
-		class MethodDeclaration {
-			'StringLiteral'() {}
-			static 'StringLiteral'() {}
+		class GetAccessorDeclaration {
+			get 'StringLiteral'() {}
+			static get 'StringLiteral'() {}
 		}
 	`
 
@@ -147,14 +147,14 @@ describe('ts.SyntaxKind.FunctionExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:GetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get:(literal:7e2b9fea)}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						},
-						'{method@static:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get@static:(literal:7e2b9fea)}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						}
 					}
 				}
@@ -166,9 +166,9 @@ describe('ts.SyntaxKind.FunctionExpression', () => {
 describe('ts.SyntaxKind.ComputedPropertyName', () => {
 	const code = `
 		const ComputedPropertyName = 'ComputedPropertyName'
-		class MethodDeclaration {
-			[ComputedPropertyName](){};
-			static [ComputedPropertyName](){};
+		class GetAccessorDeclaration {
+			get [ComputedPropertyName](){};
+			static get [ComputedPropertyName](){};
 		}
 	`
 
@@ -180,14 +180,14 @@ describe('ts.SyntaxKind.ComputedPropertyName', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:GetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(expression:34832631)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get:(expression:34832631)}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						},
-						'{method@static:(expression:34832631)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get@static:(expression:34832631)}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 						}
 					}
 				}
@@ -198,7 +198,7 @@ describe('ts.SyntaxKind.ComputedPropertyName', () => {
 
 describe('ts.SyntaxKind.ObjectLiteralExpression', () => {
 	const code = `
-		const obj = { method() {} }
+		const obj = { get a() {} }
 	`
 
 	test('expected identifier', () => {
@@ -212,86 +212,8 @@ describe('ts.SyntaxKind.ObjectLiteralExpression', () => {
 				'{scope:(obj:obj)}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
-						'{method:method}': {
-							type: ProgramStructureTreeType.MethodDefinition
-						}
-					}
-				}
-			}
-		})
-	})
-})
-
-describe('ts.SyntaxKind.MethodDeclaration with signature', () => {
-	test('empty signature', () => {
-		const code = `
-			class A {
-				MethodDeclaration(): void
-			}
-		`
-
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
-
-		const hierarchy = pst.identifierHierarchy()
-
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{class:A}': {
-					type: ProgramStructureTreeType.ClassDeclaration
-				}
-			}
-		})
-	})
-
-	test('signature with implementation', () => {
-		const code = `
-			class A {
-				MethodDeclaration(): void
-				MethodDeclaration(a?: number) {}
-			}
-		`
-
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
-
-		const hierarchy = pst.identifierHierarchy()
-
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{class:A}': {
-					type: ProgramStructureTreeType.ClassDeclaration,
-					children: {
-						'{method:MethodDeclaration}': {
-							type: ProgramStructureTreeType.MethodDefinition,
-						}
-					}
-				}
-			}
-		})
-	})
-
-	test('multiple signatures with implementation', () => {
-		const code = `
-			class A {
-				MethodDeclaration(): void
-				MethodDeclaration(a: number): void
-				MethodDeclaration(a?: number) {}
-			}
-		`
-
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
-
-		const hierarchy = pst.identifierHierarchy()
-
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{class:A}': {
-					type: ProgramStructureTreeType.ClassDeclaration,
-					children: {
-						'{method:MethodDeclaration}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get:a}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						}
 					}
 				}
@@ -302,54 +224,54 @@ describe('ts.SyntaxKind.MethodDeclaration with signature', () => {
 
 describe('duplicates in code', () => {
 	const code = `
-		class MethodDeclaration {
-			method() {
+		class GetAccessorDeclaration {
+			get getter() {
 				const a = class {
-					method() {
+					get getter() {
 						const a = class {
-							method() {}
+							get getter() {}
 						}
 					}
 				}
 			}
-			static method() {
+			static get getter() {
 				const a = class {
-					method() {
+					get getter() {
 						const a = class {
-							method() {}
+							get getter() {}
 						}
 					}
 				}
 			}
 
-			method() {
+			get getter() {
 				const a = class {
-					method() {
+					get getter() {
 						const a = class {
-							method() {}
-							method2() {}
+							get getter() {}
+							get getter2() {}
 						}
 					}
-					method() {
+					get getter() {
 						const a = class {
-							method() {}
-							method2() {}
+							get getter() {}
+							get getter2() {}
 						}
 					}
 				}
 			}
-			static method() {
+			static get getter() {
 				const a = class {
-					method() {
+					get getter() {
 						const a = class {
-							method() {}
-							method2() {}
+							get getter() {}
+							get getter2() {}
 						}
 					}
-					method() {
+					get getter() {
 						const a = class {
-							method() {}
-							method2() {}
+							get getter() {}
+							get getter2() {}
 						}
 					}
 				}
@@ -365,23 +287,23 @@ describe('duplicates in code', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:GetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get:getter}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 							children: {
 								'{classExpression:a}': {
 									type: ProgramStructureTreeType.ClassExpression,
 									children: {
-										'{method:method}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{get:getter}': {
+											type: ProgramStructureTreeType.GetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														}
 													}
 												}
@@ -391,20 +313,20 @@ describe('duplicates in code', () => {
 								}
 							}
 						},
-						'{method@static:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get@static:getter}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 							children: {
 								'{classExpression:a}': {
 									type: ProgramStructureTreeType.ClassExpression,
 									children: {
-										'{method:method}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{get:getter}': {
+											type: ProgramStructureTreeType.GetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														}
 													}
 												}
@@ -414,39 +336,39 @@ describe('duplicates in code', () => {
 								}
 							}
 						},
-						'{method:method:1}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get:getter:1}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 							children: {
 								'{classExpression:a}': {
 									type: ProgramStructureTreeType.ClassExpression,
 									children: {
-										'{method:method}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{get:getter}': {
+											type: ProgramStructureTreeType.GetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														},
-														'{method:method2}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter2}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														}
 													}
 												}
 											}
 										},
-										'{method:method:1}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{get:getter:1}': {
+											type: ProgramStructureTreeType.GetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														},
-														'{method:method2}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter2}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														}
 													}
 												}
@@ -456,39 +378,39 @@ describe('duplicates in code', () => {
 								}
 							}
 						},
-						'{method@static:method:1}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{get@static:getter:1}': {
+							type: ProgramStructureTreeType.GetAccessorDeclaration,
 							children: {
 								'{classExpression:a}': {
 									type: ProgramStructureTreeType.ClassExpression,
 									children: {
-										'{method:method}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{get:getter}': {
+											type: ProgramStructureTreeType.GetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														},
-														'{method:method2}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter2}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														}
 													}
 												}
 											}
 										},
-										'{method:method:1}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{get:getter:1}': {
+											type: ProgramStructureTreeType.GetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														},
-														'{method:method2}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{get:getter2}': {
+															type: ProgramStructureTreeType.GetAccessorDeclaration
 														}
 													}
 												}

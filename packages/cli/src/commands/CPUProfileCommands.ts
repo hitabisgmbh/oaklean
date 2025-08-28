@@ -1,5 +1,3 @@
-import * as fs from 'fs'
-
 import cli from 'cli-color'
 import {
 	UnifiedPath,
@@ -75,14 +73,21 @@ export default class CPUProfileCommands {
 			outputPath = new UnifiedPath(process.cwd()).join(outputPath)
 		}
 
-		const cpuProfile = JSON.parse(fs.readFileSync(inputPath.toPlatformString()).toString())
+		const cpuProfile = await CPUProfileHelper.loadFromFile(inputPath)
+		if (cpuProfile === undefined) {
+			LoggerHelper.error(
+				`CPU profile could not be loaded from ${inputPath.toPlatformString()}. ` +
+				'Please make sure the file exists and is a valid CPU profile.'
+			)
+			return
+		}
 		const cpuModel = new CPUModel(
 			new UnifiedPath(__dirname).join('..'),
 			cpuProfile,
 			BigInt(0) as NanoSeconds_BigInt
 		)
 
-		cpuModel.storeToFile(outputPath)
+		await cpuModel.storeToFile(outputPath)
 	}
 
 	async inspect(input: string) {
@@ -91,7 +96,14 @@ export default class CPUProfileCommands {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
 		}
 
-		const cpuProfile = JSON.parse(fs.readFileSync(inputPath.toPlatformString()).toString())
+		const cpuProfile = await CPUProfileHelper.loadFromFile(inputPath)
+		if (cpuProfile === undefined) {
+			LoggerHelper.error(
+				`CPU profile could not be loaded from ${inputPath.toPlatformString()}. ` +
+				'Please make sure the file exists and is a valid CPU profile.'
+			)
+			return
+		}
 		const cpuModel = new CPUModel(
 			new UnifiedPath(__dirname).join('..'),
 			cpuProfile,
@@ -149,7 +161,14 @@ export default class CPUProfileCommands {
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
 		}
-		const cpuProfile = JSON.parse(fs.readFileSync(inputPath.toPlatformString()).toString())
+		const cpuProfile = await CPUProfileHelper.loadFromFile(inputPath)
+		if (cpuProfile === undefined) {
+			LoggerHelper.error(
+				`CPU profile could not be loaded from ${inputPath.toPlatformString()}. ` +
+				'Please make sure the file exists and is a valid CPU profile.'
+			)
+			return
+		}
 		let rootDir: UnifiedPath
 		if (options.rootDir !== undefined) {
 			rootDir = new UnifiedPath(options.rootDir)

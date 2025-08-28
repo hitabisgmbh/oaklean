@@ -17,6 +17,7 @@ export type TraverseNodeInfoCounters = {
 	whileStatementCounter: number
 	tryStatementCounter: number
 	blockCounter: number
+	staticBlockCounter: number
 	anonymousFunctionCounter: number
 }
 
@@ -97,6 +98,7 @@ export class TraverseNodeInfo {
 			whileStatementCounter: 0,
 			tryStatementCounter: 0,
 			blockCounter: 0,
+			staticBlockCounter: 0,
 			anonymousFunctionCounter: 0
 		}
 	}

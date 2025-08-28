@@ -23,7 +23,10 @@ export class FunctionDeclarationHelper {
 	): {
 			resolve(): ProgramStructureTree<ProgramStructureTreeType.FunctionDeclaration>
 			resolveWithNoChildren: true
-		} {
+		} | null {
+		if (node.body === undefined) {
+			return null
+		}
 		return {
 			resolveWithNoChildren: true,
 			resolve() {

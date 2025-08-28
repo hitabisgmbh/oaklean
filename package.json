@@ -46,7 +46,7 @@
 	"files": [],
 	"devDependencies": {
 		"@types/jest": "^29.4.3",
-		"@types/node": "^20.11.1",
+		"@types/node": "^24.3.0",
 		"@typescript-eslint/eslint-plugin": "^5.58.0",
 		"@typescript-eslint/parser": "^5.58.0",
 		"eslint": "^8.43.0",
@@ -55,6 +55,6 @@
 		"markdown-include": "^0.4.3",
 		"ts-jest": "^29.1.2",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.3.3"
+		"typescript": "^5.9.2"
 	}
 }

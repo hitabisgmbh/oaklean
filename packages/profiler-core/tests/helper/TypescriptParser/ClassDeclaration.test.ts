@@ -42,10 +42,11 @@ describe('ts.SyntaxKind.ClassDeclaration', () => {
 			static {
 				function foo() {}
 			}
+			foo() {}
+			static foo() {}
 		}
 	`
 
-	it.todo('Should include the static in the hierarchy')
 	test('expected identifier', () => {
 		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
@@ -60,9 +61,20 @@ describe('ts.SyntaxKind.ClassDeclaration', () => {
 						'{constructor:constructor}': {
 							type: ProgramStructureTreeType.ConstructorDeclaration,
 						},
-						'{function:foo}': {
-							type: ProgramStructureTreeType.FunctionDeclaration,
-						}
+						'{static:0}': {
+							type: ProgramStructureTreeType.ClassStaticBlockDeclaration,
+							children: {
+								'{function:foo}': {
+									type: ProgramStructureTreeType.FunctionDeclaration,
+								}
+							}
+						},
+						'{method:foo}': {
+							type: ProgramStructureTreeType.MethodDefinition
+						},
+						'{method@static:foo}': {
+							type: ProgramStructureTreeType.MethodDefinition
+						},
 					}
 				}
 			}
