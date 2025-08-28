@@ -27,7 +27,7 @@ export class RegistryHelper {
 		const compressedBuffer = await BufferHelper.compressBuffer(projectReport.toBuffer())
 
 		const formData = new FormData()
-		formData.append('file', new Blob([compressedBuffer]), 'filename.txt')
+		formData.append('file', new Blob([new Uint8Array(compressedBuffer)]), 'filename.txt')
 		formData.append('auth', AuthenticationHelper.getAuthentication())
 
 		try {

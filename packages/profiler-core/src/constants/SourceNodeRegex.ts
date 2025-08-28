@@ -1,18 +1,28 @@
-export const SourceNodeNameRegexString = '[a-zA-Z0-9_$#]+'
+export const SourceNodeNameRegexString = '[^@:(){}]*'
 export const SourceNodeNameExpressionRegexString =
 	`(?:${SourceNodeNameRegexString}|\\((?:literal|expression):${SourceNodeNameRegexString}\\)|\\(anonymous:[0-9]+\\))`
 
 export const RootRegexString = '{(root)}'
 export const ConstructorDeclarationRegexString = '{constructor:(constructor)}'
 export const ClassDeclarationRegexString = `{class:(${SourceNodeNameRegexString})}`
-export const MethodDefinitionRegexString = `{method(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
-export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString})}`
-export const FunctionExpressionRegexString = `{functionExpression(?:@static)?:(${SourceNodeNameExpressionRegexString})}`
-export const ClassExpressionRegexString = `{classExpression:(${SourceNodeNameExpressionRegexString})}`
+export const MethodDefinitionRegexString =
+	`{method(?:@static)?(?:@get|@set)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const GetAccessorDeclarationRegexString =
+	`{get(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const SetAccessorDeclarationRegexString =
+	`{set(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const FunctionExpressionRegexString =
+	`{functionExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const ClassExpressionRegexString =
+	`{classExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const ClassStaticBlockDeclarationRegexString = '{(static:[0-9]+)}'
+
 // Scopes
 export const ExpressionHashRegexString = '[A-Za-z0-9]+'
 
-export const ObjectLiteralExpressionRegexString = `{scope:\\(obj:(${SourceNodeNameExpressionRegexString})\\)}`
+export const ObjectLiteralExpressionRegexString =
+	`{scope:\\(obj(?:@static)?:(${SourceNodeNameExpressionRegexString})\\)}`
 export const ModuleDeclarationRegexString =
 // eslint-disable-next-line max-len
 	`{scope:\\(namespace:(${SourceNodeNameExpressionRegexString}(?:.${SourceNodeNameExpressionRegexString})*):[0-9]+\\)}`
@@ -28,7 +38,7 @@ export const FinallyBlockStatementRegexString = '{scope:(\\(finally\\))}'
 export const BlockStatementRegexString = '{scope:(\\(block:[0-9]+\\))}'
 // eslint-disable-next-line max-len
 export const SwitchStatementRegexString = '{scope:(\\(switch:[0-9]+\\))}'
-export const SwitchCaseClauseRegexString = `{scope:(\\(case:(?:${ExpressionHashRegexString}|default)\\))}`
+export const SwitchCaseClauseRegexString = `{scope:(\\(case:(?:${ExpressionHashRegexString}|default)(?::[0-9]+)?\\))}`
 
 // eslint-disable-next-line max-len
 export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${ModuleDeclarationRegexString}|${IfStatementRegexString}|${IfThenStatementRegexString}|${IfElseStatementRegexString}|${ForStatementRegexString}|${WhileStatementRegexString}|${SwitchStatementRegexString}|${SwitchCaseClauseRegexString}|${TryStatementRegexString}|${TryBlockStatementRegexString}|${CatchClauseStatementRegexString}|${FinallyBlockStatementRegexString}|${BlockStatementRegexString})`
@@ -44,7 +54,7 @@ export const LangInternalSourceNodeIdentifierRegexString =
 export const SourceNodeIdentifierPathRegexString = '[^{}]+'
 
 // eslint-disable-next-line max-len
-export const SourceNodeIdentifierPartRegexString = `(?:${ConstructorDeclarationRegexString}|${ClassDeclarationRegexString}|${MethodDefinitionRegexString}|${FunctionDeclarationRegexString}|${FunctionExpressionRegexString}|${ClassExpressionRegexString}|${ScopeRegexString})`
+export const SourceNodeIdentifierPartRegexString = `(?:${ConstructorDeclarationRegexString}|${ClassDeclarationRegexString}|${MethodDefinitionRegexString}|${GetAccessorDeclarationRegexString}|${SetAccessorDeclarationRegexString}|${FunctionDeclarationRegexString}|${FunctionExpressionRegexString}|${ClassExpressionRegexString}|${ClassStaticBlockDeclarationRegexString}|${ScopeRegexString})`
 
 export const SourceNodeIdentifierRegexString =
 	`(?:${RootRegexString}(?:\\.${SourceNodeIdentifierPartRegexString})*` +
@@ -56,6 +66,8 @@ export const RootRegex = new RegExp(`^${RootRegexString}$`)
 export const ConstructorDeclarationRegex = new RegExp(`^${ConstructorDeclarationRegexString}$`)
 export const ClassDeclarationRegex = new RegExp(`^${ClassDeclarationRegexString}$`)
 export const MethodDefinitionRegex = new RegExp(`^${MethodDefinitionRegexString}$`)
+export const GetAccessorDeclarationRegex = new RegExp(`^${GetAccessorDeclarationRegexString}$`)
+export const SetAccessorDeclarationRegex = new RegExp(`^${SetAccessorDeclarationRegexString}$`)
 export const FunctionDeclarationRegex = new RegExp(`^${FunctionDeclarationRegexString}$`)
 export const FunctionExpressionRegex = new RegExp(`^${FunctionExpressionRegexString}$`)
 export const ClassExpressionRegex = new RegExp(`^${ClassExpressionRegexString}$`)
@@ -71,6 +83,7 @@ export const TryBlockStatementRegex = new RegExp(`^${TryBlockStatementRegexStrin
 export const CatchClauseStatementRegex = new RegExp(`^${CatchClauseStatementRegexString}$`)
 export const FinallyBlockStatementRegex = new RegExp(`^${FinallyBlockStatementRegexString}$`)
 export const BlockStatementRegex = new RegExp(`^${BlockStatementRegexString}$`)
+export const ClassStaticBlockDeclarationRegex = new RegExp(`^${ClassStaticBlockDeclarationRegexString}$`)
 export const SwitchStatementRegex = new RegExp(`^${SwitchStatementRegexString}$`)
 export const SwitchCaseClauseRegex = new RegExp(`^${SwitchCaseClauseRegexString}$`)
 export const ScopeRegex = new RegExp(`^${ScopeRegexString}$`)

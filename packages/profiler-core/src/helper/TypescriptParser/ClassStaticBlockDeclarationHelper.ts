@@ -2,41 +2,36 @@ import * as ts from 'typescript'
 
 import { TypescriptHelper } from './TypescriptHelper'
 import { TraverseNodeInfo } from './TraverseNodeInfo'
-import { NamingHelper } from './NamingHelper'
 
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
 import {
+	IdentifierType,
 	ProgramStructureTreeType,
 	SourceNodeIdentifierPart_string
 } from '../../types'
 
-export class ClassExpressionHelper {
-	static syntaxKind = ts.SyntaxKind.ClassExpression
+export class ClassStaticBlockDeclarationHelper {
+	static syntaxKind = ts.SyntaxKind.ClassStaticBlockDeclaration
 
 	static parseNode(
-		node: ts.ClassExpression,
+		node: ts.ClassStaticBlockDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassExpression>
+			resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassStaticBlockDeclaration>
 			resolveWithNoChildren: true
-		} {
+		} | null {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {
-				const { suffix, identifier, identifierType } = NamingHelper.getName(
-					node.parent,
-					sourceFile,
-					traverseNodeInfo
-				)
-
+				const tree = traverseNodeInfo.resolvedTree()
 				return new ProgramStructureTree(
-					traverseNodeInfo.resolvedTree(),
+					tree,
 					traverseNodeInfo.nextId(),
-					ProgramStructureTreeType.ClassExpression,
-					identifierType,
-					`{classExpression${suffix}:${identifier}}` as SourceNodeIdentifierPart_string,
+					ProgramStructureTreeType.ClassStaticBlockDeclaration,
+					IdentifierType.Statement,
+					`{static:${traverseNodeInfo.counters.staticBlockCounter++}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 				)

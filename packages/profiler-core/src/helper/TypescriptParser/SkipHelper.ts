@@ -13,9 +13,9 @@ export class SkipHelper {
 			return undefined
 		}
 		// skip awaiter
-		if (ts.isCallExpression(node.parent)) {
-			if (ts.isIdentifier(node.parent.expression)) {
-				if (node.parent.expression.escapedText === '___awaiter') {
+		if (node.parent.kind === ts.SyntaxKind.CallExpression) {
+			if ((node.parent as ts.CallExpression).expression.kind === ts.SyntaxKind.Identifier) {
+				if (((node.parent as ts.CallExpression).expression as ts.Identifier).escapedText === '___awaiter') {
 					/**
 					 * the actual function is wrapped into an generated ___awaiter call like this:
 					 * async function test() { console.log('') }

@@ -79,7 +79,7 @@ export default class JestCommands {
 		let profiler: Profiler | undefined
 		if (options.measure !== undefined) {
 			LoggerHelper.success('Measuring the reproduction of the reports.')
-			profiler = new Profiler('verfify')
+			profiler = new Profiler('verify')
 			await profiler.start('latest')
 		}
 
@@ -120,7 +120,7 @@ export default class JestCommands {
 				const v8CPUProfilePath =
 					exportAssetHelper.outputCPUProfilePath(assetPath)
 
-				const cpuProfile = CPUProfileHelper.loadFromFile(v8CPUProfilePath)
+				const cpuProfile = await CPUProfileHelper.loadFromFile(v8CPUProfilePath)
 
 				if (cpuProfile === undefined) {
 					LoggerHelper.error(

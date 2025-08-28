@@ -5,9 +5,9 @@ import { ProgramStructureTreeType } from '../../../src/types'
 
 describe('ts.SyntaxKind.PrivateIdentifier', () => {
 	const code = `
-		class MethodDeclaration {
-			#private () {}
-			static #private () {}
+		class SetAccessorDeclaration {
+			set #private () {}
+			static set #private () {}
 		}
 	`
 
@@ -19,14 +19,14 @@ describe('ts.SyntaxKind.PrivateIdentifier', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:SetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:#private}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set:#private}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						},
-						'{method@static:#private}': {
-							type: ProgramStructureTreeType.MethodDefinition
+						'{set@static:#private}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration
 						}
 					}
 				}
@@ -37,9 +37,9 @@ describe('ts.SyntaxKind.PrivateIdentifier', () => {
 
 describe('ts.SyntaxKind.Identifier', () => {
 	const code = `
-		class MethodDeclaration {
-			method() {}
-			static method() {}
+		class SetAccessorDeclaration {
+			set a() {}
+			static set a() {}
 		}
 	`
 
@@ -51,14 +51,14 @@ describe('ts.SyntaxKind.Identifier', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:SetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set:a}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						},
-						'{method@static:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set@static:a}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						}
 					}
 				}
@@ -69,9 +69,9 @@ describe('ts.SyntaxKind.Identifier', () => {
 
 describe('ts.SyntaxKind.FirstLiteralToken', () => {
 	const code = `
-		class MethodDeclaration {
-			42() {}
-			static 42() {}
+		class SetAccessorDeclaration {
+			set 42() {}
+			static set 42() {}
 		}
 	`
 
@@ -83,14 +83,14 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:SetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set:(literal:92cfceb3)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						},
-						'{method@static:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set@static:(literal:92cfceb3)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						}
 					}
 				}
@@ -101,9 +101,9 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 
 describe('ts.SyntaxKind.BigIntLiteral', () => {
 	const code = `
-		class MethodDeclaration {
-			42n() {}
-			static 42n() {}
+		class SetAccessorDeclaration {
+			set 42n() {}
+			static set 42n() {}
 		}
 	`
 
@@ -115,14 +115,14 @@ describe('ts.SyntaxKind.BigIntLiteral', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:SetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(literal:40a3fd3b)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set:(literal:40a3fd3b)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						},
-						'{method@static:(literal:40a3fd3b)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set@static:(literal:40a3fd3b)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						}
 					}
 				}
@@ -133,9 +133,9 @@ describe('ts.SyntaxKind.BigIntLiteral', () => {
 
 describe('ts.SyntaxKind.FunctionExpression', () => {
 	const code = `
-		class MethodDeclaration {
-			'StringLiteral'() {}
-			static 'StringLiteral'() {}
+		class SetAccessorDeclaration {
+			set 'StringLiteral'() {}
+			static set 'StringLiteral'() {}
 		}
 	`
 
@@ -147,14 +147,14 @@ describe('ts.SyntaxKind.FunctionExpression', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:SetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set:(literal:7e2b9fea)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						},
-						'{method@static:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set@static:(literal:7e2b9fea)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						}
 					}
 				}
@@ -166,9 +166,9 @@ describe('ts.SyntaxKind.FunctionExpression', () => {
 describe('ts.SyntaxKind.ComputedPropertyName', () => {
 	const code = `
 		const ComputedPropertyName = 'ComputedPropertyName'
-		class MethodDeclaration {
-			[ComputedPropertyName](){};
-			static [ComputedPropertyName](){};
+		class SetAccessorDeclaration {
+			set [ComputedPropertyName](){};
+			static set [ComputedPropertyName](){};
 		}
 	`
 
@@ -180,14 +180,14 @@ describe('ts.SyntaxKind.ComputedPropertyName', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:SetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:(expression:34832631)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set:(expression:34832631)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						},
-						'{method@static:(expression:34832631)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set@static:(expression:34832631)}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 						}
 					}
 				}
@@ -198,7 +198,7 @@ describe('ts.SyntaxKind.ComputedPropertyName', () => {
 
 describe('ts.SyntaxKind.ObjectLiteralExpression', () => {
 	const code = `
-		const obj = { method() {} }
+		const obj = { set a() {} }
 	`
 
 	test('expected identifier', () => {
@@ -212,86 +212,8 @@ describe('ts.SyntaxKind.ObjectLiteralExpression', () => {
 				'{scope:(obj:obj)}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
-						'{method:method}': {
-							type: ProgramStructureTreeType.MethodDefinition
-						}
-					}
-				}
-			}
-		})
-	})
-})
-
-describe('ts.SyntaxKind.MethodDeclaration with signature', () => {
-	test('empty signature', () => {
-		const code = `
-			class A {
-				MethodDeclaration(): void
-			}
-		`
-
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
-
-		const hierarchy = pst.identifierHierarchy()
-
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{class:A}': {
-					type: ProgramStructureTreeType.ClassDeclaration
-				}
-			}
-		})
-	})
-
-	test('signature with implementation', () => {
-		const code = `
-			class A {
-				MethodDeclaration(): void
-				MethodDeclaration(a?: number) {}
-			}
-		`
-
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
-
-		const hierarchy = pst.identifierHierarchy()
-
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{class:A}': {
-					type: ProgramStructureTreeType.ClassDeclaration,
-					children: {
-						'{method:MethodDeclaration}': {
-							type: ProgramStructureTreeType.MethodDefinition,
-						}
-					}
-				}
-			}
-		})
-	})
-
-	test('multiple signatures with implementation', () => {
-		const code = `
-			class A {
-				MethodDeclaration(): void
-				MethodDeclaration(a: number): void
-				MethodDeclaration(a?: number) {}
-			}
-		`
-
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
-
-		const hierarchy = pst.identifierHierarchy()
-
-		expect(hierarchy).toEqual({
-			type: ProgramStructureTreeType.Root,
-			children: {
-				'{class:A}': {
-					type: ProgramStructureTreeType.ClassDeclaration,
-					children: {
-						'{method:MethodDeclaration}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set:a}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration
 						}
 					}
 				}
@@ -302,54 +224,54 @@ describe('ts.SyntaxKind.MethodDeclaration with signature', () => {
 
 describe('duplicates in code', () => {
 	const code = `
-		class MethodDeclaration {
-			method() {
+		class SetAccessorDeclaration {
+			set setter(x) {
 				const a = class {
-					method() {
+					set setter(x) {
 						const a = class {
-							method() {}
+							set setter(x) {}
 						}
 					}
 				}
 			}
-			static method() {
+			static set setter(x) {
 				const a = class {
-					method() {
+					set setter(x) {
 						const a = class {
-							method() {}
+							set setter(x) {}
 						}
 					}
 				}
 			}
 
-			method() {
+			set setter(x) {
 				const a = class {
-					method() {
+					set setter(x) {
 						const a = class {
-							method() {}
-							method2() {}
+							set setter(x) {}
+							set setter2(x) {}
 						}
 					}
-					method() {
+					set setter(x) {
 						const a = class {
-							method() {}
-							method2() {}
+							set setter(x) {}
+							set setter2(x) {}
 						}
 					}
 				}
 			}
-			static method() {
+			static set setter(x) {
 				const a = class {
-					method() {
+					set setter(x) {
 						const a = class {
-							method() {}
-							method2() {}
+							set setter(x) {}
+							set setter2(x) {}
 						}
 					}
-					method() {
+					set setter(x) {
 						const a = class {
-							method() {}
-							method2() {}
+							set setter(x) {}
+							set setter2(x) {}
 						}
 					}
 				}
@@ -365,23 +287,23 @@ describe('duplicates in code', () => {
 		expect(hierarchy).toEqual({
 			type: ProgramStructureTreeType.Root,
 			children: {
-				'{class:MethodDeclaration}': {
+				'{class:SetAccessorDeclaration}': {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
-						'{method:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set:setter}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 							children: {
 								'{classExpression:a}': {
 									type: ProgramStructureTreeType.ClassExpression,
 									children: {
-										'{method:method}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{set:setter}': {
+											type: ProgramStructureTreeType.SetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														}
 													}
 												}
@@ -391,20 +313,20 @@ describe('duplicates in code', () => {
 								}
 							}
 						},
-						'{method@static:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set@static:setter}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 							children: {
 								'{classExpression:a}': {
 									type: ProgramStructureTreeType.ClassExpression,
 									children: {
-										'{method:method}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{set:setter}': {
+											type: ProgramStructureTreeType.SetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														}
 													}
 												}
@@ -414,39 +336,39 @@ describe('duplicates in code', () => {
 								}
 							}
 						},
-						'{method:method:1}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set:setter:1}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 							children: {
 								'{classExpression:a}': {
 									type: ProgramStructureTreeType.ClassExpression,
 									children: {
-										'{method:method}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{set:setter}': {
+											type: ProgramStructureTreeType.SetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														},
-														'{method:method2}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter2}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														}
 													}
 												}
 											}
 										},
-										'{method:method:1}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{set:setter:1}': {
+											type: ProgramStructureTreeType.SetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														},
-														'{method:method2}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter2}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														}
 													}
 												}
@@ -456,39 +378,39 @@ describe('duplicates in code', () => {
 								}
 							}
 						},
-						'{method@static:method:1}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+						'{set@static:setter:1}': {
+							type: ProgramStructureTreeType.SetAccessorDeclaration,
 							children: {
 								'{classExpression:a}': {
 									type: ProgramStructureTreeType.ClassExpression,
 									children: {
-										'{method:method}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{set:setter}': {
+											type: ProgramStructureTreeType.SetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														},
-														'{method:method2}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter2}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														}
 													}
 												}
 											}
 										},
-										'{method:method:1}': {
-											type: ProgramStructureTreeType.MethodDefinition,
+										'{set:setter:1}': {
+											type: ProgramStructureTreeType.SetAccessorDeclaration,
 											children: {
 												'{classExpression:a}': {
 													type: ProgramStructureTreeType.ClassExpression,
 													children: {
-														'{method:method}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														},
-														'{method:method2}': {
-															type: ProgramStructureTreeType.MethodDefinition
+														'{set:setter2}': {
+															type: ProgramStructureTreeType.SetAccessorDeclaration
 														}
 													}
 												}

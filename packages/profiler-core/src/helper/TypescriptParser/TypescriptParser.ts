@@ -10,17 +10,21 @@ import {
 	FunctionDeclarationHelper,
 	FunctionExpressionHelper,
 	MethodDeclarationHelper,
+	GetAccessorDeclarationHelper,
+	SetAccessorDeclarationHelper,
 	ArrowFunctionHelper,
 	SkipHelper,
 	ScopeHelper,
 	ObjectLiteralExpressionHelper,
 	BlockHelper,
+	ClassStaticBlockDeclarationHelper,
 	ForStatementHelper,
 	IfStatementHelper,
 	WhileStatementHelper,
 	TryStatementHelper,
 	SwitchStatementHelper,
-	ModuleDeclarationHelper
+	ModuleDeclarationHelper,
+	DuplicateIdentifierHelper
 } from './index'
 
 import { TypescriptHelper } from './TypescriptHelper'
@@ -67,6 +71,8 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 	[FunctionDeclarationHelper.syntaxKind]: FunctionDeclarationHelper.parseNode,
 	[FunctionExpressionHelper.syntaxKind]: FunctionExpressionHelper.parseNode,
 	[MethodDeclarationHelper.syntaxKind]: MethodDeclarationHelper.parseNode,
+	[GetAccessorDeclarationHelper.syntaxKind]: GetAccessorDeclarationHelper.parseNode,
+	[SetAccessorDeclarationHelper.syntaxKind]: SetAccessorDeclarationHelper.parseNode,
 	[ArrowFunctionHelper.syntaxKind]: ArrowFunctionHelper.parseNode,
 	[ObjectLiteralExpressionHelper.syntaxKind]: ObjectLiteralExpressionHelper.parseNode,
 	[IfStatementHelper.syntaxKind]: IfStatementHelper.parseNode,
@@ -77,36 +83,26 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 	[WhileStatementHelper.syntaxKind[1]]: WhileStatementHelper.parseNode,
 	[TryStatementHelper.syntaxKind]: TryStatementHelper.parseNode,
 	[BlockHelper.syntaxKind]: BlockHelper.parseNode,
+	[ClassStaticBlockDeclarationHelper.syntaxKind]: ClassStaticBlockDeclarationHelper.parseNode,
 	[SwitchStatementHelper.syntaxKind]: SwitchStatementHelper.parseNode,
 	[ModuleDeclarationHelper.syntaxKind]: ModuleDeclarationHelper.parseNode
 }
 
+export const HANDLE_DUPLICATE_IDENTIFIERS: Record<string, (
+	tree: ProgramStructureTree,
+	node: ts.Node
+) => boolean> = {
+	[ProgramStructureTreeType.FunctionDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.MethodDefinition]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.GetAccessorDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.SetAccessorDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.FunctionExpression]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.ClassExpression]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.ObjectLiteralExpression]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.SwitchCaseClause]: DuplicateIdentifierHelper.handleDuplicateIdentifier
+}
+
 export class TypescriptParser {
-
-	/**
-	 * Method to traverse through a typescript source file
-	 * 
-	 * @param sourceFile typescript source file object
-	 * @param callback Argument with an enter and a leave method that are called when a source node is visited.
-	 */
-	static traverseSourceFile(
-		sourceFile: ts.SourceFile,
-		callback: {
-			enter: (node: ts.Node, depth: number) => void,
-			leave: (node: ts.Node, depth: number) => void
-		}
-	) {
-		const { enter, leave } = callback
-
-		traverseNode(0, sourceFile)
-
-		function traverseNode(depth: number, node: ts.Node) {
-			enter(node, depth)
-			ts.forEachChild(node, traverseNode.bind(null, depth + 1))
-			leave(node, depth)
-		}
-	}
-
 	/**
 	 * Method to transpile a file
 	 * it determines the tsconfig to use and transpiles the given file with the compiler options of its tsconfig
@@ -186,17 +182,6 @@ export class TypescriptParser {
 			TypescriptHelper.posToLoc(sourceFile, sourceFile.getEnd())
 		)
 
-		let currentTraverseNodeInfo = new TraverseNodeInfo(
-			null,
-			sourceFile,
-			filePath,
-			{
-				resolve() {
-					return root
-				}
-			}
-		)
-
 		const addSubTree = (
 			node: ts.Node,
 			currentTraverseNodeInfo: TraverseNodeInfo,
@@ -209,47 +194,38 @@ export class TypescriptParser {
 				)
 			}
 			const found = subTree.parent.children.get(subTree.identifier)
-			if (found !== undefined && onDuplicateIdentifier !== undefined) {
-				const identifier = subTree.parent.identifierPath() + '.' + subTree.identifier
+			if (found !== undefined) {
+				const duplicatesAreExpected =
+					HANDLE_DUPLICATE_IDENTIFIERS[subTree.type] !== undefined &&
+					HANDLE_DUPLICATE_IDENTIFIERS[subTree.type](subTree, node)
 
-				onDuplicateIdentifier(
-					filePath,
-					(node as any),
-					identifier,
-					{
-						begin: subTree.beginLoc,
-						end: subTree.endLoc
-					},
-					{
-						begin: found.beginLoc,
-						end: found.endLoc
-					}
-				)
-
-				// throw new Error(
-				// 	'TypescriptParser.parseFile: duplicate function identifier definition: ' +
-				// 	subTree.identifier + '\n' +
-				// 	JSON.stringify({
-				// 		filePath,
-				// 		identifierPath: [...identifierPath, subTree.identifier].join('.'),
-				// 		loc: {
-				// 			begin: subTree.beginLoc,
-				// 			end: subTree.endLoc
-				// 		},
-				// 		previouslyFound: {
-				// 			loc: {
-				// 				begin: found.beginLoc,
-				// 				end: found.endLoc
-				// 			}
-				// 		}
-				// 	}, undefined, 2)
-				// )
+				if (!duplicatesAreExpected && onDuplicateIdentifier !== undefined){
+					const identifier = subTree.parent.identifierPath() + '.' + subTree.identifier
+					onDuplicateIdentifier(
+						filePath,
+						(node as any),
+						identifier,
+						{
+							begin: subTree.beginLoc,
+							end: subTree.endLoc
+						},
+						{
+							begin: found.beginLoc,
+							end: found.endLoc
+						}
+					)
+				}
 			}
 			parentTraverseNodeInfo.counters.childrenCounter++
 			subTree.parent.children.set(subTree.identifier, subTree)
 		}
 
-		const enterNode = (node: ts.Node, depth: number) => {
+		const enterNode = (
+			parentTraverseNodeInfo: TraverseNodeInfo,
+			node: ts.Node,
+			depth: number
+		): TraverseNodeInfo => {
+			let currentTraverseNodeInfo = parentTraverseNodeInfo
 			const revertToTraverseNodeInfo = SkipHelper.nodeShouldBeSkipped(
 				node,
 				sourceFile,
@@ -260,8 +236,7 @@ export class TypescriptParser {
 				// skip this node and revert to a previous traverse node info
 				// the revert is needed if multiple nodes are skipped in a row (that where previously traversed)
 				// but the necessity of skipping was determined with the current node
-				currentTraverseNodeInfo = revertToTraverseNodeInfo
-				return
+				return revertToTraverseNodeInfo
 			}
 
 			const intermediateNode = ScopeHelper.parseIntermediateNode(node, sourceFile, currentTraverseNodeInfo)
@@ -282,7 +257,7 @@ export class TypescriptParser {
 
 			if (subTree === null) {
 				// there is no parser for this node type
-				return
+				return currentTraverseNodeInfo
 			}
 
 			if (subTree) {
@@ -304,29 +279,71 @@ export class TypescriptParser {
 				)
 				throw new Error('TypescriptParser.parseFile: subTree is undefined, unexpected behaviour')
 			}
+			return currentTraverseNodeInfo
 		}
 
-		const leaveNode = (node: ts.Node) => {
+		const leaveNode = (
+			currentTraverseNodeInfo: TraverseNodeInfo,
+			node: ts.Node
+		) => {
+			let traverseNodeInfo = currentTraverseNodeInfo
 			while (
-				currentTraverseNodeInfo.parent !== null &&
-				currentTraverseNodeInfo.node === node
+				traverseNodeInfo.parent !== null &&
+				traverseNodeInfo.node === node
 			) {
 				if (
-					currentTraverseNodeInfo.isTreeResolved() ||
-					currentTraverseNodeInfo.counters.childrenCounter !== 0 ||
-					currentTraverseNodeInfo.shouldResolveTreeWithZeroChildren()
+					traverseNodeInfo.isTreeResolved() ||
+					traverseNodeInfo.counters.childrenCounter !== 0 ||
+					traverseNodeInfo.shouldResolveTreeWithZeroChildren()
 				) {
 					addSubTree(
 						node,
-						currentTraverseNodeInfo,
-						currentTraverseNodeInfo.parent
+						traverseNodeInfo,
+						traverseNodeInfo.parent
 					)
 				}
-				currentTraverseNodeInfo = currentTraverseNodeInfo.parent
+				traverseNodeInfo = traverseNodeInfo.parent
 			}
+			return traverseNodeInfo
 		}
 
-		TypescriptParser.traverseSourceFile(sourceFile, { enter: enterNode, leave: leaveNode })
+		let currentTraverseNodeInfo = new TraverseNodeInfo(
+			null,
+			sourceFile,
+			filePath,
+			{
+				resolve() {
+					return root
+				}
+			}
+		)
+
+		type StackFrame = {
+			depth: number,
+			node: ts.Node,
+			visited: boolean
+		}
+
+		const stack: StackFrame[] = [{ depth: 0, node: sourceFile, visited: false }]
+		while ( stack.length > 0) {
+			const currentStackFrame = stack[stack.length - 1]
+
+			if (!currentStackFrame.visited) {
+				currentTraverseNodeInfo = enterNode(
+					currentTraverseNodeInfo,
+					currentStackFrame.node,
+					currentStackFrame.depth
+				)
+				currentStackFrame.visited = true
+				const insertPos = stack.length
+				ts.forEachChild(currentStackFrame.node, (child) => {
+					stack.splice(insertPos, 0, { depth: currentStackFrame.depth + 1, node: child, visited: false })
+				})
+			} else {
+				currentTraverseNodeInfo = leaveNode(currentTraverseNodeInfo, currentStackFrame.node)
+				stack.pop()
+			}
+		}
 
 		return root
 	}

@@ -32,27 +32,35 @@ ProgramStructureTreeType,
 		expectedName: 'ExampleClass'
 	},
 	[ProgramStructureTreeType.ClassExpression]: {
-		input: '{classExpression:(anonymous:1234)}',
-		expectedName: '(anonymous:1234)'
+		input: '{classExpression@static:(anonymous:1234):1}',
+		expectedName: '(anonymous:1234):1'
 	},
 	[ProgramStructureTreeType.MethodDefinition]: {
-		input: '{method:memberFunction1}',
-		expectedName: 'memberFunction1'
+		input: '{method@static:memberFunction1:1}',
+		expectedName: 'memberFunction1:1'
+	},
+	[ProgramStructureTreeType.GetAccessorDeclaration]: {
+		input: '{get@static:a:1}',
+		expectedName: 'a:1'
+	},
+	[ProgramStructureTreeType.SetAccessorDeclaration]: {
+		input: '{set@static:a:1}',
+		expectedName: 'a:1'
 	},
 	[ProgramStructureTreeType.FunctionDeclaration]: {
-		input: '{function:nestedFunction}',
-		expectedName: 'nestedFunction'
+		input: '{function:nestedFunction:1}',
+		expectedName: 'nestedFunction:1'
 	},
 	[ProgramStructureTreeType.FunctionExpression]: {
-		input: '{functionExpression:arrowFunction}',
-		expectedName: 'arrowFunction'
+		input: '{functionExpression:arrowFunction:1}',
+		expectedName: 'arrowFunction:1'
 	},
 	[ProgramStructureTreeType.ConstructorDeclaration]: {
 		input: '{constructor:constructor}',
 		expectedName: 'constructor'
 	},
 	[ProgramStructureTreeType.ObjectLiteralExpression]: {
-		input: '{scope:(obj:(anonymous:1234))}',
+		input: '{scope:(obj@static:(anonymous:1234))}',
 		expectedName: '(anonymous:1234)'
 	},
 	[ProgramStructureTreeType.IfStatement]: {
@@ -95,13 +103,17 @@ ProgramStructureTreeType,
 		input: '{scope:(block:0)}',
 		expectedName: '(block:0)'
 	},
+	[ProgramStructureTreeType.ClassStaticBlockDeclaration]: {
+		input: '{static:0}',
+		expectedName: 'static:0'
+	},
 	[ProgramStructureTreeType.SwitchStatement]: {
 		input: '{scope:(switch:0)}',
 		expectedName: '(switch:0)'
 	},
 	[ProgramStructureTreeType.SwitchCaseClause]: {
-		input: '{scope:(case:default)}',
-		expectedName: '(case:default)'
+		input: '{scope:(case:default:1)}',
+		expectedName: '(case:default:1)'
 	},
 	[ProgramStructureTreeType.ModuleDeclaration]: {
 		input: '{scope:(namespace:A_1.B_2:0)}',

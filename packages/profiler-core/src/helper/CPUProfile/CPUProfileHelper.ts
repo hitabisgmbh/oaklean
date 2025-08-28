@@ -28,7 +28,7 @@ export class CPUProfileHelper {
 		cpuProfilePath: UnifiedPath,
 		outPath: UnifiedPath,
 	) {
-		const cpuProfile = CPUProfileHelper.loadFromFile(cpuProfilePath)
+		const cpuProfile = await CPUProfileHelper.loadFromFile(cpuProfilePath)
 
 		if (cpuProfile === undefined) {
 			LoggerHelper.error(
@@ -55,16 +55,21 @@ export class CPUProfileHelper {
 		)
 	}
 
-	static loadFromFile(
+	static async loadFromFile(
 		cpuProfilePath: UnifiedPath
-	): Cdp.Profiler.Profile | undefined {
+	): Promise<Cdp.Profiler.Profile | undefined> {
 		if (!fs.existsSync(cpuProfilePath.toPlatformString())) {
 			return undefined
 		}
 
-		return JSON.parse(
-			fs.readFileSync(cpuProfilePath.toPlatformString(), 'utf-8').toString()
-		)
+		try {
+			return await JSONHelper.loadBigJSON(cpuProfilePath)
+		} catch (error) {
+			LoggerHelper.error(
+				`Error loading CPU profile from ${cpuProfilePath.toPlatformString()}: ${error}`
+			)
+			return undefined
+		}
 	}
 
 	static async storeToFile(
@@ -72,8 +77,8 @@ export class CPUProfileHelper {
 		cpuProfilePath: UnifiedPath
 	): Promise<void> {
 		await JSONHelper.storeBigJSON(
-			cpuProfile,
-			cpuProfilePath
+			cpuProfilePath,
+			cpuProfile
 		)
 	}
 }

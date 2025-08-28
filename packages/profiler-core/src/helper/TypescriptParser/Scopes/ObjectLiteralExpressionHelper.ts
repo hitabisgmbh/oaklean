@@ -20,7 +20,7 @@ export class ObjectLiteralExpressionHelper {
 	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression> } {
 		return {
 			resolve() {
-				const { identifier, identifierType } = NamingHelper.getName(
+				const { suffix, identifier, identifierType } = NamingHelper.getName(
 					node.parent,
 					sourceFile,
 					traverseNodeInfo
@@ -31,7 +31,7 @@ export class ObjectLiteralExpressionHelper {
 					traverseNodeInfo.nextId(),
 					ProgramStructureTreeType.ObjectLiteralExpression,
 					identifierType,
-					`{scope:(obj:${identifier})}` as SourceNodeIdentifierPart_string,
+					`{scope:(obj${suffix}:${identifier})}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
 					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 				)
