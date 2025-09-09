@@ -223,8 +223,7 @@ export default class CPUProfileCommands {
 		const cpuModel = new CPUModel(
 			rootDir,
 			cpuProfile,
-			BigInt(0) as NanoSeconds_BigInt,
-			externalResourceHelper
+			BigInt(0) as NanoSeconds_BigInt
 		)
 
 		async function traverse(

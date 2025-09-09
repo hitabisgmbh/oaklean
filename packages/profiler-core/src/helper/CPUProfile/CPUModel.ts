@@ -1,10 +1,7 @@
-import * as fs from 'fs'
-
 import { CPUNode } from './CPUNode'
 import { CPUProfileSourceLocation } from './CPUProfileSourceLocation'
 
 import { PermissionHelper } from '../PermissionHelper'
-import { ExternalResourceHelper } from '../ExternalResourceHelper'
 import {
 	IComputedNode,
 	IProfileModel,
@@ -35,13 +32,10 @@ export class CPUModel {
 
 	private _profilerHitsPerNode: number[]
 
-	private _externalResourceHelper: ExternalResourceHelper
-
 	constructor(
 		rootDir: UnifiedPath,
 		profile: ICpuProfileRaw,
-		highResolutionBeginTime: NanoSeconds_BigInt,
-		externalResourceHelper?: ExternalResourceHelper
+		highResolutionBeginTime: NanoSeconds_BigInt
 	) {
 		this.rootDir = rootDir
 		this._startTime = profile.startTime
@@ -62,17 +56,6 @@ export class CPUModel {
 		for (const sampleId of this.cpuModel.samples) {
 			this._profilerHitsPerNode[sampleId] += 1
 		}
-		if (externalResourceHelper !== undefined) {
-			this._externalResourceHelper = externalResourceHelper
-		} else {
-			this._externalResourceHelper = new ExternalResourceHelper(
-				this.rootDir
-			)
-		}
-	}
-
-	get externalResourceHelper(): ExternalResourceHelper {
-		return this._externalResourceHelper
 	}
 
 	get profilerHitsPerNode(): number[] {

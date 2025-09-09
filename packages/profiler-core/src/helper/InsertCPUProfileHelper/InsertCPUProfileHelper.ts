@@ -437,8 +437,7 @@ export class InsertCPUProfileHelper {
 		const cpuModel = new CPUModel(
 			rootDir,
 			profile,
-			BigInt(reportToApply.executionDetails.highResolutionBeginTime) as NanoSeconds_BigInt,
-			externalResourceHelper
+			BigInt(reportToApply.executionDetails.highResolutionBeginTime) as NanoSeconds_BigInt
 		)
 
 		if (metricsDataCollection && metricsDataCollection.items.length > 0) {
