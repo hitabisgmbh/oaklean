@@ -68,7 +68,7 @@ export class PowerMetricsData extends BaseMetricsData {
 
 	energyImpactPerTask() {
 		if (this._energyImpactPerTask === undefined) {
-			const energyImpactPerTask = new Map<number, number>
+			const energyImpactPerTask = new Map<number, number>()
 			for (const task of this._data.tasks) {
 				energyImpactPerTask.set(task.pid, task.energy_impact)
 			}
