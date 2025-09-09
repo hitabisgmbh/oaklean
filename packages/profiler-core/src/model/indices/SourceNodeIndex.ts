@@ -67,7 +67,9 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 	selfAssignId: T extends SourceNodeIndexType.SourceNode
 		? () => SourceNodeIndexID<T> : never = (() => {
 			if (!this.isSourceNode()) {
-				throw new Error('SourceNodeIndex.selfAssignId: can only be called on a SourceNodeIndex of type SourceNode')
+				throw new Error(
+					'SourceNodeIndex.selfAssignId: can only be called on a SourceNodeIndex of type SourceNode'
+				)
 			}
 			const self = this as SourceNodeIndex<SourceNodeIndexType.SourceNode>
 			self._id = this.pathIndex.moduleIndex.globalIndex.newId(
@@ -76,7 +78,7 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 			) as SourceNodeID_number
 			self.pathIndex.addToSourceNodeMap(this)
 			return this._id as SourceNodeIndexID<T>
-		}) as any
+		}) as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
 	public get id(): SourceNodeIndexID<T> {
 		return this._id as SourceNodeIndexID<T>
@@ -121,7 +123,10 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		}
 
 		if (data.children) {
-			result.children = new ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>('string')
+			result.children = new ModelMap<
+				SourceNodeIdentifierPart_string,
+				SourceNodeIndex<SourceNodeIndexType>
+			>('string')
 			for (const key of Object.keys(data.children) as SourceNodeIdentifierPart_string[]) {
 				result.children.set(
 					key,

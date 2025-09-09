@@ -17,7 +17,7 @@ export class GitHelper {
 		}
 		try {
 			return ChildProcess.execSync(command, options).toString().trim() as GitHash_string	
-		} catch (error) {
+		} catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
 			return undefined
 		}
 	}
@@ -34,7 +34,7 @@ export class GitHelper {
 
 			const result = ChildProcess.execSync(command, options).toString().trim()
 			return parseInt(result)
-		} catch (error) {
+		} catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
 			return undefined
 		}
 	}
@@ -51,7 +51,7 @@ export class GitHelper {
 
 			const result = ChildProcess.execSync(command, options).toString().trim()
 			return new UnifiedPath(result)
-		} catch (error) {
+		} catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
 			return null
 		}
 	}
@@ -73,7 +73,7 @@ export class GitHelper {
 
 			const result = ChildProcess.execSync(command, options).toString().trim()
 			return result.split('\0').map((filePath) => repositoriesRootDir.join(filePath))
-		} catch (error) {
+		} catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
 			return null
 		}
 	}

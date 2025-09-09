@@ -30,6 +30,7 @@ export class WindowsSensorInterfaceMetricsData extends BaseMetricsData {
 
 	static fromJSON(
 		json: string | IWindowsSensorInterfaceMetricsData,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 		...args: any[]
 	): WindowsSensorInterfaceMetricsData {
 		let data: IWindowsSensorInterfaceMetricsData
@@ -57,10 +58,12 @@ export class WindowsSensorInterfaceMetricsData extends BaseMetricsData {
 		return this._data.timestamp
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	processIsPresent(pid: number): boolean {
 		return true
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	energyPortionOfProcess(pid: number): number {
 		return 1
 	}

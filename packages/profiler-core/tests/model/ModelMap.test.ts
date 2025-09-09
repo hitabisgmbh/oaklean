@@ -27,7 +27,7 @@ class SubClass extends BaseModel {
 
 	static fromJSON(
 		json: string | ISubClass,
-		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	): SubClass {
 		let data: ISubClass
 		if (typeof json === 'string') {

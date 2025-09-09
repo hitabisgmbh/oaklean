@@ -35,6 +35,7 @@ export class PowerMetricsData extends BaseMetricsData {
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 	static fromJSON(json: string | IPowerMetricsData, ...args: any[]): PowerMetricsData {
 		let data: IPowerMetricsData
 		if (typeof json === 'string') {
@@ -80,6 +81,7 @@ export class PowerMetricsData extends BaseMetricsData {
 	totalEnergyImpact(): number {
 		if (this._totalEnergyImpact === undefined) {
 			let totalEnergyImpact = 0
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			for (const [_, energyImpact] of this.energyImpactPerTask().entries()) {
 				totalEnergyImpact += energyImpact
 			}

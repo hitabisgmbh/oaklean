@@ -43,6 +43,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 
 	private _availableMeasurementTypes: MeasurementTypeAvailable | undefined
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private cleanExit: ((...args: any[]) => void) | undefined
 
 	constructor(options: IPerfSensorInterfaceOptions, debugOptions?: {
@@ -54,7 +55,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		this._options = options
 		
 		if (debugOptions !== undefined) {
-			this._startTime = debugOptions.startTime,
+			this._startTime = debugOptions.startTime
 			this._stopTime = debugOptions.stopTime
 			this._couldBeExecuted = true
 		}
@@ -125,7 +126,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		try {
 			const result = execSync('pgrep -ix perf', { encoding: 'utf-8' })
 			return result.trim().split('\n')
-		} catch (error) {
+		} catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
 			return []
 		}
 	}
@@ -254,7 +255,10 @@ export class PerfSensorInterface extends BaseSensorInterface {
 			fs.unlinkSync(this._options.outputFilePath) // remove output file to ensure clean measurements
 		}
 		if (PerfSensorInterface.runningInstances().length > 0) {
-			throw new Error('PerfSensorInterface.startProfiling: Perf instance already running, close it before taking any measurements')
+			throw new Error(
+				'PerfSensorInterface.startProfiling: ' +
+				'Perf instance already running, close it before taking any measurements'
+			)
 		}
 
 		this._startTime = TimeHelper.getCurrentHighResolutionTime()

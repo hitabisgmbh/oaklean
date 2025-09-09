@@ -1,7 +1,7 @@
 import type { Protocol as Cdp } from 'devtools-protocol'
 import { MicroSeconds_number } from '@oaklean/profiler-core'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const v8Profiler = require('v8-profiler-next')
 
 export class V8Profiler {

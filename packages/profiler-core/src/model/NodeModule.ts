@@ -16,6 +16,7 @@ export const NodeModuleNameRegexString = '(?:@[a-z0-9-~][a-z0-9-._~]*\\/)?[a-z0-
 // source: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
 // changes: all groups were converted to non-capturing groups
 export const NodeModuleVersionRegexString = 
+ 
 '(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-(?:(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+(?:[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?'
 
 export const NodeModuleIdentifierRegexString = `${NodeModuleNameRegexString}@${NodeModuleVersionRegexString}`

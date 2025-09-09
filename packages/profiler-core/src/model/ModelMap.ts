@@ -45,12 +45,13 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 		TKEY extends ModelMapKeyType,
 		TVALUE extends (BaseModel | string | number)
 	>(
-		json: string | object, // eslint-disable-line @typescript-eslint/no-unused-vars
+		json: string | object,
 		keyType: 'string' | 'number',
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		fromJSON: TVALUE extends BaseModel ? (json: string | any, ...args: any[]) =>
 		TVALUE : 'string' | 'number'
 	): ModelMap<TKEY, TVALUE> {
-		let data: any
+		let data: any // eslint-disable-line @typescript-eslint/no-explicit-any
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
 		} else {
@@ -114,6 +115,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 	>(
 		buffer: Buffer,
 		keyType: 'string' | 'number',
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		consumeFromBuffer: TVALUE extends BaseModel ? (buffer: Buffer, ...args: any[]) =>
 		{ instance: TVALUE, remainingBuffer: Buffer } : 'string' | 'number'
 	): { instance: ModelMap<TKEY, TVALUE>, remainingBuffer: Buffer } {

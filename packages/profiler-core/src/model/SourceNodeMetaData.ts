@@ -108,7 +108,9 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>
 		const sourceNodeIndex = self.getSourceNodeIndexByID(self.id)
 		if (sourceNodeIndex === undefined) {
-			throw new Error('SourceNodeMetaData.normalize(self): could not resolve sourceNodeIndex for: ' + self.id.toString())
+			throw new Error(
+				'SourceNodeMetaData.normalize(self): could not resolve sourceNodeIndex for: ' + self.id.toString()
+			)
 		}
 		const newSourceNodeIndex = sourceNodeIndex.insertToOtherIndex(newGlobalIndex)
 		if (SourceNodeMetaData.couldHaveChildren(self)) {
@@ -118,6 +120,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			>>('number')
 			// remap all lang_internal nodes
 			for (const sourceNodeID of sortIDsByIdentifier(self.lang_internal)) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const sourceNodeMetaData = self.lang_internal.get(sourceNodeID)!
 				sourceNodeMetaData.normalize(newGlobalIndex)
 				new_lang_internal.set(sourceNodeMetaData.id, sourceNodeMetaData)
@@ -127,6 +130,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			>>('number')
 			// remap all intern nodes
 			for (const sourceNodeID of sortIDsByIdentifier(self.intern)) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const sourceNodeMetaData = self.intern.get(sourceNodeID)!
 				sourceNodeMetaData.normalize(newGlobalIndex)
 				new_intern.set(sourceNodeMetaData.id, sourceNodeMetaData)
@@ -136,6 +140,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			>>('number')
 			// remap all extern nodes
 			for (const sourceNodeID of sortIDsByIdentifier(self.extern)) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const sourceNodeMetaData = self.extern.get(sourceNodeID)!
 				sourceNodeMetaData.normalize(newGlobalIndex)
 				new_extern.set(sourceNodeMetaData.id, sourceNodeMetaData)
@@ -370,7 +375,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 
 		for (const [identifier, sourceNodeMetaDatas] of Object.entries(valuesToMerge.intern)) {
 			const globalIdentifier = GlobalIdentifier.fromIdentifier(identifier as GlobalSourceNodeIdentifier_string)
-			const sourceNodeIndex_intern = sourceNodeIndex.pathIndex.moduleIndex.getFilePathIndex('upsert', globalIdentifier.path).getSourceNodeIndex('upsert', globalIdentifier.sourceNodeIdentifier)
+			const sourceNodeIndex_intern = sourceNodeIndex.pathIndex.moduleIndex.getFilePathIndex(
+				'upsert',
+				globalIdentifier.path
+			).getSourceNodeIndex('upsert', globalIdentifier.sourceNodeIdentifier)
 			result.intern.set(
 				sourceNodeIndex_intern.id as SourceNodeID_number,
 				SourceNodeMetaData.merge(
@@ -524,7 +532,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			throw new Error('Cannot only add sensor values to langInternal for SourceNode and LangInternalSourceNode')
 		}
 
-		const sourceNodeIndex = this.sourceNodeIndex.pathIndex.moduleIndex.globalIndex.getSourceNodeIndex('upsert', identifier)
+		const sourceNodeIndex = this.sourceNodeIndex.pathIndex.moduleIndex.globalIndex.getSourceNodeIndex(
+			'upsert',
+			identifier
+		)
 		const sourceNodeID = sourceNodeIndex.id as SourceNodeID_number
 
 		let sourceNodeMetaData = this.lang_internal.get(sourceNodeID)
@@ -534,7 +545,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				sourceNodeID,
 				new SensorValues({}),
 				sourceNodeIndex
-			),
+			)
 			this.lang_internal.set(sourceNodeID, sourceNodeMetaData)
 		}
 		sourceNodeMetaData.addToSensorValues({
@@ -567,7 +578,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		if (!SourceNodeMetaData.couldHaveChildren(this)) {
 			throw new Error('Cannot only add sensor values to intern for SourceNode and LangInternalSourceNode')
 		}
-		const sourceNodeIndex = this.sourceNodeIndex.pathIndex.moduleIndex.globalIndex.getSourceNodeIndex('upsert', identifier)
+		const sourceNodeIndex = this.sourceNodeIndex.pathIndex.moduleIndex.globalIndex.getSourceNodeIndex(
+			'upsert',
+			identifier
+		)
 		const sourceNodeID = sourceNodeIndex.id as SourceNodeID_number
 
 		let sourceNodeMetaData = this.intern.get(sourceNodeID)
@@ -610,7 +624,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		if (!SourceNodeMetaData.couldHaveChildren(this)) {
 			throw new Error('Cannot only add sensor values to extern for SourceNode and LangInternalSourceNode')
 		}
-		const sourceNodeIndex = this.sourceNodeIndex.pathIndex.moduleIndex.globalIndex.getSourceNodeIndex('upsert', identifier)
+		const sourceNodeIndex = this.sourceNodeIndex.pathIndex.moduleIndex.globalIndex.getSourceNodeIndex(
+			'upsert',
+			identifier
+		)
 		const sourceNodeID = sourceNodeIndex.id as SourceNodeID_number
 
 		let sourceNodeMetaData = this.extern.get(sourceNodeID)
@@ -649,7 +666,9 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			return
 		}
 		if (this.sourceNodeIndex?.id !== this.id) {
-			throw new Error('SourceNodeMetaData.validate: Assertion error sourceNodeIndex and sourceNode id are not compatible')
+			throw new Error(
+				'SourceNodeMetaData.validate: Assertion error sourceNodeIndex and sourceNode id are not compatible'
+			)
 		}
 		this.sensorValues.validate(path, identifier)
 
@@ -729,6 +748,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				this.sensorValues.internRAMEnergyConsumption
 			)
 		) {
+			 
 			throw new Error(
 				`SourceNodeMetaData.validate: Assertion error (SourceNode validation) ${path}:${identifier} \n` +
 				JSON.stringify(this, null, 2) + '\n' +
@@ -761,6 +781,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 					}
 				}, null, 2)
 			)
+			 
 		}
 	}
 
@@ -791,14 +812,19 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 
 		if (data.type !== SourceNodeMetaDataType.Aggregate) {
 			if (globalIndex === undefined) {
-				throw new Error('SourceNodeMetaData.fromJSON: expect a globalIndex for all SourceNodeMetaDataTypes except Aggregate')
+				throw new Error(
+					'SourceNodeMetaData.fromJSON: expect a globalIndex for all SourceNodeMetaDataTypes except Aggregate'
+				)
 			}
 			if (data.id === undefined) {
-				throw new Error('SourceNodeMetaData.fromJSON: expect an ID for all SourceNodeMetaDataTypes except Aggregate')
+				throw new Error(
+					'SourceNodeMetaData.fromJSON: expect an ID for all SourceNodeMetaDataTypes except Aggregate'
+				)
 			}
 		}
 
 		const sourceNodeIndex = data.type !== SourceNodeMetaDataType.Aggregate ?
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			globalIndex!.getSourceNodeIndexByID(data.id!) : undefined
 		const result = new SourceNodeMetaData(
 			data.type,
@@ -817,6 +843,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 						sourceNodeID,
 						SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.LangInternalSourceNodeReference>(
 							nodeMetaData,
+							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 							globalIndex!
 						)
 					)
@@ -829,6 +856,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 						sourceNodeID,
 						SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.InternSourceNodeReference>(
 							nodeMetaData,
+							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 							globalIndex!
 						)
 					)
@@ -841,6 +869,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 						sourceNodeID,
 						SourceNodeMetaData.fromJSON(
 							nodeMetaData,
+							// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 							globalIndex!
 						)
 					)
@@ -906,7 +935,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		if (type !== SourceNodeMetaDataType.SourceNode && type !== SourceNodeMetaDataType.LangInternalSourceNode) {
 			const sourceNodeIndex = globalIndex.getSourceNodeIndexByID(sourceNodeID as SourceNodeID_number)
 			if (sourceNodeIndex === undefined) {
-				throw new Error('SourceNodeMetaData.consumeFromBuffer(SourceNode|LangInternalSourceNode): expected sourceNodeIndex to be given')
+				throw new Error(
+					'SourceNodeMetaData.consumeFromBuffer(SourceNode|LangInternalSourceNode): ' + 
+					'expected sourceNodeIndex to be given'
+				)
 			}
 			
 			instance = new SourceNodeMetaData<

@@ -2,7 +2,7 @@ export abstract class BaseModel {
 	abstract toJSON(): object | undefined
 	static fromJSON(
 		json: string | object, // eslint-disable-line @typescript-eslint/no-unused-vars
-		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	): object {
 		return {}
 	}
@@ -15,13 +15,13 @@ export abstract class BaseModel {
 	}
 
 	toBuffer(
-		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	): Buffer {
 		throw new Error('BaseModel.toBuffer: not implemented yet')
 	}
 	static consumeFromBuffer(
-		buffer: Buffer,
-		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+		buffer: Buffer, // eslint-disable-line @typescript-eslint/no-unused-vars
+		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	): { instance: object, remainingBuffer: Buffer } {
 		throw new Error('BaseModel.consumeFromBuffer: not implemented yet')
 	}

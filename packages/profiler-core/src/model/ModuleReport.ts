@@ -89,7 +89,9 @@ export class ModuleReport extends Report {
 	} 
 
 	static consumeFromBuffer(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		buffer: Buffer,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		moduleIndex: ModuleIndex
 	): { instance: Report, type: ReportType, remainingBuffer: Buffer } {
 		throw new Error('ModuleReport.consumeFromBuffer: use consumeFromBuffer_ModuleReport instead')

@@ -35,7 +35,10 @@ export class GlobalIndex extends BaseModel {
 		this.moduleMap = new ModelMap<NodeModuleIdentifier_string, ModuleIndex>('string')
 		this.moduleReverseIndex = new ModelMap<ModuleID_number, ModuleIndex>('number')
 		this.pathReverseIndex = new ModelMap<PathID_number, PathIndex>('number')
-		this.sourceNodeReverseIndex = new ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>('number')
+		this.sourceNodeReverseIndex = new ModelMap<
+		SourceNodeID_number,
+		SourceNodeIndex<SourceNodeIndexType.SourceNode>
+		>('number')
 	}
 
 	toBuffer(): Buffer {
@@ -80,8 +83,13 @@ export class GlobalIndex extends BaseModel {
 	>
 	(
 		id: number,
-		index: T extends 'module' ? ModuleIndex :
-			T extends 'path' ? PathIndex : T extends 'sourceNode' ? SourceNodeIndex<SourceNodeIndexType.SourceNode> : never,
+		index: T extends 'module' ?
+			ModuleIndex :
+			T extends 'path' ?
+				PathIndex :
+				T extends 'sourceNode' ?
+					SourceNodeIndex<SourceNodeIndexType.SourceNode> :
+					never,
 		type: T
 	) {
 		switch (type) {
@@ -152,7 +160,9 @@ export class GlobalIndex extends BaseModel {
 		indexRequestType: T,
 		nodeModuleIdentifier?: NodeModuleIdentifier_string
 	): R {
-		const moduleIdentifier = nodeModuleIdentifier !== undefined ? nodeModuleIdentifier : '{self}' as NodeModuleIdentifier_string
+		const moduleIdentifier = nodeModuleIdentifier !== undefined ?
+			nodeModuleIdentifier :
+			'{self}' as NodeModuleIdentifier_string
 
 		let moduleIndex: ModuleIndex | undefined = this.moduleMap.get(moduleIdentifier)
 		if (moduleIndex === undefined) {

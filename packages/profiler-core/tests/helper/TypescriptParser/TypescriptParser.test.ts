@@ -1,4 +1,4 @@
-const tsMock = jest.mock('typescript', () => ({
+jest.mock('typescript', () => ({
 	__esModule: true,
 	...jest.requireActual('typescript'),
 }))

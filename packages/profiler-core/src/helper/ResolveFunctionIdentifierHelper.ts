@@ -239,12 +239,15 @@ export class ResolveFunctionIdentifierHelper {
 		}
 
 		if (functionIdentifier === '') {
-			LoggerHelper.error('ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
+			LoggerHelper.error(
+				'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
 				url: sourceLocation.absoluteUrl.toString(),
 				lineNumber,
 				columnNumber
 			})
-			throw new Error('ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: functionIdentifier should not be empty')
+			throw new Error(
+				'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: functionIdentifier should not be empty'
+			)
 		}
 
 

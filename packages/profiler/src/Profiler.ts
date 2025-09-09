@@ -4,7 +4,6 @@ import { Session } from 'inspector'
 import seedrandom from 'seedrandom'
 import {
 	APP_NAME,
-	UnifiedPath,
 	ProfilerConfig,
 	ProjectReport,
 	IProjectReportExecutionDetails,

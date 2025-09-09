@@ -60,6 +60,7 @@ type OnDuplicateIdentifierCallback = (
 ) => void
 
 const PARSE_NODE_FUNCTIONS: Record<number, (
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	...args: any
 ) => {
 	resolve(): ProgramStructureTree,
@@ -116,7 +117,10 @@ export class TypescriptParser {
 		const tsconfigFilePath = TypescriptParser.tsConfigFilePathFromFile(filePath.toPlatformString())
 
 		if (!tsconfigFilePath) {
-			throw new Error('TypescriptParser.transpileCode: Could not find a tsconfig for: ' + filePath.toPlatformString())
+			throw new Error(
+				'TypescriptParser.transpileCode: Could not find a tsconfig for: ' +
+				filePath.toPlatformString()
+			)
 		}
 
 		const tsconfig = TypescriptParser.readConfigFile(tsconfigFilePath)
@@ -203,6 +207,7 @@ export class TypescriptParser {
 					const identifier = subTree.parent.identifierPath() + '.' + subTree.identifier
 					onDuplicateIdentifier(
 						filePath,
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						(node as any),
 						identifier,
 						{

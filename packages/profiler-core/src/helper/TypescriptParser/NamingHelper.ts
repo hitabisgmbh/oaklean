@@ -109,7 +109,9 @@ export class NamingHelper {
 
 	static getIdentifierName(
 		node: ts.Identifier,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		sourceFile: ts.SourceFile,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
 		return {
@@ -122,6 +124,7 @@ export class NamingHelper {
 	static getLiteralName(
 		node: ts.StringLiteral | ts.NumericLiteral | ts.BigIntLiteral,
 		sourceFile: ts.SourceFile,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
 		const expressionHash = ExpressionHelper.hashExpression(
@@ -139,6 +142,7 @@ export class NamingHelper {
 	static getComputedPropertyName(
 		node: ts.ComputedPropertyName,
 		sourceFile: ts.SourceFile,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
 		const expressionHash = ExpressionHelper.hashExpression(
@@ -154,6 +158,7 @@ export class NamingHelper {
 }
 
 type GetNameFunction = (
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	node: any,
 	sourceFile: ts.SourceFile,
 	traverseNodeInfo: TraverseNodeInfo

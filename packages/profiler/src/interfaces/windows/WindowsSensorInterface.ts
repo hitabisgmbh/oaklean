@@ -41,6 +41,7 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 	private _startTime: NanoSeconds_BigInt | undefined
 	private _stopTime: NanoSeconds_BigInt | undefined
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private cleanExit: ((...args: any[]) => void) | undefined
 
 	constructor(options: IWindowsSensorInterfaceOptions, debugOptions?: {
@@ -58,7 +59,7 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 		this._options = options
 		
 		if (debugOptions !== undefined) {
-			this._startTime = debugOptions.startTime,
+			this._startTime = debugOptions.startTime
 			this._stopTime = debugOptions.stopTime
 			this._offsetTime = debugOptions.offsetTime
 			this._couldBeExecuted = true
@@ -230,7 +231,11 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 				const currentTime = TimeHelper.getCurrentHighResolutionTime()
 				const content = data.toString()
 				if (!content.startsWith('BEGIN_MEASUREMENT')) {
-					LoggerHelper.error('WindowsSensorInterface.startProfiling: Could not capture first measurement, unexpected output:', content)
+					LoggerHelper.error(
+						'WindowsSensorInterface.startProfiling: ' +
+						'Could not capture first measurement, unexpected output:',
+						content
+					)
 					return
 				}
 				firstCapture = true

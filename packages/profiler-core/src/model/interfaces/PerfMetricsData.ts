@@ -27,6 +27,7 @@ export class PerfMetricsData extends BaseMetricsData {
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 	static fromJSON(json: string | IPerfMetricsData, ...args: any[]): PerfMetricsData {
 		let data: IPerfMetricsData
 		if (typeof json === 'string') {
@@ -52,10 +53,12 @@ export class PerfMetricsData extends BaseMetricsData {
 		return this._data.timestamp
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	processIsPresent(pid: number): boolean {
 		return true
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	energyPortionOfProcess(pid: number): number {
 		return 1
 	}

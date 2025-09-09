@@ -49,8 +49,10 @@ type LastNodeCallInfo = {
 }
 
 type AwaiterStack = {
-	awaiter: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, // the last called __awaiter function
-	awaiterParent: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined // the last async function that called the __awaiter function
+	// the last called __awaiter function
+	awaiter: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+	// the last async function that called the __awaiter function
+	awaiterParent: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined
 }[]
 
 export class InsertCPUProfileHelper {
@@ -119,10 +121,10 @@ export class InsertCPUProfileHelper {
 		ramEnergyConsumption: IPureRAMEnergyConsumption,
 		visited: boolean,
 	): {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption,
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		} {
+		cpuTime: IPureCPUTime,
+		cpuEnergyConsumption: IPureCPUEnergyConsumption,
+		ramEnergyConsumption: IPureRAMEnergyConsumption
+	} {
 		const cpuTimeResult: IPureCPUTime = {
 			selfCPUTime: cpuTime.selfCPUTime,
 			aggregatedCPUTime: cpuTime.aggregatedCPUTime
@@ -298,8 +300,10 @@ export class InsertCPUProfileHelper {
 				cpuEnergyConsumption,
 				ramEnergyConsumption,
 				accounted.map.has(InsertCPUProfileHelper.callIdentifierToString(parentSourceNode_CallIdentifier)) &&
-				accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
-					parentSourceNode_CallIdentifier))!.length > 0
+				/* eslint-disable @typescript-eslint/no-non-null-assertion */
+				accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(parentSourceNode_CallIdentifier)
+				)!.length > 0
+				/* eslint-enable @typescript-eslint/no-non-null-assertion */
 			)
 
 			// IMPORTANT to change when new measurement type gets added
@@ -607,7 +611,9 @@ export class InsertCPUProfileHelper {
 				const childCalls = accounted.map.get(InsertCPUProfileHelper.callIdentifierToString(
 					parentSourceNode_CallIdentifier))
 				if (childCalls === undefined) {
-					throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present')
+					throw new Error(
+						'InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present'
+					)
 				}
 				childCalls.pop() // remove self from parent
 			}
@@ -641,7 +647,8 @@ export class InsertCPUProfileHelper {
 				firstTimeVisitedSourceNode_CallIdentifier = result.firstTimeVisitedSourceNode_CallIdentifier
 				parentSourceNode_CallIdentifier = result.parentSourceNode_CallIdentifier
 			} else if (cpuNode.sourceLocation.isWASM) {
-				const wasmPath = new UnifiedPath(cpuNode.sourceLocation.rawUrl.substring(7)) // remove the 'wasm://' prefix
+				 // remove the 'wasm://' prefix
+				const wasmPath = new UnifiedPath(cpuNode.sourceLocation.rawUrl.substring(7))
 
 				if (
 					reportToCredit instanceof ModuleReport &&
@@ -707,7 +714,9 @@ export class InsertCPUProfileHelper {
 						(
 							lastNodeCallInfo === undefined &&
 							reportToCredit !== originalReport
-						) // the last call originates from the node engine (like node:vm), but the last recorded report was from a node module
+						)
+						// the last call originates from the node engine (like node:vm)
+						// but the last recorded report was from a node module
 					)
 
 				if (ownCodeGetsExecutedByExternal) {
@@ -837,12 +846,13 @@ export class InsertCPUProfileHelper {
 			accounted.internMap.size !== 0 ||
 			accounted.externMap.size !== 0 ||
 			accounted.langInternalMap.size !== 0) {
-			LoggerHelper.error('InsertCPUProfileHelper.insertCPUProfile: accounted tracker should be empty after traverse', {
-				mapSize: accounted.map.size,
-				internMapSize: accounted.internMap.size,
-				externMapSize: accounted.externMap.size,
-				langInternalMapSize: accounted.langInternalMap.size
-			}
+			LoggerHelper.error(
+				'InsertCPUProfileHelper.insertCPUProfile: accounted tracker should be empty after traverse', {
+					mapSize: accounted.map.size,
+					internMapSize: accounted.internMap.size,
+					externMapSize: accounted.externMap.size,
+					langInternalMapSize: accounted.langInternalMap.size
+				}
 			)
 			throw new Error('InsertCPUProfileHelper.insertCPUProfile: accounted tracker should be empty after traverse')
 		}
