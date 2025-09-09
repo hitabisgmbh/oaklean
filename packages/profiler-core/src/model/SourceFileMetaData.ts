@@ -134,6 +134,7 @@ export class SourceFileMetaData extends BaseModel {
 		SourceNodeID_number,
 		SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>>('number')
 		for (const sourceNodeID of sortIDsByIdentifier(this.functions)) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const sourceNodeMetaData = this.functions.get(sourceNodeID)!
 			sourceNodeMetaData.normalize(newGlobalIndex)
 			newFunctions.set(sourceNodeMetaData.id, sourceNodeMetaData)
@@ -206,7 +207,10 @@ export class SourceFileMetaData extends BaseModel {
 		if (!this._functions) {
 			this._functions = new ModelMap<
 			SourceNodeID_number,
-			SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>>('number')
+			SourceNodeMetaData<
+				SourceNodeMetaDataType.SourceNode |
+				SourceNodeMetaDataType.LangInternalSourceNode
+			>>('number')
 		}
 		return this._functions
 	}

@@ -30,6 +30,7 @@ export class BaseSensorInterface {
 		throw new Error('BaseSensorInterface.startTime must be implemented')
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async readSensorValues(pid: number): Promise<MetricsDataCollection | undefined> {
 		throw new Error('BaseSensorInterface.readSensorValues must be implemented')
 	}
@@ -50,7 +51,7 @@ export class BaseSensorInterface {
 		try {
 			process.kill(pid, 0)
 			return true
-		} catch (e) {
+		} catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
 			return false
 		}
 	}

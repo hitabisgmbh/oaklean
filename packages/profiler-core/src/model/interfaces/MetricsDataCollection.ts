@@ -74,6 +74,7 @@ export class MetricsDataCollection extends BaseModel {
 		)
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 	static fromJSON(json: string | IMetricsDataCollection, ...args: any[]): MetricsDataCollection {
 		let data: IMetricsDataCollection
 		if (typeof json === 'string') {

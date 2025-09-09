@@ -152,7 +152,10 @@ export class ModuleIndex extends BaseModel {
 						case 'upsert':
 							pathIndex.selfAssignId()
 							if (pathIndex.file === undefined) {
-								pathIndex.file = new ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>('string')
+								pathIndex.file = new ModelMap<
+									SourceNodeIdentifierPart_string,
+									SourceNodeIndex<SourceNodeIndexType>
+								>('string')
 							}
 							break
 						default:

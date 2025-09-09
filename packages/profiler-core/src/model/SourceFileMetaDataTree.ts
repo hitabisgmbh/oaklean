@@ -53,10 +53,6 @@ type IndexTypeMap = {
 
 type IndexPerType<T extends SourceFileMetaDataTreeType> = IndexTypeMap[T]
 
-function areNumbersClose(a: number, b: number, epsilon = 1e-10) {
-	return Math.abs(a - b) < epsilon
-}
-
 export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extends BaseModel{
 	private _lang_internalHeadlessSensorValues?: SensorValues
 	private _aggregatedLangInternalSourceNodeMetaData?: AggregatedSourceNodeMetaData
@@ -319,7 +315,9 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 
 		if (!SourceNodeMetaData.equals(this.aggregatedInternSourceMetaData.max, max)) {
 			LoggerHelper.error(max, this.aggregatedInternSourceMetaData.max, this.filePath?.toString())
-			throw new Error('SourceFileMetaDataTree.validate: Assertion error max is not correct ' + this.filePath?.toString())
+			throw new Error(
+				'SourceFileMetaDataTree.validate: Assertion error max is not correct ' + this.filePath?.toString()
+			)
 		}
 	}
 
@@ -411,12 +409,20 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		}
 		if (data.langInternalChildren) {
 			for (const [langInternalPath, subTree] of Object.entries(data.langInternalChildren)) {
-				const indexToPass: PathIndex | undefined = type === SourceFileMetaDataTreeType.Root ?
-					(index as IndexPerType<SourceFileMetaDataTreeType.Root>).getLangInternalIndex('get')?.getFilePathIndex('get', subTree.filePath)
-					: (index as ModuleIndex)?.globalIndex?.getLangInternalIndex('get')?.getFilePathIndex('get', subTree.filePath)
+				const indexToPass: PathIndex | undefined =
+					type === SourceFileMetaDataTreeType.Root ?
+						(index as IndexPerType<SourceFileMetaDataTreeType.Root>)
+							.getLangInternalIndex('get')
+							?.getFilePathIndex('get', subTree.filePath)
+					: (index as ModuleIndex)
+							?.globalIndex
+							?.getLangInternalIndex('get')
+							?.getFilePathIndex('get', subTree.filePath)
 				if (indexToPass === undefined) {
 					LoggerHelper.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
-					throw new Error('SourceFileMetaDataTree.fromJSON: (langInternal children) could not resolve index for subTree')
+					throw new Error(
+						'SourceFileMetaDataTree.fromJSON: (langInternal children) could not resolve index for subTree'
+					)
 				}
 				result.langInternalChildren.set(
 					langInternalPath as LangInternalPath_string,
@@ -441,7 +447,9 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 						break
 					case SourceFileMetaDataTreeType.File:
 						indexToPass = type === SourceFileMetaDataTreeType.Root ?
-							(index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get')?.getFilePathIndex('get', subTree.filePath)
+							(index as IndexPerType<SourceFileMetaDataTreeType.Root>)
+								.getModuleIndex('get')
+								?.getFilePathIndex('get', subTree.filePath)
 							: (index as ModuleIndex).getFilePathIndex('get', subTree.filePath)
 						break
 					default:
@@ -449,7 +457,9 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				}
 				if (indexToPass === undefined) {
 					LoggerHelper.error((index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get'))
-					throw new Error('SourceFileMetaDataTree.fromJSON: (intern children) could not resolve index for subTree')
+					throw new Error(
+						'SourceFileMetaDataTree.fromJSON: (intern children) could not resolve index for subTree'
+					)
 				}
 				result.internChildren.set(
 					filePart as UnifiedPathPart_string,
@@ -468,16 +478,21 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				let indexToPass: ModuleIndex | undefined
 				switch (type) {
 					case SourceFileMetaDataTreeType.Root:
-						indexToPass = (index as IndexPerType<SourceFileMetaDataTreeType.Root>).getModuleIndex('get', moduleIdentifier as NodeModuleIdentifier_string)
+						indexToPass = (index as IndexPerType<SourceFileMetaDataTreeType.Root>)
+							.getModuleIndex('get', moduleIdentifier as NodeModuleIdentifier_string)
 						break
 					case SourceFileMetaDataTreeType.Module:
-						indexToPass = (index as IndexPerType<SourceFileMetaDataTreeType.Module>).globalIndex.getModuleIndex('get', moduleIdentifier as NodeModuleIdentifier_string)
+						indexToPass =(index as IndexPerType<SourceFileMetaDataTreeType.Module>)
+							.globalIndex
+							.getModuleIndex('get', moduleIdentifier as NodeModuleIdentifier_string)
 						break
 					default:
 						throw new Error('SourceFileMetaDataTree.fromJSON: unexpected subTree type')
 				}
 				if (indexToPass === undefined) {
-					throw new Error('SourceFileMetaDataTree.fromJSON: (extern children) could not resolve index for subTree')
+					throw new Error(
+						'SourceFileMetaDataTree.fromJSON: (extern children) could not resolve index for subTree'
+					)
 				}
 				result.externChildren.set(
 					moduleIdentifier as NodeModuleIdentifier_string,
@@ -571,7 +586,10 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			this.langInternalChildren.set(langInternalPath, child)
 			return child
 		} else {
-			throw new Error('SourceFileMetaDataTree.insertLangInternalPath: path was already inserted ' + `${langInternalPath}`)
+			throw new Error(
+				'SourceFileMetaDataTree.insertLangInternalPath: path was already inserted ' +
+				`${langInternalPath}`
+			)
 		}
 	}
 
@@ -602,11 +620,18 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				this.internChildren.set(filePathParts[0], child)
 				return child
 			} else {
-				throw new Error('SourceFileMetaDataTree.insertPath: path was already inserted ' + `${filePath.toString()}/${filePathParts[0]}`)
+				throw new Error(
+					'SourceFileMetaDataTree.insertPath: path was already inserted ' +
+					`${filePath.toString()}/${filePathParts[0]}`
+				)
 			}
 		}
 		if (!child) {
-			const moduleIndex = (this.isRoot() ? this.index.getModuleIndex('get') : this.index as IndexPerType<SourceFileMetaDataTreeType.Module>)
+			const moduleIndex = (
+				this.isRoot() ?
+				this.index.getModuleIndex('get') :
+				this.index as IndexPerType<SourceFileMetaDataTreeType.Module>
+			)
 			if (moduleIndex === undefined) {
 				throw new Error('SourceFileMetaDataTree.insertPath: could not resolve module index')
 			}

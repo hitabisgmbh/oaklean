@@ -1,4 +1,3 @@
-/* eslint-disable import/order */
 import { NodeModule } from '../../src/model/NodeModule'
 import { SensorValues } from '../../src/model/SensorValues'
 import {
@@ -6,7 +5,7 @@ import {
 } from '../../src/model/SourceNodeMetaData'
 import { GlobalIndex } from '../../src/model/indices/GlobalIndex'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
-
+// Types
 import {
 	SourceNodeID_number,
 	MilliJoule_number,
@@ -325,7 +324,7 @@ describe('SourceNodeMetaData', () => {
 				'{./dist/index.js}{root}' as GlobalSourceNodeIdentifier_string
 			)
 		)
-		const moduleIndex = globalIndex.getModuleIndex('upsert')
+		globalIndex.getModuleIndex('upsert')
 		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
 			'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
 		))
@@ -370,7 +369,7 @@ describe('SourceNodeMetaData', () => {
 	describe('consume from buffer', () => {
 		const buffer = Buffer.from(EXAMPLE_SOURCE_NODE_META_DATA_BUFFER, 'hex')
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-		const moduleIndex = globalIndex.getModuleIndex('upsert')
+		globalIndex.getModuleIndex('upsert')
 		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
 			'{./dist/index.js}{root}' as GlobalSourceNodeIdentifier_string
 		))
@@ -518,7 +517,7 @@ describe('SourceNodeMetaData', () => {
 		let instancesToMerge: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>[]
 		beforeEach(() => {
 			const firstGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const firstModuleIndex = firstGlobalIndex.getModuleIndex('upsert')
+			firstGlobalIndex.getModuleIndex('upsert')
 			const firstSourceNodeIndex = firstGlobalIndex.getSourceNodeIndex(
 				'upsert',
 				GlobalIdentifier.fromIdentifier(
@@ -662,7 +661,7 @@ describe('SourceNodeMetaData', () => {
 			} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, firstGlobalIndex)
 
 			const secondGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const secondModuleIndex = secondGlobalIndex.getModuleIndex('upsert')
+			secondGlobalIndex.getModuleIndex('upsert')
 			const secondSourceNodeIndex = secondGlobalIndex.getSourceNodeIndex(
 				'upsert',
 				GlobalIdentifier.fromIdentifier(
@@ -806,7 +805,7 @@ describe('SourceNodeMetaData', () => {
 			} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, secondGlobalIndex)
 
 			const thirdGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const thirdModuleIndex = thirdGlobalIndex.getModuleIndex('upsert')
+			thirdGlobalIndex.getModuleIndex('upsert')
 			const thirdSourceNodeIndex = thirdGlobalIndex.getSourceNodeIndex(
 				'upsert',
 				GlobalIdentifier.fromIdentifier(
@@ -992,7 +991,7 @@ describe('SourceNodeMetaData', () => {
 			SourceNodeMetaDataType.Aggregate
 
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const moduleIndex = globalIndex.getModuleIndex('upsert')
+			globalIndex.getModuleIndex('upsert')
 			const sourceNodeIndex = globalIndex.getSourceNodeIndex(
 				'upsert',
 				GlobalIdentifier.fromIdentifier(
@@ -1008,7 +1007,7 @@ describe('SourceNodeMetaData', () => {
 
 		test('merges correctly', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const moduleIndex = globalIndex.getModuleIndex('upsert')
+			globalIndex.getModuleIndex('upsert')
 			const sourceNodeIndex = globalIndex.getSourceNodeIndex(
 				'upsert',
 				GlobalIdentifier.fromIdentifier(
@@ -1320,7 +1319,7 @@ describe('SourceNodeMetaData', () => {
 				instancesToMerge[2].presentInOriginalSourceCode = true
 
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-				const moduleIndex = globalIndex.getModuleIndex('upsert')
+				globalIndex.getModuleIndex('upsert')
 				const sourceNodeIndex = globalIndex.getSourceNodeIndex(
 					'upsert',
 					GlobalIdentifier.fromIdentifier(
@@ -1339,7 +1338,7 @@ describe('SourceNodeMetaData', () => {
 				instancesToMerge[2].presentInOriginalSourceCode = true
 
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-				const moduleIndex = globalIndex.getModuleIndex('upsert')
+				globalIndex.getModuleIndex('upsert')
 				const sourceNodeIndex = globalIndex.getSourceNodeIndex(
 					'upsert',
 					GlobalIdentifier.fromIdentifier(

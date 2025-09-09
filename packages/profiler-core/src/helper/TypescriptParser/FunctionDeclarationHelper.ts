@@ -59,14 +59,16 @@ export class FunctionDeclarationHelper {
 					)
 				}
 				LoggerHelper.error(
-					'FunctionDeclarationHelper (parseNode): unhandled case, function has no name and is now default export',
+					'FunctionDeclarationHelper (parseNode): unhandled case, ' +
+					'function has no name and is now default export',
 					{
 						filePath: traverseNodeInfo.filePath,
 						pos: TypescriptHelper.posToLoc(sourceFile, node.getStart() || 0)
 					}
 				)
 				throw new Error(
-					'FunctionDeclarationHelper (parseNode): unhandled case, function has no name and is now default export'
+					'FunctionDeclarationHelper (parseNode): unhandled case, ' +
+					'function has no name and is now default export'
 				)
 			}
 		}

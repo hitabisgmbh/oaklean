@@ -8,10 +8,12 @@ import {
 } from '../../types'
 
 export class BaseMetricsData {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	processIsPresent(pid: number): boolean {
 		throw new Error('BaseMetricsData.processPresent must be implemented')
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	energyPortionOfProcess(pid: number): number {
 		throw new Error('BaseMetricsData.energyPortionOfProcess must be implemented')
 	}
@@ -46,7 +48,7 @@ export class BaseMetricsData {
 
 	static fromJSON(
 		json: string | object, // eslint-disable-line @typescript-eslint/no-unused-vars
-		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 	): object {
 		throw new Error('BaseMetricsData.fromJSON must be implemented')
 	}

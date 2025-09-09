@@ -23,10 +23,13 @@ export class ExecutionDetails {
 		const timestamp = TimeHelper.getCurrentTimestamp()
 
 		if (timestamp === undefined) {
-			throw new Error('ProjectReport.resolveExecutionDetails: Could not resolve execution details.' + JSON.stringify({
-				commitHash: commitHash,
-				timestamp: timestamp
-			}, undefined, 2))
+			throw new Error(
+				'ProjectReport.resolveExecutionDetails: Could not resolve execution details.' +
+				JSON.stringify({
+					commitHash: commitHash,
+					timestamp: timestamp
+				}, undefined, 2)
+			)
 		}
 		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
 

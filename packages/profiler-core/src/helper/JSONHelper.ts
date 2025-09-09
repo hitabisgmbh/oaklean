@@ -10,8 +10,11 @@ import { UnifiedPath } from '../system/UnifiedPath'
 export class JSONHelper {
 	static async storeBigJSON(
 		outputPath: UnifiedPath,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		json: any,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
 		replacer?: any,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		spaces?: string | number | undefined
 	): Promise<void> {
 		const outputStream = fs.createWriteStream(outputPath.toPlatformString())
@@ -30,7 +33,7 @@ export class JSONHelper {
 
 	static async loadBigJSON(
 		inputPath: UnifiedPath
-	): Promise<any> {
+	): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
 		return new Promise((resolve, reject) => {
 			const fileStream = fs.createReadStream(inputPath.toPlatformString())
 

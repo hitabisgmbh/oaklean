@@ -590,7 +590,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			const config = ProfilerConfig.autoResolve()
 
 			expect(
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				instance.relativeRootDir!.toString()
 			).toBe(
 				projectReportFilePath.dirName().pathTo(config.getRootDir()).toString()

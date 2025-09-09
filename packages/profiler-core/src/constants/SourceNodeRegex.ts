@@ -36,7 +36,6 @@ export const TryBlockStatementRegexString = '{scope:(\\(try\\))}'
 export const CatchClauseStatementRegexString = '{scope:(\\(catch\\))}'
 export const FinallyBlockStatementRegexString = '{scope:(\\(finally\\))}'
 export const BlockStatementRegexString = '{scope:(\\(block:[0-9]+\\))}'
-// eslint-disable-next-line max-len
 export const SwitchStatementRegexString = '{scope:(\\(switch:[0-9]+\\))}'
 export const SwitchCaseClauseRegexString = `{scope:(\\(case:(?:${ExpressionHashRegexString}|default)(?::[0-9]+)?\\))}`
 

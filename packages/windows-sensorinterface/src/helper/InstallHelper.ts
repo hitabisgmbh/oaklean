@@ -12,8 +12,6 @@ import {
 	getPlatformSpecificBinaryPath,
 	getPlatformSpecificBinaryDirectoryPath
 } from '../constants/config'
-import { VERSION } from '../constants/app'
-
 
 export class InstallHelper {
 	static makeRequest(url: string): Promise<Buffer> {
@@ -21,6 +19,7 @@ export class InstallHelper {
 			https
 				.get(url, (response) => {
 					if (response.statusCode !== undefined && response.statusCode >= 200 && response.statusCode < 300) {
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						const chunks: any[] = []
 						response.on('data', (chunk) => chunks.push(chunk))
 						response.on('end', () => {

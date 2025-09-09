@@ -39,6 +39,7 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 
 	private _eventHandler: EventHandler<EventMap>
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private cleanExit: ((...args: any[]) => void) | undefined
 
 	constructor(options: IPowerMetricsSensorInterfaceOptions, debugOptions?: {
@@ -109,7 +110,7 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		try {
 			const result = execSync('pgrep -ix powermetrics', { encoding: 'utf-8' })
 			return result.trim().split('\n')
-		} catch (error) {
+		} catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
 			return []
 		}
 	}
@@ -176,7 +177,10 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 			fs.unlinkSync(this._options.outputFilePath) // remove output file to ensure clean measurements
 		}
 		if (PowerMetricsSensorInterface.runningInstances().length > 0) {
-			throw new Error('PowerMetricsSensorInterface.startProfiling: PowerMetrics instance already running, close it before taking any measurements')
+			throw new Error(
+				'PowerMetricsSensorInterface.startProfiling: ' +
+				'PowerMetrics instance already running, close it before taking any measurements'
+			)
 		}
 
 		this._startTime = TimeHelper.getCurrentHighResolutionTime()

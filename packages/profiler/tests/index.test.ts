@@ -7,7 +7,7 @@ import { buildModel } from '../../profiler-core/lib/vscode-js-profile-core/src/c
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 const globalAny: any = global
 
 const fibonacci = (n: number): number => {

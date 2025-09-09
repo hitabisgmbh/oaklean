@@ -1,7 +1,9 @@
 import EventEmitter from 'events'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type EventMap<T> = Record<keyof T, any[]> | DefaultEventMap;
 type DefaultEventMap = [never];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRest = [...args: any[]];
 type Args<K, T> = T extends DefaultEventMap ? AnyRest : (
 	K extends keyof T ? T[K] : never
@@ -13,6 +15,7 @@ type Listener<K, T, F> = T extends DefaultEventMap ? F : (
 	)
 		: never
 );
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Listener1<K, T> = Listener<K, T, (...args: any[]) => void>;
 
 export class EventHandler<T extends EventMap<T> = DefaultEventMap> {

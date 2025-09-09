@@ -15,7 +15,10 @@ export class DuplicateIdentifierHelper {
 		const currentIdentifier = tree.identifier
 
 		if (!currentIdentifier.endsWith('}')) {
-			throw new Error('DuplicateIdentifierHelper (handleDuplicateIdentifier): invalid identifier format: ' + currentIdentifier)
+			throw new Error(
+				'DuplicateIdentifierHelper (handleDuplicateIdentifier): invalid identifier format: ' +
+				currentIdentifier
+			)
 		}
 
 		function isDeclaredViaVar(node: ts.Node) {
@@ -62,7 +65,10 @@ export class DuplicateIdentifierHelper {
 			tree.type === ProgramStructureTreeType.SwitchCaseClause
 		) {
 			if (!currentIdentifier.endsWith(')}')) {
-				throw new Error('DuplicateIdentifierHelper (handleDuplicateIdentifier): invalid identifier format: ' + currentIdentifier)
+				throw new Error(
+					'DuplicateIdentifierHelper (handleDuplicateIdentifier): invalid identifier format: ' +
+					currentIdentifier
+				)
 			}
 
 			const baseIdentifier = currentIdentifier.substring(0, currentIdentifier.length - 2)

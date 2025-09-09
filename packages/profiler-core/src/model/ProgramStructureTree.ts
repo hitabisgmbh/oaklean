@@ -220,7 +220,8 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		if (this.type === ProgramStructureTreeType.Root) {
 			if (targetLoc.line <= this.beginLoc.line && targetLoc.line <= this.endLoc.line) {
 				return {
-					identifier: this.identifier as unknown as SourceNodeIdentifier_string, // treat as root node if its before the root node
+					// treat as root node if its before the root node
+					identifier: this.identifier as unknown as SourceNodeIdentifier_string,
 					node: this
 				}
 			}

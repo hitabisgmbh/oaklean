@@ -12,6 +12,7 @@ export function duplicatesExist(code: string, scriptKind: 'TS' | 'TSX' = 'TS') {
 		new UnifiedPath(''),
 		code,
 		scriptKind,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		(filePath, node, identifier: string, loc, duplicateLoc) => {
 			hasDuplicates = true
 		}

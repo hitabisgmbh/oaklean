@@ -37,10 +37,12 @@ export class ExternalResourceHelper {
 	private fileInfoPerScriptID: Map<ScriptID_string, ExternalResourceFileInfo | null>
 
 	// loaded files from the file system
-	private fileInfoPerPath: Map<UnifiedPath_string, ExternalResourceFileInfo | null> // null represents that the file was not found
+	// null represents that the file was not found
+	private fileInfoPerPath: Map<UnifiedPath_string, ExternalResourceFileInfo | null>
 
 	// loaded node modules
-	private nodeModules: Map<UnifiedPath_string, NodeModule | null> // null represents that the node module was not found
+	// null represents that the node module was not found
+	private nodeModules: Map<UnifiedPath_string, NodeModule | null>
 
 	// uncommitted files
 	// null represents that the uncommitted files could not be determined
@@ -405,10 +407,10 @@ export class ExternalResourceHelper {
 		}
 
 		const result = await (new Promise<
-		{
-			source: string,
-			err?: Error
-		}
+			{
+				source: string,
+				err?: Error
+			}
 		>((resolve) => {
 			this._session.post('Debugger.getScriptSource', { scriptId: scriptID }, (err, args) => {
 				if (err) {

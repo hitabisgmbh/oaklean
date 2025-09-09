@@ -61,7 +61,9 @@ export class PermissionHelper {
 			}
 			try {
 				ChildProcess.execSync(`chown ${SUDO_USER} "${path}"`, options)
-			} catch {}
+			} catch {
+				// do nothing
+			}
 		}
 	}
 
@@ -76,7 +78,9 @@ export class PermissionHelper {
 		// }
 		try {
 			ChildProcess.execSync(`chmod ${permissions} "${path}"`, options)
-		} catch { }
+		} catch {
+			// do nothing
+		}
 	}
 
 	static mkdirRecursivelyWithUserPermission(path: UnifiedPath) {
@@ -122,6 +126,7 @@ export class PermissionHelper {
 			if (platform !== 'win32') {
 				resolve(false)
 			}
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			ChildProcess.exec('fsutil dirty query ' + SYSTEM_DRIVE, function (err, stdout, stderr) {
 				if (err) {
 					resolve(false)

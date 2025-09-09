@@ -38,6 +38,8 @@ export class RegistryHelper {
 				}
 			})
 			return result
-		} catch {}
+		} catch {
+			// do nothing
+		}
 	}
 }

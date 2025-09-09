@@ -1,5 +1,3 @@
-import * as fs from 'fs'
-
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 import { NodeModule } from './NodeModule'
@@ -40,7 +38,8 @@ import {
 	PathID_number,
 	IReport,
 	ReportType,
-	ISourceFileMetaData
+	ISourceFileMetaData,
+	IModuleReport
 } from '../types'
 
 
@@ -84,6 +83,7 @@ export class Report extends BaseModel {
 			return Array.from(input.values())
 				.map((value) => ({
 					path: value.path,
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					id: value.pathIndex.id!
 				})) // Pair identifier with id
 				.sort((a, b) => a.path.localeCompare(b.path)) // Sort by path
@@ -103,6 +103,7 @@ export class Report extends BaseModel {
 
 		const new_lang_internal = new ModelMap<PathID_number, SourceFileMetaData>('number')
 		for (const pathID of sortIDsByPath(this.lang_internal)) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const sourceFileMetaData = this.lang_internal.get(pathID)!
 			sourceFileMetaData.normalize(newGlobalIndex)
 			if (sourceFileMetaData.pathIndex.id === undefined) {
@@ -113,6 +114,7 @@ export class Report extends BaseModel {
 		const newModuleIndex = this.moduleIndex.insertToOtherIndex(newGlobalIndex)
 		const new_intern = new ModelMap<PathID_number, SourceFileMetaData>('number')
 		for (const pathID of sortIDsByPath(this.intern)) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const sourceFileMetaData = this.intern.get(pathID)!
 			sourceFileMetaData.normalize(newGlobalIndex)
 			if (sourceFileMetaData.pathIndex.id === undefined) {
@@ -122,6 +124,7 @@ export class Report extends BaseModel {
 		}
 		const new_extern = new ModelMap<ModuleID_number, ModuleReport>('number')
 		for (const moduleID of sortIDsByModuleIdentifier(this.extern)) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const moduleReport = this.extern.get(moduleID)!
 			moduleReport.normalize(newGlobalIndex)
 			new_extern.set(moduleReport.moduleIndex.id, moduleReport)
@@ -709,6 +712,7 @@ export class Report extends BaseModel {
 		// consume internMapping from the buffer and ignore it (since it is not used anymore)
 		if (VersionHelper.compare(reportVersion, '0.1.4') <= 0) {
 			const {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				instance: internMapping,
 				remainingBuffer: newRemainingBuffer4
 			} = ModelMap.consumeFromBuffer<PathID_number, PathID_number>(
@@ -778,7 +782,3 @@ export class Report extends BaseModel {
 import { ModuleReport } from './ModuleReport'
 // eslint-disable-next-line import/order
 import { ProjectReport } from './ProjectReport'
-// eslint-disable-next-line import/order
-import {
-	IModuleReport
-} from '../types'

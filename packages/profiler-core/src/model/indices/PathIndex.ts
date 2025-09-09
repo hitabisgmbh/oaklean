@@ -191,6 +191,7 @@ export class PathIndex extends BaseModel {
 		let currentSourceNodeMap: ModelMap<
 		SourceNodeIdentifierPart_string,
 		SourceNodeIndex<SourceNodeIndexType>
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		> = this.file!
 
 		const sourceNodeIdentifierParts = SourceNodeIdentifierHelper.split(sourceNodeIdentifier)

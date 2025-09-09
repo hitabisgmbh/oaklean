@@ -297,6 +297,7 @@ export class ProjectReport extends Report {
 
 	static consumeFromBuffer(
 		buffer: Buffer,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		config?: ProfilerConfig
 	) {
 		let remainingBuffer = buffer
@@ -309,7 +310,7 @@ export class ProjectReport extends Report {
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const {
-			instance: reportVersion,
+			instance: reportVersion, // eslint-disable-line @typescript-eslint/no-unused-vars
 			remainingBuffer: newRemainingBuffer0
 		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer0

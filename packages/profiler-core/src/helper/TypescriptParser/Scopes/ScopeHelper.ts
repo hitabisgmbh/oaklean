@@ -13,6 +13,7 @@ import {
 
 type ParseIntermediateFunction = (
 	node: ts.Node,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	parent: any,
 	sourceFile: ts.SourceFile,
 	traverseNodeInfo: TraverseNodeInfo
