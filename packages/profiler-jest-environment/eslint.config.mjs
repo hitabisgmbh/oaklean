@@ -11,5 +11,6 @@ export default defineConfig(
 				project: ['./tsconfig.json']
 			}
 		}
-	}
+	},
+	globalIgnores(['*.js'])
 )

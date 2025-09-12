@@ -667,7 +667,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				this.sensorValues.internRAMEnergyConsumption
 			)
 		) {
-			/* eslint-disable max-len */
+			 
 			throw new Error(
 				`SourceNodeMetaData.validate: Assertion error (SourceNode validation) ${path}:${identifier} \n` +
 				JSON.stringify(this, null, 2) + '\n' +
@@ -700,7 +700,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 					}
 				}, null, 2)
 			)
-			/* eslint-enable max-len */
+			 
 		}
 	}
 
