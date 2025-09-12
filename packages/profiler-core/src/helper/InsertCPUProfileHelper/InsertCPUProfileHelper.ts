@@ -670,6 +670,9 @@ export class InsertCPUProfileHelper {
 								// remove aggregated time from the accounted source node reference
 								parentCallIdentifier.sourceNode?.sensorValues.addToExtern(compensation, -1)		
 								break
+							case 'empty':
+								// nothing
+								break
 						}
 					}
 				}

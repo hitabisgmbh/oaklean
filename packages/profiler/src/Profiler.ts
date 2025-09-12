@@ -19,7 +19,8 @@ import {
 	ExternalResourceHelper,
 	RegistryHelper,
 	ExportAssetHelper,
-	CPUProfileHelper
+	CPUProfileHelper,
+	SensorInterfaceType
 } from '@oaklean/profiler-core'
 
 import { V8Profiler } from './model/V8Profiler'
@@ -69,7 +70,7 @@ export class Profiler {
 	static getSensorInterface(config: ProfilerConfig) {
 		const sensorInterfaceType = config.getSensorInterfaceType()
 		switch (sensorInterfaceType) {
-			case 'powermetrics': {
+			case SensorInterfaceType.powermetrics: {
 				const options = config.getSensorInterfaceOptions()
 				if (options === undefined) {
 					throw new Error('Profiler.getSensorInterface: sensorInterfaceOptions are not defined')
@@ -77,7 +78,7 @@ export class Profiler {
 				options.outputFilePath = config.getOutDir().join(options.outputFilePath).toPlatformString()
 				return new PowerMetricsSensorInterface(options)
 			}
-			case 'perf': {
+			case SensorInterfaceType.perf: {
 				const options = config.getSensorInterfaceOptions()
 				if (options === undefined) {
 					throw new Error('Profiler.getSensorInterface: sensorInterfaceOptions are not defined')
@@ -85,7 +86,7 @@ export class Profiler {
 				options.outputFilePath = config.getOutDir().join(options.outputFilePath).toPlatformString()
 				return new PerfSensorInterface(options)
 			}
-			case 'windows': {
+			case SensorInterfaceType.windows: {
 				const options = config.getSensorInterfaceOptions()
 				if (options === undefined) {
 					throw new Error('Profiler.getSensorInterface: sensorInterfaceOptions are not defined')
@@ -93,6 +94,8 @@ export class Profiler {
 				options.outputFilePath = config.getOutDir().join(options.outputFilePath).toPlatformString()
 				return new WindowsSensorInterface(options)
 			}
+			case undefined:
+				return undefined
 		}
 	}
 

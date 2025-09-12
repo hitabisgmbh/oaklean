@@ -76,7 +76,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 	toBuffer(): Buffer {
 		const buffers = [BufferHelper.UIntToBuffer(this._map.size)]
 		for (const [key, value] of this._map) {
-			switch (typeof key) {
+			switch ((typeof key) as TKEY) {
 				case 'string':
 					buffers.push(BufferHelper.String2LToBuffer(key as string))
 					break
@@ -86,7 +86,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 				default:
 					throw new Error('ModelMap.toBuffer: unexpected type of key')
 			}
-			switch (typeof value) {
+			switch ((typeof value) as TVALUE) {
 				case 'string':
 					buffers.push(
 						BufferHelper.UInt8ToBuffer(ModelMapValueType.string),
@@ -102,7 +102,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 				default:
 					buffers.push(
 						BufferHelper.UInt8ToBuffer(ModelMapValueType.object),
-						value.toBuffer()
+						(value as BaseModel).toBuffer()
 					)
 			}
 		}

@@ -486,6 +486,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 							.globalIndex
 							.getModuleIndex('get', moduleIdentifier as NodeModuleIdentifier_string)
 						break
+					case SourceFileMetaDataTreeType.Directory:
+					case SourceFileMetaDataTreeType.File:
 					default:
 						throw new Error('SourceFileMetaDataTree.fromJSON: unexpected subTree type')
 				}
