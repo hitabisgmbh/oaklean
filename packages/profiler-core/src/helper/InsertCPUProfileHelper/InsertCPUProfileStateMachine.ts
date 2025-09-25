@@ -21,7 +21,11 @@ import { ExternalResourceHelper } from '../ExternalResourceHelper'
 import { TypescriptHelper } from '../TypescriptParser'
 
 type StateProps = {
-	type: 'lang_internal' | 'wasm' | 'intern'
+	type: 'intern'
+	headless: false
+	callIdentifier: CallIdentifier
+} | {
+	type: 'lang_internal'
 	headless: boolean
 	callIdentifier: CallIdentifier
 }
@@ -34,7 +38,7 @@ type ModuleState = StateProps & {
 	scope: 'module'
 }
 
-type State = ProjectState | ModuleState
+export type State = ProjectState | ModuleState
 
 type TransitionOptions = {
 	createLink: boolean
@@ -46,13 +50,10 @@ type SourceLocationTransitionOptions = {
 	presentInOriginalSourceCode: boolean
 }
 
-type ProjectTransitionOptions = TransitionOptions & SourceLocationTransitionOptions & {
-	getsExecutedFromExtern: boolean
-}
+type ProjectTransitionOptions = TransitionOptions & SourceLocationTransitionOptions
 
 type ModuleTransitionOptions = TransitionOptions & SourceLocationTransitionOptions & {
 	nodeModule: NodeModule
-	relativeNodeModulePath: UnifiedPath
 }
 
 type ToProjectTransition = {
@@ -65,20 +66,14 @@ type ToLangInternalTransition = {
 	options: TransitionOptions
 }
 
-type ToLangWasmTransition = {
-	transition: 'toWasm'
-	options: TransitionOptions
-}
-
 type ToModuleTransition = { 
 	transition: 'toModule'
 	options: ModuleTransitionOptions
 }
 
-type Transitions = 
+export type Transition = 
 	ToProjectTransition |
 	ToLangInternalTransition |
-	ToLangWasmTransition |
 	ToModuleTransition | {
 		transition: 'stayInState'
 	}
@@ -107,25 +102,21 @@ type AwaiterStack = {
  * 
  */
 export class InsertCPUProfileStateMachine {
-	resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper
+	rootDir: UnifiedPath
+	projectReport: ProjectReport
+
 	callRelationTracker: CallRelationTracker
 	awaiterStack: AwaiterStack
-	currentState: State
 
 	constructor(
 		rootDir: UnifiedPath,
 		reportToApply: ProjectReport,
-		externalResourceHelper: ExternalResourceHelper,
-		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper
 	) {
-		this.resolveFunctionIdentifierHelper = new ResolveFunctionIdentifierHelper(
-			rootDir,
-			externalResourceHelper
-		)
-		this.resolveFunctionIdentifierHelper = resolveFunctionIdentifierHelper
+		this.rootDir = rootDir
+		this.projectReport = reportToApply
 		this.callRelationTracker = new CallRelationTracker()
 		this.awaiterStack = []
-		this.currentState = {
+	}
 			scope: 'project',
 			type: 'lang_internal',
 			headless: true,
@@ -144,10 +135,11 @@ export class InsertCPUProfileStateMachine {
 	 * @param cpuNode the new cpu node (that should be inserted)
 	 * @returns the transition to the next state
 	 */
-	async getTransition(
+	static async getTransition(
 		currentState: State,
-		cpuNode: CPUNode
-	): Promise<Transitions> {
+		cpuNode: CPUNode,
+		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper
+	): Promise<Transition> {
 		if (cpuNode.sourceLocation.isLangInternal) {
 			return {
 				transition: 'toLangInternal' as const,
@@ -158,11 +150,20 @@ export class InsertCPUProfileStateMachine {
 			}
 		}
 		if (cpuNode.sourceLocation.isWASM) {
+			const wasmPath = new UnifiedPath(cpuNode.sourceLocation.rawUrl.substring(7)) // remove the 'wasm://' prefix
+
 			return {
-				transition: 'toWasm' as const,
+				transition: 'toModule' as const,
 				options: {
 					createLink: currentState.type !== 'lang_internal',
-					headless: false
+					headless: false,
+					nodeModule: WASM_NODE_MODULE,
+					sourceNodeLocation: {
+						relativeFilePath: wasmPath,
+						functionIdentifier:
+							cpuNode.sourceLocation.rawFunctionName as SourceNodeIdentifier_string
+					},
+					presentInOriginalSourceCode: false
 				}
 			}
 		}
@@ -172,7 +173,7 @@ export class InsertCPUProfileStateMachine {
 				functionIdentifierPresentInOriginalFile,
 				nodeModule,
 				relativeNodeModulePath
-			} = await this.resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
+			} = await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
 				cpuNode.sourceLocation
 			)
 
@@ -184,7 +185,6 @@ export class InsertCPUProfileStateMachine {
 						createLink: currentState.scope === 'project' && currentState.type === 'intern',
 						headless: false,
 						sourceNodeLocation: sourceNodeLocation,
-						getsExecutedFromExtern: currentState.scope === 'module' || currentState.type === 'wasm',
 						presentInOriginalSourceCode: functionIdentifierPresentInOriginalFile
 					}
 				}
@@ -196,7 +196,6 @@ export class InsertCPUProfileStateMachine {
 						createLink: currentState.type !== 'lang_internal',
 						headless: false,
 						nodeModule: nodeModule,
-						relativeNodeModulePath: relativeNodeModulePath,
 						sourceNodeLocation: sourceNodeLocation,
 						presentInOriginalSourceCode: functionIdentifierPresentInOriginalFile
 					}
@@ -423,7 +422,7 @@ export class InsertCPUProfileStateMachine {
 		return {
 			scope: transition.transition === 'toProject' ? 'project' : 'module',
 			type: 'intern',
-			headless: transition.options.headless,
+			headless: false,
 			callIdentifier: currentCallIdentifier
 		}
 	}
@@ -500,7 +499,7 @@ export class InsertCPUProfileStateMachine {
 		return {
 			scope: 'module',
 			type: 'intern',
-			headless: transition.options.headless,
+			headless: false,
 			callIdentifier: currentCallIdentifier
 		}
 	}
@@ -524,7 +523,7 @@ export class InsertCPUProfileStateMachine {
 	async accountOwnCodeGetsExecutedByExternal(
 		originalReport: ProjectReport,
 		cpuNode: CPUNode,
-		transition: ToModuleTransition,
+		transition: ToProjectTransition,
 	): Promise<State> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
@@ -558,7 +557,7 @@ export class InsertCPUProfileStateMachine {
 		return {
 			scope: 'project',
 			type: 'intern',
-			headless: transition.options.headless,
+			headless: false,
 			callIdentifier: currentCallIdentifier
 		}
 	}
