@@ -287,6 +287,7 @@ export default class CPUProfileCommands {
 					(resolvedFunctionName !== '' ? cli.green(` ${resolvedFunctionName}`) : '') +
 					cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`) +
 					`[CM_ID: ${cpuNode.index}]`,
+					`[LOC_ID: ${cpuNode.sourceLocation.index}]`,
 					`[SCRIPT_ID: ${cpuNode.sourceLocation.scriptID} | ${cpuNode.sourceLocation.isLangInternal}]`,
 					`- ${cpuNode.cpuTime.selfCPUTime} µs | ${cpuNode.cpuTime.aggregatedCPUTime} µs`
 				)
