@@ -1,24 +1,34 @@
 import { CallIdentifier } from './CallIdentifier'
 import { CallRelationTracker } from './CallRelationTracker'
 
-import { CPUNode } from '../CPUProfile'
+import { CPUModel } from '../CPUProfile/CPUModel'
+import { CPUNode } from '../CPUProfile/CPUNode'
 import { ResolveFunctionIdentifierHelper } from '../ResolveFunctionIdentifierHelper'
 import { GlobalIdentifier, UnifiedPath } from '../../system'
 import { ProjectReport } from '../../model/ProjectReport'
-import { NodeModule } from '../../model/NodeModule'
+import { ModuleReport } from '../../model/ModuleReport'
+import { NodeModule, WASM_NODE_MODULE } from '../../model/NodeModule'
 import { SourceNodeMetaData } from '../../model/SourceNodeMetaData'
+import { MetricsDataCollection } from '../../model/interfaces/MetricsDataCollection'
+import { ICpuProfileRaw } from '../../../lib/vscode-js-profile-core/src/cpu/types'
 // Types
 import {
 	ISensorValues,
 	LangInternalPath_string,
 	LangInternalSourceNodeIdentifier_string,
+	NanoSeconds_BigInt,
 	MicroSeconds_number,
 	MilliJoule_number,
 	ResolvedSourceNodeLocation,
-	SourceNodeMetaDataType
+	SourceNodeMetaDataType,
+	SourceNodeIdentifier_string
 } from '../../types'
-import { ExternalResourceHelper } from '../ExternalResourceHelper'
 import { TypescriptHelper } from '../TypescriptParser'
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function assertUnreachable(x: never): never {
+	throw new Error('Didn\'t expect to get here')
+}
 
 type StateProps = {
 	type: 'intern'
@@ -117,14 +127,186 @@ export class InsertCPUProfileStateMachine {
 		this.callRelationTracker = new CallRelationTracker()
 		this.awaiterStack = []
 	}
+
+	async insertCPUProfile(
+		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper,
+		profile: ICpuProfileRaw,
+		metricsDataCollection?: MetricsDataCollection,
+	) {
+		if (this.projectReport.executionDetails.highResolutionBeginTime === undefined) {
+			throw new Error('InsertCPUProfileHelper.insertCPUProfile: executionDetails.highResolutionBeginTime is undefined')
+		}
+		const cpuModel = new CPUModel(
+			this.rootDir,
+			profile,
+			BigInt(this.projectReport.executionDetails.highResolutionBeginTime) as NanoSeconds_BigInt
+		)
+
+		if (metricsDataCollection && metricsDataCollection.items.length > 0) {
+			// fill the cpu model with energy values
+			cpuModel.energyValuesPerNode = cpuModel.energyValuesPerNodeByMetricsData(metricsDataCollection)
+		}
+
+		type StackFrame = {
+			state: State,
+			node: CPUNode,
+			depth: number,
+			result?: {
+				transition: Transition,
+				nextState: State
+			}
+		}
+
+		const beginState: State = {
 			scope: 'project',
 			type: 'lang_internal',
 			headless: true,
 			callIdentifier: new CallIdentifier(
-				reportToApply,
+				this.projectReport,
 				null
 			)
 		}
+
+		const stack: StackFrame[] = [
+			{
+				state: beginState,
+				node: cpuModel.getNode(0),
+				depth: 0
+			}]
+
+		while (stack.length > 0) {
+			const currentStackFrame = stack[stack.length - 1]
+
+			if (currentStackFrame.result) {
+				stack.pop()
+				if (currentStackFrame.result.transition.transition === 'stayInState') {
+					continue
+				}
+				
+				const parentCallIdentifier = currentStackFrame.state.callIdentifier
+				const accountedCallIdentifier = currentStackFrame.result.nextState.callIdentifier
+
+				if (currentStackFrame.result.transition.options.createLink) {
+					// remove the last child call from the current state
+					if (!this.callRelationTracker.removeLastChildRecord(parentCallIdentifier)) {
+						throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present')
+					}
+				}
+				if (accountedCallIdentifier.firstTimeVisited) {
+					this.callRelationTracker.removeCallRecord(accountedCallIdentifier)
+				}
+				if (accountedCallIdentifier.isAwaiterSourceNode) {
+					this.awaiterStack.pop()
+				}
+				continue
+			}
+
+			// determine the transition
+			const transition = await InsertCPUProfileStateMachine.getTransition(
+				currentStackFrame.state,
+				currentStackFrame.node,
+				resolveFunctionIdentifierHelper
+			)
+
+			let nextState: State
+			// apply the transition
+			switch (transition.transition) {
+				case 'toLangInternal':
+					nextState = await this.accountToLangInternal(
+						currentStackFrame.state,
+						currentStackFrame.node,
+						transition
+					)
+					break
+				case 'toProject': {
+					const scope = currentStackFrame.state.scope
+					switch (scope) {
+						case 'project':
+							// transition stays in project
+							nextState = await this.accountToIntern(
+								currentStackFrame.state,
+								currentStackFrame.node,
+								transition
+							)
+							break
+						case 'module':
+							// transition from module to project
+							nextState = await this.accountOwnCodeGetsExecutedByExternal(
+								this.projectReport,
+								currentStackFrame.node,
+								transition
+							)
+							break
+					}
+				}
+				break
+				case 'toModule': {
+					const scope = currentStackFrame.state.scope
+					switch (scope) {
+						case 'project':
+							// transition from project to module
+							nextState = await this.accountToExtern(
+								currentStackFrame.state,
+								currentStackFrame.node,
+								transition
+							)
+							break
+						case 'module':
+							if (
+								currentStackFrame.state.callIdentifier.report instanceof ModuleReport &&
+								currentStackFrame.state.callIdentifier.report.nodeModule.identifier ===
+									transition.options.nodeModule.identifier
+							) {
+								// transition stays in the same module
+								nextState = await this.accountToIntern(
+									currentStackFrame.state,
+									currentStackFrame.node,
+									transition
+								)
+							} else {
+								// transition from module to different module
+								nextState = await this.accountToExtern(
+									currentStackFrame.state,
+									currentStackFrame.node,
+									transition
+								)
+							}
+							break
+					}
+				}
+				break
+				case 'stayInState':
+					// do nothing, stay in the current state
+					nextState = currentStackFrame.state
+					break
+				default:
+					assertUnreachable(transition)
+			}
+
+			currentStackFrame.result = {
+				transition,
+				nextState
+			}
+
+			// add children to stack
+			for (const child of currentStackFrame.node.reversedChildren()) {
+				stack.push({
+					state: nextState,
+					node: child,
+					depth: currentStackFrame.depth + 1
+				})
+			}
+		}
+	}
+
+	stringifyTransition(
+		currentState: State,
+		nextState: State,
+		cpuNode: CPUNode,
+		transition: Transition
+	): string {
+		// eslint-disable-next-line max-len
+		return `[${currentState.callIdentifier.toString()}] (${currentState.scope}:${currentState.type}:${cpuNode.sourceLocation.index}) -- ${transition.transition} --> [${nextState.callIdentifier.toString()}]`
 	}
 
 	/**
@@ -241,23 +423,25 @@ export class InsertCPUProfileStateMachine {
 	 * @returns the new state
 	 */
 	async accountToLangInternal(
+		currentState: State,
 		cpuNode: CPUNode,
 		transition: ToLangInternalTransition
 	): Promise<State> {
 		const sensorValues = cpuNode.sensorValues
 
-		const accountedSourceNode = this.currentState.callIdentifier.report.addToLangInternal(
+		const accountedSourceNode = currentState.callIdentifier.report.addToLangInternal(
 			cpuNode.sourceLocation.rawUrl as LangInternalPath_string,
 			cpuNode.sourceLocation.sourceNodeIdentifier as LangInternalSourceNodeIdentifier_string
 		)
+
 		const currentCallIdentifier = new CallIdentifier(
-			this.currentState.callIdentifier.report,
+			currentState.callIdentifier.report,
 			accountedSourceNode
 		)
 
 		if (transition.options.headless) {
 			// if no extern or intern calls were tracked yet, add the time to the total of headless cpu time
-			this.currentState.callIdentifier.report.lang_internalHeadlessSensorValues.addToSelf(sensorValues)
+			currentState.callIdentifier.report.lang_internalHeadlessSensorValues.addToSelf(sensorValues)
 		}
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
@@ -276,15 +460,15 @@ export class InsertCPUProfileStateMachine {
 
 		let currentSourceNodeReference: SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference> 
 		if (transition.options.createLink) {
-			if (this.currentState.callIdentifier.sourceNode === null) {
+			if (currentState.callIdentifier.sourceNode === null) {
 				throw new Error('InsertCPUProfileStateMachine.accountToLangInternal: Current state has no source node assigned')
 			}
 			const alreadyLinked = this.callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
-				this.currentState.callIdentifier
+				currentState.callIdentifier
 			)
 			
-			currentSourceNodeReference = this.currentState.callIdentifier.sourceNode.addSensorValuesToLangInternal(
+			currentSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToLangInternal(
 				accountedSourceNode.globalIdentifier(),
 				this.sensorValuesForVisitedNode(
 					sensorValues,
@@ -295,7 +479,7 @@ export class InsertCPUProfileStateMachine {
 		}
 
 		return {
-			scope: this.currentState.scope,
+			scope: currentState.scope,
 			type: 'lang_internal',
 			headless: transition.options.headless,
 			callIdentifier: currentCallIdentifier
@@ -315,6 +499,7 @@ export class InsertCPUProfileStateMachine {
 	 * @returns the new state
 	 */
 	async accountToIntern(
+		currentState: State,
 		cpuNode: CPUNode,
 		transition: ToProjectTransition | ToModuleTransition,
 	): Promise<State> {
@@ -325,12 +510,13 @@ export class InsertCPUProfileStateMachine {
 		SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> | undefined = undefined
 
 		// intern
-		const accountedSourceNode = this.currentState.callIdentifier.report.addToIntern(
+		const accountedSourceNode = currentState.callIdentifier.report.addToIntern(
 			sourceNodeLocation.relativeFilePath.toString(),
 			sourceNodeLocation.functionIdentifier
 		)
+		accountedSourceNode.presentInOriginalSourceCode = transition.options.presentInOriginalSourceCode
 		const currentCallIdentifier = new CallIdentifier(
-			this.currentState.callIdentifier.report,
+			currentState.callIdentifier.report,
 			accountedSourceNode
 		)
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
@@ -354,8 +540,8 @@ export class InsertCPUProfileStateMachine {
 			// this could happen if the was called from node internal functions for example
 			this.awaiterStack.push({
 				awaiter: accountedSourceNode,
-				awaiterParent: this.currentState.callIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode ?
-					(this.currentState.callIdentifier.sourceNode as
+				awaiterParent: currentState.callIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode ?
+					(currentState.callIdentifier.sourceNode as
 						SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>) :
 					undefined
 			})
@@ -378,7 +564,7 @@ export class InsertCPUProfileStateMachine {
 			if (
 				this.callRelationTracker.isCallRecorded(
 					new CallIdentifier(
-						this.currentState.callIdentifier.report,
+						currentState.callIdentifier.report,
 						lastAwaiterNode.awaiter
 					)) && lastAwaiterNode.awaiterParent === accountedSourceNode
 			) {
@@ -399,16 +585,16 @@ export class InsertCPUProfileStateMachine {
 		if (transition.options.createLink) {
 			const alreadyLinked = this.callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
-				this.currentState.callIdentifier
+				currentState.callIdentifier
 			)
 
-			if (this.currentState.callIdentifier.sourceNode === null) {
+			if (currentState.callIdentifier.sourceNode === null) {
 				throw new Error('InsertCPUProfileStateMachine.accountToIntern: Current state has no source node assigned')
 			}
 
-			if (this.currentState.callIdentifier.sourceNode !== accountedSourceNode) {
+			if (currentState.callIdentifier.sourceNode !== accountedSourceNode) {
 				// only create a reference if its not a recursive call
-				currentSourceNodeReference = this.currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
+				currentSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
 					accountedSourceNode.globalIdentifier(),
 					this.sensorValuesForVisitedNode(
 						sensorValues,
@@ -440,6 +626,7 @@ export class InsertCPUProfileStateMachine {
 	 * @returns the new state
 	 */
 	async accountToExtern(
+		currentState: State,
 		cpuNode: CPUNode,
 		transition: ToModuleTransition,
 	): Promise<State> {
@@ -456,17 +643,18 @@ export class InsertCPUProfileStateMachine {
 		)
 
 		// extern
-		const { report, sourceNodeMetaData } = this.currentState.callIdentifier.report.addToExtern(
+		const { report, sourceNodeMetaData: accountedSourceNode } = currentState.callIdentifier.report.addToExtern(
 			sourceNodeLocation.relativeFilePath,
 			nodeModule,
 			sourceNodeLocation.functionIdentifier
 		)
+		accountedSourceNode.presentInOriginalSourceCode = transition.options.presentInOriginalSourceCode
 		const currentCallIdentifier = new CallIdentifier(
 			report,
-			sourceNodeMetaData
+			accountedSourceNode
 		)
-		sourceNodeMetaData.sensorValues.profilerHits += cpuNode.profilerHits
-		sourceNodeMetaData.addToSensorValues(
+		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
+		accountedSourceNode.addToSensorValues(
 			this.sensorValuesForVisitedNode(
 				sensorValues,
 				this.callRelationTracker.isCallRecorded(currentCallIdentifier)
@@ -478,15 +666,15 @@ export class InsertCPUProfileStateMachine {
 			'extern')
 
 		if (transition.options.createLink) {
-			if (this.currentState.callIdentifier.sourceNode === null) {
+			if (currentState.callIdentifier.sourceNode === null) {
 				throw new Error('InsertCPUProfileStateMachine.accountToIntern: Current state has no source node assigned')
 			}
 			const alreadyLinked = this.callRelationTracker.linkCallToParent(
 				currentCallIdentifier,
-				this.currentState.callIdentifier
+				currentState.callIdentifier
 			)
 
-			currentSourceNodeReference = this.currentState.callIdentifier.sourceNode.addSensorValuesToExtern(
+			currentSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToExtern(
 				globalIdentifier,
 				this.sensorValuesForVisitedNode(
 					sensorValues,
@@ -532,6 +720,7 @@ export class InsertCPUProfileStateMachine {
 			sourceNodeLocation.relativeFilePath.toString(),
 			sourceNodeLocation.functionIdentifier,
 		)
+		accountedSourceNode.presentInOriginalSourceCode = transition.options.presentInOriginalSourceCode
 		const currentCallIdentifier = new CallIdentifier(
 			originalReport,
 			accountedSourceNode
