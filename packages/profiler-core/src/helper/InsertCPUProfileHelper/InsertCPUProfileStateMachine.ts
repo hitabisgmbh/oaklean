@@ -314,15 +314,15 @@ export class InsertCPUProfileStateMachine {
 	 * 
 	 * @param currentState the current state of the state machine
 	 * 
-	 * @param cpuNode the new cpu node (that should be inserted)
+	 * @param sourceLocation the source location of the incoming cpu node
 	 * @returns the transition to the next state
 	 */
 	static async getTransition(
 		currentState: State,
-		cpuNode: CPUNode,
+		sourceLocation: CPUProfileSourceLocation,
 		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper
 	): Promise<Transition> {
-		if (cpuNode.sourceLocation.isLangInternal) {
+		if (sourceLocation.isLangInternal) {
 			return {
 				transition: 'toLangInternal' as const,
 				options: {
@@ -331,8 +331,8 @@ export class InsertCPUProfileStateMachine {
 				}
 			}
 		}
-		if (cpuNode.sourceLocation.isWASM) {
-			const wasmPath = new UnifiedPath(cpuNode.sourceLocation.rawUrl.substring(7)) // remove the 'wasm://' prefix
+		if (sourceLocation.isWASM) {
+			const wasmPath = new UnifiedPath(sourceLocation.rawUrl.substring(7)) // remove the 'wasm://' prefix
 
 			return {
 				transition: 'toModule' as const,
@@ -343,20 +343,20 @@ export class InsertCPUProfileStateMachine {
 					sourceNodeLocation: {
 						relativeFilePath: wasmPath,
 						functionIdentifier:
-							cpuNode.sourceLocation.rawFunctionName as SourceNodeIdentifier_string
+							sourceLocation.rawFunctionName as SourceNodeIdentifier_string
 					},
 					presentInOriginalSourceCode: false
 				}
 			}
 		}
-		if (!cpuNode.sourceLocation.isEmpty) {
+		if (!sourceLocation.isEmpty) {
 			const {
 				sourceNodeLocation,
 				functionIdentifierPresentInOriginalFile,
 				nodeModule,
 				relativeNodeModulePath
 			} = await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
-				cpuNode.sourceLocation
+				sourceLocation
 			)
 
 			if (!(relativeNodeModulePath && nodeModule)) {

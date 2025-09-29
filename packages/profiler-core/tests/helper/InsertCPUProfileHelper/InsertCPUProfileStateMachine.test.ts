@@ -13,8 +13,9 @@ import { NodeModule } from '../../../src/model/NodeModule'
 // Types
 import { CPUProfileSourceLocationType, SourceNodeIdentifier_string } from '../../../src/types'
 
-type StateIdentifier<T extends State = State> =
-  T extends State ? `${T['scope']}:${T['type']}:${T['headless']}` : never
+type StateIdentifier<T extends State = State> = T extends State
+	? `${T['scope']}:${T['type']}:${T['headless']}`
+	: never
 
 const STATES: Record<StateIdentifier<State>, State> = {
 	'project:lang_internal:false': {
@@ -61,25 +62,22 @@ const STATES: Record<StateIdentifier<State>, State> = {
 	}
 }
 
-const CPU_NODES: Record<CPUProfileSourceLocationType, CPUNode[]> = {
+const SOURCE_LOCATIONS: Record<CPUProfileSourceLocationType, CPUProfileSourceLocation[]> = {
 	[CPUProfileSourceLocationType.LANG_INTERNAL]: [
-		{
-			sourceLocation: new CPUProfileSourceLocation(
-				undefined as any,
-				undefined as any,
-				{
-					url: '',
-					functionName: '',
-					scriptId: '0',
-					lineNumber: 0,
-					columnNumber: 0
-				}
-			)
-		} as CPUNode
+		new CPUProfileSourceLocation(
+			undefined as any,
+			undefined as any,
+			{
+				url: '',
+				functionName: '',
+				scriptId: '0',
+				lineNumber: 0,
+				columnNumber: 0
+			}
+		)
 	],
 	[CPUProfileSourceLocationType.WASM]: [
-		{
-			sourceLocation: new CPUProfileSourceLocation(
+		new CPUProfileSourceLocation(
 				undefined as any,
 				undefined as any,
 				{
@@ -90,89 +88,80 @@ const CPU_NODES: Record<CPUProfileSourceLocationType, CPUNode[]> = {
 					columnNumber: 0
 				}
 			)
-		} as CPUNode
 	],
 	[CPUProfileSourceLocationType.WEBPACK]: [
-		{
-			sourceLocation: new CPUProfileSourceLocation(
-				undefined as any,
-				undefined as any,
-				{
-					url: 'webpack://./src/index.js',
-					functionName: 'myFunction',
-					scriptId: '1',
-					lineNumber: 0,
-					columnNumber: 0
-				}
-			)
-		} as CPUNode,
-		{
-			sourceLocation: new CPUProfileSourceLocation(
-				undefined as any,
-				undefined as any,
-				{
-					url: 'webpack://./node_modules/module/index.js',
-					functionName: 'moduleFunction',
-					scriptId: '1',
-					lineNumber: 0,
-					columnNumber: 0
-				}
-			)
-		} as CPUNode
+		new CPUProfileSourceLocation(
+			undefined as any,
+			undefined as any,
+			{
+				url: 'webpack://./src/index.js',
+				functionName: 'myFunction',
+				scriptId: '1',
+				lineNumber: 0,
+				columnNumber: 0
+			}
+		),
+		new CPUProfileSourceLocation(
+			undefined as any,
+			undefined as any,
+			{
+				url: 'webpack://./node_modules/module/index.js',
+				functionName: 'moduleFunction',
+				scriptId: '1',
+				lineNumber: 0,
+				columnNumber: 0
+			}
+		)
 	],
 	[CPUProfileSourceLocationType.DEFAULT]: [
-		{
-			sourceLocation: new CPUProfileSourceLocation(
-				undefined as any,
-				undefined as any,
-				{
-					url: 'file:///Users/user/project/src/index.js',
-					functionName: 'myFunction',
-					scriptId: '1',
-					lineNumber: 0,
-					columnNumber: 0
-				}
-			)
-		} as CPUNode,
-		{
-			sourceLocation: new CPUProfileSourceLocation(
-				undefined as any,
-				undefined as any,
-				{
-					url: 'file:///Users/user/project/node_modules/module/index.js',
-					functionName: 'moduleFunction',
-					scriptId: '1',
-					lineNumber: 0,
-					columnNumber: 0
-				}
-			)
-		} as CPUNode
+		new CPUProfileSourceLocation(
+			undefined as any,
+			undefined as any,
+			{
+				url: 'file:///Users/user/project/src/index.js',
+				functionName: 'myFunction',
+				scriptId: '1',
+				lineNumber: 0,
+				columnNumber: 0
+			}
+		),
+		new CPUProfileSourceLocation(
+			undefined as any,
+			undefined as any,
+			{
+				url: 'file:///Users/user/project/node_modules/module/index.js',
+				functionName: 'moduleFunction',
+				scriptId: '1',
+				lineNumber: 0,
+				columnNumber: 0
+			}
+		)
 	],
 	[CPUProfileSourceLocationType.EMPTY]: [
-		{
-			sourceLocation: new CPUProfileSourceLocation(
-				undefined as any,
-				undefined as any,
-				{
-					url: '',
-					functionName: '',
-					scriptId: '1',
-					lineNumber: 0,
-					columnNumber: 0
-				}
-			)
-		} as CPUNode
+		new CPUProfileSourceLocation(
+			undefined as any,
+			undefined as any,
+			{
+				url: '',
+				functionName: '',
+				scriptId: '1',
+				lineNumber: 0,
+				columnNumber: 0
+			}
+		)
 	]
 }
 
+
 const MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER = {
 	resolveFunctionIdentifier(sourceLocation: CPUProfileSourceLocation) {
-		switch(sourceLocation.rawUrl) {
+		switch (sourceLocation.rawUrl) {
 			case 'webpack://./src/index.js':
 				return {
 					sourceNodeLocation: {
 						relativeFilePath: new UnifiedPath('./src/index.js'),
-						functionIdentifier: '{function:myFunction}' as SourceNodeIdentifier_string
+						functionIdentifier:
+							'{function:myFunction}' as SourceNodeIdentifier_string
 					},
 					functionIdentifierPresentInOriginalFile: true
 				}
@@ -180,17 +169,19 @@ const MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER = {
 				return {
 					sourceNodeLocation: {
 						relativeFilePath: new UnifiedPath('./index.js'),
-						functionIdentifier: '{function:moduleFunction}' as SourceNodeIdentifier_string,
+						functionIdentifier:
+							'{function:moduleFunction}' as SourceNodeIdentifier_string
 					},
 					functionIdentifierPresentInOriginalFile: true,
-					nodeModule: new NodeModule('module','1.0.0'),
-					relativeNodeModulePath: new UnifiedPath('./node_modules/module'),
+					nodeModule: new NodeModule('module', '1.0.0'),
+					relativeNodeModulePath: new UnifiedPath('./node_modules/module')
 				}
 			case 'file:///Users/user/project/src/index.js':
 				return {
 					sourceNodeLocation: {
 						relativeFilePath: new UnifiedPath('src/index.js'),
-						functionIdentifier: '{function:myFunction}' as SourceNodeIdentifier_string
+						functionIdentifier:
+							'{function:myFunction}' as SourceNodeIdentifier_string
 					},
 					functionIdentifierPresentInOriginalFile: true
 				}
@@ -198,9 +189,10 @@ const MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER = {
 				return {
 					sourceNodeLocation: {
 						relativeFilePath: new UnifiedPath('index.js'),
-						functionIdentifier: '{function:moduleFunction}' as SourceNodeIdentifier_string
+						functionIdentifier:
+							'{function:moduleFunction}' as SourceNodeIdentifier_string
 					},
-					nodeModule: new NodeModule('module','1.0.0'),
+					nodeModule: new NodeModule('module', '1.0.0'),
 					relativeNodeModulePath: new UnifiedPath('node_modules/module'),
 					functionIdentifierPresentInOriginalFile: true
 				}
@@ -208,14 +200,14 @@ const MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER = {
 	}
 } as unknown as ResolveFunctionIdentifierHelper
 
-describe('InsertCPUProfileStateMachine', () => {
+describe('InsertCPUProfileStateMachine.getTransition', () => {
 	describe('getTransition to LANG_INTERNAL', () => {
-		const cpuNode = CPU_NODES[CPUProfileSourceLocationType.LANG_INTERNAL][0]
+		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.LANG_INTERNAL][0]
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -231,7 +223,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -247,7 +239,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -263,7 +255,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -279,7 +271,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -295,7 +287,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -309,18 +301,19 @@ describe('InsertCPUProfileStateMachine', () => {
 	})
 
 	describe('getTransition to WASM', () => {
-		const cpuNode = CPU_NODES[CPUProfileSourceLocationType.WASM][0]
+		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.WASM][0]
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('wasm/0x12345'),
-			functionIdentifier: 'wasm-function[42]:0x12345' as SourceNodeIdentifier_string
+			functionIdentifier:
+				'wasm-function[42]:0x12345' as SourceNodeIdentifier_string
 		}
 
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
-			
+
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -339,7 +332,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -358,7 +351,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -377,7 +370,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -396,7 +389,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -415,7 +408,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -432,7 +425,7 @@ describe('InsertCPUProfileStateMachine', () => {
 	})
 
 	describe('getTransition to WEB_PACK (PROJECT_SCOPE)', () => {
-		const cpuNode = CPU_NODES[CPUProfileSourceLocationType.WEBPACK][0]
+		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.WEBPACK][0]
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('./src/index.js'),
 			functionIdentifier: '{function:myFunction}' as SourceNodeIdentifier_string
@@ -442,7 +435,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -460,7 +453,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -478,7 +471,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -496,7 +489,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -514,7 +507,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -532,7 +525,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -548,18 +541,19 @@ describe('InsertCPUProfileStateMachine', () => {
 	})
 
 	describe('getTransition to WEB_PACK (MODULE_SCOPE)', () => {
-		const cpuNode = CPU_NODES[CPUProfileSourceLocationType.WEBPACK][1]
+		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.WEBPACK][1]
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('./index.js'),
-			functionIdentifier: '{function:moduleFunction}' as SourceNodeIdentifier_string
+			functionIdentifier:
+				'{function:moduleFunction}' as SourceNodeIdentifier_string
 		}
-		const nodeModule = new NodeModule('module','1.0.0')
+		const nodeModule = new NodeModule('module', '1.0.0')
 
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -578,7 +572,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -597,7 +591,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -616,7 +610,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -635,7 +629,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -654,7 +648,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -671,7 +665,7 @@ describe('InsertCPUProfileStateMachine', () => {
 	})
 
 	describe('getTransition to DEFAULT (PROJECT_SCOPE)', () => {
-		const cpuNode = CPU_NODES[CPUProfileSourceLocationType.DEFAULT][0]
+		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.DEFAULT][0]
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('src/index.js'),
 			functionIdentifier: '{function:myFunction}' as SourceNodeIdentifier_string
@@ -679,10 +673,10 @@ describe('InsertCPUProfileStateMachine', () => {
 
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
-			
+
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -700,7 +694,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -718,7 +712,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -736,7 +730,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -754,7 +748,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -772,7 +766,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -788,19 +782,20 @@ describe('InsertCPUProfileStateMachine', () => {
 	})
 
 	describe('getTransition to DEFAULT (MODULE_SCOPE)', () => {
-		const cpuNode = CPU_NODES[CPUProfileSourceLocationType.DEFAULT][1]
+		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.DEFAULT][1]
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('index.js'),
-			functionIdentifier: '{function:moduleFunction}' as SourceNodeIdentifier_string
+			functionIdentifier:
+				'{function:moduleFunction}' as SourceNodeIdentifier_string
 		}
-		const nodeModule = new NodeModule('module','1.0.0')
+		const nodeModule = new NodeModule('module', '1.0.0')
 
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
-			
+
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -819,7 +814,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -838,7 +833,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -857,7 +852,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -876,7 +871,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -895,7 +890,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -912,13 +907,13 @@ describe('InsertCPUProfileStateMachine', () => {
 	})
 
 	describe('getTransition to EMPTY', () => {
-		const cpuNode = CPU_NODES[CPUProfileSourceLocationType.EMPTY][0]
+		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.EMPTY][0]
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
-			
+
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -930,7 +925,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -942,7 +937,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['project:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -954,7 +949,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -966,7 +961,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:lang_internal:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
@@ -978,7 +973,7 @@ describe('InsertCPUProfileStateMachine', () => {
 			const fromState = STATES['module:intern:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
-				cpuNode,
+				sourceLocation,
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
