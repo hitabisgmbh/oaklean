@@ -31,6 +31,8 @@ export const SOURCE_LOCATIONS_LANG_INTERNAL = {
 	'libA-0': langInternalFunction('libA', 0),
 	'libA-1': langInternalFunction('libA', 1),
 	'libA-2': langInternalFunction('libA', 2),
+	'libB-0': langInternalFunction('libB', 0),
+	'libC-0': langInternalFunction('libC', 0),
 }
 
 export const SOURCE_LOCATIONS_WASM = {
