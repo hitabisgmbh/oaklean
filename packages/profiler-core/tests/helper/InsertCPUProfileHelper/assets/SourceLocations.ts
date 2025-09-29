@@ -7,18 +7,30 @@ import {
 	SourceNodeIdentifier_string
 } from '../../../../src/types'
 
-export const SOURCE_LOCATIONS_LANG_INTERNAL = {
-	'default': new CPUProfileSourceLocation(
+function langInternalFunction(
+	fileName: string,
+	// index of the function in the file (0, 1, 2, ...)
+	index: number
+) {
+	const functionName = `lang_internal_${fileName}_${index}`
+	return new CPUProfileSourceLocation(
 		undefined as any,
 		undefined as any,
 		{
-			url: '',
-			functionName: '',
+			url: fileName,
+			functionName: functionName,
 			scriptId: '0',
 			lineNumber: 0,
 			columnNumber: 0
 		}
 	)
+}
+
+export const SOURCE_LOCATIONS_LANG_INTERNAL = {
+	'default': langInternalFunction('default', 0),
+	'libA-0': langInternalFunction('libA', 0),
+	'libA-1': langInternalFunction('libA', 1),
+	'libA-2': langInternalFunction('libA', 2),
 }
 
 export const SOURCE_LOCATIONS_WASM = {

@@ -1,5 +1,6 @@
 // Test Assets
 import {
+	SOURCE_LOCATIONS_LANG_INTERNAL,
 	SOURCE_LOCATIONS_DEFAULT,
 } from './assets/SourceLocations'
 import {
@@ -18,6 +19,220 @@ import {
 	MicroSeconds_number,
 	SourceNodeMetaDataType
 } from '../../../src/types'
+
+describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE)', () => {
+	let projectReport: ProjectReport
+	let stateMachine: InsertCPUProfileStateMachine
+
+	beforeEach(() => {
+		projectReport = new ProjectReport(
+			EXAMPLE_EXECUTION_DETAILS,
+			ReportKind.measurement
+		)
+		stateMachine = new InsertCPUProfileStateMachine(projectReport)
+	})
+
+	test('LA.0 -> LA.1 -> LA.2', async () => {
+		const cpuNode = mockedCPUModel({
+			location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+			profilerHits: 3,
+			sensorValues: {
+				selfCPUTime: 30 as MicroSeconds_number,
+				aggregatedCPUTime: 60 as MicroSeconds_number
+			},
+			children: [
+				{
+					location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
+					profilerHits: 2,
+					sensorValues: {
+						selfCPUTime: 20 as MicroSeconds_number,
+						aggregatedCPUTime: 30 as MicroSeconds_number
+					},
+					children: [
+						{
+							location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'],
+							profilerHits: 1,
+							sensorValues: {
+								selfCPUTime: 10 as MicroSeconds_number,
+								aggregatedCPUTime: 10 as MicroSeconds_number
+							}
+						}
+					]
+				}
+			]
+		})
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({
+			selfCPUTime: 60
+		})
+		expect(projectReport.extern.toJSON()).toBeUndefined()
+		expect(projectReport.lang_internal.toJSON()).toEqual({
+			'2': {
+				path: 'libA',
+				functions: {
+					'3': {
+						id: 3,
+						type: SourceNodeMetaDataType.LangInternalSourceNode,
+						sensorValues: {
+							profilerHits: 3,
+							selfCPUTime: 30,
+							aggregatedCPUTime: 60
+						}
+					},
+					'4': {
+						id: 4,
+						type: SourceNodeMetaDataType.LangInternalSourceNode,
+						sensorValues: {
+							profilerHits: 2,
+							selfCPUTime: 20,
+							aggregatedCPUTime: 30
+						}
+					},
+					'5': {
+						id: 5,
+						type: SourceNodeMetaDataType.LangInternalSourceNode,
+						sensorValues: {
+							profilerHits: 1,
+							selfCPUTime: 10,
+							aggregatedCPUTime: 10
+						}
+					}
+				}
+			}
+		})
+		expect(projectReport.intern.toJSON()).toBeUndefined()
+	})
+
+	test('LA.0 -> LA.0', async () => {
+		const cpuNode = mockedCPUModel({
+			location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+			profilerHits: 2,
+			sensorValues: {
+				selfCPUTime: 20 as MicroSeconds_number,
+				aggregatedCPUTime: 50 as MicroSeconds_number
+			},
+			children: [
+				{
+					location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+					profilerHits: 3,
+					sensorValues: {
+						selfCPUTime: 30 as MicroSeconds_number,
+						aggregatedCPUTime: 30 as MicroSeconds_number
+					}
+				}
+			]
+		})
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({
+			selfCPUTime: 50
+		})
+		expect(projectReport.extern.toJSON()).toBeUndefined()
+		expect(projectReport.lang_internal.toJSON()).toEqual({
+			'2': {
+				path: 'libA',
+				functions: {
+					'3': {
+						id: 3,
+						type: SourceNodeMetaDataType.LangInternalSourceNode,
+						sensorValues: {
+							profilerHits: 5,
+							selfCPUTime: 50,
+							aggregatedCPUTime: 50
+						}
+					} 
+				}
+			}
+		})
+		expect(projectReport.intern.toJSON()).toBeUndefined()
+	})
+
+	test('LA.0 -> LA.1 -> LA.0 -> LA.1', async () => {
+		const cpuNode = mockedCPUModel({
+			location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+			profilerHits: 4,
+			sensorValues: {
+				selfCPUTime: 40 as MicroSeconds_number,
+				aggregatedCPUTime: 100 as MicroSeconds_number
+			},
+			children: [
+				{
+					location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
+					profilerHits: 3,
+					sensorValues: {
+						selfCPUTime: 30 as MicroSeconds_number,
+						aggregatedCPUTime: 60 as MicroSeconds_number
+					},
+					children: [
+						{
+							location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+							profilerHits: 2,
+							sensorValues: {
+								selfCPUTime: 20 as MicroSeconds_number,
+								aggregatedCPUTime: 30 as MicroSeconds_number
+							},
+							children: [
+								{
+									location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
+									profilerHits: 1,
+									sensorValues: {
+										selfCPUTime: 10 as MicroSeconds_number,
+										aggregatedCPUTime: 10 as MicroSeconds_number
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		})
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({
+			selfCPUTime: 100
+		})
+		expect(projectReport.extern.toJSON()).toBeUndefined()
+		expect(projectReport.lang_internal.toJSON()).toEqual({
+			'2': {
+				path: 'libA',
+				functions: {
+					'3': {
+						id: 3,
+						type: SourceNodeMetaDataType.LangInternalSourceNode,
+						sensorValues: {
+							profilerHits: 6,
+							selfCPUTime: 60,
+							aggregatedCPUTime: 100
+						}
+					},
+					'4': {
+						id: 4,
+						type: SourceNodeMetaDataType.LangInternalSourceNode,
+						sensorValues: {
+							profilerHits: 4,
+							selfCPUTime: 40,
+							aggregatedCPUTime: 60
+						},
+					}
+				}
+			}
+		})
+		expect(projectReport.intern.toJSON()).toBeUndefined()
+	})
+})
 
 describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE)', () => {
 	let projectReport: ProjectReport
@@ -66,7 +281,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 		expect(projectReport.intern.toJSON()).toEqual({
@@ -154,7 +369,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 		expect(projectReport.intern.toJSON()).toEqual({
@@ -220,7 +435,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 
@@ -323,7 +538,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + DIFFERENT
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 		expect(projectReport.intern.toJSON()).toEqual({
@@ -441,7 +656,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + DIFFERENT
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 
@@ -549,7 +764,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
@@ -648,7 +863,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
@@ -725,7 +940,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
@@ -838,7 +1053,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
@@ -967,7 +1182,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues).toEqual({})
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
