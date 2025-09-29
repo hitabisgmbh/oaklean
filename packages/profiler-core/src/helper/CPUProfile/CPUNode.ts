@@ -103,9 +103,19 @@ export class CPUNode {
 		return this._index
 	}
 
+	get childrenCount(): number {
+		return this.cpuNode.children.length
+	}
+
 	*children() {
 		for (const childId of this.cpuNode.children) {
 			yield this.cpuModel.getNode(childId)
+		}
+	}
+
+	*reversedChildren() {
+		for (let i = this.cpuNode.children.length - 1; i >= 0; i--) {
+			yield this.cpuModel.getNode(this.cpuNode.children[i])
 		}
 	}
 }
