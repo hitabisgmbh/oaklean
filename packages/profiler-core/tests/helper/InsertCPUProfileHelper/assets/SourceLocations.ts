@@ -177,6 +177,7 @@ export const SOURCE_LOCATIONS_DEFAULT = {
 	'moduleA-fileA-2': moduleScopeDefaultFunction('moduleA', 'fileA', 2),
 	'moduleA-fileB-0': moduleScopeDefaultFunction('moduleA', 'fileB', 0),
 	'moduleA-fileC-0': moduleScopeDefaultFunction('moduleA', 'fileC', 0),
+	'moduleB-fileA-0': moduleScopeDefaultFunction('moduleB', 'fileA', 0),
 }
 
 export const SOURCE_LOCATIONS_EMPTY = {
