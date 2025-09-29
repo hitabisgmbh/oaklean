@@ -24,6 +24,7 @@ import {
 	SourceNodeIdentifier_string
 } from '../../types'
 import { TypescriptHelper } from '../TypescriptParser'
+import { CPUProfileSourceLocation } from '../CPUProfile'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertUnreachable(x: never): never {
@@ -112,23 +113,26 @@ type AwaiterStack = {
  * 
  */
 export class InsertCPUProfileStateMachine {
-	rootDir: UnifiedPath
 	projectReport: ProjectReport
 
 	callRelationTracker: CallRelationTracker
 	awaiterStack: AwaiterStack
 
-	constructor(
-		rootDir: UnifiedPath,
-		reportToApply: ProjectReport,
-	) {
-		this.rootDir = rootDir
+	constructor(reportToApply: ProjectReport) {
 		this.projectReport = reportToApply
 		this.callRelationTracker = new CallRelationTracker()
 		this.awaiterStack = []
 	}
 
+	/**
+	 * Inserts a CPU profile into the state machine, updating the project report accordingly.
+	 * 
+	 * @param resolveFunctionIdentifierHelper the helper to resolve function identifiers
+	 * @param profile the raw cpu profile to insert
+	 * @param metricsDataCollection optional metrics data collection to enrich the cpu profile with energy values
+	 */
 	async insertCPUProfile(
+		rootDir: UnifiedPath,
 		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper,
 		profile: ICpuProfileRaw,
 		metricsDataCollection?: MetricsDataCollection,
@@ -137,7 +141,7 @@ export class InsertCPUProfileStateMachine {
 			throw new Error('InsertCPUProfileHelper.insertCPUProfile: executionDetails.highResolutionBeginTime is undefined')
 		}
 		const cpuModel = new CPUModel(
-			this.rootDir,
+			rootDir,
 			profile,
 			BigInt(this.projectReport.executionDetails.highResolutionBeginTime) as NanoSeconds_BigInt
 		)
@@ -147,6 +151,22 @@ export class InsertCPUProfileStateMachine {
 			cpuModel.energyValuesPerNode = cpuModel.energyValuesPerNodeByMetricsData(metricsDataCollection)
 		}
 
+		await this.insertCPUNodes(
+			cpuModel.getNode(0),
+			resolveFunctionIdentifierHelper
+		)
+	}
+
+	/**
+	 * Inserts CPU nodes into the state machine, updating the project report accordingly.
+	 * 
+	 * @param rootNode the root node of the cpu model
+	 * @param resolveFunctionIdentifierHelper the helper to resolve function identifiers
+	 */
+	async insertCPUNodes(
+		rootNode: CPUNode,
+		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper
+	) {
 		type StackFrame = {
 			state: State,
 			node: CPUNode,
@@ -170,7 +190,7 @@ export class InsertCPUProfileStateMachine {
 		const stack: StackFrame[] = [
 			{
 				state: beginState,
-				node: cpuModel.getNode(0),
+				node: rootNode,
 				depth: 0
 			}]
 
@@ -204,7 +224,7 @@ export class InsertCPUProfileStateMachine {
 			// determine the transition
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				currentStackFrame.state,
-				currentStackFrame.node,
+				currentStackFrame.node.sourceLocation,
 				resolveFunctionIdentifierHelper
 			)
 

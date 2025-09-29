@@ -1,208 +1,31 @@
-import { CallIdentifier } from '../../../src/helper/InsertCPUProfileHelper/CallIdentifier'
-import { CPUNode } from '../../../src/helper/CPUProfile/CPUNode'
+// Test Assets
+import {
+	SOURCE_LOCATIONS_DEFAULT,
+	SOURCE_LOCATIONS_EMPTY,
+	SOURCE_LOCATIONS_LANG_INTERNAL,
+	SOURCE_LOCATIONS_WEBPACK,
+	SOURCE_LOCATIONS_WASM
+} from './assets/SourceLocations'
+import { STATES } from './assets/States'
+import {
+	MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+} from './mock'
+
 import {
 	InsertCPUProfileStateMachine,
-	State,
 	Transition
 } from '../../../src/helper/InsertCPUProfileHelper/InsertCPUProfileStateMachine'
-import { ResolveFunctionIdentifierHelper } from '../../../src/helper/ResolveFunctionIdentifierHelper'
-import { CPUProfileSourceLocation } from '../../../src/helper/CPUProfile/CPUProfileSourceLocation'
 import { WASM_NODE_MODULE } from '../../../src/model/NodeModule'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'
 import { NodeModule } from '../../../src/model/NodeModule'
 // Types
-import { CPUProfileSourceLocationType, SourceNodeIdentifier_string } from '../../../src/types'
-
-type StateIdentifier<T extends State = State> = T extends State
-	? `${T['scope']}:${T['type']}:${T['headless']}`
-	: never
-
-const STATES: Record<StateIdentifier<State>, State> = {
-	'project:lang_internal:false': {
-		scope: 'project',
-		type: 'lang_internal',
-		headless: false,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		callIdentifier: undefined as any
-	},
-	'project:lang_internal:true': {
-		scope: 'project',
-		type: 'lang_internal',
-		headless: true,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		callIdentifier: undefined as any
-	},
-	'project:intern:false': {
-		scope: 'project',
-		type: 'intern',
-		headless: false,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		callIdentifier: undefined as any
-	},
-	'module:lang_internal:false': {
-		scope: 'module',
-		type: 'lang_internal',
-		headless: false,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		callIdentifier: undefined as any
-	},
-	'module:lang_internal:true': {
-		scope: 'module',
-		type: 'lang_internal',
-		headless: true,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		callIdentifier: undefined as any
-	},
-	'module:intern:false': {
-		scope: 'module',
-		type: 'intern',
-		headless: false,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		callIdentifier: undefined as any
-	}
-}
-
-const SOURCE_LOCATIONS: Record<CPUProfileSourceLocationType, CPUProfileSourceLocation[]> = {
-	[CPUProfileSourceLocationType.LANG_INTERNAL]: [
-		new CPUProfileSourceLocation(
-			undefined as any,
-			undefined as any,
-			{
-				url: '',
-				functionName: '',
-				scriptId: '0',
-				lineNumber: 0,
-				columnNumber: 0
-			}
-		)
-	],
-	[CPUProfileSourceLocationType.WASM]: [
-		new CPUProfileSourceLocation(
-				undefined as any,
-				undefined as any,
-				{
-					url: 'wasm://wasm/0x12345',
-					functionName: 'wasm-function[42]:0x12345',
-					scriptId: '1',
-					lineNumber: 0,
-					columnNumber: 0
-				}
-			)
-	],
-	[CPUProfileSourceLocationType.WEBPACK]: [
-		new CPUProfileSourceLocation(
-			undefined as any,
-			undefined as any,
-			{
-				url: 'webpack://./src/index.js',
-				functionName: 'myFunction',
-				scriptId: '1',
-				lineNumber: 0,
-				columnNumber: 0
-			}
-		),
-		new CPUProfileSourceLocation(
-			undefined as any,
-			undefined as any,
-			{
-				url: 'webpack://./node_modules/module/index.js',
-				functionName: 'moduleFunction',
-				scriptId: '1',
-				lineNumber: 0,
-				columnNumber: 0
-			}
-		)
-	],
-	[CPUProfileSourceLocationType.DEFAULT]: [
-		new CPUProfileSourceLocation(
-			undefined as any,
-			undefined as any,
-			{
-				url: 'file:///Users/user/project/src/index.js',
-				functionName: 'myFunction',
-				scriptId: '1',
-				lineNumber: 0,
-				columnNumber: 0
-			}
-		),
-		new CPUProfileSourceLocation(
-			undefined as any,
-			undefined as any,
-			{
-				url: 'file:///Users/user/project/node_modules/module/index.js',
-				functionName: 'moduleFunction',
-				scriptId: '1',
-				lineNumber: 0,
-				columnNumber: 0
-			}
-		)
-	],
-	[CPUProfileSourceLocationType.EMPTY]: [
-		new CPUProfileSourceLocation(
-			undefined as any,
-			undefined as any,
-			{
-				url: '',
-				functionName: '',
-				scriptId: '1',
-				lineNumber: 0,
-				columnNumber: 0
-			}
-		)
-	]
-}
-
-
-const MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER = {
-	resolveFunctionIdentifier(sourceLocation: CPUProfileSourceLocation) {
-		switch (sourceLocation.rawUrl) {
-			case 'webpack://./src/index.js':
-				return {
-					sourceNodeLocation: {
-						relativeFilePath: new UnifiedPath('./src/index.js'),
-						functionIdentifier:
-							'{function:myFunction}' as SourceNodeIdentifier_string
-					},
-					functionIdentifierPresentInOriginalFile: true
-				}
-			case 'webpack://./node_modules/module/index.js':
-				return {
-					sourceNodeLocation: {
-						relativeFilePath: new UnifiedPath('./index.js'),
-						functionIdentifier:
-							'{function:moduleFunction}' as SourceNodeIdentifier_string
-					},
-					functionIdentifierPresentInOriginalFile: true,
-					nodeModule: new NodeModule('module', '1.0.0'),
-					relativeNodeModulePath: new UnifiedPath('./node_modules/module')
-				}
-			case 'file:///Users/user/project/src/index.js':
-				return {
-					sourceNodeLocation: {
-						relativeFilePath: new UnifiedPath('src/index.js'),
-						functionIdentifier:
-							'{function:myFunction}' as SourceNodeIdentifier_string
-					},
-					functionIdentifierPresentInOriginalFile: true
-				}
-			case 'file:///Users/user/project/node_modules/module/index.js':
-				return {
-					sourceNodeLocation: {
-						relativeFilePath: new UnifiedPath('index.js'),
-						functionIdentifier:
-							'{function:moduleFunction}' as SourceNodeIdentifier_string
-					},
-					nodeModule: new NodeModule('module', '1.0.0'),
-					relativeNodeModulePath: new UnifiedPath('node_modules/module'),
-					functionIdentifierPresentInOriginalFile: true
-				}
-		}
-	}
-} as unknown as ResolveFunctionIdentifierHelper
+import {
+	SourceNodeIdentifier_string
+} from '../../../src/types'
 
 describe('InsertCPUProfileStateMachine.getTransition', () => {
 	describe('getTransition to LANG_INTERNAL', () => {
-		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.LANG_INTERNAL][0]
+		const sourceLocation = SOURCE_LOCATIONS_LANG_INTERNAL['default']
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
@@ -301,7 +124,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 	})
 
 	describe('getTransition to WASM', () => {
-		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.WASM][0]
+		const sourceLocation = SOURCE_LOCATIONS_WASM['default']
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('wasm/0x12345'),
 			functionIdentifier:
@@ -425,7 +248,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 	})
 
 	describe('getTransition to WEB_PACK (PROJECT_SCOPE)', () => {
-		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.WEBPACK][0]
+		const sourceLocation = SOURCE_LOCATIONS_WEBPACK['project-index-0']
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('./src/index.js'),
 			functionIdentifier: '{function:myFunction}' as SourceNodeIdentifier_string
@@ -541,13 +364,13 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 	})
 
 	describe('getTransition to WEB_PACK (MODULE_SCOPE)', () => {
-		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.WEBPACK][1]
+		const sourceLocation = SOURCE_LOCATIONS_WEBPACK['moduleA-index-0']
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('./index.js'),
 			functionIdentifier:
 				'{function:moduleFunction}' as SourceNodeIdentifier_string
 		}
-		const nodeModule = new NodeModule('module', '1.0.0')
+		const nodeModule = new NodeModule('moduleA', '1.0.0')
 
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
@@ -665,7 +488,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 	})
 
 	describe('getTransition to DEFAULT (PROJECT_SCOPE)', () => {
-		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.DEFAULT][0]
+		const sourceLocation = SOURCE_LOCATIONS_DEFAULT['project-index-0']
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('src/index.js'),
 			functionIdentifier: '{function:myFunction}' as SourceNodeIdentifier_string
@@ -782,13 +605,13 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 	})
 
 	describe('getTransition to DEFAULT (MODULE_SCOPE)', () => {
-		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.DEFAULT][1]
+		const sourceLocation = SOURCE_LOCATIONS_DEFAULT['moduleA-index-0']
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('index.js'),
 			functionIdentifier:
 				'{function:moduleFunction}' as SourceNodeIdentifier_string
 		}
-		const nodeModule = new NodeModule('module', '1.0.0')
+		const nodeModule = new NodeModule('moduleA', '1.0.0')
 
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
@@ -907,7 +730,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 	})
 
 	describe('getTransition to EMPTY', () => {
-		const sourceLocation = SOURCE_LOCATIONS[CPUProfileSourceLocationType.EMPTY][0]
+		const sourceLocation = SOURCE_LOCATIONS_EMPTY['default']
 		test('from STATE: project:lang_internal:false', async () => {
 			const fromState = STATES['project:lang_internal:false']
 
