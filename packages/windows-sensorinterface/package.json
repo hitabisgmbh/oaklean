@@ -47,10 +47,12 @@
 		"@oaklean/profiler-core": "^0.1.4"
 	},
 	"dependencies": {
-		"adm-zip": "^0.5.16"
+		"adm-zip": "^0.5.16",
+		"progress": "^2.0.3"
 	},
 	"devDependencies": {
 		"@types/adm-zip": "^0.5.5",
+		"@types/progress": "^2.0.7",
 		"rimraf": "^6.0.1"
 	}
 }

@@ -3,7 +3,6 @@ import { Session } from 'inspector'
 
 import seedrandom from 'seedrandom'
 import {
-	APP_NAME,
 	ProfilerConfig,
 	ProjectReport,
 	IProjectReportExecutionDetails,
@@ -118,7 +117,7 @@ export class Profiler {
 		async function resolve(origin: string) {
 			if (!stopped) {
 				stopped = true
-				LoggerHelper.log(`(${APP_NAME} Profiler) Finish Measurement, please wait...`)
+				LoggerHelper.appPrefix.log('Finish Measurement, please wait...')
 				await profiler.finish(title)
 				process.removeListener('exit', exitResolve)
 				process.removeListener('SIGINT', sigIntResolve)
@@ -130,7 +129,7 @@ export class Profiler {
 			}
 		}
 
-		LoggerHelper.log(`(${APP_NAME} Profiler) Measurement started`)
+		LoggerHelper.appPrefix.log('Measurement started')
 		await profiler.start(title)
 
 		process.on('exit', exitResolve)
@@ -219,8 +218,10 @@ export class Profiler {
 		if (this._sensorInterface !== undefined && !await this._sensorInterface.couldBeExecuted()) {
 			// remove sensor interface from execution details since it cannot be executed
 			this.executionDetails.runTimeOptions.sensorInterface = undefined
-			LoggerHelper.warn(`(${APP_NAME} Profiler) Warning: ` + 
-				'Sensor Interface can not be executed, no energy measurements will be collected')
+			LoggerHelper.appPrefix.warn(
+				'Warning: ' + 
+				'Sensor Interface can not be executed, no energy measurements will be collected'
+			)
 		}
 		performance.stop('Profiler.start.sensorInterface.couldBeExecuted')
 

@@ -1,9 +1,11 @@
 import * as fs from 'fs'
 import https from 'https'
 
+import ProgressBar from 'progress'
 import { LoggerHelper, UnifiedPath } from '@oaklean/profiler-core'
 
 import { ZipHelper } from './ZipHelper'
+import { formatTime } from './formatTime'
 
 import {
 	SupportedPlatforms,
@@ -17,12 +19,43 @@ export class InstallHelper {
 	static makeRequest(url: string): Promise<Buffer> {
 		return new Promise((resolve, reject) => {
 			https
-				.get(url, (response) => {
+				.get(url, async (response) => {
 					if (response.statusCode !== undefined && response.statusCode >= 200 && response.statusCode < 300) {
+						const totalLength = parseInt(response.headers['content-length'] || '0', 10)
+						if (totalLength) {
+							LoggerHelper.appPrefix.log(
+								`File size (${(totalLength / (1024 * 1024)).toFixed(2)} MB)`
+							)
+						}
+						let downloaded = 0
+						const startTime = Date.now()
+						
+						const progressBar = new ProgressBar(
+							'-> downloading [:bar] :percent :rate/bps ETA: :remainingTime',
+							{
+								width: 40,
+								total: totalLength || 0,
+								complete: '=',
+								incomplete: ' ',
+								renderThrottle: 100
+							}
+						)
+
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						const chunks: any[] = []
-						response.on('data', (chunk) => chunks.push(chunk))
+						response.on('data', (chunk) => {
+							downloaded += chunk.length
+							progressBar.tick(chunk.length, {
+								remainingTime: formatTime(
+									((totalLength - downloaded) / downloaded) *
+										((Date.now() - startTime) / 1000)
+								)
+							})
+							chunks.push(chunk)
+						})
 						response.on('end', () => {
+							response.destroy()
+							progressBar.terminate()
 							resolve(Buffer.concat(chunks))
 						})
 					} else if (
@@ -32,11 +65,12 @@ export class InstallHelper {
 						response.headers.location
 					) {
 						// Follow redirects
+						response.destroy()
 						InstallHelper.makeRequest(response.headers.location).then(resolve, reject)
 					} else {
 						reject(
 							new Error(
-								`npm responded with status code ${response.statusCode} when downloading the package!`
+								`Server responded with status code ${response.statusCode} when downloading the file!`
 							)
 						)
 					}
@@ -50,12 +84,14 @@ export class InstallHelper {
 	static async downloadPlatformSpecificBinary(platform: SupportedPlatforms) {
 		// Download the tarball of the right binary distribution package
 		const tarballDownloadBuffer = await InstallHelper.makeRequest(getPlatformSpecificDownloadLink(platform))
-
+		LoggerHelper.appPrefix.success('Download complete. Extracting...')
+		
 		ZipHelper.extractSpecificDirectory(
 			tarballDownloadBuffer,
 			new UnifiedPath('./'),
 			getPlatformSpecificBinaryDirectoryPath(platform)
 		)
+		LoggerHelper.appPrefix.success('Installation complete.')
 	}
 
 	static isPlatformSpecificPackageInstalled(platform: SupportedPlatforms) {
@@ -71,7 +107,8 @@ export class InstallHelper {
 
 		// Skip downloading the binary if it was already installed via optionalDependencies
 		if (!InstallHelper.isPlatformSpecificPackageInstalled(platform)) {
-			LoggerHelper.log('Platform specific package not found. Will manually download binary.')
+			LoggerHelper.appPrefix.log('Energy measurement binary not found.')
+			LoggerHelper.appPrefix.log(`Downloading required binary for ${platform}...`)
 			InstallHelper.downloadPlatformSpecificBinary(platform)
 		}
 	}
