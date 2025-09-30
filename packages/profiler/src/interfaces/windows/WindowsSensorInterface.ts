@@ -15,7 +15,8 @@ import {
 } from '@oaklean/profiler-core'
 import {
 	getPlatformSpecificBinaryPath,
-	SupportedPlatforms
+	SupportedPlatforms,
+	InstallHelper
 } from '@oaklean/windows-sensorinterface'
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
@@ -41,6 +42,8 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 	private _startTime: NanoSeconds_BigInt | undefined
 	private _stopTime: NanoSeconds_BigInt | undefined
 
+	private _platform: NodeJS.Platform
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private cleanExit: ((...args: any[]) => void) | undefined
 
@@ -51,11 +54,8 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 		platform?: SupportedPlatforms
 	}) {
 		super()
-		const platform = debugOptions?.platform ?? process.platform
-		if (platform !== 'win32') {
-			throw new Error('WindowsSensorInterface: This sensor interface can only be used on Windows')
-		}
-		this._executable = getPlatformSpecificBinaryPath(platform).toPlatformString()
+		this._platform = debugOptions?.platform ?? process.platform
+		this._executable = getPlatformSpecificBinaryPath('win32').toPlatformString()
 		this._options = options
 		
 		if (debugOptions !== undefined) {
@@ -75,6 +75,11 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 	}
 
 	async canBeExecuted(): Promise<boolean> {
+		if (this._platform !== 'win32') {
+			LoggerHelper.appPrefix.error('WindowsSensorInterface: This sensor interface can only be used on Windows. Your platform:', this._platform)
+			return false
+		}
+		await InstallHelper.installPlatformSpecificPackage('win32')
 		return await PermissionHelper.checkWindowsAdminRights()
 	}
 

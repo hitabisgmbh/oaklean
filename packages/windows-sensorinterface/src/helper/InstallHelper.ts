@@ -98,7 +98,7 @@ export class InstallHelper {
 		return fs.existsSync(getPlatformSpecificBinaryPath(platform).toPlatformString())
 	}
 
-	static installPlatformSpecificPackage(platform: SupportedPlatforms) {
+	static async installPlatformSpecificPackage(platform: SupportedPlatforms) {
 		const platformSpecificPackageName = getPlatformSpecificPackageName(platform)
 
 		if (!platformSpecificPackageName) {
@@ -109,7 +109,7 @@ export class InstallHelper {
 		if (!InstallHelper.isPlatformSpecificPackageInstalled(platform)) {
 			LoggerHelper.appPrefix.log('Energy measurement binary not found.')
 			LoggerHelper.appPrefix.log(`Downloading required binary for ${platform}...`)
-			InstallHelper.downloadPlatformSpecificBinary(platform)
+			await InstallHelper.downloadPlatformSpecificBinary(platform)
 		}
 	}
 }
