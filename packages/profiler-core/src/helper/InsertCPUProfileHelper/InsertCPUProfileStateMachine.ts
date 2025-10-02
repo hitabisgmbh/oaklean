@@ -232,7 +232,7 @@ export class InsertCPUProfileStateMachine {
 				}
 				if (this.debug) {
 					this.logState(
-						currentStackFrame.depth,
+						currentStackFrame.depth + 1,
 						currentStackFrame.node,
 						currentStackFrame.result.nextState
 					)
