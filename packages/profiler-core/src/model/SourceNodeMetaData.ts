@@ -491,6 +491,21 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		return this
 	}
 
+	compensateLangInternalSensorValues(values: SensorValues): SourceNodeMetaData<T> {
+		this.sensorValues.addToLangInternal(values, -1)
+		return this
+	}
+
+	compensateInternSensorValues(values: SensorValues): SourceNodeMetaData<T> {
+		this.sensorValues.addToIntern(values, -1)
+		return this
+	}
+
+	compensateExternSensorValues(values: SensorValues): SourceNodeMetaData<T> {
+		this.sensorValues.addToExtern(values, -1)
+		return this
+	}
+
 	addToSensorValues(values: SensorValues | Partial<ISensorValues>): SourceNodeMetaData<T> {
 		this.sensorValues.addToSelf(values)
 		this.sensorValues.addToAggregated(values)

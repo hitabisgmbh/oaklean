@@ -59,6 +59,11 @@ export type AccountingType =
 
 export type AccountingInfo = {
 	type: AccountingType
+	accountedSourceNodeReference: SourceNodeMetaData<
+	SourceNodeMetaDataType.LangInternalSourceNodeReference |
+	SourceNodeMetaDataType.InternSourceNodeReference |
+	SourceNodeMetaDataType.ExternSourceNodeReference
+	> | null
 	accountedProfilerHits: number
 	accountedSensorValues: ISensorValues
 }
@@ -190,6 +195,12 @@ export class InsertCPUProfileStateMachine {
 			result?: {
 				transition: Transition,
 				nextState: State,
+				accountingType: AccountingType | null,
+				accountedSourceNodeReference: SourceNodeMetaData<
+					SourceNodeMetaDataType.LangInternalSourceNodeReference |
+					SourceNodeMetaDataType.InternSourceNodeReference |
+					SourceNodeMetaDataType.ExternSourceNodeReference
+					> | null,
 				compensation?: SensorValues
 			}
 		}
@@ -243,10 +254,59 @@ export class InsertCPUProfileStateMachine {
 					)
 				}
 				if (currentStackFrame.result.compensation !== undefined) {
-					// apply compensation and carry it upwards
-					currentStackFrame.state.callIdentifier.sourceNode?.compensateAggregatedSensorValues(
-						currentStackFrame.result.compensation
-					)
+					if (currentStackFrame.state.callIdentifier.sourceNode !== null) {
+						// the aggregated always needs to be compensated
+						currentStackFrame.state.callIdentifier.sourceNode.compensateAggregatedSensorValues(
+							currentStackFrame.result.compensation
+						)
+
+						// only compensate (lang_internal|intern|extern) when there was a link created
+						if (currentStackFrame.result.accountedSourceNodeReference !== null) {
+							// compensate the accounted source node reference
+							currentStackFrame
+								.result
+								.accountedSourceNodeReference
+								.compensateAggregatedSensorValues(
+									currentStackFrame.result.compensation
+								)
+
+							switch (currentStackFrame.result.accountingType) {
+								case 'accountToIntern':
+									currentStackFrame
+										.state
+										.callIdentifier
+										.sourceNode
+										.compensateInternSensorValues(
+											currentStackFrame.result.compensation
+										)
+								break
+								case 'accountToExtern':
+									currentStackFrame
+										.state
+										.callIdentifier
+										.sourceNode
+										.compensateExternSensorValues(
+											currentStackFrame.result.compensation
+										)
+								break
+								case 'accountToLangInternal':
+									currentStackFrame
+										.state
+										.callIdentifier
+										.sourceNode
+										.compensateLangInternalSensorValues(
+											currentStackFrame.result.compensation
+										)
+								break
+								case 'accountOwnCodeGetsExecutedByExternal':
+								break
+								case null:
+								break
+								default:
+									assertUnreachable(currentStackFrame.result.accountingType)
+							}
+						}
+					}
 
 					const parentStackFrame = stack[stack.length - 1]
 					if (parentStackFrame !== undefined && parentStackFrame.result !== undefined) {
@@ -383,7 +443,9 @@ export class InsertCPUProfileStateMachine {
 
 			currentStackFrame.result = {
 				transition,
-				nextState: transitionResult.nextState
+				nextState: transitionResult.nextState,
+				accountingType: transitionResult.accountingInfo?.type || null,
+				accountedSourceNodeReference: transitionResult.accountingInfo?.accountedSourceNodeReference || null
 			}
 
 			if (
@@ -723,7 +785,10 @@ export class InsertCPUProfileStateMachine {
 			'langInternal'
 		)
 
-		let currentSourceNodeReference: SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference> 
+		let accountedSourceNodeReference:
+			SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference> |
+			null
+
 		if (transition.options.createLink) {
 			if (currentState.callIdentifier.sourceNode === null) {
 				throw new Error('InsertCPUProfileStateMachine.accountToLangInternal: Current state has no source node assigned')
@@ -737,11 +802,13 @@ export class InsertCPUProfileStateMachine {
 				sensorValues,
 				alreadyLinked
 			)
-			currentSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToLangInternal(
+			accountedSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToLangInternal(
 				accountedSourceNode.globalIdentifier(),
 				accountedSensorValues
 			)
-			currentSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+			accountedSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+		} else {
+			accountedSourceNodeReference = null
 		}
 
 		return {
@@ -754,7 +821,8 @@ export class InsertCPUProfileStateMachine {
 			accountingInfo: {
 				type: 'accountToLangInternal',
 				accountedProfilerHits: cpuNode.profilerHits,
-				accountedSensorValues: accountedSensorValues
+				accountedSensorValues: accountedSensorValues,
+				accountedSourceNodeReference
 			}
 		}
 	}
@@ -779,8 +847,8 @@ export class InsertCPUProfileStateMachine {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 
-		let currentSourceNodeReference:
-		SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> | undefined = undefined
+		let accountedSourceNodeReference:
+		SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> | null
 
 		// intern
 		const accountedSourceNode = currentState.callIdentifier.report.addToIntern(
@@ -870,12 +938,16 @@ export class InsertCPUProfileStateMachine {
 					sensorValues,
 					alreadyLinked
 				)
-				currentSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
+				accountedSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
 					accountedSourceNode.globalIdentifier(),
 					accountedSensorValues
 				)
-				currentSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+				accountedSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+			} else {
+				accountedSourceNodeReference = null
 			}
+		} else {
+			accountedSourceNodeReference = null
 		}
 
 		return {
@@ -888,7 +960,8 @@ export class InsertCPUProfileStateMachine {
 			accountingInfo: {
 				type: 'accountToIntern',
 				accountedProfilerHits: cpuNode.profilerHits,
-				accountedSensorValues: accountedSensorValues
+				accountedSensorValues: accountedSensorValues,
+				accountedSourceNodeReference
 			}
 		}
 	}
@@ -913,8 +986,8 @@ export class InsertCPUProfileStateMachine {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 		const nodeModule = transition.options.nodeModule
-		let currentSourceNodeReference:
-		SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> | undefined = undefined
+		let accountedSourceNodeReference:
+		SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> | null
 
 		const globalIdentifier = new GlobalIdentifier(
 			sourceNodeLocation.relativeFilePath.toString(),
@@ -957,11 +1030,13 @@ export class InsertCPUProfileStateMachine {
 				sensorValues,
 				alreadyLinked
 			)
-			currentSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToExtern(
+			accountedSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToExtern(
 				globalIdentifier,
 				accountedSensorValues
 			)
-			currentSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+			accountedSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+		} else {
+			accountedSourceNodeReference = null
 		}
 
 		return {
@@ -974,7 +1049,8 @@ export class InsertCPUProfileStateMachine {
 			accountingInfo: {
 				type: 'accountToExtern',
 				accountedProfilerHits: cpuNode.profilerHits,
-				accountedSensorValues: accountedSensorValues
+				accountedSensorValues: accountedSensorValues,
+				accountedSourceNodeReference
 			}
 		}
 	}
@@ -1039,7 +1115,8 @@ export class InsertCPUProfileStateMachine {
 			accountingInfo: {
 				type: 'accountOwnCodeGetsExecutedByExternal',
 				accountedProfilerHits: cpuNode.profilerHits,
-				accountedSensorValues: accountedSensorValues
+				accountedSensorValues: accountedSensorValues,
+				accountedSourceNodeReference: null
 			}
 		}
 	}
