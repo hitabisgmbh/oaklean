@@ -1,6 +1,7 @@
 import { CallIdentifier } from './CallIdentifier'
 import { CallRelationTracker } from './CallRelationTracker'
 
+import { SensorValues } from '../../model/SensorValues'
 import { CPUModel } from '../CPUProfile/CPUModel'
 import { CPUNode } from '../CPUProfile/CPUNode'
 import { ResolveFunctionIdentifierHelper } from '../ResolveFunctionIdentifierHelper'
@@ -188,7 +189,8 @@ export class InsertCPUProfileStateMachine {
 			depth: number,
 			result?: {
 				transition: Transition,
-				nextState: State
+				nextState: State,
+				compensation?: SensorValues
 			}
 		}
 
@@ -219,6 +221,9 @@ export class InsertCPUProfileStateMachine {
 				}
 				
 				const parentCallIdentifier = currentStackFrame.state.callIdentifier
+
+				// this node (currentStackFrame.result.nextState):
+				// is about to get left (all children have been processed)
 				const accountedCallIdentifier = currentStackFrame.result.nextState.callIdentifier
 
 				if (currentStackFrame.result.transition.options.createLink) {
@@ -236,6 +241,39 @@ export class InsertCPUProfileStateMachine {
 						currentStackFrame.node,
 						currentStackFrame.result.nextState
 					)
+				}
+				if (currentStackFrame.result.compensation !== undefined) {
+					// apply compensation and carry it upwards
+					currentStackFrame.state.callIdentifier.sourceNode?.compensateAggregatedSensorValues(
+						currentStackFrame.result.compensation
+					)
+
+					const parentStackFrame = stack[stack.length - 1]
+					if (parentStackFrame !== undefined && parentStackFrame.result !== undefined) {
+						if (parentStackFrame.result.compensation === undefined) {
+							// carry upwards
+							parentStackFrame.result.compensation = currentStackFrame.result.compensation
+						} else {
+							// add to existing compensation (also carried upwards)
+							parentStackFrame.result.compensation.addToAggregated(
+								currentStackFrame.result.compensation
+							)
+						}
+						if (this.debug) {
+							LoggerHelper.warn(
+								'[COMPENSATION] carried upwards ' +
+								`${currentStackFrame.result.compensation.aggregatedCPUTime} µs`
+							)
+							this.logState(
+								currentStackFrame.depth + 1,
+								currentStackFrame.node,
+								currentStackFrame.result.nextState
+							)
+						}
+					}
+				}
+
+				if (this.debug) {
 					this.logLeaveTransition(
 						currentStackFrame.result.nextState,
 						currentStackFrame.state
@@ -346,6 +384,26 @@ export class InsertCPUProfileStateMachine {
 			currentStackFrame.result = {
 				transition,
 				nextState: transitionResult.nextState
+			}
+
+			if (
+				transition.transition !== 'stayInState' &&
+				transition.options.createLink === false &&
+				// special case: lang_internal nodes never create links
+				currentStackFrame.state.type !== 'lang_internal' &&
+				transitionResult.accountingInfo !== null
+			) {
+				// if no link is created, we treat this as a special case
+				// this call is treated as if the call tree starts here
+				// 
+				// since the current node was accounted with the full aggregated sensor values
+				// without a reference being created, the current nodes sensor values do not add up
+				// we need to compensate the accounted sensor values here
+				// and in all its parents
+				// so the compensation needs to be carried upwards
+				currentStackFrame.result.compensation = new SensorValues(
+					transitionResult.accountingInfo.accountedSensorValues
+				)
 			}
 
 			if (this.debug) {

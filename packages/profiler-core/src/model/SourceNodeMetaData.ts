@@ -486,6 +486,11 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		return this._extern as ExternMap<T>
 	}
 
+	compensateAggregatedSensorValues(values: SensorValues): SourceNodeMetaData<T> {
+		this.sensorValues.addToAggregated(values, -1)
+		return this
+	}
+
 	addToSensorValues(values: SensorValues | Partial<ISensorValues>): SourceNodeMetaData<T> {
 		this.sensorValues.addToSelf(values)
 		this.sensorValues.addToAggregated(values)
