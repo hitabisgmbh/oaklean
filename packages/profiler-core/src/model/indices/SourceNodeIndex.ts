@@ -50,6 +50,16 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		this._notPresentInOriginalSourceCode = v === true ? undefined : true
 	}
 
+	private _functionName?: string
+	public get functionName(): string {
+		if (this._functionName === undefined) {
+			const parts = SourceNodeIdentifierHelper.split(this.identifier)
+			const parsed = SourceNodeIdentifierHelper.parseSourceNodeIdentifierPart(parts[parts.length - 1])
+			this._functionName = parsed ? parsed.name : this.identifier
+		}
+		return this._functionName
+	}
+
 	insertToOtherIndex(globalIndex: GlobalIndex): SourceNodeIndex<SourceNodeIndexType.SourceNode> {
 		const newPathIndex = this.pathIndex.insertToOtherIndex(globalIndex)
 		return newPathIndex.getSourceNodeIndex('upsert', this.identifier)

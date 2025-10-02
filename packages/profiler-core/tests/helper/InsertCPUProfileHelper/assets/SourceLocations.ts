@@ -105,6 +105,7 @@ const scriptId = (name: string) => {
 	return id;
 };
 
+let globalSourceLocationIndex = 0;
 function projectScopeDefaultFunction(
 	fileName: string,
 	// index of the function in the file (0, 1, 2, ...)
@@ -114,7 +115,7 @@ function projectScopeDefaultFunction(
 	const filePath =  `file:///Users/user/project/src/${fileName}.js`
 	return Object.assign(new CPUProfileSourceLocation(
 		undefined as any,
-		undefined as any,
+		globalSourceLocationIndex++,
 		{
 			url: filePath,
 			functionName: functionName,
@@ -145,7 +146,7 @@ function moduleScopeDefaultFunction(
 
 	return Object.assign(new CPUProfileSourceLocation(
 		undefined as any,
-		undefined as any,
+		globalSourceLocationIndex++,
 		{
 			url: filePath,
 			functionName: functionName,

@@ -69,4 +69,19 @@ export class LoggerHelper {
 			LoggerHelper.success(`[${APP_NAME}] ${message}`, ...optionalParams)
 		}
 	}
+
+	static treeStyleKeyValues<KEYS extends string[]>(keys: KEYS) {
+		const maxKeyLength = Math.max(...keys.map(k => k.length))
+
+		return function (entries: Record<KEYS[number], string>) {
+			let result = ''
+
+			for (const key of keys) {
+				const value = entries[key as KEYS[number]] ?? ''
+				const padding = ' '.repeat(maxKeyLength - key.length)
+				result += `├─ ${cli.cyan(key)} ${padding}: ${value}` + '\n'
+			}
+			return result.trimEnd()
+		}
+	}
 }

@@ -14,9 +14,11 @@ export type MockedCPUModel = {
 }
 
 export function mockedCPUModel(
-	mocked: MockedCPUModel
+	mocked: MockedCPUModel,
+	idx: number = 0
 ): CPUNode {
 	return {
+		index: idx++,
 		sourceLocation: mocked.location,
 		get profilerHits() {
 			return mocked.profilerHits
@@ -24,10 +26,11 @@ export function mockedCPUModel(
 		get sensorValues() {
 			return mocked.sensorValues
 		},
+		childrenCount: mocked.children?.length ?? 0,
 		*reversedChildren() {
 			if (mocked.children !== undefined) {
 				for (let i = mocked.children.length - 1; i >= 0; i--) {
-					yield mockedCPUModel(mocked.children[i])
+					yield mockedCPUModel(mocked.children[i], idx++)
 				}
 			}
 		}

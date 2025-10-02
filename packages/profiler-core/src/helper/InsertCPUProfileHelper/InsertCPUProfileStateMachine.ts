@@ -24,6 +24,7 @@ import {
 	SourceNodeIdentifier_string
 } from '../../types'
 import { TypescriptHelper } from '../TypescriptParser'
+import { LoggerHelper } from '../LoggerHelper'
 import { CPUProfileSourceLocation } from '../CPUProfile'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,6 +48,18 @@ type ProjectState = StateProps & {
 
 type ModuleState = StateProps & {
 	scope: 'module'
+}
+
+export type AccountingType =
+	| 'accountToLangInternal'
+	| 'accountToIntern'
+	| 'accountToExtern'
+	| 'accountOwnCodeGetsExecutedByExternal'
+
+export type AccountingInfo = {
+	type: AccountingType
+	accountedProfilerHits: number
+	accountedSensorValues: ISensorValues
 }
 
 export type State = ProjectState | ModuleState
@@ -117,6 +130,8 @@ export class InsertCPUProfileStateMachine {
 
 	callRelationTracker: CallRelationTracker
 	awaiterStack: AwaiterStack
+
+	debug: boolean = false
 
 	constructor(reportToApply: ProjectReport) {
 		this.projectReport = reportToApply
@@ -215,10 +230,28 @@ export class InsertCPUProfileStateMachine {
 				if (accountedCallIdentifier.firstTimeVisited) {
 					this.callRelationTracker.removeCallRecord(accountedCallIdentifier)
 				}
+				if (this.debug) {
+					this.logLeaveState(
+						currentStackFrame.result.nextState
+					)
+					this.logState(
+						currentStackFrame.depth,
+						currentStackFrame.node,
+						currentStackFrame.state
+					)
+				}
 				if (accountedCallIdentifier.isAwaiterSourceNode) {
 					this.awaiterStack.pop()
 				}
 				continue
+			}
+
+			if (this.debug) {
+				this.logState(
+					currentStackFrame.depth,
+					currentStackFrame.node,
+					currentStackFrame.state
+				)
 			}
 
 			// determine the transition
@@ -228,11 +261,14 @@ export class InsertCPUProfileStateMachine {
 				resolveFunctionIdentifierHelper
 			)
 
-			let nextState: State
+			let transitionResult: {
+				nextState: State,
+				accountingInfo: AccountingInfo | null
+			}
 			// apply the transition
 			switch (transition.transition) {
 				case 'toLangInternal':
-					nextState = await this.accountToLangInternal(
+					transitionResult = await this.accountToLangInternal(
 						currentStackFrame.state,
 						currentStackFrame.node,
 						transition
@@ -243,7 +279,7 @@ export class InsertCPUProfileStateMachine {
 					switch (scope) {
 						case 'project':
 							// transition stays in project
-							nextState = await this.accountToIntern(
+							transitionResult = await this.accountToIntern(
 								currentStackFrame.state,
 								currentStackFrame.node,
 								transition
@@ -251,7 +287,7 @@ export class InsertCPUProfileStateMachine {
 							break
 						case 'module':
 							// transition from module to project
-							nextState = await this.accountOwnCodeGetsExecutedByExternal(
+							transitionResult = await this.accountOwnCodeGetsExecutedByExternal(
 								this.projectReport,
 								currentStackFrame.node,
 								transition
@@ -265,7 +301,7 @@ export class InsertCPUProfileStateMachine {
 					switch (scope) {
 						case 'project':
 							// transition from project to module
-							nextState = await this.accountToExtern(
+							transitionResult = await this.accountToExtern(
 								currentStackFrame.state,
 								currentStackFrame.node,
 								transition
@@ -278,14 +314,14 @@ export class InsertCPUProfileStateMachine {
 									transition.options.nodeModule.identifier
 							) {
 								// transition stays in the same module
-								nextState = await this.accountToIntern(
+								transitionResult = await this.accountToIntern(
 									currentStackFrame.state,
 									currentStackFrame.node,
 									transition
 								)
 							} else {
 								// transition from module to different module
-								nextState = await this.accountToExtern(
+								transitionResult = await this.accountToExtern(
 									currentStackFrame.state,
 									currentStackFrame.node,
 									transition
@@ -297,7 +333,10 @@ export class InsertCPUProfileStateMachine {
 				break
 				case 'stayInState':
 					// do nothing, stay in the current state
-					nextState = currentStackFrame.state
+					transitionResult = {
+						nextState: currentStackFrame.state,
+						accountingInfo: null
+					}
 					break
 				default:
 					assertUnreachable(transition)
@@ -305,13 +344,23 @@ export class InsertCPUProfileStateMachine {
 
 			currentStackFrame.result = {
 				transition,
-				nextState
+				nextState: transitionResult.nextState
+			}
+
+			if (this.debug) {
+				this.logTransition(
+					currentStackFrame.node,
+					transition,
+					transitionResult.accountingInfo,
+					currentStackFrame.state,
+					transitionResult.nextState
+				)
 			}
 
 			// add children to stack
 			for (const child of currentStackFrame.node.reversedChildren()) {
 				stack.push({
-					state: nextState,
+					state: transitionResult.nextState,
 					node: child,
 					depth: currentStackFrame.depth + 1
 				})
@@ -319,14 +368,144 @@ export class InsertCPUProfileStateMachine {
 		}
 	}
 
-	stringifyTransition(
-		currentState: State,
-		nextState: State,
+	formatState = LoggerHelper.treeStyleKeyValues([
+		'Depth',
+		'CPU Node',
+		'ReportID',
+		'SourceNodeID',
+		'Scope',
+		'Type',
+		'Headless',
+		'Profiler Hits',
+		'CPU Time',
+		'CPU Energy',
+		'RAM Energy'
+	] as const)
+
+	logState(
+		depth: number,
 		cpuNode: CPUNode,
-		transition: Transition
-	): string {
-		// eslint-disable-next-line max-len
-		return `[${currentState.callIdentifier.toString()}] (${currentState.scope}:${currentState.type}:${cpuNode.sourceLocation.index}) -- ${transition.transition} --> [${nextState.callIdentifier.toString()}]`
+		currentState: State
+	) {
+		/*
+			[STATE] moduleFunction_fileA_0 (./fileA.js)
+			├─ Depth         : 1
+			├─ CPU Node      : 001
+			├─ ReportID      : 1
+			├─ SourceNodeID  : 3
+			├─ Scope         : module
+			├─ Type          : intern
+			├─ Headless      : false
+			├─ Profiler Hits : 2
+			├─ CPU Time      : self=20 µs | total=30 µs
+			├─ CPU Energy    : self=0 mJ | total=0 mJ
+			├─ RAM Energy    : self=0 mJ | total=0 mJ
+		*/
+		if (currentState.callIdentifier.sourceNode === null) {
+			LoggerHelper.log(
+				LoggerHelper.successString('[FRAME]'),
+				'(root)'
+			)
+			return
+		}
+
+		const sourceNodeIndex = currentState.callIdentifier.sourceNode?.getIndex()
+		if (sourceNodeIndex === undefined) {
+			throw new Error('InsertCPUProfileStateMachine.logState: sourceNode has no index')
+		}
+
+		const sensorValues = currentState.callIdentifier.sourceNode.sensorValues
+		
+		LoggerHelper.log(
+			LoggerHelper.successString('[STATE]'),
+			`${sourceNodeIndex.functionName}`,
+			`(${sourceNodeIndex.pathIndex.identifier})`, '\n' +
+			this.formatState({
+				'Depth': depth.toString(),
+				'CPU Node': String(cpuNode.index).padStart(3, '0'),
+				'ReportID': currentState.callIdentifier.report.internID.toString(),
+				'SourceNodeID': currentState.callIdentifier.sourceNode.id.toString(),
+				'Scope': currentState.scope,
+				'Type': currentState.type,
+				'Headless': currentState.headless.toString(),
+				'Profiler Hits': `${sensorValues.profilerHits}`,
+				'CPU Time': `self=${sensorValues.selfCPUTime} µs | total=${sensorValues.aggregatedCPUTime} µs`,
+				'CPU Energy': `self=${sensorValues.selfCPUEnergyConsumption} mJ | total=${sensorValues.aggregatedCPUEnergyConsumption} mJ`,
+				'RAM Energy': `self=${sensorValues.selfRAMEnergyConsumption} mJ | total=${sensorValues.aggregatedRAMEnergyConsumption} mJ`
+			})
+		)
+	}
+
+	logLeaveState(
+		leaveState: State,
+	) {
+		const currentSourceNodeIndex = leaveState.callIdentifier.sourceNode?.getIndex()
+
+		const currentSourceNodeName = currentSourceNodeIndex !== undefined ?
+			currentSourceNodeIndex.functionName :
+			'(root)'
+
+		LoggerHelper.log(
+			LoggerHelper.errorString('[LEAVE STATE]'),
+			`${currentSourceNodeName}`,
+			leaveState.callIdentifier.firstTimeVisited ? '[last-occurrence-in-tree]' : ''
+		)
+	}
+
+	formatTransition = LoggerHelper.treeStyleKeyValues([
+		'CPU Node',
+		'Transition',
+		'AccountingType',
+		'FirstTimeVisited',
+		'Accounted Hits',
+		'Accounted CPU Time',
+		'Accounted CPU Energy',
+		'Accounted RAM Energy'
+	] as const)
+
+	logTransition(
+		cpuNode: CPUNode,
+		transition: Transition,
+		accountingInfo: AccountingInfo | null,
+		currentState: State,
+		nextState: State
+	) {
+		/*
+			 [TRANSITION] (root) -> moduleFunction_fileA_0
+				├─ CPU Node             : 000
+				├─ Transition           : toModule
+				├─ AccountingType       : accountToExtern
+				├─ FirstTimeVisited     : true
+				├─ Accounted Hits       : 2
+				├─ Accounted CPU Time   : self=20 µs | total=30 µs
+				├─ Accounted CPU Energy : self=0 mJ | total=0 mJ
+				├─ Accounted RAM Energy : self=0 mJ | total=0 mJ
+		*/
+		const currentSourceNodeIndex = currentState.callIdentifier.sourceNode?.getIndex()
+		const currentSourceNodeName = currentSourceNodeIndex !== undefined ?
+			currentSourceNodeIndex.functionName :
+			'(root)'
+
+
+		const nextSourceNodeIndex = nextState.callIdentifier.sourceNode?.getIndex()
+		const nextSourceNodeName = nextSourceNodeIndex !== undefined ?
+			nextSourceNodeIndex.functionName :
+			'(root)'
+
+		LoggerHelper.log(
+			LoggerHelper.successString('[TRANSITION]'),
+			`${currentSourceNodeName} -> ${nextSourceNodeName}`, '\n' +
+			this.formatTransition({
+				'CPU Node': String(cpuNode.index).padStart(3, '0'),
+				'Transition': transition.transition,
+				'AccountingType': accountingInfo === null ? 'styInState' : accountingInfo?.type,
+				'FirstTimeVisited': nextState.callIdentifier.firstTimeVisited.toString(),
+				'Accounted Hits': `${accountingInfo?.accountedProfilerHits}`,
+				'Accounted CPU Time': `self=${accountingInfo?.accountedSensorValues.selfCPUTime || 0} µs | total=${accountingInfo?.accountedSensorValues.aggregatedCPUTime || 0} µs`,
+				'Accounted CPU Energy': `self=${accountingInfo?.accountedSensorValues.selfCPUEnergyConsumption || 0} mJ | total=${accountingInfo?.accountedSensorValues.aggregatedCPUEnergyConsumption || 0} mJ`,
+				'Accounted RAM Energy': `self=${accountingInfo?.accountedSensorValues.selfRAMEnergyConsumption || 0} mJ | total=${accountingInfo?.accountedSensorValues.aggregatedRAMEnergyConsumption || 0} mJ`
+			})
+		)
 	}
 
 	/**
@@ -446,7 +625,7 @@ export class InsertCPUProfileStateMachine {
 		currentState: State,
 		cpuNode: CPUNode,
 		transition: ToLangInternalTransition
-	): Promise<State> {
+	): Promise<{ nextState: State, accountingInfo: AccountingInfo }> {
 		const sensorValues = cpuNode.sensorValues
 
 		const accountedSourceNode = currentState.callIdentifier.report.addToLangInternal(
@@ -465,13 +644,11 @@ export class InsertCPUProfileStateMachine {
 		}
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-
-		accountedSourceNode.addToSensorValues(
-			this.sensorValuesForVisitedNode(
-				sensorValues,
-				this.callRelationTracker.isCallRecorded(currentCallIdentifier)
-			)
+		const accountedSensorValues = this.sensorValuesForVisitedNode(
+			sensorValues,
+			this.callRelationTracker.isCallRecorded(currentCallIdentifier)
 		)
+		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
 		currentCallIdentifier.firstTimeVisited = this.callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
@@ -488,21 +665,29 @@ export class InsertCPUProfileStateMachine {
 				currentState.callIdentifier
 			)
 			
+			const accountedSensorValues = this.sensorValuesForVisitedNode(
+				sensorValues,
+				alreadyLinked
+			)
 			currentSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToLangInternal(
 				accountedSourceNode.globalIdentifier(),
-				this.sensorValuesForVisitedNode(
-					sensorValues,
-					alreadyLinked
-				)
+				accountedSensorValues
 			)
 			currentSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
 		}
 
 		return {
-			scope: currentState.scope,
-			type: 'lang_internal',
-			headless: transition.options.headless,
-			callIdentifier: currentCallIdentifier
+			nextState: {
+				scope: currentState.scope,
+				type: 'lang_internal',
+				headless: transition.options.headless,
+				callIdentifier: currentCallIdentifier
+			},
+			accountingInfo: {
+				type: 'accountToLangInternal',
+				accountedProfilerHits: cpuNode.profilerHits,
+				accountedSensorValues: accountedSensorValues
+			}
 		}
 	}
 
@@ -522,7 +707,7 @@ export class InsertCPUProfileStateMachine {
 		currentState: State,
 		cpuNode: CPUNode,
 		transition: ToProjectTransition | ToModuleTransition,
-	): Promise<State> {
+	): Promise<{ nextState: State, accountingInfo: AccountingInfo }> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 
@@ -540,12 +725,11 @@ export class InsertCPUProfileStateMachine {
 			accountedSourceNode
 		)
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		accountedSourceNode.addToSensorValues(
-			this.sensorValuesForVisitedNode(
-				sensorValues,
-				this.callRelationTracker.isCallRecorded(currentCallIdentifier)
-			)
+		const accountedSensorValues = this.sensorValuesForVisitedNode(
+			sensorValues,
+			this.callRelationTracker.isCallRecorded(currentCallIdentifier)
 		)
+		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
 		currentCallIdentifier.firstTimeVisited = this.callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
@@ -614,22 +798,30 @@ export class InsertCPUProfileStateMachine {
 
 			if (currentState.callIdentifier.sourceNode !== accountedSourceNode) {
 				// only create a reference if its not a recursive call
+				const accountedSensorValues = this.sensorValuesForVisitedNode(
+					sensorValues,
+					alreadyLinked
+				)
 				currentSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
 					accountedSourceNode.globalIdentifier(),
-					this.sensorValuesForVisitedNode(
-						sensorValues,
-						alreadyLinked
-					)
+					accountedSensorValues
 				)
 				currentSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
 			}
 		}
 
 		return {
-			scope: transition.transition === 'toProject' ? 'project' : 'module',
-			type: 'intern',
-			headless: false,
-			callIdentifier: currentCallIdentifier
+			nextState: {
+				scope: transition.transition === 'toProject' ? 'project' : 'module',
+				type: 'intern',
+				headless: false,
+				callIdentifier: currentCallIdentifier
+			},
+			accountingInfo: {
+				type: 'accountToIntern',
+				accountedProfilerHits: cpuNode.profilerHits,
+				accountedSensorValues: accountedSensorValues
+			}
 		}
 	}
 
@@ -649,7 +841,7 @@ export class InsertCPUProfileStateMachine {
 		currentState: State,
 		cpuNode: CPUNode,
 		transition: ToModuleTransition,
-	): Promise<State> {
+	): Promise<{ nextState: State, accountingInfo: AccountingInfo }> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 		const nodeModule = transition.options.nodeModule
@@ -674,12 +866,11 @@ export class InsertCPUProfileStateMachine {
 			accountedSourceNode
 		)
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		accountedSourceNode.addToSensorValues(
-			this.sensorValuesForVisitedNode(
-				sensorValues,
-				this.callRelationTracker.isCallRecorded(currentCallIdentifier)
-			)
+		const accountedSensorValues = this.sensorValuesForVisitedNode(
+			sensorValues,
+			this.callRelationTracker.isCallRecorded(currentCallIdentifier)
 		)
+		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
 		currentCallIdentifier.firstTimeVisited = this.callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
@@ -694,21 +885,29 @@ export class InsertCPUProfileStateMachine {
 				currentState.callIdentifier
 			)
 
+			const accountedSensorValues = this.sensorValuesForVisitedNode(
+				sensorValues,
+				alreadyLinked
+			)
 			currentSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToExtern(
 				globalIdentifier,
-				this.sensorValuesForVisitedNode(
-					sensorValues,
-					alreadyLinked
-				)
+				accountedSensorValues
 			)
 			currentSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
 		}
 
 		return {
-			scope: 'module',
-			type: 'intern',
-			headless: false,
-			callIdentifier: currentCallIdentifier
+			nextState: {
+				scope: 'module',
+				type: 'intern',
+				headless: false,
+				callIdentifier: currentCallIdentifier
+			},
+			accountingInfo: {
+				type: 'accountToExtern',
+				accountedProfilerHits: cpuNode.profilerHits,
+				accountedSensorValues: accountedSensorValues
+			}
 		}
 	}
 
@@ -732,7 +931,7 @@ export class InsertCPUProfileStateMachine {
 		originalReport: ProjectReport,
 		cpuNode: CPUNode,
 		transition: ToProjectTransition,
-	): Promise<State> {
+	): Promise<{ nextState: State, accountingInfo: AccountingInfo }> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 
@@ -747,13 +946,12 @@ export class InsertCPUProfileStateMachine {
 		)
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		// add measurements to original source code
-		accountedSourceNode.addToSensorValues(
-			this.sensorValuesForVisitedNode(
-				sensorValues,
-				this.callRelationTracker.isCallRecorded(currentCallIdentifier)
-			)
+		const accountedSensorValues = this.sensorValuesForVisitedNode(
+			sensorValues,
+			this.callRelationTracker.isCallRecorded(currentCallIdentifier)
 		)
+		// add measurements to original source code
+		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
 		currentCallIdentifier.firstTimeVisited = this.callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
@@ -764,10 +962,17 @@ export class InsertCPUProfileStateMachine {
 		}
 
 		return {
-			scope: 'project',
-			type: 'intern',
-			headless: false,
-			callIdentifier: currentCallIdentifier
+			nextState: {
+				scope: 'project',
+				type: 'intern',
+				headless: false,
+				callIdentifier: currentCallIdentifier
+			},
+			accountingInfo: {
+				type: 'accountOwnCodeGetsExecutedByExternal',
+				accountedProfilerHits: cpuNode.profilerHits,
+				accountedSensorValues: accountedSensorValues
+			}
 		}
 	}
 }

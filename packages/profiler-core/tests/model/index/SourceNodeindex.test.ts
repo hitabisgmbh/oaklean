@@ -42,6 +42,14 @@ function runInstanceTests(title: string, preDefinedInstance: () => SourceNodeInd
 		expect(instance.isSourceNode()).toBe(true)
 	})
 
+	test('identifier', () => {
+		expect(instance.identifier).toBe('{isAbsolute}')
+	})
+
+	test('functionName', () => {
+		expect(instance.functionName).toBe('{isAbsolute}')
+	})
+
 	test('globalIdentifier', () => {
 		expect(instance.globalIdentifier().identifier).toBe('node@20.11.1{node:path}{isAbsolute}')
 	})
