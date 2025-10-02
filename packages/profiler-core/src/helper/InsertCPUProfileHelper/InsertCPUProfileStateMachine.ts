@@ -231,12 +231,13 @@ export class InsertCPUProfileStateMachine {
 					this.callRelationTracker.removeCallRecord(accountedCallIdentifier)
 				}
 				if (this.debug) {
-					this.logLeaveState(
-						currentStackFrame.result.nextState
-					)
 					this.logState(
 						currentStackFrame.depth,
 						currentStackFrame.node,
+						currentStackFrame.result.nextState
+					)
+					this.logLeaveTransition(
+						currentStackFrame.result.nextState,
 						currentStackFrame.state
 					)
 				}
@@ -403,7 +404,7 @@ export class InsertCPUProfileStateMachine {
 		*/
 		if (currentState.callIdentifier.sourceNode === null) {
 			LoggerHelper.log(
-				LoggerHelper.successString('[FRAME]'),
+				LoggerHelper.successString('[STATE]'),
 				'(root)'
 			)
 			return
@@ -436,25 +437,33 @@ export class InsertCPUProfileStateMachine {
 		)
 	}
 
-	logLeaveState(
-		leaveState: State,
+	logLeaveTransition(
+		currentState: State,
+		nextState: State,
 	) {
-		const currentSourceNodeIndex = leaveState.callIdentifier.sourceNode?.getIndex()
+		const currentSourceNodeIndex = currentState.callIdentifier.sourceNode?.getIndex()
 
 		const currentSourceNodeName = currentSourceNodeIndex !== undefined ?
 			currentSourceNodeIndex.functionName :
 			'(root)'
+		
+		const nextSourceNodeIndex = nextState.callIdentifier.sourceNode?.getIndex()
+		const nextSourceNodeName = nextSourceNodeIndex !== undefined ?
+			nextSourceNodeIndex.functionName :
+			'(root)'
 
 		LoggerHelper.log(
-			LoggerHelper.errorString('[LEAVE STATE]'),
+			LoggerHelper.errorString('[LEAVE TRANSITION]'),
 			`${currentSourceNodeName}`,
-			leaveState.callIdentifier.firstTimeVisited ? '[last-occurrence-in-tree]' : ''
+			LoggerHelper.successString(`${currentState.callIdentifier.firstTimeVisited ? '[last-occurrence-in-tree]' : ''}`),
+			`-> ${nextSourceNodeName}`
 		)
 	}
 
 	formatTransition = LoggerHelper.treeStyleKeyValues([
 		'CPU Node',
 		'Transition',
+		'Create Link',
 		'AccountingType',
 		'FirstTimeVisited',
 		'Accounted Hits',
@@ -493,11 +502,12 @@ export class InsertCPUProfileStateMachine {
 			'(root)'
 
 		LoggerHelper.log(
-			LoggerHelper.successString('[TRANSITION]'),
+			LoggerHelper.warnString('[TRANSITION]'),
 			`${currentSourceNodeName} -> ${nextSourceNodeName}`, '\n' +
 			this.formatTransition({
 				'CPU Node': String(cpuNode.index).padStart(3, '0'),
 				'Transition': transition.transition,
+				'Create Link': transition.transition === 'stayInState' ? 'false' : transition.options.createLink.toString(),
 				'AccountingType': accountingInfo === null ? 'styInState' : accountingInfo?.type,
 				'FirstTimeVisited': nextState.callIdentifier.firstTimeVisited.toString(),
 				'Accounted Hits': `${accountingInfo?.accountedProfilerHits}`,
