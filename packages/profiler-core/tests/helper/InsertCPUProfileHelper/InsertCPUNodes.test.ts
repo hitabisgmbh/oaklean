@@ -1691,9 +1691,6 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		console.log(JSON.stringify(projectReport.extern.toJSON(), null, 2))
-		console.log(JSON.stringify(projectReport.intern.toJSON(), null, 2))
-
 		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'3': {
