@@ -6,7 +6,7 @@ import { LoggerHelper } from '../LoggerHelper'
 import { CPUNode } from '../CPUProfile/CPUNode'
 
 export class StateMachineLogger {
-	formatState = LoggerHelper.treeStyleKeyValues([
+	static formatState = LoggerHelper.treeStyleKeyValues([
 		'Depth',
 		'CPU Node',
 		'ReportID',
@@ -20,7 +20,7 @@ export class StateMachineLogger {
 		'RAM Energy'
 	] as const)
 
-	logState(depth: number, cpuNode: CPUNode, currentState: State) {
+	static logState(depth: number, cpuNode: CPUNode, currentState: State) {
 		/*
 				[STATE] moduleFunction_fileA_0 (./fileA.js)
 				├─ Depth         : 1
@@ -54,7 +54,7 @@ export class StateMachineLogger {
 			`${sourceNodeIndex.functionName}`,
 			`(${sourceNodeIndex.pathIndex.identifier})`,
 			'\n' +
-				this.formatState({
+				StateMachineLogger.formatState({
 					Depth: depth.toString(),
 					'CPU Node': String(cpuNode.index).padStart(3, '0'),
 					ReportID: currentState.callIdentifier.report.internID.toString(),
@@ -70,7 +70,7 @@ export class StateMachineLogger {
 		)
 	}
 
-	logLeaveTransition(currentState: State, nextState: State) {
+	static logLeaveTransition(currentState: State, nextState: State) {
 		const currentSourceNodeIndex =
 			currentState.callIdentifier.sourceNode?.getIndex()
 
@@ -99,7 +99,7 @@ export class StateMachineLogger {
 		)
 	}
 
-	formatTransition = LoggerHelper.treeStyleKeyValues([
+	static formatTransition = LoggerHelper.treeStyleKeyValues([
 		'CPU Node',
 		'Transition',
 		'Create Link',
@@ -111,7 +111,7 @@ export class StateMachineLogger {
 		'Accounted RAM Energy'
 	] as const)
 
-	logTransition(
+	static logTransition(
 		cpuNode: CPUNode,
 		transition: Transition,
 		accountingInfo: AccountingInfo | null,
@@ -146,7 +146,7 @@ export class StateMachineLogger {
 			LoggerHelper.warnString('[TRANSITION]'),
 			`${currentSourceNodeName} -> ${nextSourceNodeName}`,
 			'\n' +
-				this.formatTransition({
+				StateMachineLogger.formatTransition({
 					'CPU Node': String(cpuNode.index).padStart(3, '0'),
 					Transition: transition.transition,
 					'Create Link':

@@ -5,7 +5,7 @@ import {
 	SourceNodeMetaDataType
 } from '../../../types'
 
-export type AccountingType =
+type AccountingType =
 	| 'accountToLangInternal'
 	| 'accountToIntern'
 	| 'accountToExtern'

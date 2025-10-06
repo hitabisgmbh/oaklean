@@ -8,12 +8,12 @@ import {
 	ToModuleTransition
 } from './types/transition'
 import {
-	AccountingInfo,
-	AccountingType
+	AccountingInfo
 } from './types/accounting'
+import { StackFrame } from './types/stack'
 import { StateMachineLogger } from './StateMachineLogger'
+import { CompensationHelper } from './CompensationHelper'
 
-import { SensorValues } from '../../model/SensorValues'
 import { CPUModel } from '../CPUProfile/CPUModel'
 import { CPUNode } from '../CPUProfile/CPUNode'
 import { ResolveFunctionIdentifierHelper } from '../ResolveFunctionIdentifierHelper'
@@ -66,7 +66,7 @@ type AwaiterStack = {
  * This ensures that sensor values are accurately attributed to the correct source nodes in async scenarios.
  * 
  */
-export class InsertCPUProfileStateMachine extends StateMachineLogger {
+export class InsertCPUProfileStateMachine {
 	projectReport: ProjectReport
 
 	callRelationTracker: CallRelationTracker
@@ -75,7 +75,6 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 	debug: boolean = false
 
 	constructor(reportToApply: ProjectReport) {
-		super()
 		this.projectReport = reportToApply
 		this.callRelationTracker = new CallRelationTracker()
 		this.awaiterStack = []
@@ -124,122 +123,108 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 		rootNode: CPUNode,
 		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper
 	) {
-		type StackFrame = {
-			state: State,
-			node: CPUNode,
-			depth: number,
-			result?: {
-				transition: Transition,
-				nextState: State,
-				accountingType: AccountingType | null,
-				accountedSourceNodeReference: SourceNodeMetaData<
-					SourceNodeMetaDataType.LangInternalSourceNodeReference |
-					SourceNodeMetaDataType.InternSourceNodeReference |
-					SourceNodeMetaDataType.ExternSourceNodeReference
-					> | null,
-				compensation?: SensorValues
-			}
-		}
-
-		const beginState: State = {
-			scope: 'project',
-			type: 'lang_internal',
-			headless: true,
-			callIdentifier: new CallIdentifier(
-				this.projectReport,
-				null
-			)
-		}
-
 		const stack: StackFrame[] = [
 			{
-				state: beginState,
+				// begin state
+				state:  {
+					scope: 'project',
+					type: 'lang_internal',
+					headless: true,
+					callIdentifier: new CallIdentifier(
+						this.projectReport,
+						null
+					)
+				},
 				node: rootNode,
 				depth: 0
 			}]
 
+		// traverse the cpu nodes depth first
 		while (stack.length > 0) {
 			const currentStackFrame = stack[stack.length - 1]
 
 			if (currentStackFrame.result) {
+				// second visit of the node, do post processing
 				stack.pop()
-				if (currentStackFrame.result.transition.transition === 'stayInState') {
+				if (currentStackFrame.result.accountingInfo === null) {
+					// it was a stayInState transition
+					// no post processing needed
 					continue
 				}
-				
-				const parentCallIdentifier = currentStackFrame.state.callIdentifier
+				// state that is about to get left: currentStackFrame.result.nextState
+				// so the parent state is: currentStackFrame.state:
+				const parentState = currentStackFrame.state
+				// this state is about to get left (all children have been processed):
+				const currentState = currentStackFrame.result.nextState
+				const accountingInfo = currentStackFrame.result.accountingInfo
 
-				// this node (currentStackFrame.result.nextState):
-				// is about to get left (all children have been processed)
-				const accountedCallIdentifier = currentStackFrame.result.nextState.callIdentifier
-
-				if (currentStackFrame.result.transition.options.createLink) {
+				// check wether a link was created
+				if (accountingInfo.accountedSourceNodeReference !== null) {
 					// remove the last child call from the current state
-					if (!this.callRelationTracker.removeLastChildRecord(parentCallIdentifier)) {
+					if (!this.callRelationTracker.removeLastChildRecord(parentState.callIdentifier)) {
 						throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present')
 					}
 				}
-				if (accountedCallIdentifier.firstTimeVisited) {
-					this.callRelationTracker.removeCallRecord(accountedCallIdentifier)
+				if (currentState.callIdentifier.firstTimeVisited) {
+					this.callRelationTracker.removeCallRecord(currentState.callIdentifier)
 				}
 				if (this.debug) {
-					this.logState(
+					StateMachineLogger.logState(
 						currentStackFrame.depth + 1,
 						currentStackFrame.node,
-						currentStackFrame.result.nextState
+						currentState
 					)
 				}
-				if (currentStackFrame.result.compensation !== undefined) {
-					if (currentStackFrame.state.callIdentifier.sourceNode !== null) {
+				
+				const compensation = currentStackFrame.result.compensation
+				// Compensation handling:
+				if (compensation !== undefined) {
+					if (parentState.callIdentifier.sourceNode !== null) {
 						// the aggregated always needs to be compensated
-						currentStackFrame.state.callIdentifier.sourceNode.compensateAggregatedSensorValues(
-							currentStackFrame.result.compensation
+						parentState.callIdentifier.sourceNode.compensateAggregatedSensorValues(
+							compensation
 						)
 
 						// only compensate (lang_internal|intern|extern) when there was a link created
-						if (currentStackFrame.result.accountedSourceNodeReference !== null) {
+						if (accountingInfo.accountedSourceNodeReference !== null) {
 							// compensate the accounted source node reference
-							currentStackFrame
-								.result
+							accountingInfo
 								.accountedSourceNodeReference
 								.compensateAggregatedSensorValues(
-									currentStackFrame.result.compensation
+									compensation
 								)
 
-							switch (currentStackFrame.result.accountingType) {
+							switch (accountingInfo.type) {
 								case 'accountToIntern':
-									currentStackFrame
-										.state
+									parentState
 										.callIdentifier
 										.sourceNode
 										.compensateInternSensorValues(
-											currentStackFrame.result.compensation
+											compensation
 										)
 								break
 								case 'accountToExtern':
-									currentStackFrame
-										.state
+									parentState
 										.callIdentifier
 										.sourceNode
 										.compensateExternSensorValues(
-											currentStackFrame.result.compensation
+											compensation
 										)
 								break
 								case 'accountToLangInternal':
-									currentStackFrame
-										.state
+									parentState
 										.callIdentifier
 										.sourceNode
 										.compensateLangInternalSensorValues(
-											currentStackFrame.result.compensation
+											compensation
 										)
 								break
 								case 'accountOwnCodeGetsExecutedByExternal':
-								break
+									throw new Error('InsertCPUProfileStateMachine.insertCPUNodes: compensation not supported for accountOwnCodeGetsExecutedByExternal')
 								case null:
 								break
 								default:
-									assertUnreachable(currentStackFrame.result.accountingType)
+									assertUnreachable(accountingInfo.type)
 							}
 						}
 					}
@@ -252,15 +237,15 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 						} else {
 							// add to existing compensation (also carried upwards)
 							parentStackFrame.result.compensation.addToAggregated(
-								currentStackFrame.result.compensation
+								compensation
 							)
 						}
 						if (this.debug) {
 							LoggerHelper.warn(
 								'[COMPENSATION] carried upwards ' +
-								`${currentStackFrame.result.compensation.aggregatedCPUTime} µs`
+								`${compensation.aggregatedCPUTime} µs`
 							)
-							this.logState(
+							StateMachineLogger.logState(
 								currentStackFrame.depth + 1,
 								currentStackFrame.node,
 								currentStackFrame.result.nextState
@@ -270,19 +255,19 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 				}
 
 				if (this.debug) {
-					this.logLeaveTransition(
+					StateMachineLogger.logLeaveTransition(
 						currentStackFrame.result.nextState,
 						currentStackFrame.state
 					)
 				}
-				if (accountedCallIdentifier.isAwaiterSourceNode) {
+				if (currentState.callIdentifier.isAwaiterSourceNode) {
 					this.awaiterStack.pop()
 				}
 				continue
 			}
 
 			if (this.debug) {
-				this.logState(
+				StateMachineLogger.logState(
 					currentStackFrame.depth,
 					currentStackFrame.node,
 					currentStackFrame.state
@@ -296,14 +281,10 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 				resolveFunctionIdentifierHelper
 			)
 
-			let transitionResult: {
-				nextState: State,
-				accountingInfo: AccountingInfo | null
-			}
 			// apply the transition
 			switch (transition.transition) {
 				case 'toLangInternal':
-					transitionResult = await this.accountToLangInternal(
+					currentStackFrame.result = await this.accountToLangInternal(
 						currentStackFrame.state,
 						currentStackFrame.node,
 						transition
@@ -314,7 +295,7 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 					switch (scope) {
 						case 'project':
 							// transition stays in project
-							transitionResult = await this.accountToIntern(
+							currentStackFrame.result = await this.accountToIntern(
 								currentStackFrame.state,
 								currentStackFrame.node,
 								transition
@@ -322,7 +303,7 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 							break
 						case 'module':
 							// transition from module to project
-							transitionResult = await this.accountOwnCodeGetsExecutedByExternal(
+							currentStackFrame.result = await this.accountOwnCodeGetsExecutedByExternal(
 								this.projectReport,
 								currentStackFrame.node,
 								transition
@@ -336,7 +317,7 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 					switch (scope) {
 						case 'project':
 							// transition from project to module
-							transitionResult = await this.accountToExtern(
+							currentStackFrame.result = await this.accountToExtern(
 								currentStackFrame.state,
 								currentStackFrame.node,
 								transition
@@ -349,14 +330,14 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 									transition.options.nodeModule.identifier
 							) {
 								// transition stays in the same module
-								transitionResult = await this.accountToIntern(
+								currentStackFrame.result = await this.accountToIntern(
 									currentStackFrame.state,
 									currentStackFrame.node,
 									transition
 								)
 							} else {
 								// transition from module to different module
-								transitionResult = await this.accountToExtern(
+								currentStackFrame.result = await this.accountToExtern(
 									currentStackFrame.state,
 									currentStackFrame.node,
 									transition
@@ -368,7 +349,7 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 				break
 				case 'stayInState':
 					// do nothing, stay in the current state
-					transitionResult = {
+					currentStackFrame.result = {
 						nextState: currentStackFrame.state,
 						accountingInfo: null
 					}
@@ -377,47 +358,25 @@ export class InsertCPUProfileStateMachine extends StateMachineLogger {
 					assertUnreachable(transition)
 			}
 
-			currentStackFrame.result = {
-				transition,
-				nextState: transitionResult.nextState,
-				accountingType: transitionResult.accountingInfo?.type || null,
-				accountedSourceNodeReference: transitionResult.accountingInfo?.accountedSourceNodeReference || null
-			}
-
-			if (
-				transition.transition !== 'stayInState' &&
-				transition.options.createLink === false &&
-				// special case: lang_internal nodes never create links
-				currentStackFrame.state.type !== 'lang_internal' &&
-				transitionResult.accountingInfo !== null
-			) {
-				// if no link is created, we treat this as a special case
-				// this call is treated as if the call tree starts here
-				// 
-				// since the current node was accounted with the full aggregated sensor values
-				// without a reference being created, the current nodes sensor values do not add up
-				// we need to compensate the accounted sensor values here
-				// and in all its parents
-				// so the compensation needs to be carried upwards
-				currentStackFrame.result.compensation = new SensorValues(
-					transitionResult.accountingInfo.accountedSensorValues
-				)
-			}
+			CompensationHelper.createCompensationIfNecessary(
+				currentStackFrame.state,
+				currentStackFrame.result
+			)
 
 			if (this.debug) {
-				this.logTransition(
+				StateMachineLogger.logTransition(
 					currentStackFrame.node,
 					transition,
-					transitionResult.accountingInfo,
+					currentStackFrame.result.accountingInfo,
 					currentStackFrame.state,
-					transitionResult.nextState
+					currentStackFrame.result.nextState
 				)
 			}
 
 			// add children to stack
 			for (const child of currentStackFrame.node.reversedChildren()) {
 				stack.push({
-					state: transitionResult.nextState,
+					state: currentStackFrame.result.nextState,
 					node: child,
 					depth: currentStackFrame.depth + 1
 				})
