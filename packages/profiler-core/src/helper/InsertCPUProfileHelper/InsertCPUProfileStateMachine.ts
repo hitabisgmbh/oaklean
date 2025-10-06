@@ -5,7 +5,8 @@ import {
 	Transition,
 	ToLangInternalTransition,
 	ToProjectTransition,
-	ToModuleTransition
+	ToModuleTransition,
+	TransitionResult
 } from './types/transition'
 import {
 	AccountingInfo
@@ -14,6 +15,7 @@ import { StackFrame } from './types/stack'
 import { StateMachineLogger } from './StateMachineLogger'
 import { CompensationHelper } from './CompensationHelper'
 
+import { assertUnreachable } from '../../system/Switch'
 import { CPUModel } from '../CPUProfile/CPUModel'
 import { CPUNode } from '../CPUProfile/CPUNode'
 import { ResolveFunctionIdentifierHelper } from '../ResolveFunctionIdentifierHelper'
@@ -36,13 +38,7 @@ import {
 	SourceNodeIdentifier_string
 } from '../../types'
 import { TypescriptHelper } from '../TypescriptParser'
-import { LoggerHelper } from '../LoggerHelper'
 import { CPUProfileSourceLocation } from '../CPUProfile'
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function assertUnreachable(x: never): never {
-	throw new Error('Didn\'t expect to get here')
-}
 
 type AwaiterStack = {
 	awaiter: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, // the last called __awaiter function
@@ -166,6 +162,8 @@ export class InsertCPUProfileStateMachine {
 					}
 				}
 				if (currentState.callIdentifier.firstTimeVisited) {
+					// last occurrence of the callIdentifier in the call stack
+					// remove it from the call relation tracker
 					this.callRelationTracker.removeCallRecord(currentState.callIdentifier)
 				}
 				if (this.debug) {
@@ -179,79 +177,23 @@ export class InsertCPUProfileStateMachine {
 				const compensation = currentStackFrame.result.compensation
 				// Compensation handling:
 				if (compensation !== undefined) {
-					if (parentState.callIdentifier.sourceNode !== null) {
-						// the aggregated always needs to be compensated
-						parentState.callIdentifier.sourceNode.compensateAggregatedSensorValues(
-							compensation
-						)
+					// apply the compensation to the current state
+					CompensationHelper.applyCompensation(
+						parentState,
+						compensation,
+						accountingInfo
+					)
 
-						// only compensate (lang_internal|intern|extern) when there was a link created
-						if (accountingInfo.accountedSourceNodeReference !== null) {
-							// compensate the accounted source node reference
-							accountingInfo
-								.accountedSourceNodeReference
-								.compensateAggregatedSensorValues(
-									compensation
-								)
-
-							switch (accountingInfo.type) {
-								case 'accountToIntern':
-									parentState
-										.callIdentifier
-										.sourceNode
-										.compensateInternSensorValues(
-											compensation
-										)
-								break
-								case 'accountToExtern':
-									parentState
-										.callIdentifier
-										.sourceNode
-										.compensateExternSensorValues(
-											compensation
-										)
-								break
-								case 'accountToLangInternal':
-									parentState
-										.callIdentifier
-										.sourceNode
-										.compensateLangInternalSensorValues(
-											compensation
-										)
-								break
-								case 'accountOwnCodeGetsExecutedByExternal':
-									throw new Error('InsertCPUProfileStateMachine.insertCPUNodes: compensation not supported for accountOwnCodeGetsExecutedByExternal')
-								case null:
-								break
-								default:
-									assertUnreachable(accountingInfo.type)
-							}
-						}
-					}
-
-					const parentStackFrame = stack[stack.length - 1]
-					if (parentStackFrame !== undefined && parentStackFrame.result !== undefined) {
-						if (parentStackFrame.result.compensation === undefined) {
-							// carry upwards
-							parentStackFrame.result.compensation = currentStackFrame.result.compensation
-						} else {
-							// add to existing compensation (also carried upwards)
-							parentStackFrame.result.compensation.addToAggregated(
-								compensation
-							)
-						}
-						if (this.debug) {
-							LoggerHelper.warn(
-								'[COMPENSATION] carried upwards ' +
-								`${compensation.aggregatedCPUTime} µs`
-							)
-							StateMachineLogger.logState(
-								currentStackFrame.depth + 1,
-								currentStackFrame.node,
-								currentStackFrame.result.nextState
-							)
-						}
-					}
+					// propagate the compensation to all parents
+					CompensationHelper.propagateCompensation(
+						stack[stack.length - 1],
+						compensation,
+						this.debug ? {
+							depth: currentStackFrame.depth + 1,
+							node: currentStackFrame.node,
+							currentState
+						} : undefined
+					)
 				}
 
 				if (this.debug) {
@@ -282,83 +224,13 @@ export class InsertCPUProfileStateMachine {
 			)
 
 			// apply the transition
-			switch (transition.transition) {
-				case 'toLangInternal':
-					currentStackFrame.result = await this.accountToLangInternal(
-						currentStackFrame.state,
-						currentStackFrame.node,
-						transition
-					)
-					break
-				case 'toProject': {
-					const scope = currentStackFrame.state.scope
-					switch (scope) {
-						case 'project':
-							// transition stays in project
-							currentStackFrame.result = await this.accountToIntern(
-								currentStackFrame.state,
-								currentStackFrame.node,
-								transition
-							)
-							break
-						case 'module':
-							// transition from module to project
-							currentStackFrame.result = await this.accountOwnCodeGetsExecutedByExternal(
-								this.projectReport,
-								currentStackFrame.node,
-								transition
-							)
-							break
-					}
-				}
-				break
-				case 'toModule': {
-					const scope = currentStackFrame.state.scope
-					switch (scope) {
-						case 'project':
-							// transition from project to module
-							currentStackFrame.result = await this.accountToExtern(
-								currentStackFrame.state,
-								currentStackFrame.node,
-								transition
-							)
-							break
-						case 'module':
-							if (
-								currentStackFrame.state.callIdentifier.report instanceof ModuleReport &&
-								currentStackFrame.state.callIdentifier.report.nodeModule.identifier ===
-									transition.options.nodeModule.identifier
-							) {
-								// transition stays in the same module
-								currentStackFrame.result = await this.accountToIntern(
-									currentStackFrame.state,
-									currentStackFrame.node,
-									transition
-								)
-							} else {
-								// transition from module to different module
-								currentStackFrame.result = await this.accountToExtern(
-									currentStackFrame.state,
-									currentStackFrame.node,
-									transition
-								)
-							}
-							break
-					}
-				}
-				break
-				case 'stayInState':
-					// do nothing, stay in the current state
-					currentStackFrame.result = {
-						nextState: currentStackFrame.state,
-						accountingInfo: null
-					}
-					break
-				default:
-					assertUnreachable(transition)
-			}
+			currentStackFrame.result = await this.applyTransition(
+				currentStackFrame,
+				transition
+			)
 
-			CompensationHelper.createCompensationIfNecessary(
+			// create compensation if necessary
+			currentStackFrame.result.compensation = CompensationHelper.createCompensationIfNecessary(
 				currentStackFrame.state,
 				currentStackFrame.result
 			)
@@ -483,6 +355,81 @@ export class InsertCPUProfileStateMachine {
 		}
 
 		return result
+	}
+
+	async applyTransition(
+		currentStackFrame: StackFrame,
+		transition: Transition
+	): Promise<TransitionResult> {
+		switch (transition.transition) {
+			case 'toLangInternal':
+				return await this.accountToLangInternal(
+					currentStackFrame.state,
+					currentStackFrame.node,
+					transition
+				)
+			case 'toProject': {
+				const scope = currentStackFrame.state.scope
+				switch (scope) {
+					case 'project':
+						// transition stays in project
+						return await this.accountToIntern(
+							currentStackFrame.state,
+							currentStackFrame.node,
+							transition
+						)
+					case 'module':
+						// transition from module to project
+						return await this.accountOwnCodeGetsExecutedByExternal(
+							this.projectReport,
+							currentStackFrame.node,
+							transition
+						)
+				}
+			}
+			break
+			case 'toModule': {
+				const scope = currentStackFrame.state.scope
+				switch (scope) {
+					case 'project':
+						// transition from project to module
+						return await this.accountToExtern(
+							currentStackFrame.state,
+							currentStackFrame.node,
+							transition
+						)
+					case 'module':
+						if (
+							currentStackFrame.state.callIdentifier.report instanceof ModuleReport &&
+							currentStackFrame.state.callIdentifier.report.nodeModule.identifier ===
+								transition.options.nodeModule.identifier
+						) {
+							// transition stays in the same module
+							return await this.accountToIntern(
+								currentStackFrame.state,
+								currentStackFrame.node,
+								transition
+							)
+						} else {
+							// transition from module to different module
+							return await this.accountToExtern(
+								currentStackFrame.state,
+								currentStackFrame.node,
+								transition
+							)
+						}
+				}
+			}
+			break
+			case 'stayInState':
+				// do nothing, stay in the current state
+				return {
+					nextState: currentStackFrame.state,
+					accountingInfo: null
+				}
+			default:
+				assertUnreachable(transition)
+		}
 	}
 
 	/**
