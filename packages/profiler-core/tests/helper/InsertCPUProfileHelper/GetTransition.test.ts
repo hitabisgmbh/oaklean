@@ -12,8 +12,10 @@ import {
 } from './mock'
 
 import {
-	InsertCPUProfileStateMachine,
 	Transition
+} from '../../../src/helper/InsertCPUProfileHelper/types/transition'
+import {
+	InsertCPUProfileStateMachine,
 } from '../../../src/helper/InsertCPUProfileHelper/InsertCPUProfileStateMachine'
 import { WASM_NODE_MODULE } from '../../../src/model/NodeModule'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'

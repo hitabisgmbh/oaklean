@@ -139,7 +139,8 @@ export class InsertCPUProfileStateMachine {
 		while (stack.length > 0) {
 			const currentStackFrame = stack[stack.length - 1]
 
-			if (currentStackFrame.result) {
+			// POSTPROCESSING OF THE NODE (second visit)
+			if (currentStackFrame.result !== undefined) {
 				// second visit of the node, do post processing
 				stack.pop()
 				if (currentStackFrame.result.accountingInfo === null) {
@@ -208,6 +209,7 @@ export class InsertCPUProfileStateMachine {
 				continue
 			}
 
+			// PROCESSING OF THE NODE (first visit)
 			if (this.debug) {
 				StateMachineLogger.logState(
 					currentStackFrame.depth,
