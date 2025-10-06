@@ -1658,32 +1658,42 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 		})
 	})
 
-	test('A1 -> mA.A0 -> A0', async () => {
+	test('A2 -> A1 -> mA.A0 -> A0', async () => {
 		const cpuNode = mockedCPUModel({
-			location: SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
-			profilerHits: 3,
+			location: SOURCE_LOCATIONS_DEFAULT['project-fileA-2'],
+			profilerHits: 4,
 			sensorValues: {
-				selfCPUTime: 30 as MicroSeconds_number,
-				aggregatedCPUTime: 60 as MicroSeconds_number
+				selfCPUTime: 40 as MicroSeconds_number,
+				aggregatedCPUTime: 100 as MicroSeconds_number
 			},
-			children: [{
-				location: SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
-				profilerHits: 2,
-				sensorValues: {
-					selfCPUTime: 20 as MicroSeconds_number,
-					aggregatedCPUTime: 30 as MicroSeconds_number
-				},
-				children: [
-					{
-						location: SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
-						profilerHits: 1,
+			children: [
+				{
+					location: SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
+					profilerHits: 3,
+					sensorValues: {
+						selfCPUTime: 30 as MicroSeconds_number,
+						aggregatedCPUTime: 60 as MicroSeconds_number
+					},
+					children: [{
+						location: SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
+						profilerHits: 2,
 						sensorValues: {
-							selfCPUTime: 10 as MicroSeconds_number,
-							aggregatedCPUTime: 10 as MicroSeconds_number
-						}
-					}
-				]
-			}]
+							selfCPUTime: 20 as MicroSeconds_number,
+							aggregatedCPUTime: 30 as MicroSeconds_number
+						},
+						children: [
+							{
+								location: SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+								profilerHits: 1,
+								sensorValues: {
+									selfCPUTime: 10 as MicroSeconds_number,
+									aggregatedCPUTime: 10 as MicroSeconds_number
+								}
+							}
+						]
+					}]
+				}
+			]
 		})
 
 		await stateMachine.insertCPUNodes(
@@ -1693,7 +1703,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 
 		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
-			'3': {
+			'4': {
 				reportVersion: projectReport.reportVersion,
 				kind: ReportKind.measurement,
 				nodeModule: {
@@ -1702,11 +1712,11 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 				},
 				lang_internalHeadlessSensorValues: {},
 				intern: {
-					'4': {
+					'5': {
 						path: './fileA.js',
 						functions: {
-							'5': {
-								id: 5,
+							'6': {
+								id: 6,
 								type: SourceNodeMetaDataType.SourceNode,
 								sensorValues: {
 									profilerHits: 2,
@@ -1728,14 +1738,35 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 						id: 2,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
+							profilerHits: 4,
+							selfCPUTime: 40,
+							aggregatedCPUTime: 90,
+							internCPUTime: 50
+						},
+						intern: {
+							'3': {
+								id: 3,
+								type: SourceNodeMetaDataType.InternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 3,
+									selfCPUTime: 30,
+									aggregatedCPUTime: 50
+								}
+							}
+						}
+					},
+					'3': {
+						id: 3,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
 							profilerHits: 3,
 							selfCPUTime: 30,
 							aggregatedCPUTime: 50,
 							externCPUTime: 20
 						},
 						extern: {
-							'5': {
-								id: 5,
+							'6': {
+								id: 6,
 								type: SourceNodeMetaDataType.ExternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 2,
@@ -1745,8 +1776,8 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 							}
 						}
 					},
-					'6': {
-						id: 6,
+					'7': {
+						id: 7,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 1,
