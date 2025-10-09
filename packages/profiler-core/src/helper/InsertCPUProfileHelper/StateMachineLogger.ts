@@ -1,6 +1,6 @@
 import { State } from './types/state'
 import { Transition } from './types/transition'
-import { AccountingInfo } from './types/accounting'
+import { AccountingInfo, Compensation } from './types/accounting'
 
 import { LoggerHelper } from '../LoggerHelper'
 import { CPUNode } from '../CPUProfile/CPUNode'
@@ -22,19 +22,19 @@ export class StateMachineLogger {
 
 	static logState(depth: number, cpuNode: CPUNode, currentState: State) {
 		/*
-				[STATE] moduleFunction_fileA_0 (./fileA.js)
-				├─ Depth         : 1
-				├─ CPU Node      : 001
-				├─ ReportID      : 1
-				├─ SourceNodeID  : 3
-				├─ Scope         : module
-				├─ Type          : intern
-				├─ Headless      : false
-				├─ Profiler Hits : 2
-				├─ CPU Time      : self=20 µs | total=30 µs
-				├─ CPU Energy    : self=0 mJ | total=0 mJ
-				├─ RAM Energy    : self=0 mJ | total=0 mJ
-			*/
+			[STATE] moduleFunction_fileA_0 (./fileA.js)
+			├─ Depth         : 1
+			├─ CPU Node      : 001
+			├─ ReportID      : 1
+			├─ SourceNodeID  : 3
+			├─ Scope         : module
+			├─ Type          : intern
+			├─ Headless      : false
+			├─ Profiler Hits : 2
+			├─ CPU Time      : self=20 µs | total=30 µs
+			├─ CPU Energy    : self=0 mJ | total=0 mJ
+			├─ RAM Energy    : self=0 mJ | total=0 mJ
+		*/
 		if (currentState.callIdentifier.sourceNode === null) {
 			LoggerHelper.log(LoggerHelper.successString('[STATE]'), '(root)')
 			return
@@ -119,16 +119,16 @@ export class StateMachineLogger {
 		nextState: State
 	) {
 		/*
-				 [TRANSITION] (root) -> moduleFunction_fileA_0
-					├─ CPU Node             : 000
-					├─ Transition           : toModule
-					├─ AccountingType       : accountToExtern
-					├─ FirstTimeVisited     : true
-					├─ Accounted Hits       : 2
-					├─ Accounted CPU Time   : self=20 µs | total=30 µs
-					├─ Accounted CPU Energy : self=0 mJ | total=0 mJ
-					├─ Accounted RAM Energy : self=0 mJ | total=0 mJ
-			*/
+			[TRANSITION] (root) -> moduleFunction_fileA_0
+			├─ CPU Node             : 000
+			├─ Transition           : toModule
+			├─ AccountingType       : accountToExtern
+			├─ FirstTimeVisited     : true
+			├─ Accounted Hits       : 2
+			├─ Accounted CPU Time   : self=20 µs | total=30 µs
+			├─ Accounted CPU Energy : self=0 mJ | total=0 mJ
+			├─ Accounted RAM Energy : self=0 mJ | total=0 mJ
+		*/
 		const currentSourceNodeIndex =
 			currentState.callIdentifier.sourceNode?.getIndex()
 		const currentSourceNodeName =
@@ -175,6 +175,73 @@ export class StateMachineLogger {
 						accountingInfo?.accountedSensorValues
 							.aggregatedRAMEnergyConsumption || 0
 					} mJ`
+				})
+		)
+	}
+
+	static formatCompensation = LoggerHelper.treeStyleKeyValues([
+		'Compensation ID',
+		'Depth',
+		'CPU Node',
+		'ReportID',
+		'SourceNodeID',
+		'Scope',
+		'Type',
+		'Headless',
+		'Compensated CPU Time',
+		'Compensated CPU Energy',
+		'Compensated RAM Energy'
+	] as const)
+
+	static logCompensation(
+		depth: number,
+		cpuNode: CPUNode,
+		parentState: State,
+		compensation: Compensation,
+		title: 'CREATE COMPENSATION' | 'APPLY COMPENSATION'
+	) {
+		/*
+			[CREATE COMPENSATION | APPLY COMPENSATION] moduleFunction_fileA_0 (./fileA.js)
+			├─ Depth                  : 2
+			├─ CPU Node               : 002
+			├─ ReportID               : 1
+			├─ SourceNodeID           : 5
+			├─ Scope                  : module
+			├─ Type                   : intern
+			├─ Headless               : false
+			├─ Compensated CPU Time   : self=30 µs | total=0 µs
+			├─ Compensated CPU Energy : self=0 mJ | total=0 mJ
+			├─ Compensated RAM Energy : self=0 mJ | total=0 mJ
+		*/
+		if (parentState.callIdentifier.sourceNode === null) {
+			LoggerHelper.log(LoggerHelper.errorString(`[${title}]`), '(root)')
+			return
+		}
+
+		const sourceNodeIndex = parentState.callIdentifier.sourceNode?.getIndex()
+		if (sourceNodeIndex === undefined) {
+			throw new Error(
+				'InsertCPUProfileStateMachine.logCompensation: sourceNode has no index'
+			)
+		}
+
+		LoggerHelper.log(
+			LoggerHelper.errorString(`[${title}]`),
+			`${sourceNodeIndex.functionName}`,
+			`(${sourceNodeIndex.pathIndex.identifier})`,
+			'\n' +
+				StateMachineLogger.formatCompensation({
+					'Compensation ID': compensation.id.toString(),
+					Depth: depth.toString(),
+					'CPU Node': String(cpuNode.index).padStart(3, '0'),
+					ReportID: parentState.callIdentifier.report.internID.toString(),
+					SourceNodeID: parentState.callIdentifier.sourceNode.id.toString(),
+					Scope: parentState.scope,
+					Type: parentState.type,
+					Headless: parentState.headless.toString(),
+					'Compensated CPU Time': `self=${compensation.sensorValues.selfCPUTime} µs | total=${compensation.sensorValues.aggregatedCPUTime} µs`,
+					'Compensated CPU Energy': `self=${compensation.sensorValues.selfCPUEnergyConsumption} mJ | total=${compensation.sensorValues.aggregatedCPUEnergyConsumption} mJ`,
+					'Compensated RAM Energy': `self=${compensation.sensorValues.selfRAMEnergyConsumption} mJ | total=${compensation.sensorValues.aggregatedRAMEnergyConsumption} mJ`
 				})
 		)
 	}

@@ -1,11 +1,10 @@
 
 import { State } from './state'
-import { AccountingInfo } from './accounting'
+import { AccountingInfo, Compensation } from './accounting'
 
 import {
 	NodeModule
 } from '../../../model/NodeModule'
-import { SensorValues } from '../../../model'
 // Types
 import {
 	ResolvedSourceNodeLocation
@@ -52,5 +51,5 @@ export type Transition =
 export type TransitionResult = {
 	nextState: State
 	accountingInfo: AccountingInfo | null
-	compensation?: SensorValues
+	compensation?: Compensation
 }

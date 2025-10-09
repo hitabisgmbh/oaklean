@@ -1,3 +1,4 @@
+import { SensorValues } from '../../../model/SensorValues'
 import { SourceNodeMetaData } from '../../../model/SourceNodeMetaData'
 // Types
 import {
@@ -10,6 +11,11 @@ type AccountingType =
 	| 'accountToIntern'
 	| 'accountToExtern'
 	| 'accountOwnCodeGetsExecutedByExternal'
+
+export type Compensation = {
+	id: number
+	sensorValues: SensorValues
+}
 
 export type AccountingInfo = {
 	type: AccountingType

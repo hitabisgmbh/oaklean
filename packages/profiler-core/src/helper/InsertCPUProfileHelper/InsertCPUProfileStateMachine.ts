@@ -164,7 +164,11 @@ export class InsertCPUProfileStateMachine {
 					CompensationHelper.applyCompensation(
 						parentState,
 						compensation,
-						accountingInfo
+						accountingInfo,
+						this.debug ? {
+							depth: currentStackFrame.depth,
+							node: currentStackFrame.node
+						} : undefined
 					)
 
 					// propagate the compensation to all parents
@@ -172,7 +176,7 @@ export class InsertCPUProfileStateMachine {
 						stack[stack.length - 1],
 						compensation,
 						this.debug ? {
-							depth: currentStackFrame.depth + 1,
+							depth: currentStackFrame.depth,
 							node: currentStackFrame.node,
 							currentState
 						} : undefined
@@ -213,12 +217,6 @@ export class InsertCPUProfileStateMachine {
 				transition
 			)
 
-			// create compensation if necessary
-			currentStackFrame.result.compensation = CompensationHelper.createCompensationIfNecessary(
-				currentStackFrame.state,
-				currentStackFrame.result
-			)
-
 			if (this.debug) {
 				StateMachineLogger.logTransition(
 					currentStackFrame.node,
@@ -228,6 +226,16 @@ export class InsertCPUProfileStateMachine {
 					currentStackFrame.result.nextState
 				)
 			}
+
+			// create compensation if necessary
+			currentStackFrame.result.compensation = CompensationHelper.createCompensationIfNecessary(
+				currentStackFrame.state,
+				currentStackFrame.result,
+				this.debug ? {
+					depth: currentStackFrame.depth,
+					node: currentStackFrame.node
+				} : undefined
+			)
 
 			// add children to stack
 			for (const child of currentStackFrame.node.reversedChildren()) {
