@@ -1,10 +1,10 @@
-import { CPUNode } from '../../../src/helper/CPUProfile/CPUNode'
-import { ResolveFunctionIdentifierHelper } from '../../../src/helper/ResolveFunctionIdentifierHelper'
-import { CPUProfileSourceLocation } from '../../../src/helper/CPUProfile/CPUProfileSourceLocation'
-// Types
 import {
 	ISensorValues,
-} from '../../../src/types'
+	CPUNode,
+	MicroSeconds_number,
+	CPUProfileSourceLocation,
+	ResolveFunctionIdentifierHelper
+} from '@oaklean/profiler-core/src'
 
 export type MockedCPUModel = {
 	location: CPUProfileSourceLocation,
@@ -35,6 +35,40 @@ export function mockedCPUModel(
 			}
 		}
 	} as CPUNode
+}
+/**
+ * Creates a mocked CPUModel with a chain of locations.
+ * The first location in the array will be the root, the last location will be the deepest child.
+ * Each node will have profilerHits by 1 and selfCPUTime increasing by 10 for each depth level.
+ * The aggregatedCPUTime will be the sum of selfCPUTime of itself and all its children.
+ * 
+ * E.g. for locations = [A, B, C]:
+ * - A: profilerHits = 3, selfCPUTime = 30, aggregatedCPUTime = 60
+ *  - B: profilerHits = 2, selfCPUTime = 20, aggregatedCPUTime = 30
+ * 	  - C: profilerHits = 1, selfCPUTime = 10, aggregatedCPUTime = 10
+ */
+export function createLocationChainCPUModel(
+	locations: CPUProfileSourceLocation[]
+) {
+	let aggregatedCPUTime: MicroSeconds_number = 0 as MicroSeconds_number
+	let currentRoot: MockedCPUModel | undefined = undefined
+	for (let i = 0; i < locations.length; i++) {
+		aggregatedCPUTime = aggregatedCPUTime + (i+1)*10 as MicroSeconds_number
+
+		currentRoot = {
+			location: locations[locations.length - 1 - i],
+			profilerHits: i+1,
+			sensorValues: {
+				selfCPUTime: (i+1)*10 as MicroSeconds_number,
+				aggregatedCPUTime
+			},
+			children: currentRoot === undefined ? undefined : [currentRoot]
+		}
+	}
+	if (currentRoot === undefined) {
+		throw new Error('createMockedCPUModel: locations must not be empty')
+	}
+	return currentRoot
 }
 
 export const MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER = {

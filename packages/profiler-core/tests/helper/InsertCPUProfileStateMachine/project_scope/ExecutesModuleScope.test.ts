@@ -1,3 +1,11 @@
+import {
+	ReportKind,
+	MicroSeconds_number,
+	SourceNodeMetaDataType,
+	ProjectReport,
+	InsertCPUProfileStateMachine
+} from '@oaklean/profiler-core/src'
+
 // Test Assets
 import { SOURCE_LOCATIONS_DEFAULT } from '../assets/SourceLocations'
 import {
@@ -5,14 +13,6 @@ import {
 	MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 } from '../mock'
 import { EXAMPLE_EXECUTION_DETAILS } from '../../../model/assets/ProjectReport/ExecutionDetails'
-import { InsertCPUProfileStateMachine } from '../../../../src/helper/InsertCPUProfileHelper/InsertCPUProfileStateMachine'
-import { ProjectReport } from '../../../../src/model/ProjectReport'
-// Types
-import {
-	ReportKind,
-	MicroSeconds_number,
-	SourceNodeMetaDataType
-} from '../../../../src/types'
 
 describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE executes MODULE_SCOPE)', () => {
 	let projectReport: ProjectReport

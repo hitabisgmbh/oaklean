@@ -1,18 +1,18 @@
+import {
+	ReportKind,
+	SourceNodeMetaDataType,
+	ProjectReport,
+	InsertCPUProfileStateMachine
+} from '@oaklean/profiler-core/src'
+
 // Test Assets
 import { SOURCE_LOCATIONS_LANG_INTERNAL } from '../assets/SourceLocations'
 import {
 	mockedCPUModel,
+	createLocationChainCPUModel,
 	MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 } from '../mock'
 import { EXAMPLE_EXECUTION_DETAILS } from '../../../model/assets/ProjectReport/ExecutionDetails'
-import { InsertCPUProfileStateMachine } from '../../../../src/helper/InsertCPUProfileHelper/InsertCPUProfileStateMachine'
-import { ProjectReport } from '../../../../src/model/ProjectReport'
-// Types
-import {
-	ReportKind,
-	MicroSeconds_number,
-	SourceNodeMetaDataType
-} from '../../../../src/types'
 
 describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE)', () => {
 	let projectReport: ProjectReport
@@ -27,34 +27,13 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 	})
 
 	test('LA.0 -> LA.1 -> LA.2', async () => {
-		const cpuNode = mockedCPUModel({
-			location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
-			profilerHits: 3,
-			sensorValues: {
-				selfCPUTime: 30 as MicroSeconds_number,
-				aggregatedCPUTime: 60 as MicroSeconds_number
-			},
-			children: [
-				{
-					location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
-					profilerHits: 2,
-					sensorValues: {
-						selfCPUTime: 20 as MicroSeconds_number,
-						aggregatedCPUTime: 30 as MicroSeconds_number
-					},
-					children: [
-						{
-							location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'],
-							profilerHits: 1,
-							sensorValues: {
-								selfCPUTime: 10 as MicroSeconds_number,
-								aggregatedCPUTime: 10 as MicroSeconds_number
-							}
-						}
-					]
-				}
-			]
-		})
+		const cpuNode = mockedCPUModel(
+			createLocationChainCPUModel([
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'],
+			])
+		)
 
 		await stateMachine.insertCPUNodes(
 			cpuNode,
@@ -103,24 +82,12 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 	})
 
 	test('LA.0 -> LA.0', async () => {
-		const cpuNode = mockedCPUModel({
-			location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
-			profilerHits: 2,
-			sensorValues: {
-				selfCPUTime: 20 as MicroSeconds_number,
-				aggregatedCPUTime: 50 as MicroSeconds_number
-			},
-			children: [
-				{
-					location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
-					profilerHits: 3,
-					sensorValues: {
-						selfCPUTime: 30 as MicroSeconds_number,
-						aggregatedCPUTime: 30 as MicroSeconds_number
-					}
-				}
-			]
-		})
+		const cpuNode = mockedCPUModel(
+			createLocationChainCPUModel([
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+			])
+		)
 
 		await stateMachine.insertCPUNodes(
 			cpuNode,
@@ -128,7 +95,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 		)
 
 		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({
-			selfCPUTime: 50
+			selfCPUTime: 30
 		})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toEqual({
@@ -139,9 +106,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 						id: 3,
 						type: SourceNodeMetaDataType.LangInternalSourceNode,
 						sensorValues: {
-							profilerHits: 5,
-							selfCPUTime: 50,
-							aggregatedCPUTime: 50
+							profilerHits: 3,
+							selfCPUTime: 30,
+							aggregatedCPUTime: 30
 						}
 					}
 				}
@@ -151,44 +118,14 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 	})
 
 	test('LA.0 -> LA.1 -> LA.0 -> LA.1', async () => {
-		const cpuNode = mockedCPUModel({
-			location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
-			profilerHits: 4,
-			sensorValues: {
-				selfCPUTime: 40 as MicroSeconds_number,
-				aggregatedCPUTime: 100 as MicroSeconds_number
-			},
-			children: [
-				{
-					location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
-					profilerHits: 3,
-					sensorValues: {
-						selfCPUTime: 30 as MicroSeconds_number,
-						aggregatedCPUTime: 60 as MicroSeconds_number
-					},
-					children: [
-						{
-							location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
-							profilerHits: 2,
-							sensorValues: {
-								selfCPUTime: 20 as MicroSeconds_number,
-								aggregatedCPUTime: 30 as MicroSeconds_number
-							},
-							children: [
-								{
-									location: SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
-									profilerHits: 1,
-									sensorValues: {
-										selfCPUTime: 10 as MicroSeconds_number,
-										aggregatedCPUTime: 10 as MicroSeconds_number
-									}
-								}
-							]
-						}
-					]
-				}
-			]
-		})
+		const cpuNode = mockedCPUModel(
+			createLocationChainCPUModel([
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
+			])
+		)
 
 		await stateMachine.insertCPUNodes(
 			cpuNode,
