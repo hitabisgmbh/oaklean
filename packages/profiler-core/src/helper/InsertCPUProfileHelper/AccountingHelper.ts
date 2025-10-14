@@ -77,6 +77,10 @@ export class AccountingHelper {
 			currentState.callIdentifier.report,
 			accountedSourceNode
 		)
+		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
+			'langInternal'
+		)
 
 		if (transition.options.headless) {
 			// if no extern or intern calls were tracked yet, add the time to the total of headless cpu time
@@ -86,14 +90,9 @@ export class AccountingHelper {
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
 			sensorValues,
-			callRelationTracker.isCallRecorded(currentCallIdentifier)
+			!currentCallIdentifier.firstTimeVisited
 		)
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
-
-		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
-			currentCallIdentifier,
-			'langInternal'
-		)
 
 		let accountedSourceNodeReference:
 			SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference> |
@@ -172,16 +171,16 @@ export class AccountingHelper {
 			currentState.callIdentifier.report,
 			accountedSourceNode
 		)
-		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
-			sensorValues,
-			callRelationTracker.isCallRecorded(currentCallIdentifier)
-		)
-		accountedSourceNode.addToSensorValues(accountedSensorValues)
-
 		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
 			'intern')
+
+		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
+		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
+			sensorValues,
+			!currentCallIdentifier.firstTimeVisited
+		)
+		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
 		if (sourceNodeLocation.functionIdentifier === TypescriptHelper.awaiterSourceNodeIdentifier()) {
 			currentCallIdentifier.isAwaiterSourceNode = true
@@ -319,16 +318,16 @@ export class AccountingHelper {
 			report,
 			accountedSourceNode
 		)
-		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
-			sensorValues,
-			callRelationTracker.isCallRecorded(currentCallIdentifier)
-		)
-		accountedSourceNode.addToSensorValues(accountedSensorValues)
-
 		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
 			'extern')
+
+		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
+		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
+			sensorValues,
+			!currentCallIdentifier.firstTimeVisited
+		)
+		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
 		if (transition.options.createLink) {
 			if (currentState.callIdentifier.sourceNode === null) {
@@ -402,18 +401,17 @@ export class AccountingHelper {
 			originalReport,
 			accountedSourceNode
 		)
+		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
+			'intern')
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
 			sensorValues,
-			callRelationTracker.isCallRecorded(currentCallIdentifier)
+			!currentCallIdentifier.firstTimeVisited
 		)
 		// add measurements to original source code
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
-
-		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
-			currentCallIdentifier,
-			'intern')
 
 		if (transition.options.createLink) {
 			throw new Error('InsertCPUProfileStateMachine.accountOwnCodeGetsExecutedByExternal: Cannot create link to parent, since the parent call is from a different report')
