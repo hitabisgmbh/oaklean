@@ -89,13 +89,13 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 		})
 	})
 
-	test('A1 -> mA.A0 -> A0', async () => {
+	test('A0 -> mA.A0 -> A1', async () => {
 		const cpuNode = mockedCPUModel(
 			createLocationChainCPUModel(
 				[
-					SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
-					SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
 					SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+					SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
 				]
 			)
 		)
@@ -173,14 +173,14 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 		})
 	})
 
-	test('A2 -> A1 -> mA.A0 -> A0', async () => {
+	test('A0 -> A1 -> mA.A0 -> A2', async () => {
 		const cpuNode = mockedCPUModel(
 			createLocationChainCPUModel(
 				[
-					SOURCE_LOCATIONS_DEFAULT['project-fileA-2'],
-					SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
-					SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
 					SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
+					SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'],
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-2'],
 				]
 			)
 		)
@@ -272,6 +272,81 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 							profilerHits: 1,
 							selfCPUTime: 10,
 							aggregatedCPUTime: 10
+						}
+					}
+				}
+			}
+		})
+	})
+
+	test('A0 -> mA.A0 -> A0', async () => {
+		const cpuNode = mockedCPUModel(
+			createLocationChainCPUModel(
+				[
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+					SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+				]
+			)
+		)
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.extern.toJSON()).toEqual({
+			'3': {
+				reportVersion: projectReport.reportVersion,
+				kind: ReportKind.measurement,
+				nodeModule: {
+					name: 'moduleA',
+					version: '1.0.0'
+				},
+				lang_internalHeadlessSensorValues: {},
+				intern: {
+					'4': {
+						path: './fileA.js',
+						functions: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
+		expect(projectReport.intern.toJSON()).toEqual({
+			'1': {
+				path: './src/fileA.js',
+				functions: {
+					'2': {
+						id: 2,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 4,
+							selfCPUTime: 40,
+							aggregatedCPUTime: 60,
+							externCPUTime: 20
+						},
+						extern: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							}
 						}
 					}
 				}

@@ -4,6 +4,7 @@ import { AccountingInfo, Compensation } from './types/accounting'
 
 import { LoggerHelper } from '../LoggerHelper'
 import { CPUNode } from '../CPUProfile/CPUNode'
+import { SensorValues } from '../../model/SensorValues'
 
 export class StateMachineLogger {
 	static formatState = LoggerHelper.treeStyleKeyValues([
@@ -157,7 +158,7 @@ export class StateMachineLogger {
 						accountingInfo === null ? 'styInState' : accountingInfo?.type,
 					FirstTimeVisited:
 						nextState.callIdentifier.firstTimeVisited.toString(),
-					'Accounted Hits': `${accountingInfo?.accountedProfilerHits}`,
+					'Accounted Hits': `${cpuNode.profilerHits}`,
 					'Accounted CPU Time': `self=${
 						accountingInfo?.accountedSensorValues.selfCPUTime || 0
 					} µs | total=${
@@ -197,6 +198,7 @@ export class StateMachineLogger {
 		depth: number,
 		cpuNode: CPUNode,
 		parentState: State,
+		appliedSensorValues: SensorValues,
 		compensation: Compensation,
 		title: 'CREATE COMPENSATION' | 'APPLY COMPENSATION'
 	) {
@@ -225,6 +227,14 @@ export class StateMachineLogger {
 			)
 		}
 
+		const childCompensationStrings: string[] = []
+		for (const [id, sensorValues] of compensation.compensationPerNode.entries()) {
+			childCompensationStrings.push(
+				`  ├─ Child Compensation SourceNodeID [${id}]: self=${sensorValues.selfCPUTime} µs` +
+				`| total=${sensorValues.aggregatedCPUTime} µs\n`
+			)
+		}
+
 		LoggerHelper.log(
 			LoggerHelper.errorString(`[${title}]`),
 			`${sourceNodeIndex.functionName}`,
@@ -239,10 +249,11 @@ export class StateMachineLogger {
 					Scope: parentState.scope,
 					Type: parentState.type,
 					Headless: parentState.headless.toString(),
-					'Compensated CPU Time': `self=${compensation.sensorValues.selfCPUTime} µs | total=${compensation.sensorValues.aggregatedCPUTime} µs`,
-					'Compensated CPU Energy': `self=${compensation.sensorValues.selfCPUEnergyConsumption} mJ | total=${compensation.sensorValues.aggregatedCPUEnergyConsumption} mJ`,
-					'Compensated RAM Energy': `self=${compensation.sensorValues.selfRAMEnergyConsumption} mJ | total=${compensation.sensorValues.aggregatedRAMEnergyConsumption} mJ`
-				})
+					'Compensated CPU Time': `self=${appliedSensorValues.selfCPUTime} µs | total=${appliedSensorValues.aggregatedCPUTime} µs`,
+					'Compensated CPU Energy': `self=${appliedSensorValues.selfCPUEnergyConsumption} mJ | total=${appliedSensorValues.aggregatedCPUEnergyConsumption} mJ`,
+					'Compensated RAM Energy': `self=${appliedSensorValues.selfRAMEnergyConsumption} mJ | total=${appliedSensorValues.aggregatedRAMEnergyConsumption} mJ`
+				}),
+			'\n' + childCompensationStrings.join('\n')
 		)
 	}
 }

@@ -229,6 +229,7 @@ export class InsertCPUProfileStateMachine {
 
 			// create compensation if necessary
 			currentStackFrame.result.compensation = CompensationHelper.createCompensationIfNecessary(
+				currentStackFrame.node,
 				currentStackFrame.state,
 				currentStackFrame.result,
 				this.debug ? {

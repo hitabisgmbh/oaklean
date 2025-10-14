@@ -535,6 +535,7 @@ export class SensorValues extends BaseModel {
 			other.selfRAMEnergyConsumption,
 			sign
 		)
+		return this
 	}
 
 	// IMPORTANT to change when new measurement type gets added
@@ -557,6 +558,7 @@ export class SensorValues extends BaseModel {
 			other.aggregatedRAMEnergyConsumption,
 			sign
 		)
+		return this
 	}
 
 
@@ -580,6 +582,7 @@ export class SensorValues extends BaseModel {
 			other.aggregatedRAMEnergyConsumption,
 			sign
 		)
+		return this
 	}
 
 	// IMPORTANT to change when new measurement type gets added
@@ -602,6 +605,7 @@ export class SensorValues extends BaseModel {
 			other.aggregatedRAMEnergyConsumption,
 			sign
 		)
+		return this
 	}
 
 	// IMPORTANT to change when new measurement type gets added
@@ -624,6 +628,7 @@ export class SensorValues extends BaseModel {
 			other.aggregatedRAMEnergyConsumption,
 			sign
 		)
+		return this
 	}
 
 	add({

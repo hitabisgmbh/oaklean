@@ -129,8 +129,8 @@ export class AccountingHelper {
 			},
 			accountingInfo: {
 				type: 'accountToLangInternal',
-				accountedProfilerHits: cpuNode.profilerHits,
-				accountedSensorValues: accountedSensorValues,
+				accountedSourceNode,
+				accountedSensorValues,
 				accountedSourceNodeReference
 			}
 		}
@@ -270,8 +270,8 @@ export class AccountingHelper {
 			},
 			accountingInfo: {
 				type: 'accountToIntern',
-				accountedProfilerHits: cpuNode.profilerHits,
-				accountedSensorValues: accountedSensorValues,
+				accountedSourceNode,
+				accountedSensorValues,
 				accountedSourceNodeReference
 			}
 		}
@@ -360,8 +360,8 @@ export class AccountingHelper {
 			},
 			accountingInfo: {
 				type: 'accountToExtern',
-				accountedProfilerHits: cpuNode.profilerHits,
-				accountedSensorValues: accountedSensorValues,
+				accountedSourceNode,
+				accountedSensorValues,
 				accountedSourceNodeReference
 			}
 		}
@@ -426,8 +426,8 @@ export class AccountingHelper {
 			},
 			accountingInfo: {
 				type: 'accountOwnCodeGetsExecutedByExternal',
-				accountedProfilerHits: cpuNode.profilerHits,
-				accountedSensorValues: accountedSensorValues,
+				accountedSourceNode,
+				accountedSensorValues,
 				accountedSourceNodeReference: null
 			}
 		}

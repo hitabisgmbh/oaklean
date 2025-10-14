@@ -1,11 +1,9 @@
-import { CPUProfileSourceLocation } from '../../../../src/helper/CPUProfile/CPUProfileSourceLocation'
-import { UnifiedPath } from '../../../../src/system/UnifiedPath'
-import { NodeModule } from '../../../../src/model/NodeModule'
-
-// Types
 import {
+	NodeModule,
+	UnifiedPath,
+	CPUProfileSourceLocation,
 	SourceNodeIdentifier_string
-} from '../../../../src/types'
+} from '@oaklean/profiler-core/src'
 
 function langInternalFunction(
 	fileName: string,

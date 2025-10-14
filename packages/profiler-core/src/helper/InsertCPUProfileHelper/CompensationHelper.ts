@@ -8,11 +8,52 @@ import { CPUNode } from '../CPUProfile'
 import { LoggerHelper } from '../LoggerHelper'
 import { assertUnreachable } from '../../system/Switch'
 import { SensorValues } from '../../model/SensorValues'
+import { SourceNodeID_number } from '../../types'
 
 let COMPENSATION_ID_COUNTER = 1
 
 export class CompensationHelper {
+	static addToCompensation(
+		target: Compensation,
+		add: Compensation
+	) {
+		target.total.addToAggregated(add.total)
+		for (const [id, sensorValue] of add.compensationPerNode.entries()) {
+			let existing = target.compensationPerNode.get(id)
+			if (existing === undefined) {
+				existing = new SensorValues({})
+				target.compensationPerNode.set(
+					id,
+					existing
+				)
+			}
+			existing.addToAggregated(sensorValue)
+		}
+	}
+
+	static getAppliedCompensationForNode(
+		compensation: Compensation,
+		sourceNodeId: SourceNodeID_number
+	) {
+		const existing = compensation.compensationPerNode.get(sourceNodeId)
+		if (existing === undefined) {
+			return compensation.total
+		}
+
+		/*
+		 * Rollback self compensation
+		 * example: A -> B -> A
+		 * since A already includes A in its aggregated sensor values,
+		 * we need to rollback the compensation of A (that is included in the total)
+		*/
+		return compensation.total.clone().addToAggregated(
+			existing,
+			-1
+		)
+	}
+
 	static createCompensationIfNecessary(
+		node: CPUNode,
 		currentState: State,
 		transitionResult: TransitionResult,
 		debug?: {
@@ -36,17 +77,25 @@ export class CompensationHelper {
 			// we need to compensate the accounted sensor values here
 			// and in all its parents
 			// so the compensation needs to be carried upwards
-			const compensation = {
+				
+			const compensation: Compensation = {
 				id: COMPENSATION_ID_COUNTER++,
-				sensorValues: new SensorValues(
-					transitionResult.accountingInfo.accountedSensorValues
-				)
+				total: new SensorValues(
+					node.sensorValues
+				),
+				compensationPerNode: new Map([
+					[
+						transitionResult.accountingInfo.accountedSourceNode.id,
+						new SensorValues(node.sensorValues)
+					]
+				])
 			}
 			if (debug !== undefined) {
 				StateMachineLogger.logCompensation(
 					debug.depth,
 					debug.node,
 					currentState,
+					compensation.total,
 					compensation,
 					'CREATE COMPENSATION'
 				)
@@ -79,15 +128,23 @@ export class CompensationHelper {
 			// parent source node does not exist (e.g. root)
 			return
 		}
-		// the aggregated sensor values always need to be compensated
-		parentState.callIdentifier.sourceNode.compensateAggregatedSensorValues(
-			compensation.sensorValues
+
+		const appliedCompensation = this.getAppliedCompensationForNode(
+			compensation,
+			parentState.callIdentifier.sourceNode.id
 		)
+
+		// the aggregated sensor values always needs to be compensated
+		parentState.callIdentifier.sourceNode.compensateAggregatedSensorValues(
+			appliedCompensation
+		)
+
 		if (debug !== undefined) {
 			StateMachineLogger.logCompensation(
 				debug.depth,
 				debug.node,
 				parentState,
+				appliedCompensation,
 				compensation,
 				'APPLY COMPENSATION'
 			)
@@ -101,23 +158,23 @@ export class CompensationHelper {
 		// only compensate (lang_internal|intern|extern) when there was a link created
 		// compensate the accounted source node reference
 		accountingInfo.accountedSourceNodeReference.compensateAggregatedSensorValues(
-			compensation.sensorValues
+			compensation.total
 		)
 
 		switch (accountingInfo.type) {
 			case 'accountToIntern':
 				parentState.callIdentifier.sourceNode.compensateInternSensorValues(
-					compensation.sensorValues
+					compensation.total
 				)
 				break
 			case 'accountToExtern':
 				parentState.callIdentifier.sourceNode.compensateExternSensorValues(
-					compensation.sensorValues
+					compensation.total
 				)
 				break
 			case 'accountToLangInternal':
 				parentState.callIdentifier.sourceNode.compensateLangInternalSensorValues(
-					compensation.sensorValues
+					compensation.total
 				)
 				break
 			case 'accountOwnCodeGetsExecutedByExternal':
@@ -154,7 +211,10 @@ export class CompensationHelper {
 				parentStackFrame.result.compensation = compensation
 			} else {
 				// add to existing compensation (also carried upwards)
-				parentStackFrame.result.compensation.sensorValues.addToAggregated(compensation.sensorValues)
+				CompensationHelper.addToCompensation(
+					parentStackFrame.result.compensation,
+					compensation
+				)
 			}
 			if (debugInfo !== undefined) {
 				LoggerHelper.log(
@@ -162,18 +222,18 @@ export class CompensationHelper {
 					` ${compensation.id} -> ${parentStackFrame.result.compensation.id}\n` +
 						`├─ Compensation ID               : ${compensation.id}\n` + 
 						// eslint-disable-next-line max-len
-						`├─ Carried CPU Time              : total=${compensation.sensorValues.aggregatedCPUTime} µs \n` + 
+						`├─ Carried CPU Time              : total=${compensation.total.aggregatedCPUTime} µs \n` + 
 						// eslint-disable-next-line max-len
-						`├─ Carried CPU Energy            : total=${compensation.sensorValues.aggregatedCPUEnergyConsumption} µs \n` +
+						`├─ Carried CPU Energy            : total=${compensation.total.aggregatedCPUEnergyConsumption} µs \n` +
 						// eslint-disable-next-line max-len
-						`├─ Carried RAM Energy            : total=${compensation.sensorValues.aggregatedRAMEnergyConsumption} µs \n` +
+						`├─ Carried RAM Energy            : total=${compensation.total.aggregatedRAMEnergyConsumption} µs \n` +
 						`├─ Parent Compensation ID        : ${compensation.id}\n` +
 						// eslint-disable-next-line max-len
-						`├─ Parent Compensated CPU Time   : self=${parentStackFrame.result.compensation.sensorValues.selfCPUTime} µs | total=${parentStackFrame.result.compensation.sensorValues.aggregatedCPUTime} µs \n` + 
+						`├─ Parent Compensated CPU Time   : self=${parentStackFrame.result.compensation.total.selfCPUTime} µs | total=${parentStackFrame.result.compensation.total.aggregatedCPUTime} µs \n` + 
 						// eslint-disable-next-line max-len
-						`├─ Parent Compensated CPU Energy : self=${parentStackFrame.result.compensation.sensorValues.selfCPUEnergyConsumption} µs | total=${parentStackFrame.result.compensation.sensorValues.aggregatedCPUEnergyConsumption} µs \n` +
+						`├─ Parent Compensated CPU Energy : self=${parentStackFrame.result.compensation.total.selfCPUEnergyConsumption} µs | total=${parentStackFrame.result.compensation.total.aggregatedCPUEnergyConsumption} µs \n` +
 						// eslint-disable-next-line max-len
-						`├─ Parent Compensated RAM Energy : self=${parentStackFrame.result.compensation.sensorValues.selfRAMEnergyConsumption} µs | total=${parentStackFrame.result.compensation.sensorValues.aggregatedRAMEnergyConsumption} µs \n`
+						`├─ Parent Compensated RAM Energy : self=${parentStackFrame.result.compensation.total.selfRAMEnergyConsumption} µs | total=${parentStackFrame.result.compensation.total.aggregatedRAMEnergyConsumption} µs \n`
 				)
 				StateMachineLogger.logState(
 					debugInfo.depth + 1,
