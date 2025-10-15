@@ -10,12 +10,12 @@ stages:
   - test-artifacts
   - deploy
 
-pipeline-windows:
-  stage: platform-build-and-test
-  trigger:
-    include: 
-      - local: .gitlab/pipeline-windows.yml
-    strategy: depend
+# pipeline-windows:
+#   stage: platform-build-and-test
+#   trigger:
+#     include: 
+#       - local: .gitlab/pipeline-windows.yml
+#     strategy: depend
 
 pipeline-linux:
   stage: platform-build-and-test
