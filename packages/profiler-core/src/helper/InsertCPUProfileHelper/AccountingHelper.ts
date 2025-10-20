@@ -77,7 +77,7 @@ export class AccountingHelper {
 			currentState.callIdentifier.report,
 			accountedSourceNode
 		)
-		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
 			'langInternal'
 		)
@@ -90,7 +90,7 @@ export class AccountingHelper {
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
 			sensorValues,
-			!currentCallIdentifier.firstTimeVisited
+			!firstTimeVisited
 		)
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
@@ -133,7 +133,10 @@ export class AccountingHelper {
 			},
 			accountingInfo: {
 				type: 'accountToLangInternal',
-				accountedSourceNode,
+				accountedSourceNode: {
+					node: accountedSourceNode,
+					firstTimeVisited: firstTimeVisited
+				},
 				accountedSensorValues,
 				accountedSourceNodeReference
 			}
@@ -177,14 +180,14 @@ export class AccountingHelper {
 			currentState.callIdentifier.report,
 			accountedSourceNode
 		)
-		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
 			'intern')
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
 			sensorValues,
-			!currentCallIdentifier.firstTimeVisited
+			!firstTimeVisited
 		)
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
@@ -279,7 +282,10 @@ export class AccountingHelper {
 			},
 			accountingInfo: {
 				type: 'accountToIntern',
-				accountedSourceNode,
+				accountedSourceNode: {
+					node: accountedSourceNode,
+					firstTimeVisited: firstTimeVisited
+				},
 				accountedSensorValues,
 				accountedSourceNodeReference
 			}
@@ -329,14 +335,14 @@ export class AccountingHelper {
 			report,
 			accountedSourceNode
 		)
-		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
 			'extern')
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
 			sensorValues,
-			!currentCallIdentifier.firstTimeVisited
+			!firstTimeVisited
 		)
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
@@ -374,7 +380,10 @@ export class AccountingHelper {
 			},
 			accountingInfo: {
 				type: 'accountToExtern',
-				accountedSourceNode,
+				accountedSourceNode: {
+					node: accountedSourceNode,
+					firstTimeVisited: firstTimeVisited
+				},
 				accountedSensorValues,
 				accountedSourceNodeReference
 			}
@@ -415,14 +424,14 @@ export class AccountingHelper {
 			originalReport,
 			accountedSourceNode
 		)
-		currentCallIdentifier.firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
 			'intern')
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
 			sensorValues,
-			!currentCallIdentifier.firstTimeVisited
+			!firstTimeVisited
 		)
 		// add measurements to original source code
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
@@ -440,7 +449,10 @@ export class AccountingHelper {
 			},
 			accountingInfo: {
 				type: 'accountOwnCodeGetsExecutedByExternal',
-				accountedSourceNode,
+				accountedSourceNode: {
+					node: accountedSourceNode,
+					firstTimeVisited: firstTimeVisited
+				},
 				accountedSensorValues,
 				accountedSourceNodeReference: null
 			}

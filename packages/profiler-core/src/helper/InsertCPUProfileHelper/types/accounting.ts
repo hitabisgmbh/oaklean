@@ -22,10 +22,13 @@ export type Compensation = {
 
 export type AccountingInfo = {
 	type: AccountingType
-	accountedSourceNode: SourceNodeMetaData<
-		| SourceNodeMetaDataType.SourceNode
-		| SourceNodeMetaDataType.LangInternalSourceNode
-	>
+	accountedSourceNode: {
+		firstTimeVisited: boolean,
+		node: SourceNodeMetaData<
+			| SourceNodeMetaDataType.SourceNode
+			| SourceNodeMetaDataType.LangInternalSourceNode
+		>
+	}
 	accountedSourceNodeReference: {
 		firstTimeVisited: boolean
 		reference: SourceNodeMetaData<

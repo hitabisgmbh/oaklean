@@ -144,7 +144,7 @@ export class InsertCPUProfileStateMachine {
 						throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present')
 					}
 				}
-				if (currentState.callIdentifier.firstTimeVisited) {
+				if (currentStackFrame.result.accountingInfo.accountedSourceNode.firstTimeVisited) {
 					// last occurrence of the callIdentifier in the call stack
 					// remove it from the call relation tracker
 					this.callRelationTracker.removeCallRecord(currentState.callIdentifier)

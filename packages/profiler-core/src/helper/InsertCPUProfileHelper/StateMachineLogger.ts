@@ -4,7 +4,6 @@ import { AccountingInfo, Compensation } from './types/accounting'
 
 import { LoggerHelper } from '../LoggerHelper'
 import { CPUNode } from '../CPUProfile/CPUNode'
-import { SensorValues } from '../../model/SensorValues'
 
 export class StateMachineLogger {
 	static formatState = LoggerHelper.treeStyleKeyValues([
@@ -71,7 +70,10 @@ export class StateMachineLogger {
 		)
 	}
 
-	static logLeaveTransition(currentState: State, nextState: State) {
+	static logLeaveTransition(
+		currentState: State,
+		nextState: State
+	) {
 		const currentSourceNodeIndex =
 			currentState.callIdentifier.sourceNode?.getIndex()
 
@@ -89,13 +91,6 @@ export class StateMachineLogger {
 		LoggerHelper.log(
 			LoggerHelper.errorString('[LEAVE TRANSITION]'),
 			`${currentSourceNodeName}`,
-			LoggerHelper.successString(
-				`${
-					currentState.callIdentifier.firstTimeVisited
-						? '[last-occurrence-in-tree]'
-						: ''
-				}`
-			),
 			`-> ${nextSourceNodeName}`
 		)
 	}
@@ -155,9 +150,10 @@ export class StateMachineLogger {
 							? 'false'
 							: transition.options.createLink.toString(),
 					AccountingType:
-						accountingInfo === null ? 'styInState' : accountingInfo?.type,
+						accountingInfo === null ? 'stayInState' : accountingInfo?.type,
 					FirstTimeVisited:
-						nextState.callIdentifier.firstTimeVisited.toString(),
+						accountingInfo === null ? 'stayInState' :
+						accountingInfo?.accountedSourceNode.firstTimeVisited.toString(),
 					'Accounted Hits': `${cpuNode.profilerHits}`,
 					'Accounted CPU Time': `self=${
 						accountingInfo?.accountedSensorValues.selfCPUTime || 0

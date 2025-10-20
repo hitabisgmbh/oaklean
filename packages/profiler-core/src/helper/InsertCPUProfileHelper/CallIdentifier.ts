@@ -8,7 +8,6 @@ import {
 } from '../../types'
 
 export class CallIdentifier {
-	firstTimeVisited: boolean
 	isAwaiterSourceNode: boolean
 
 	readonly report: ProjectReport | ModuleReport
@@ -28,7 +27,6 @@ export class CallIdentifier {
 		this.report = report
 		this.sourceNode = sourceNode
 		this.sourceNodeIDString = `${report.internID}:${sourceNode === null ? 'root' : sourceNode?.id}`
-		this.firstTimeVisited = false
 		this.isAwaiterSourceNode = false
 	}
 
