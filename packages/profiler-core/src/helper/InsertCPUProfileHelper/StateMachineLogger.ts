@@ -197,8 +197,7 @@ export class StateMachineLogger {
 	static logCompensation(
 		depth: number,
 		cpuNode: CPUNode,
-		parentState: State,
-		appliedSensorValues: SensorValues,
+		currentState: State,
 		compensation: Compensation,
 		title: 'CREATE COMPENSATION' | 'APPLY COMPENSATION'
 	) {
@@ -215,25 +214,20 @@ export class StateMachineLogger {
 			├─ Compensated CPU Energy : self=0 mJ | total=0 mJ
 			├─ Compensated RAM Energy : self=0 mJ | total=0 mJ
 		*/
-		if (parentState.callIdentifier.sourceNode === null) {
+		if (currentState.callIdentifier.sourceNode === null) {
 			LoggerHelper.log(LoggerHelper.errorString(`[${title}]`), '(root)')
 			return
 		}
 
-		const sourceNodeIndex = parentState.callIdentifier.sourceNode?.getIndex()
+		const sourceNodeIndex = currentState.callIdentifier.sourceNode.getIndex()
 		if (sourceNodeIndex === undefined) {
 			throw new Error(
 				'InsertCPUProfileStateMachine.logCompensation: sourceNode has no index'
 			)
 		}
 
-		const childCompensationStrings: string[] = []
-		for (const [id, sensorValues] of compensation.compensationPerNode.entries()) {
-			childCompensationStrings.push(
-				`  ├─ Child Compensation SourceNodeID [${id}]: self=${sensorValues.selfCPUTime} µs` +
-				`| total=${sensorValues.aggregatedCPUTime} µs\n`
-			)
-		}
+		const createdComp = compensation.createdComp
+		const carriedComp = compensation.carriedComp
 
 		LoggerHelper.log(
 			LoggerHelper.errorString(`[${title}]`),
@@ -244,16 +238,15 @@ export class StateMachineLogger {
 					'Compensation ID': compensation.id.toString(),
 					Depth: depth.toString(),
 					'CPU Node': String(cpuNode.index).padStart(3, '0'),
-					ReportID: parentState.callIdentifier.report.internID.toString(),
-					SourceNodeID: parentState.callIdentifier.sourceNode.id.toString(),
-					Scope: parentState.scope,
-					Type: parentState.type,
-					Headless: parentState.headless.toString(),
-					'Compensated CPU Time': `self=${appliedSensorValues.selfCPUTime} µs | total=${appliedSensorValues.aggregatedCPUTime} µs`,
-					'Compensated CPU Energy': `self=${appliedSensorValues.selfCPUEnergyConsumption} mJ | total=${appliedSensorValues.aggregatedCPUEnergyConsumption} mJ`,
-					'Compensated RAM Energy': `self=${appliedSensorValues.selfRAMEnergyConsumption} mJ | total=${appliedSensorValues.aggregatedRAMEnergyConsumption} mJ`
+					ReportID: currentState.callIdentifier.report.internID.toString(),
+					SourceNodeID: currentState.callIdentifier.sourceNode.id.toString(),
+					Scope: currentState.scope,
+					Type: currentState.type,
+					Headless: currentState.headless.toString(),
+					'Compensated CPU Time': `created=${createdComp?.aggregatedCPUTime} µs | carried=${carriedComp?.aggregatedCPUTime} µs`,
+					'Compensated CPU Energy': `created=${createdComp?.aggregatedCPUEnergyConsumption} mJ | carried=${carriedComp?.aggregatedCPUEnergyConsumption} mJ`,
+					'Compensated RAM Energy': `created=${createdComp?.aggregatedRAMEnergyConsumption} mJ | carried=${carriedComp?.aggregatedRAMEnergyConsumption} mJ`
 				}),
-			'\n' + childCompensationStrings.join('\n')
 		)
 	}
 }

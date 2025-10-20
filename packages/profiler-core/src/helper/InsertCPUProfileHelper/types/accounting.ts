@@ -3,7 +3,6 @@ import { SourceNodeMetaData } from '../../../model/SourceNodeMetaData'
 // Types
 import {
 	ISensorValues,
-	SourceNodeID_number,
 	SourceNodeMetaDataType
 } from '../../../types'
 
@@ -15,23 +14,25 @@ type AccountingType =
 
 export type Compensation = {
 	id: number
-	// the total sum of all compensations
-	total: SensorValues,
-	// the individual compensations per source node id
-	// used to rollback compensations if needed
-	compensationPerNode: Map<SourceNodeID_number, SensorValues>
+	// compensation that was just created
+	createdComp: null | SensorValues
+	// total compensation (carried from previous compensations | does not include createdComp)
+	carriedComp: SensorValues
 }
 
 export type AccountingInfo = {
 	type: AccountingType
 	accountedSourceNode: SourceNodeMetaData<
-		SourceNodeMetaDataType.SourceNode |
-		SourceNodeMetaDataType.LangInternalSourceNode
+		| SourceNodeMetaDataType.SourceNode
+		| SourceNodeMetaDataType.LangInternalSourceNode
 	>
-	accountedSourceNodeReference: SourceNodeMetaData<
-	SourceNodeMetaDataType.LangInternalSourceNodeReference |
-	SourceNodeMetaDataType.InternSourceNodeReference |
-	SourceNodeMetaDataType.ExternSourceNodeReference
-	> | null
+	accountedSourceNodeReference: {
+		firstTimeVisited: boolean
+		reference: SourceNodeMetaData<
+			| SourceNodeMetaDataType.LangInternalSourceNodeReference
+			| SourceNodeMetaDataType.InternSourceNodeReference
+			| SourceNodeMetaDataType.ExternSourceNodeReference
+		>
+	} | null
 	accountedSensorValues: ISensorValues
 }

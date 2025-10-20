@@ -94,9 +94,10 @@ export class AccountingHelper {
 		)
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
-		let accountedSourceNodeReference:
-			SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference> |
-			null
+		let accountedSourceNodeReference: {
+			firstTimeVisited: boolean,
+			reference: SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+		} | null
 
 		if (transition.options.createLink) {
 			if (currentState.callIdentifier.sourceNode === null) {
@@ -111,11 +112,14 @@ export class AccountingHelper {
 				sensorValues,
 				alreadyLinked
 			)
-			accountedSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToLangInternal(
-				accountedSourceNode.globalIdentifier(),
-				accountedSensorValues
-			)
-			accountedSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+			accountedSourceNodeReference = {
+				firstTimeVisited: !alreadyLinked,
+				reference: currentState.callIdentifier.sourceNode.addSensorValuesToLangInternal(
+					accountedSourceNode.globalIdentifier(),
+					accountedSensorValues
+				)
+			}
+			accountedSourceNodeReference.reference.sensorValues.profilerHits += cpuNode.profilerHits
 		} else {
 			accountedSourceNodeReference = null
 		}
@@ -158,8 +162,10 @@ export class AccountingHelper {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 
-		let accountedSourceNodeReference:
-		SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> | null
+		let accountedSourceNodeReference: {
+			firstTimeVisited: boolean,
+			reference: SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+		} | null
 
 		// intern
 		const accountedSourceNode = currentState.callIdentifier.report.addToIntern(
@@ -249,11 +255,14 @@ export class AccountingHelper {
 					sensorValues,
 					alreadyLinked
 				)
-				accountedSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
-					accountedSourceNode.globalIdentifier(),
-					accountedSensorValues
-				)
-				accountedSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+				accountedSourceNodeReference = {
+					firstTimeVisited: !alreadyLinked,
+					reference: currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
+						accountedSourceNode.globalIdentifier(),
+						accountedSensorValues
+					)
+				}
+				accountedSourceNodeReference.reference.sensorValues.profilerHits += cpuNode.profilerHits
 			} else {
 				accountedSourceNodeReference = null
 			}
@@ -298,8 +307,10 @@ export class AccountingHelper {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 		const nodeModule = transition.options.nodeModule
-		let accountedSourceNodeReference:
-		SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> | null
+		let accountedSourceNodeReference: {
+			firstTimeVisited: boolean,
+			reference: SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+		} | null
 
 		const globalIdentifier = new GlobalIdentifier(
 			sourceNodeLocation.relativeFilePath.toString(),
@@ -342,11 +353,14 @@ export class AccountingHelper {
 				sensorValues,
 				alreadyLinked
 			)
-			accountedSourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToExtern(
-				globalIdentifier,
-				accountedSensorValues
-			)
-			accountedSourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+			accountedSourceNodeReference = {
+				firstTimeVisited: !alreadyLinked,
+				reference: currentState.callIdentifier.sourceNode.addSensorValuesToExtern(
+					globalIdentifier,
+					accountedSensorValues
+				)
+			}
+			accountedSourceNodeReference.reference.sensorValues.profilerHits += cpuNode.profilerHits
 		} else {
 			accountedSourceNodeReference = null
 		}

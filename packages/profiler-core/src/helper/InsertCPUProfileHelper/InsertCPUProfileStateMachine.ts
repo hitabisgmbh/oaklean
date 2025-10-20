@@ -160,14 +160,14 @@ export class InsertCPUProfileStateMachine {
 				const compensation = currentStackFrame.result.compensation
 				// Compensation handling:
 				if (compensation !== undefined) {
-					// apply the compensation to the current state
 					CompensationHelper.applyCompensation(
+						currentStackFrame.node,
+						currentState,
 						parentState,
 						compensation,
 						accountingInfo,
 						this.debug ? {
-							depth: currentStackFrame.depth,
-							node: currentStackFrame.node
+							depth: currentStackFrame.depth
 						} : undefined
 					)
 
