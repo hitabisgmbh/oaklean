@@ -3,7 +3,8 @@ import { SourceNodeMetaData } from '../../../model/SourceNodeMetaData'
 // Types
 import {
 	ISensorValues,
-	SourceNodeMetaDataType
+	SourceNodeMetaDataType_Node,
+	SourceNodeMetaDataType_Reference
 } from '../../../types'
 
 type AccountingType =
@@ -20,22 +21,25 @@ export type Compensation = {
 	carriedComp: SensorValues
 }
 
-export type AccountingInfo = {
+export type AccountingSourceNodeInfo<T extends SourceNodeMetaDataType_Node> = {
+	firstTimeVisited: boolean
+	node: SourceNodeMetaData<T>
+}
+
+export type AccountingSourceNodeReferenceInfo<
+	T extends SourceNodeMetaDataType_Reference
+> = {
+	firstTimeVisited: boolean
+	selfReference?: true
+	reference?: SourceNodeMetaData<T>
+}
+
+export type AccountingInfo<
+	NT extends SourceNodeMetaDataType_Node = SourceNodeMetaDataType_Node,
+	RT extends SourceNodeMetaDataType_Reference = SourceNodeMetaDataType_Reference
+> = {
 	type: AccountingType
-	accountedSourceNode: {
-		firstTimeVisited: boolean,
-		node: SourceNodeMetaData<
-			| SourceNodeMetaDataType.SourceNode
-			| SourceNodeMetaDataType.LangInternalSourceNode
-		>
-	}
-	accountedSourceNodeReference: {
-		firstTimeVisited: boolean
-		reference: SourceNodeMetaData<
-			| SourceNodeMetaDataType.LangInternalSourceNodeReference
-			| SourceNodeMetaDataType.InternSourceNodeReference
-			| SourceNodeMetaDataType.ExternSourceNodeReference
-		>
-	} | null
+	accountedSourceNode: AccountingSourceNodeInfo<NT>
+	accountedSourceNodeReference: AccountingSourceNodeReferenceInfo<RT> | null
 	accountedSensorValues: ISensorValues
 }

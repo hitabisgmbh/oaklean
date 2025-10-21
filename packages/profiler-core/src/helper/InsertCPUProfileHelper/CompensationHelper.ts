@@ -154,6 +154,11 @@ export class CompensationHelper {
 				-1
 			)
 
+
+		if (accountingInfo.accountedSourceNodeReference.reference === undefined) {
+			return
+		}
+
 		// only compensate (lang_internal|intern|extern) when there was a link created
 		// compensate the accounted source node reference
 		accountingInfo.accountedSourceNodeReference.reference.sensorValues.addToAggregated(

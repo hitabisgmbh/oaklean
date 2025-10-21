@@ -13,6 +13,7 @@ import {
 	SourceNodeIndexType,
 	IndexRequestType,
 	SourceNodeMetaDataType,
+	SourceNodeMetaDataType_Node,
 	ISourceNodeMetaData,
 	PathID_number,
 	MilliJoule_number,
@@ -30,20 +31,17 @@ function areNumbersClose(a: number, b: number, epsilon = 1e-10) {
 
 export type SourceNodeMetaDataTypeNotAggregate = Exclude<SourceNodeMetaDataType, SourceNodeMetaDataType.Aggregate>
 
-type SourceNodeMetaDataTypeWithChildren =
-SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
-
-type LangInternalMap<T> = T extends SourceNodeMetaDataTypeWithChildren ? ModelMap<
+type LangInternalMap<T> = T extends SourceNodeMetaDataType_Node ? ModelMap<
 SourceNodeID_number,
 SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
 > : never
 
-type InternMap<T> = T extends SourceNodeMetaDataTypeWithChildren ? ModelMap<
+type InternMap<T> = T extends SourceNodeMetaDataType_Node ? ModelMap<
 SourceNodeID_number,
 SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
 > : never
 
-type ExternMap<T> = T extends SourceNodeMetaDataTypeWithChildren ? ModelMap<
+type ExternMap<T> = T extends SourceNodeMetaDataType_Node ? ModelMap<
 SourceNodeID_number,
 SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
 > : never
@@ -451,7 +449,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 	}
 
 	static couldHaveChildren(object: SourceNodeMetaData<SourceNodeMetaDataType>):
-		object is SourceNodeMetaData<SourceNodeMetaDataTypeWithChildren> {
+		object is SourceNodeMetaData<SourceNodeMetaDataType_Node> {
 		return object.type === SourceNodeMetaDataType.SourceNode ||
 		object.type === SourceNodeMetaDataType.LangInternalSourceNode
 	}

@@ -142,6 +142,102 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 		})
 	})
 
+	test('A0 -> A0 -> A0', async () => {
+		const cpuNode = mockedCPUModel(
+			createLocationChainCPUModel(
+				[
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+				]
+			)
+		)
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.extern.toJSON()).toBeUndefined()
+		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
+		expect(projectReport.intern.toJSON()).toEqual({
+			'1': {
+				path: './src/fileA.js',
+				functions: {
+					'2': {
+						id: 2,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 6,
+							selfCPUTime: 60,
+							aggregatedCPUTime: 60
+						}
+					}
+				}
+			}
+		})
+	})
+
+	test('A0 -> A1 -> A1 -> A1', async () => {
+		const cpuNode = mockedCPUModel(
+			createLocationChainCPUModel(
+				[
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
+					SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
+				]
+			)
+		)
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.extern.toJSON()).toBeUndefined()
+		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
+		expect(projectReport.intern.toJSON()).toEqual({
+			'1': {
+				path: './src/fileA.js',
+				functions: {
+					'2': {
+						id: 2,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 4,
+							selfCPUTime: 40,
+							aggregatedCPUTime: 100,
+							internCPUTime: 60
+						},
+						intern: {
+							'3': {
+								id: 3,
+								type: SourceNodeMetaDataType.InternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 3,
+									selfCPUTime: 30,
+									aggregatedCPUTime: 60
+								}
+							}
+						}
+					},
+					'3': {
+						id: 3,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 6,
+							selfCPUTime: 60,
+							aggregatedCPUTime: 60
+						}
+					}
+				}
+			}
+		})
+	})
+
 	test('A0 -> A1 -> A0', async () => {
 		const cpuNode = mockedCPUModel(
 			createLocationChainCPUModel(

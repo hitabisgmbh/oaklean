@@ -7,7 +7,8 @@ import {
 	ToModuleTransition,
 } from './types/transition'
 import {
-	AccountingInfo
+	AccountingInfo,
+	AccountingSourceNodeReferenceInfo
 } from './types/accounting'
 import { AwaiterStack } from './types/stack'
 
@@ -25,6 +26,7 @@ import {
 	SourceNodeMetaDataType
 } from '../../types'
 import { TypescriptHelper } from '../TypescriptParser'
+import { LoggerHelper } from '../LoggerHelper'
 
 
 export class AccountingHelper {
@@ -65,7 +67,13 @@ export class AccountingHelper {
 		cpuNode: CPUNode,
 		transition: ToLangInternalTransition,
 		callRelationTracker: CallRelationTracker
-	): Promise<{ nextState: State, accountingInfo: AccountingInfo }> {
+	): Promise<{
+		nextState: State,
+		accountingInfo: AccountingInfo<
+			SourceNodeMetaDataType.LangInternalSourceNode,
+			SourceNodeMetaDataType.LangInternalSourceNodeReference
+		>
+	}> {
 		const sensorValues = cpuNode.sensorValues
 
 		const accountedSourceNode = currentState.callIdentifier.report.addToLangInternal(
@@ -161,14 +169,19 @@ export class AccountingHelper {
 		transition: ToProjectTransition | ToModuleTransition,
 		callRelationTracker: CallRelationTracker,
 		awaiterStack: AwaiterStack
-	): Promise<{ nextState: State, accountingInfo: AccountingInfo }> {
+	): Promise<{
+		nextState: State,
+		accountingInfo: AccountingInfo<
+			SourceNodeMetaDataType.SourceNode,
+			SourceNodeMetaDataType.InternSourceNodeReference
+		>
+	}> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 
-		let accountedSourceNodeReference: {
-			firstTimeVisited: boolean,
-			reference: SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
-		} | null
+		let accountedSourceNodeReference: AccountingSourceNodeReferenceInfo<
+			SourceNodeMetaDataType.InternSourceNodeReference
+		> | null
 
 		// intern
 		const accountedSourceNode = currentState.callIdentifier.report.addToIntern(
@@ -258,16 +271,21 @@ export class AccountingHelper {
 					sensorValues,
 					alreadyLinked
 				)
+				const sourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
+					accountedSourceNode.globalIdentifier(),
+					accountedSensorValues
+				)
+				sourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
+
 				accountedSourceNodeReference = {
 					firstTimeVisited: !alreadyLinked,
-					reference: currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
-						accountedSourceNode.globalIdentifier(),
-						accountedSensorValues
-					)
+					reference: sourceNodeReference
 				}
-				accountedSourceNodeReference.reference.sensorValues.profilerHits += cpuNode.profilerHits
 			} else {
-				accountedSourceNodeReference = null
+				accountedSourceNodeReference = {
+					firstTimeVisited: !alreadyLinked,
+					selfReference: true
+				}
 			}
 		} else {
 			accountedSourceNodeReference = null
@@ -309,7 +327,13 @@ export class AccountingHelper {
 		cpuNode: CPUNode,
 		transition: ToModuleTransition,
 		callRelationTracker: CallRelationTracker
-	): Promise<{ nextState: State, accountingInfo: AccountingInfo }> {
+	): Promise<{
+		nextState: State,
+		accountingInfo: AccountingInfo<
+			SourceNodeMetaDataType.SourceNode,
+			SourceNodeMetaDataType.ExternSourceNodeReference
+		>
+	}> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 		const nodeModule = transition.options.nodeModule
@@ -411,7 +435,13 @@ export class AccountingHelper {
 		cpuNode: CPUNode,
 		transition: ToProjectTransition,
 		callRelationTracker: CallRelationTracker
-	): Promise<{ nextState: State, accountingInfo: AccountingInfo }> {
+	): Promise<{
+		nextState: State,
+		accountingInfo: AccountingInfo<
+			SourceNodeMetaDataType.SourceNode,
+			SourceNodeMetaDataType.InternSourceNodeReference
+		>
+	}> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
 
