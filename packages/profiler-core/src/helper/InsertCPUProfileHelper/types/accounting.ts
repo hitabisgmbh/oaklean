@@ -30,7 +30,6 @@ export type AccountingSourceNodeReferenceInfo<
 	T extends SourceNodeMetaDataType_Reference
 > = {
 	firstTimeVisited: boolean
-	selfReference?: true
 	reference?: SourceNodeMetaData<T>
 }
 
