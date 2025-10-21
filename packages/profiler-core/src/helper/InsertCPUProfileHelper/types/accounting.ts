@@ -23,6 +23,7 @@ export type Compensation = {
 
 export type AccountingSourceNodeInfo<T extends SourceNodeMetaDataType_Node> = {
 	firstTimeVisited: boolean
+	firstTimeInCurrentCompensationLayer: boolean
 	node: SourceNodeMetaData<T>
 }
 

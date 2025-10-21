@@ -26,7 +26,6 @@ import {
 	SourceNodeMetaDataType
 } from '../../types'
 import { TypescriptHelper } from '../TypescriptParser'
-import { LoggerHelper } from '../LoggerHelper'
 
 
 export class AccountingHelper {
@@ -83,11 +82,15 @@ export class AccountingHelper {
 
 		const currentCallIdentifier = new CallIdentifier(
 			currentState.callIdentifier.report,
-			accountedSourceNode
+			accountedSourceNode,
+			currentState.compensationLayerDepth
 		)
 		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
 			'langInternal'
+		)
+		const firstTimeInCurrentCompensationLayer = callRelationTracker.initializeInCompensationLayerIfAbsent(
+			currentCallIdentifier
 		)
 
 		if (transition.options.headless) {
@@ -139,13 +142,15 @@ export class AccountingHelper {
 				scope: currentState.scope,
 				type: 'lang_internal',
 				headless: transition.options.headless,
-				callIdentifier: currentCallIdentifier
+				callIdentifier: currentCallIdentifier,
+				compensationLayerDepth: currentState.compensationLayerDepth
 			},
 			accountingInfo: {
 				type: 'accountToLangInternal',
 				accountedSourceNode: {
 					node: accountedSourceNode,
-					firstTimeVisited: firstTimeVisited
+					firstTimeVisited,
+					firstTimeInCurrentCompensationLayer
 				},
 				accountedSensorValues,
 				accountedSourceNodeReference
@@ -193,11 +198,16 @@ export class AccountingHelper {
 		accountedSourceNode.presentInOriginalSourceCode = transition.options.presentInOriginalSourceCode
 		const currentCallIdentifier = new CallIdentifier(
 			currentState.callIdentifier.report,
-			accountedSourceNode
+			accountedSourceNode,
+			currentState.compensationLayerDepth
 		)
 		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
-			'intern')
+			'intern'
+		)
+		const firstTimeInCurrentCompensationLayer = callRelationTracker.initializeInCompensationLayerIfAbsent(
+			currentCallIdentifier
+		)
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
@@ -240,7 +250,8 @@ export class AccountingHelper {
 				callRelationTracker.isCallRecorded(
 					new CallIdentifier(
 						currentState.callIdentifier.report,
-						lastAwaiterNode.awaiter
+						lastAwaiterNode.awaiter,
+						currentState.compensationLayerDepth
 					)) && lastAwaiterNode.awaiterParent === accountedSourceNode
 			) {
 				// the async function resolved when the awaiter was called,
@@ -297,13 +308,15 @@ export class AccountingHelper {
 				scope: transition.transition === 'toProject' ? 'project' : 'module',
 				type: 'intern',
 				headless: false,
-				callIdentifier: currentCallIdentifier
+				callIdentifier: currentCallIdentifier,
+				compensationLayerDepth: currentState.compensationLayerDepth
 			},
 			accountingInfo: {
 				type: 'accountToIntern',
 				accountedSourceNode: {
 					node: accountedSourceNode,
-					firstTimeVisited: firstTimeVisited
+					firstTimeVisited,
+					firstTimeInCurrentCompensationLayer
 				},
 				accountedSensorValues,
 				accountedSourceNodeReference
@@ -357,11 +370,16 @@ export class AccountingHelper {
 		accountedSourceNode.presentInOriginalSourceCode = transition.options.presentInOriginalSourceCode
 		const currentCallIdentifier = new CallIdentifier(
 			report,
-			accountedSourceNode
+			accountedSourceNode,
+			currentState.compensationLayerDepth
 		)
 		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
-			'extern')
+			'extern'
+		)
+		const firstTimeInCurrentCompensationLayer = callRelationTracker.initializeInCompensationLayerIfAbsent(
+			currentCallIdentifier
+		)
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
@@ -403,13 +421,15 @@ export class AccountingHelper {
 				scope: 'module',
 				type: 'intern',
 				headless: false,
-				callIdentifier: currentCallIdentifier
+				callIdentifier: currentCallIdentifier,
+				compensationLayerDepth: currentState.compensationLayerDepth
 			},
 			accountingInfo: {
 				type: 'accountToExtern',
 				accountedSourceNode: {
 					node: accountedSourceNode,
-					firstTimeVisited: firstTimeVisited
+					firstTimeVisited,
+					firstTimeInCurrentCompensationLayer
 				},
 				accountedSensorValues,
 				accountedSourceNodeReference
@@ -434,10 +454,11 @@ export class AccountingHelper {
 	 * @returns the new state
 	 */
 	static async accountOwnCodeGetsExecutedByExternal(
-		originalReport: ProjectReport,
+		currentState: State,
 		cpuNode: CPUNode,
 		transition: ToProjectTransition,
-		callRelationTracker: CallRelationTracker
+		callRelationTracker: CallRelationTracker,
+		originalReport: ProjectReport
 	): Promise<{
 		nextState: State,
 		accountingInfo: AccountingInfo<
@@ -455,11 +476,15 @@ export class AccountingHelper {
 		accountedSourceNode.presentInOriginalSourceCode = transition.options.presentInOriginalSourceCode
 		const currentCallIdentifier = new CallIdentifier(
 			originalReport,
-			accountedSourceNode
+			accountedSourceNode,
+			currentState.compensationLayerDepth + 1
 		)
 		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
 			currentCallIdentifier,
 			'intern')
+		const firstTimeInCurrentCompensationLayer = callRelationTracker.initializeInCompensationLayerIfAbsent(
+			currentCallIdentifier
+		)
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
@@ -478,13 +503,15 @@ export class AccountingHelper {
 				scope: 'project',
 				type: 'intern',
 				headless: false,
-				callIdentifier: currentCallIdentifier
+				callIdentifier: currentCallIdentifier,
+				compensationLayerDepth: currentState.compensationLayerDepth + 1
 			},
 			accountingInfo: {
 				type: 'accountOwnCodeGetsExecutedByExternal',
 				accountedSourceNode: {
 					node: accountedSourceNode,
-					firstTimeVisited: firstTimeVisited
+					firstTimeVisited,
+					firstTimeInCurrentCompensationLayer
 				},
 				accountedSensorValues,
 				accountedSourceNodeReference: null

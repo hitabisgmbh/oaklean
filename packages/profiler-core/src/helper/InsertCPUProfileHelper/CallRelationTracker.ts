@@ -23,11 +23,15 @@ export class CallRelationTracker {
 	private _externMap: Map<string, boolean>
 	private _langInternalMap: Map<string, boolean>
 
+	// layerDepth:callIdentifierString
+	private _compensationLayerSet: Set<string>
+
 	constructor() {
 		this._map = new Map<string, MapEntry>()
 		this._internMap = new Map<string, boolean>()
 		this._externMap = new Map<string, boolean>()
 		this._langInternalMap = new Map<string, boolean>()
+		this._compensationLayerSet = new Set<string>()
 	}
 
 	get map() {
@@ -152,6 +156,30 @@ export class CallRelationTracker {
 		this._externMap.delete(callIdentifierString)
 		this._langInternalMap.delete(callIdentifierString)
 		this._map.delete(callIdentifierString)
+	}
+
+	/**
+	 * Ensures that the function call is tracked in the compensation layer.
+	 * 
+	 * @param {CallIdentifier} callIdentifier - The call identifier
+	 * @returns {boolean} true: first time in this compensation layer, false: already present
+	 */
+	initializeInCompensationLayerIfAbsent(callIdentifier: CallIdentifier) {
+		const compensationLayerString = callIdentifier.toCompensationLayerString()
+		if (this._compensationLayerSet.has(compensationLayerString)) {
+			return false
+		}
+		this._compensationLayerSet.add(compensationLayerString)
+		return true
+	}
+
+	/**
+	 * Removes a function call from a specific compensation layer.
+	 * 
+	 * @param {CallIdentifier} callIdentifier - The call identifier
+	 */
+	removeCompensationLayerRecord(callIdentifier: CallIdentifier) {
+		this._compensationLayerSet.delete(callIdentifier.toCompensationLayerString())
 	}
 
 	/**

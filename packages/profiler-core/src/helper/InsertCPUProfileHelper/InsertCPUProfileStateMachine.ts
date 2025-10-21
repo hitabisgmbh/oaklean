@@ -108,9 +108,11 @@ export class InsertCPUProfileStateMachine {
 					scope: 'project',
 					type: 'lang_internal',
 					headless: true,
+					compensationLayerDepth: 0,
 					callIdentifier: new CallIdentifier(
 						this.projectReport,
-						null
+						null,
+						0
 					)
 				},
 				node: rootNode,
@@ -148,6 +150,11 @@ export class InsertCPUProfileStateMachine {
 					// last occurrence of the callIdentifier in the call stack
 					// remove it from the call relation tracker
 					this.callRelationTracker.removeCallRecord(currentState.callIdentifier)
+				}
+				if (currentStackFrame.result.accountingInfo.accountedSourceNode.firstTimeInCurrentCompensationLayer) {
+					// last occurrence of the callIdentifier in the current compensation layer
+					// remove it from the compensation layer tracking
+					this.callRelationTracker.removeCompensationLayerRecord(currentState.callIdentifier)
 				}
 				if (this.debug) {
 					StateMachineLogger.logState(
@@ -357,10 +364,11 @@ export class InsertCPUProfileStateMachine {
 					case 'module':
 						// transition from module to project
 						return await AccountingHelper.accountOwnCodeGetsExecutedByExternal(
-							this.projectReport,
+							currentStackFrame.state,
 							currentStackFrame.node,
 							transition,
-							this.callRelationTracker
+							this.callRelationTracker,
+							this.projectReport
 						)
 				}
 			}

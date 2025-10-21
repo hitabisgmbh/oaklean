@@ -114,20 +114,24 @@ export class CompensationHelper {
 		}
 	) {
 
-		// if the current source node was already visited before
-		// we need to add the currents cpu node's aggregated sensor values
-		// to prevent double compensation
-		const sourceNodeCompensation = accountingInfo.accountedSourceNode.firstTimeVisited ?
-			compensation.carriedComp :
-			compensation.carriedComp.clone().addToAggregated(
-				node.sensorValues,
+		if (accountingInfo.accountedSourceNode.firstTimeVisited) {
+			// only compensate the accounted source node if its the first occurrence in the call tree (from the root)
+			accountingInfo.accountedSourceNode.node.sensorValues.addToAggregated(
+				compensation.carriedComp,
 				-1
 			)
-
-		accountingInfo.accountedSourceNode.node.sensorValues.addToAggregated(
-			sourceNodeCompensation,
-			-1
-		)
+		} else if (accountingInfo.accountedSourceNode.firstTimeInCurrentCompensationLayer) {
+			// if its not the first time visited, but the first time in the current compensation layer
+			// we need to add the currents cpu node's aggregated sensor values
+			// to prevent double compensation
+			accountingInfo.accountedSourceNode.node.sensorValues.addToAggregated(
+				compensation.carriedComp.clone().addToAggregated(
+					node.sensorValues,
+					-1
+				),
+				-1
+			)
+		}
 
 		if (debug !== undefined) {
 			StateMachineLogger.logCompensation(
