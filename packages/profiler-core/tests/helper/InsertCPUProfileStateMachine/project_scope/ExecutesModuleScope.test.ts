@@ -1,6 +1,5 @@
 import {
 	ReportKind,
-	MicroSeconds_number,
 	SourceNodeMetaDataType,
 	ProjectReport,
 	InsertCPUProfileStateMachine
@@ -10,6 +9,7 @@ import {
 import { SOURCE_LOCATIONS_DEFAULT } from '../assets/SourceLocations'
 import {
 	mockedCPUModel,
+	createLocationTreeCPUModel,
 	MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 } from '../mock'
 import { EXAMPLE_EXECUTION_DETAILS } from '../../../model/assets/ProjectReport/ExecutionDetails'
@@ -27,32 +27,23 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE executes MO
 	})
 
 	test('A0 -> (mA.A0 | mB.A0)', async () => {
-		const cpuNode = mockedCPUModel({
-			location: SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
-			profilerHits: 3,
-			sensorValues: {
-				selfCPUTime: 30 as MicroSeconds_number,
-				aggregatedCPUTime: 60 as MicroSeconds_number
-			},
-			children: [
-				{
-					location: SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
-					profilerHits: 2,
-					sensorValues: {
-						selfCPUTime: 20 as MicroSeconds_number,
-						aggregatedCPUTime: 20 as MicroSeconds_number
-					}
-				},
-				{
-					location: SOURCE_LOCATIONS_DEFAULT['moduleB-fileA-0'],
-					profilerHits: 1,
-					sensorValues: {
-						selfCPUTime: 10 as MicroSeconds_number,
-						aggregatedCPUTime: 10 as MicroSeconds_number
-					}
-				}
-			]
-		})
+		/*
+			A0: 10 | 50
+			├── mA.A0: 20 | 20
+			└── mB.A0: 20 | 20
+		*/
+
+		const cpuNode = mockedCPUModel(
+			createLocationTreeCPUModel(
+				[
+					 SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+					[
+						[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], []],
+						[SOURCE_LOCATIONS_DEFAULT['moduleB-fileA-0'], []]
+					]
+				]
+			)
+		)
 
 		await stateMachine.insertCPUNodes(
 			cpuNode,
@@ -102,9 +93,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE executes MO
 								id: 8,
 								type: SourceNodeMetaDataType.SourceNode,
 								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 10,
-									aggregatedCPUTime: 10
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
 								}
 							}
 						}
@@ -121,10 +112,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE executes MO
 						id: 2,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 3,
-							selfCPUTime: 30,
-							aggregatedCPUTime: 60,
-							externCPUTime: 30
+							profilerHits: 1,
+							selfCPUTime: 10,
+							aggregatedCPUTime: 50,
+							externCPUTime: 40
 						},
 						extern: {
 							'5': {
@@ -140,9 +131,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE executes MO
 								id: 8,
 								type: SourceNodeMetaDataType.ExternSourceNodeReference,
 								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 10,
-									aggregatedCPUTime: 10
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
 								}
 							}
 						}
