@@ -39,7 +39,7 @@ export function mockedCPUModel(
 /**
  * Creates a mocked CPUModel with a chain of locations.
  * The first location in the array will be the root, the last location will be the deepest child.
- * Each node will have profilerHits by 1 and selfCPUTime increasing by 10 for each depth level.
+ * Each node will have profilerHits by 1 and selfCPUTime increasing by 10 for each depth level below it.
  * The aggregatedCPUTime will be the sum of selfCPUTime of itself and all its children.
  * 
  * E.g. for locations = [A, B, C]:
@@ -69,6 +69,50 @@ export function createLocationChainCPUModel(
 		throw new Error('createMockedCPUModel: locations must not be empty')
 	}
 	return currentRoot
+}
+
+type LocationTreeNode = [CPUProfileSourceLocation, LocationTreeNode[]]
+
+/**
+ * Creates a mocked CPUModel with a tree of locations.
+ * Each node will have profilerHits by 1 and selfCPUTime increasing by 10 for each depth level above it.
+ * The aggregatedCPUTime will be the sum of selfCPUTime of itself and all its children.
+ * 
+ * E.g. for locations = [A, B, C]:
+ * - A: profilerHits = 1, selfCPUTime = 10, aggregatedCPUTime = 80
+ * 	- B: profilerHits = 2, selfCPUTime = 20, aggregatedCPUTime = 50
+ * 		- C: profilerHits = 3, selfCPUTime = 30, aggregatedCPUTime = 30
+ *  - B: profilerHits = 2, selfCPUTime = 20, aggregatedCPUTime = 20
+ */
+export function createLocationTreeCPUModel(
+	node: LocationTreeNode,
+	currentLevel: number = 1
+) {
+	const result: MockedCPUModel = {
+		location: node[0],
+		profilerHits: currentLevel,
+		sensorValues: {
+			selfCPUTime: currentLevel*10 as MicroSeconds_number,
+			aggregatedCPUTime: currentLevel*10 as MicroSeconds_number
+		}
+	}
+	const children = []
+	for (let i = 0; i < node[1].length; i++) {
+		const childCPUNode = createLocationTreeCPUModel(
+			node[1][i],
+			currentLevel + 1
+		)
+
+		children.push(childCPUNode)
+		result.sensorValues.aggregatedCPUTime =
+			(
+				(result.sensorValues.aggregatedCPUTime || 0) +
+				(childCPUNode.sensorValues.aggregatedCPUTime || 0)
+			) as MicroSeconds_number
+	}
+	result.children = children
+	
+	return result
 }
 
 export const MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER = {
