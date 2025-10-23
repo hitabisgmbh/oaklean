@@ -371,12 +371,12 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 
 	// ------ split cases ------
 
-	test('A0 -> A1 -> A2', async () => {
+	test('A0 -> (A1 || A2)', async () => {
 		/*
-				A0: 10 | 50
-				├── B0: 20 | 20
-				└── C0: 20 | 20
-			*/
+			A0: 10 | 50
+			├── B0: 20 | 20
+			└── C0: 20 | 20
+		*/
 
 		const cpuNode = mockedCPUModel(
 			createLocationTreeCPUModel([
@@ -455,17 +455,17 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 
 	test('A0 -> (A0 -> A0 -> A0 || A0 -> A0 -> A0 || A0 -> A0 -> A0)', async () => {
 		/*
-				A0: 10 | 280
-				├── A0: 20 | 90
-				│    └── A0: 30 | 70
-				│         └── A0: 40 | 40
-				├── A0: 20 | 90
-				│    └── A0: 30 | 70
-				│         └── A0: 40 | 40
-				└── A0: 20 | 90
-						 └── A0: 30 | 70
-									└── A0: 40 | 40
-			*/
+			A0: 10 | 280
+			├── A0: 20 | 90
+			│    └── A0: 30 | 70
+			│         └── A0: 40 | 40
+			├── A0: 20 | 90
+			│    └── A0: 30 | 70
+			│         └── A0: 40 | 40
+			└── A0: 20 | 90
+						└── A0: 30 | 70
+								└── A0: 40 | 40
+		*/
 
 		const cpuNode = mockedCPUModel(
 			createLocationTreeCPUModel([
@@ -531,17 +531,17 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 
 	test('A0 -> (A1 -> A1 -> A1 || A2 -> A2 -> A2 || A1 -> A1 -> A1)', async () => {
 		/*
-				A0: 10 | 280
-				├── A1: 20 | 90
-				│    └── A1: 30 | 70
-				│         └── A1: 40 | 40
-				├── A2: 20 | 90
-				│    └── A2: 30 | 70
-				│         └── A2: 40 | 40
-				└── A1: 20 | 90
-						 └── A1: 30 | 70
-									└── A1: 40 | 40
-			*/
+			A0: 10 | 280
+			├── A1: 20 | 90
+			│    └── A1: 30 | 70
+			│         └── A1: 40 | 40
+			├── A2: 20 | 90
+			│    └── A2: 30 | 70
+			│         └── A2: 40 | 40
+			└── A1: 20 | 90
+						└── A1: 30 | 70
+								└── A1: 40 | 40
+		*/
 
 		const cpuNode = mockedCPUModel(
 			createLocationTreeCPUModel([
@@ -646,14 +646,14 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 
 	test('A0 -> (A1 -> A0 -> A1 || A2 -> A0 -> A2)', async () => {
 		/*
-				A0: 10 | 190
-				├── A1: 20 | 90
-				│    └── A0: 30 | 70
-				│         └── A1: 40 | 40
-				└── A2: 20 | 90
-						 └── A0: 30 | 70
-									└── A2: 40 | 40
-			*/
+			A0: 10 | 190
+			├── A1: 20 | 90
+			│    └── A0: 30 | 70
+			│         └── A1: 40 | 40
+			└── A2: 20 | 90
+						└── A0: 30 | 70
+								└── A2: 40 | 40
+		*/
 
 		const cpuNode = mockedCPUModel(
 			createLocationTreeCPUModel([
