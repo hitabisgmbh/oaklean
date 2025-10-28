@@ -95,7 +95,7 @@ export class AccountingHelper {
 
 		if (transition.options.headless) {
 			// if no extern or intern calls were tracked yet, add the time to the total of headless cpu time
-			currentState.callIdentifier.report.lang_internalHeadlessSensorValues.addToSelf(sensorValues)
+			currentState.callIdentifier.report.headlessSensorValues.addToSelf(sensorValues)
 		}
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits

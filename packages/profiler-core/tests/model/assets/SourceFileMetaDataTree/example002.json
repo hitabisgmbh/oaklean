@@ -1,5 +1,5 @@
 {
-  "lang_internalHeadlessSensorValues": {
+  "headlessSensorValues": {
     "selfCPUTime": 84
   },
   "aggregatedLangInternalSourceNodeMetaData": {
@@ -69,7 +69,7 @@
   "type": "Root",
   "langInternalChildren": {
     "": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -160,7 +160,7 @@
       }
     },
     "node:domain": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -218,7 +218,7 @@
       }
     },
     "node:events": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -288,7 +288,7 @@
       }
     },
     "node:inspector": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -372,7 +372,7 @@
       }
     },
     "node:internal/process/task_queues": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -422,7 +422,7 @@
       }
     },
     "node:internal/validators": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -481,7 +481,7 @@
       }
     },
     "node:path": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -541,7 +541,7 @@
   },
   "internChildren": {
     "packages": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -589,7 +589,7 @@
       "filePath": "./packages",
       "internChildren": {
         "profiler-core": {
-          "lang_internalHeadlessSensorValues": {},
+          "headlessSensorValues": {},
           "aggregatedLangInternalSourceNodeMetaData": {
             "total": {
               "type": 5,
@@ -635,7 +635,7 @@
           "filePath": "./packages/profiler-core",
           "internChildren": {
             "dist": {
-              "lang_internalHeadlessSensorValues": {},
+              "headlessSensorValues": {},
               "aggregatedLangInternalSourceNodeMetaData": {
                 "total": {
                   "type": 5,
@@ -681,7 +681,7 @@
               "filePath": "./packages/profiler-core/dist",
               "internChildren": {
                 "src": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -727,7 +727,7 @@
                   "filePath": "./packages/profiler-core/dist/src",
                   "internChildren": {
                     "helper": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -773,7 +773,7 @@
                       "filePath": "./packages/profiler-core/dist/src/helper",
                       "internChildren": {
                         "InspectorHelper.js": {
-                          "lang_internalHeadlessSensorValues": {},
+                          "headlessSensorValues": {},
                           "aggregatedLangInternalSourceNodeMetaData": {
                             "total": {
                               "type": 5,
@@ -978,7 +978,7 @@
                           }
                         },
                         "PathUtils.js": {
-                          "lang_internalHeadlessSensorValues": {},
+                          "headlessSensorValues": {},
                           "aggregatedLangInternalSourceNodeMetaData": {
                             "total": {
                               "type": 5,
@@ -1044,7 +1044,7 @@
                           }
                         },
                         "PerformanceHelper.js": {
-                          "lang_internalHeadlessSensorValues": {},
+                          "headlessSensorValues": {},
                           "aggregatedLangInternalSourceNodeMetaData": {
                             "total": {
                               "type": 5,
@@ -1098,7 +1098,7 @@
                       }
                     },
                     "model": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -1141,7 +1141,7 @@
                       "filePath": "./packages/profiler-core/dist/src/model",
                       "internChildren": {
                         "ProfilerConfig.js": {
-                          "lang_internalHeadlessSensorValues": {},
+                          "headlessSensorValues": {},
                           "aggregatedLangInternalSourceNodeMetaData": {
                             "total": {
                               "type": 5,
@@ -1224,7 +1224,7 @@
                       }
                     },
                     "system": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -1259,7 +1259,7 @@
                       "filePath": "./packages/profiler-core/dist/src/system",
                       "internChildren": {
                         "UnifiedPath.js": {
-                          "lang_internalHeadlessSensorValues": {},
+                          "headlessSensorValues": {},
                           "aggregatedLangInternalSourceNodeMetaData": {
                             "total": {
                               "type": 5,
@@ -1334,7 +1334,7 @@
           }
         },
         "profiler": {
-          "lang_internalHeadlessSensorValues": {},
+          "headlessSensorValues": {},
           "aggregatedLangInternalSourceNodeMetaData": {
             "total": {
               "type": 5,
@@ -1381,7 +1381,7 @@
           "filePath": "./packages/profiler",
           "internChildren": {
             "examples": {
-              "lang_internalHeadlessSensorValues": {},
+              "headlessSensorValues": {},
               "aggregatedLangInternalSourceNodeMetaData": {
                 "total": {
                   "type": 5,
@@ -1428,7 +1428,7 @@
               "filePath": "./packages/profiler/examples",
               "internChildren": {
                 "example002.ts": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -1533,7 +1533,7 @@
               }
             },
             "src": {
-              "lang_internalHeadlessSensorValues": {},
+              "headlessSensorValues": {},
               "aggregatedLangInternalSourceNodeMetaData": {
                 "total": {
                   "type": 5,
@@ -1580,7 +1580,7 @@
               "filePath": "./packages/profiler/src",
               "internChildren": {
                 "Profiler.ts": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -1788,7 +1788,7 @@
                   }
                 },
                 "model": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -1833,7 +1833,7 @@
                   "filePath": "./packages/profiler/src/model",
                   "internChildren": {
                     "V8Profiler.ts": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -1931,7 +1931,7 @@
   },
   "externChildren": {
     "html-minifier@4.0.0": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -1990,7 +1990,7 @@
       "filePath": "./node_modules/html-minifier@4.0.0",
       "langInternalChildren": {
         "": {
-          "lang_internalHeadlessSensorValues": {},
+          "headlessSensorValues": {},
           "aggregatedLangInternalSourceNodeMetaData": {
             "total": {
               "type": 5,
@@ -2051,7 +2051,7 @@
       },
       "internChildren": {
         "src": {
-          "lang_internalHeadlessSensorValues": {},
+          "headlessSensorValues": {},
           "aggregatedLangInternalSourceNodeMetaData": {
             "total": {
               "type": 5,
@@ -2097,7 +2097,7 @@
           "filePath": "./src",
           "internChildren": {
             "htmlminifier.js": {
-              "lang_internalHeadlessSensorValues": {},
+              "headlessSensorValues": {},
               "aggregatedLangInternalSourceNodeMetaData": {
                 "total": {
                   "type": 5,
@@ -2441,7 +2441,7 @@
               }
             },
             "htmlparser.js": {
-              "lang_internalHeadlessSensorValues": {},
+              "headlessSensorValues": {},
               "aggregatedLangInternalSourceNodeMetaData": {
                 "total": {
                   "type": 5,
@@ -2681,7 +2681,7 @@
       },
       "externChildren": {
         "clean-css@4.2.4": {
-          "lang_internalHeadlessSensorValues": {},
+          "headlessSensorValues": {},
           "aggregatedInternSourceMetaData": {
             "total": {
               "type": 5,
@@ -2705,7 +2705,7 @@
           "filePath": "./node_modules/clean-css@4.2.4",
           "internChildren": {
             "lib": {
-              "lang_internalHeadlessSensorValues": {},
+              "headlessSensorValues": {},
               "aggregatedLangInternalSourceNodeMetaData": {
                 "total": {
                   "type": 5,
@@ -2749,7 +2749,7 @@
               "filePath": "./lib",
               "internChildren": {
                 "clean.js": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -3015,7 +3015,7 @@
                   }
                 },
                 "optimizer": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -3060,7 +3060,7 @@
                   "filePath": "./lib/optimizer",
                   "internChildren": {
                     "validator.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -3143,7 +3143,7 @@
                       }
                     },
                     "level-1": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -3188,7 +3188,7 @@
                       "filePath": "./lib/optimizer/level-1",
                       "internChildren": {
                         "optimize.js": {
-                          "lang_internalHeadlessSensorValues": {},
+                          "headlessSensorValues": {},
                           "aggregatedLangInternalSourceNodeMetaData": {
                             "total": {
                               "type": 5,
@@ -3508,7 +3508,7 @@
                           }
                         },
                         "tidy-rules.js": {
-                          "lang_internalHeadlessSensorValues": {},
+                          "headlessSensorValues": {},
                           "aggregatedLangInternalSourceNodeMetaData": {
                             "total": {
                               "type": 5,
@@ -3602,7 +3602,7 @@
                           }
                         },
                         "shorten-hex.js": {
-                          "lang_internalHeadlessSensorValues": {},
+                          "headlessSensorValues": {},
                           "aggregatedLangInternalSourceNodeMetaData": {
                             "total": {
                               "type": 5,
@@ -3662,7 +3662,7 @@
                       }
                     },
                     "restore-from-optimizing.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -3714,7 +3714,7 @@
                       }
                     },
                     "wrap-for-optimizing.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -3817,7 +3817,7 @@
                   }
                 },
                 "reader": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -3862,7 +3862,7 @@
                   "filePath": "./lib/reader",
                   "internChildren": {
                     "input-source-map-tracker.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -3914,7 +3914,7 @@
                       }
                     },
                     "read-sources.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -4170,7 +4170,7 @@
                       }
                     },
                     "apply-source-maps.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -4241,7 +4241,7 @@
                       }
                     },
                     "load-original-sources.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -4313,7 +4313,7 @@
                       }
                     },
                     "rebase.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -4427,7 +4427,7 @@
                   }
                 },
                 "writer": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -4471,7 +4471,7 @@
                   "filePath": "./lib/writer",
                   "internChildren": {
                     "simple.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -4568,7 +4568,7 @@
                       }
                     },
                     "one-time.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -4649,7 +4649,7 @@
                       }
                     },
                     "helpers.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -4793,7 +4793,7 @@
                   }
                 },
                 "options": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -4838,7 +4838,7 @@
                   "filePath": "./lib/options",
                   "internChildren": {
                     "compatibility.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -4924,7 +4924,7 @@
                       }
                     },
                     "inline-request.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -4982,7 +4982,7 @@
                       }
                     },
                     "optimization-level.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -5050,7 +5050,7 @@
                   }
                 },
                 "utils": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -5093,7 +5093,7 @@
                   "filePath": "./lib/utils",
                   "internChildren": {
                     "override.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -5153,7 +5153,7 @@
                   }
                 },
                 "tokenizer": {
-                  "lang_internalHeadlessSensorValues": {},
+                  "headlessSensorValues": {},
                   "aggregatedLangInternalSourceNodeMetaData": {
                     "total": {
                       "type": 5,
@@ -5197,7 +5197,7 @@
                   "filePath": "./lib/tokenizer",
                   "internChildren": {
                     "tokenize.js": {
-                      "lang_internalHeadlessSensorValues": {},
+                      "headlessSensorValues": {},
                       "aggregatedLangInternalSourceNodeMetaData": {
                         "total": {
                           "type": 5,
@@ -5320,7 +5320,7 @@
       }
     },
     "v8-profiler-next@1.10.0": {
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "aggregatedLangInternalSourceNodeMetaData": {
         "total": {
           "type": 5,
@@ -5361,7 +5361,7 @@
       "filePath": "./node_modules/v8-profiler-next@1.10.0",
       "langInternalChildren": {
         "": {
-          "lang_internalHeadlessSensorValues": {},
+          "headlessSensorValues": {},
           "aggregatedLangInternalSourceNodeMetaData": {
             "total": {
               "type": 5,
@@ -5421,7 +5421,7 @@
       },
       "internChildren": {
         "dispatch.js": {
-          "lang_internalHeadlessSensorValues": {},
+          "headlessSensorValues": {},
           "aggregatedLangInternalSourceNodeMetaData": {
             "total": {
               "type": 5,

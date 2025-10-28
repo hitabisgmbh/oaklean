@@ -139,7 +139,7 @@ describe('SourceFileMetaDataTree', () => {
 
 		test('serialization', () => {
 			const expectedObj: ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Root> = {
-				lang_internalHeadlessSensorValues: {},
+				headlessSensorValues: {},
 				filePath: undefined,
 				aggregatedInternSourceMetaData: {
 					total: {

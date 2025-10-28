@@ -54,7 +54,7 @@ type IndexTypeMap = {
 type IndexPerType<T extends SourceFileMetaDataTreeType> = IndexTypeMap[T]
 
 export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extends BaseModel{
-	private _lang_internalHeadlessSensorValues?: SensorValues
+	private _headlessSensorValues?: SensorValues
 	private _aggregatedLangInternalSourceNodeMetaData?: AggregatedSourceNodeMetaData
 	private _aggregatedInternSourceMetaData?: AggregatedSourceNodeMetaData
 	private _aggregatedExternSourceMetaData?: AggregatedSourceNodeMetaData
@@ -136,15 +136,15 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		return SourceFileMetaDataTree.isModuleNode(this)
 	}
 
-	get lang_internalHeadlessSensorValues() {
-		if (this._lang_internalHeadlessSensorValues === undefined) {
-			this._lang_internalHeadlessSensorValues = new SensorValues({})
+	get headlessSensorValues() {
+		if (this._headlessSensorValues === undefined) {
+			this._headlessSensorValues = new SensorValues({})
 		}
-		return this._lang_internalHeadlessSensorValues
+		return this._headlessSensorValues
 	}
 
-	set lang_internalHeadlessSensorValues(value: SensorValues) {
-		this._lang_internalHeadlessSensorValues = value
+	set headlessSensorValues(value: SensorValues) {
+		this._headlessSensorValues = value
 	}
 
 	get aggregatedLangInternalSourceNodeMetaData(): AggregatedSourceNodeMetaData {
@@ -286,7 +286,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		const max = SourceNodeMetaData.max(...maxs)
 
 		if (this.type === SourceFileMetaDataTreeType.Root) {
-			total.sensorValues.addToAggregated(this.lang_internalHeadlessSensorValues)
+			total.sensorValues.addToAggregated(this.headlessSensorValues)
 		}
 
 		if (total.sensorValues.aggregatedCPUTime > 
@@ -326,7 +326,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			this.validate()
 		}
 		return {
-			lang_internalHeadlessSensorValues: this._lang_internalHeadlessSensorValues?.toJSON(),
+			headlessSensorValues: this._headlessSensorValues?.toJSON(),
 			aggregatedLangInternalSourceNodeMetaData: this._aggregatedLangInternalSourceNodeMetaData?.toJSON(),
 			aggregatedInternSourceMetaData: this._aggregatedInternSourceMetaData?.toJSON(),
 			aggregatedExternSourceMetaData: this._aggregatedExternSourceMetaData?.toJSON(),
@@ -384,9 +384,9 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			) ? new UnifiedPath(data.filePath as unknown as string) : undefined) as UnifiedPathOnlyForPathNode<T>,
 			index
 		)
-		if (data.lang_internalHeadlessSensorValues) {
-			result._lang_internalHeadlessSensorValues =
-				SensorValues.fromJSON(data.lang_internalHeadlessSensorValues)
+		if (data.headlessSensorValues) {
+			result._headlessSensorValues =
+				SensorValues.fromJSON(data.headlessSensorValues)
 		}
 		if (data.aggregatedLangInternalSourceNodeMetaData) {
 			result._aggregatedLangInternalSourceNodeMetaData =
@@ -556,8 +556,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			projectReport.globalIndex
 		)
 		tree.addProjectReport(projectReport)
-		tree.lang_internalHeadlessSensorValues = SensorValues.fromJSON(
-			projectReport.lang_internalHeadlessSensorValues.toJSON()
+		tree.headlessSensorValues = SensorValues.fromJSON(
+			projectReport.headlessSensorValues.toJSON()
 		)
 		return tree
 	}
@@ -862,8 +862,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			this.filePath,
 			this.index
 		)
-		node.lang_internalHeadlessSensorValues = SensorValues.fromJSON(
-			this.lang_internalHeadlessSensorValues.toJSON()
+		node.headlessSensorValues = SensorValues.fromJSON(
+			this.headlessSensorValues.toJSON()
 		)
 		node.sourceFileMetaData = this.sourceFileMetaData
 

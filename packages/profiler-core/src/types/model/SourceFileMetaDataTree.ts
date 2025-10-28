@@ -38,7 +38,7 @@ export type IEngineModuleOnlyForRootNode<T> = T extends SourceFileMetaDataTreeTy
 
 
 export interface ISourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> {
-	lang_internalHeadlessSensorValues?: ISensorValues
+	headlessSensorValues?: ISensorValues
 	aggregatedLangInternalSourceNodeMetaData?: IAggregatedSourceNodeMetaData
 	aggregatedInternSourceMetaData?: IAggregatedSourceNodeMetaData
 	aggregatedExternSourceMetaData?: IAggregatedSourceNodeMetaData

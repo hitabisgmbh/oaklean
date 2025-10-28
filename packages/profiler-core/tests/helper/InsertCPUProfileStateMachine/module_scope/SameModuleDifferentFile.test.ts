@@ -42,7 +42,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
@@ -51,7 +51,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 					name: 'moduleA',
 					version: '1.0.0'
 				},
-				lang_internalHeadlessSensorValues: {},
+				headlessSensorValues: {},
 				intern: {
 					'2': {
 						path: './fileA.js',
@@ -141,7 +141,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
@@ -150,7 +150,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 					name: 'moduleA',
 					version: '1.0.0'
 				},
-				lang_internalHeadlessSensorValues: {},
+				headlessSensorValues: {},
 				intern: {
 					'2': {
 						path: './fileA.js',
@@ -235,7 +235,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 		expect(projectReport.intern.toJSON()).toBeUndefined()
 		expect(projectReport.extern.toJSON()).toEqual({
@@ -246,7 +246,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 					name: 'moduleA',
 					version: '1.0.0'
 				},
-				lang_internalHeadlessSensorValues: {},
+				headlessSensorValues: {},
 				intern: {
 					'2': {
 						path: './fileA.js',
@@ -370,7 +370,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.intern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 
@@ -382,7 +382,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 					name: 'moduleA',
 					version: '1.0.0'
 				},
-				lang_internalHeadlessSensorValues: {},
+				headlessSensorValues: {},
 				intern: {
 					'2': {
 						path: './fileA.js',
@@ -494,7 +494,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.intern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 
@@ -506,7 +506,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 					name: 'moduleA',
 					version: '1.0.0'
 				},
-				lang_internalHeadlessSensorValues: {},
+				headlessSensorValues: {},
 				intern: {
 					'2': {
 						path: './fileA.js',

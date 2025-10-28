@@ -52,7 +52,7 @@ export class Report extends BaseModel {
 	reportVersion: string
 	kind: ReportKind
 	relativeRootDir?: UnifiedPath
-	private _lang_internalHeadlessSensorValues?: SensorValues
+	private _headlessSensorValues?: SensorValues
 	private _lang_internal?: ModelMap<PathID_number, SourceFileMetaData>
 	private _intern?: ModelMap<PathID_number, SourceFileMetaData>
 	private _extern?: ModelMap<ModuleID_number, ModuleReport>
@@ -135,15 +135,15 @@ export class Report extends BaseModel {
 		this._extern = new_extern
 	}
 
-	get lang_internalHeadlessSensorValues() {
-		if (this._lang_internalHeadlessSensorValues === undefined) {
-			this._lang_internalHeadlessSensorValues = new SensorValues({})
+	get headlessSensorValues() {
+		if (this._headlessSensorValues === undefined) {
+			this._headlessSensorValues = new SensorValues({})
 		}
-		return this._lang_internalHeadlessSensorValues
+		return this._headlessSensorValues
 	}
 
-	set lang_internalHeadlessSensorValues(value: SensorValues) {
-		this._lang_internalHeadlessSensorValues = value
+	set headlessSensorValues(value: SensorValues) {
+		this._headlessSensorValues = value
 	}
 
 	get lang_internal(): ModelMap<PathID_number, SourceFileMetaData> {
@@ -395,7 +395,7 @@ export class Report extends BaseModel {
 			reportVersion: this.reportVersion,
 			kind: this.kind,
 			relativeRootDir: this.relativeRootDir?.toJSON(),
-			lang_internalHeadlessSensorValues: this.lang_internalHeadlessSensorValues.toJSON(),
+			headlessSensorValues: this.headlessSensorValues.toJSON(),
 			lang_internal: this.lang_internal.toJSON<ISourceFileMetaData>(),
 			intern: this.intern.toJSON<ISourceFileMetaData>(),
 			extern: this.extern.toJSON<IModuleReport>(),
@@ -434,8 +434,8 @@ export class Report extends BaseModel {
 			}
 		}
 
-		if (data.lang_internalHeadlessSensorValues) {
-			result.lang_internalHeadlessSensorValues = SensorValues.fromJSON(data.lang_internalHeadlessSensorValues)
+		if (data.headlessSensorValues) {
+			result.headlessSensorValues = SensorValues.fromJSON(data.headlessSensorValues)
 		}
 
 		if (data.intern) {
@@ -533,7 +533,7 @@ export class Report extends BaseModel {
 		const version = args[0].reportVersion
 		result.reportVersion = version
 
-		const lang_internalHeadlessSensorValues: SensorValues[] = []
+		const headlessSensorValues: SensorValues[] = []
 		const valuesToMerge: {
 			lang_internal: Record<LangInternalPath_string, SourceFileMetaData[]>,
 			intern: Record<UnifiedPath_string, SourceFileMetaData[]>,
@@ -548,7 +548,7 @@ export class Report extends BaseModel {
 			if (currentProjectReport.reportVersion !== version) {
 				throw new Error('ProjectReport.merge: Project reports versions are not compatible')
 			}
-			lang_internalHeadlessSensorValues.push(currentProjectReport.lang_internalHeadlessSensorValues)
+			headlessSensorValues.push(currentProjectReport.headlessSensorValues)
 
 			for (const [langInternalPathID, sourceFileMetaData] of currentProjectReport.lang_internal.entries()) {
 				const langInternalPathIndex = currentProjectReport.getPathIndexByID(langInternalPathID)
@@ -625,7 +625,7 @@ export class Report extends BaseModel {
 				ModuleReport.merge(nodeModuleIndex, ...moduleReports)
 			)
 		}
-		result.lang_internalHeadlessSensorValues = SensorValues.sum(...lang_internalHeadlessSensorValues)
+		result.headlessSensorValues = SensorValues.sum(...headlessSensorValues)
 
 		return result
 	}
@@ -645,7 +645,7 @@ export class Report extends BaseModel {
 		// if current Oaklean version is greater or equal to 0.1.4
 		// add lang_internal_headless_cpu_time to the buffer
 		if (VersionHelper.compare(this.reportVersion, '0.1.4') >= 0) {
-			buffers.push(this.lang_internalHeadlessSensorValues.toBuffer())
+			buffers.push(this.headlessSensorValues.toBuffer())
 		}
 
 		buffers.push(
@@ -696,16 +696,16 @@ export class Report extends BaseModel {
 			remainingBuffer = newRemainingBuffer3
 		}
 
-		let langInternalHeadLessSensorValues: SensorValues | undefined = undefined
+		let headlessSensorValues: SensorValues | undefined = undefined
 		// if the version of the Report is greater or equal to 0.1.4
 		// consume lang_internal_headless_cpu_time from the buffer
 		if (VersionHelper.compare(reportVersion, '0.1.4') >= 0) {
 			const {
-				instance: langInternalHeadLessSensorValues_instance,
+				instance: headlessSensorValues_instance,
 				remainingBuffer: newRemainingBuffer3_1
 			} = SensorValues.consumeFromBuffer(remainingBuffer)
 			remainingBuffer = newRemainingBuffer3_1
-			langInternalHeadLessSensorValues = langInternalHeadLessSensorValues_instance
+			headlessSensorValues = headlessSensorValues_instance
 		}
 
 		// if the version of the Report is less or equal to 0.1.4
@@ -767,8 +767,8 @@ export class Report extends BaseModel {
 		result._intern = intern
 		result._lang_internal = lang_internal
 		result._extern = extern
-		if (langInternalHeadLessSensorValues) {
-			result.lang_internalHeadlessSensorValues = langInternalHeadLessSensorValues
+		if (headlessSensorValues) {
+			result.headlessSensorValues = headlessSensorValues
 		}
 
 		return {

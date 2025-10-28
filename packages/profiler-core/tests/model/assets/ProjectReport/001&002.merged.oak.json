@@ -1405,7 +1405,7 @@
   "reportVersion": "0.1.5",
   "kind": 1,
   "relativeRootDir": "../../../..",
-  "lang_internalHeadlessSensorValues": {
+  "headlessSensorValues": {
     "selfCPUTime": 9915
   },
   "lang_internal": {
@@ -2794,7 +2794,7 @@
       },
       "reportVersion": "0.1.5",
       "kind": 1,
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "lang_internal": {
         "2": {
           "path": "",
@@ -2884,7 +2884,7 @@
       },
       "reportVersion": "0.1.5",
       "kind": 1,
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "lang_internal": {
         "2": {
           "path": "",
@@ -3402,7 +3402,7 @@
           },
           "reportVersion": "0.1.5",
           "kind": 1,
-          "lang_internalHeadlessSensorValues": {},
+          "headlessSensorValues": {},
           "intern": {
             "152": {
               "path": "./lib/clean.js",
