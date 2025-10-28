@@ -104,6 +104,7 @@ export class InsertCPUProfileStateMachine {
 		const stack: StackFrame[] = [
 			{
 				// begin state
+				parent: null,
 				state:  {
 					scope: 'project',
 					type: 'lang_internal',
@@ -178,16 +179,18 @@ export class InsertCPUProfileStateMachine {
 						} : undefined
 					)
 
-					// propagate the compensation to all parents
-					CompensationHelper.propagateCompensation(
-						stack[stack.length - 1],
-						compensation,
-						this.debug ? {
-							depth: currentStackFrame.depth,
-							node: currentStackFrame.node,
-							currentState
-						} : undefined
-					)
+					if (currentStackFrame.parent !== null) {
+						// propagate the compensation to all parents
+						CompensationHelper.propagateCompensation(
+							currentStackFrame.parent,
+							compensation,
+							this.debug ? {
+								depth: currentStackFrame.depth,
+								node: currentStackFrame.node,
+								currentState
+							} : undefined
+						)
+					}
 				}
 
 				if (this.debug) {
@@ -248,6 +251,7 @@ export class InsertCPUProfileStateMachine {
 			// add children to stack
 			for (const child of currentStackFrame.node.reversedChildren()) {
 				stack.push({
+					parent: currentStackFrame,
 					state: currentStackFrame.result.nextState,
 					node: child,
 					depth: currentStackFrame.depth + 1

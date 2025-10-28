@@ -11,7 +11,8 @@ import { SOURCE_LOCATIONS_DEFAULT } from '../assets/SourceLocations'
 import {
 	mockedCPUModel,
 	createLocationChainCPUModel,
-	MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+	MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER,
+	createLocationTreeCPUModel
 } from '../mock'
 import { EXAMPLE_EXECUTION_DETAILS } from '../../../model/assets/ProjectReport/ExecutionDetails'
 
@@ -916,4 +917,121 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			}
 		})
 	})
+
+	// ------ split cases ------
+
+	test('A0 -> (mA.A0 -> A1 || mA.A1 -> A1)', async () => {
+		/*
+			A0: 10 | 110
+			├── mA.A0: 20 | 50
+			│    └── A1: 30 | 30
+			└── mA.A1: 20 | 50
+			     └── A1: 30 | 30
+		*/
+
+		const cpuNode = mockedCPUModel(
+			createLocationTreeCPUModel([
+				SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+				[
+					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], [
+						[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]
+					]],
+					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'], [
+						[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]
+					]],
+				]
+			])
+		)
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.lang_internalHeadlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.extern.toJSON()).toEqual({
+			'3': {
+				reportVersion: projectReport.reportVersion,
+				kind: ReportKind.measurement,
+				nodeModule: {
+					name: 'moduleA',
+					version: '1.0.0'
+				},
+				lang_internalHeadlessSensorValues: {},
+				intern: {
+					'4': {
+						path: './fileA.js',
+						functions: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							},
+							'7': {
+								id: 7,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
+		expect(projectReport.intern.toJSON()).toEqual({
+			'1': {
+				path: './src/fileA.js',
+				functions: {
+					'2': {
+						id: 2,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 1,
+							selfCPUTime: 10,
+							aggregatedCPUTime: 50,
+							externCPUTime: 40
+						},
+						extern: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							},
+							'7': {
+								id: 7,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							}
+						}
+					},
+					'6': {
+						id: 6,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 6,
+							selfCPUTime: 60,
+							aggregatedCPUTime: 60
+						}
+					}
+				}
+			}
+		})
+	})
+
 })

@@ -7,6 +7,7 @@ import { SourceNodeMetaData } from '../../../model/SourceNodeMetaData'
 import { SourceNodeMetaDataType } from '../../../types'
 
 export type StackFrame = {
+	parent: StackFrame | null
 	state: State
 	node: CPUNode
 	depth: number

@@ -40,7 +40,7 @@ export class CompensationHelper {
 		target: Compensation,
 		add: Compensation
 	) {
-		target.carriedComp = SensorValues.max(
+		target.carriedComp = SensorValues.sum(
 			target.carriedComp,
 			CompensationHelper.totalCompensationSensorValues(
 				add
