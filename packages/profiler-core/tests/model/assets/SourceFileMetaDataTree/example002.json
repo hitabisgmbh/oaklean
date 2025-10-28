@@ -1,6 +1,6 @@
 {
   "headlessSensorValues": {
-    "selfCPUTime": 84
+    "langInternalCPUTime": 84
   },
   "aggregatedLangInternalSourceNodeMetaData": {
     "total": {

@@ -1111,7 +1111,7 @@
   "kind": 0,
   "relativeRootDir": "../../../../../..",
   "headlessSensorValues": {
-    "selfCPUTime": 84
+    "langInternalCPUTime": 84
   },
   "lang_internal": {
     "1": {

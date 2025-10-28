@@ -44,7 +44,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + DIFFERENT
 		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
-			selfCPUTime: 60
+			langInternalCPUTime: 60
 		})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toEqual({
@@ -112,7 +112,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + DIFFERENT
 		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
-			selfCPUTime: 100
+			langInternalCPUTime: 100
 		})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toEqual({
@@ -174,7 +174,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + DIFFERENT
 		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
-			selfCPUTime: 50
+			langInternalCPUTime: 50
 		})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toEqual({
@@ -259,7 +259,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + DIFFERENT
 		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
-			selfCPUTime: 190
+			langInternalCPUTime: 190
 		})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toEqual({
