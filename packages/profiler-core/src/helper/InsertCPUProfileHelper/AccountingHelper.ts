@@ -93,11 +93,6 @@ export class AccountingHelper {
 			currentCallIdentifier
 		)
 
-		if (transition.options.headless) {
-			// if no extern or intern calls were tracked yet, add the time to the total of headless cpu time
-			currentState.callIdentifier.report.headlessSensorValues.addSelfToLangInternal(sensorValues)
-		}
-
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
 		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
 			sensorValues,
@@ -304,13 +299,22 @@ export class AccountingHelper {
 		}
 
 		return {
-			nextState: {
-				scope: transition.transition === 'toProject' ? 'project' : 'module',
-				type: 'intern',
-				headless: false,
-				callIdentifier: currentCallIdentifier,
-				compensationLayerDepth: currentState.compensationLayerDepth
-			},
+			nextState:
+				transition.transition === 'toProject'
+					? {
+							scope: 'project',
+							type: 'intern',
+							headless: false,
+							callIdentifier: currentCallIdentifier,
+							compensationLayerDepth: currentState.compensationLayerDepth
+					  }
+					: {
+							scope: 'module',
+							type: 'intern',
+							headless: transition.options.headless,
+							callIdentifier: currentCallIdentifier,
+							compensationLayerDepth: currentState.compensationLayerDepth
+					  },
 			accountingInfo: {
 				type: 'accountToIntern',
 				accountedSourceNode: {
@@ -420,7 +424,7 @@ export class AccountingHelper {
 			nextState: {
 				scope: 'module',
 				type: 'intern',
-				headless: false,
+				headless: transition.options.headless,
 				callIdentifier: currentCallIdentifier,
 				compensationLayerDepth: currentState.compensationLayerDepth
 			},

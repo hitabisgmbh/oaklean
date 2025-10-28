@@ -609,6 +609,29 @@ export class SensorValues extends BaseModel {
 	}
 
 	// IMPORTANT to change when new measurement type gets added
+	addSelfToExtern(
+		other: SensorValues | Partial<ISensorValues>,
+		sign = 1
+	) {
+		this.externCPUTime = UnitHelper.sumMicroSeconds(
+			this.externCPUTime,
+			other.selfCPUTime,
+			sign
+		)
+		this.externCPUEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.externCPUEnergyConsumption,
+			other.selfCPUEnergyConsumption,
+			sign
+		)
+		this.externRAMEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.externRAMEnergyConsumption,
+			other.selfRAMEnergyConsumption,
+			sign
+		)
+		return this
+	}
+
+	// IMPORTANT to change when new measurement type gets added
 	addToLangInternal(
 		other: SensorValues | Partial<ISensorValues>,
 		sign = 1

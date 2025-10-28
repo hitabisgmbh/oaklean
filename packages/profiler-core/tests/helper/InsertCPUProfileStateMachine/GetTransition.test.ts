@@ -123,6 +123,22 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				}
 			} satisfies Transition)
 		})
+
+		test('from STATE: module:intern:true', async () => {
+			const fromState = STATES['module:intern:true']
+			const transition = await InsertCPUProfileStateMachine.getTransition(
+				fromState,
+				sourceLocation,
+				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+			)
+			expect(transition).toEqual({
+				transition: 'toLangInternal',
+				options: {
+					createLink: true,
+					headless: true
+				}
+			} satisfies Transition)
+		})
 	})
 
 	describe('getTransition to WASM', () => {
@@ -164,7 +180,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				transition: 'toModule',
 				options: {
 					createLink: false,
-					headless: false,
+					headless: true,
 					nodeModule: WASM_NODE_MODULE,
 					presentInOriginalSourceCode: false,
 					sourceNodeLocation
@@ -221,7 +237,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				transition: 'toModule',
 				options: {
 					createLink: false,
-					headless: false,
+					headless: true,
 					nodeModule: WASM_NODE_MODULE,
 					presentInOriginalSourceCode: false,
 					sourceNodeLocation
@@ -241,6 +257,25 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				options: {
 					createLink: true,
 					headless: false,
+					nodeModule: WASM_NODE_MODULE,
+					presentInOriginalSourceCode: false,
+					sourceNodeLocation
+				}
+			} satisfies Transition)
+		})
+		
+		test('from STATE: module:intern:true', async () => {
+			const fromState = STATES['module:intern:true']
+			const transition = await InsertCPUProfileStateMachine.getTransition(
+				fromState,
+				sourceLocation,
+				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+			)
+			expect(transition).toEqual({
+				transition: 'toModule',
+				options: {
+					createLink: true,
+					headless: true,
 					nodeModule: WASM_NODE_MODULE,
 					presentInOriginalSourceCode: false,
 					sourceNodeLocation
@@ -363,6 +398,24 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				}
 			} satisfies Transition)
 		})
+
+		test('from STATE: module:intern:true', async () => {
+			const fromState = STATES['module:intern:true']
+			const transition = await InsertCPUProfileStateMachine.getTransition(
+				fromState,
+				sourceLocation,
+				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+			)
+			expect(transition).toEqual({
+				transition: 'toProject',
+				options: {
+					createLink: false,
+					headless: false,
+					presentInOriginalSourceCode: true,
+					sourceNodeLocation
+				}
+			} satisfies Transition)
+		})
 	})
 
 	describe('getTransition to WEB_PACK (MODULE_SCOPE)', () => {
@@ -404,7 +457,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				transition: 'toModule',
 				options: {
 					createLink: false,
-					headless: false,
+					headless: true,
 					presentInOriginalSourceCode: true,
 					sourceNodeLocation,
 					nodeModule
@@ -461,7 +514,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				transition: 'toModule',
 				options: {
 					createLink: false,
-					headless: false,
+					headless: true,
 					presentInOriginalSourceCode: true,
 					sourceNodeLocation,
 					nodeModule
@@ -481,6 +534,25 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				options: {
 					createLink: true,
 					headless: false,
+					presentInOriginalSourceCode: true,
+					sourceNodeLocation,
+					nodeModule
+				}
+			} satisfies Transition)
+		})
+
+		test('from STATE: module:intern:true', async () => {
+			const fromState = STATES['module:intern:true']
+			const transition = await InsertCPUProfileStateMachine.getTransition(
+				fromState,
+				sourceLocation,
+				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+			)
+			expect(transition).toEqual({
+				transition: 'toModule',
+				options: {
+					createLink: true,
+					headless: true,
 					presentInOriginalSourceCode: true,
 					sourceNodeLocation,
 					nodeModule
@@ -604,6 +676,24 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				}
 			} satisfies Transition)
 		})
+
+		test('from STATE: module:intern:true', async () => {
+			const fromState = STATES['module:intern:true']
+			const transition = await InsertCPUProfileStateMachine.getTransition(
+				fromState,
+				sourceLocation,
+				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+			)
+			expect(transition).toEqual({
+				transition: 'toProject',
+				options: {
+					createLink: false,
+					headless: false,
+					presentInOriginalSourceCode: true,
+					sourceNodeLocation
+				}
+			} satisfies Transition)
+		})
 	})
 
 	describe('getTransition to DEFAULT (MODULE_SCOPE)', () => {
@@ -646,7 +736,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				transition: 'toModule',
 				options: {
 					createLink: false,
-					headless: false,
+					headless: true,
 					presentInOriginalSourceCode: true,
 					sourceNodeLocation,
 					nodeModule
@@ -703,7 +793,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				transition: 'toModule',
 				options: {
 					createLink: false,
-					headless: false,
+					headless: true,
 					presentInOriginalSourceCode: true,
 					sourceNodeLocation,
 					nodeModule
@@ -723,6 +813,25 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				options: {
 					createLink: true,
 					headless: false,
+					presentInOriginalSourceCode: true,
+					sourceNodeLocation,
+					nodeModule
+				}
+			} satisfies Transition)
+		})
+
+		test('from STATE: module:intern:true', async () => {
+			const fromState = STATES['module:intern:true']
+			const transition = await InsertCPUProfileStateMachine.getTransition(
+				fromState,
+				sourceLocation,
+				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+			)
+			expect(transition).toEqual({
+				transition: 'toModule',
+				options: {
+					createLink: true,
+					headless: true,
 					presentInOriginalSourceCode: true,
 					sourceNodeLocation,
 					nodeModule
@@ -796,6 +905,18 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 
 		test('from STATE: module:intern:false', async () => {
 			const fromState = STATES['module:intern:false']
+			const transition = await InsertCPUProfileStateMachine.getTransition(
+				fromState,
+				sourceLocation,
+				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+			)
+			expect(transition).toEqual({
+				transition: 'stayInState'
+			} satisfies Transition)
+		})
+
+		test('from STATE: module:intern:true', async () => {
+			const fromState = STATES['module:intern:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
 				fromState,
 				sourceLocation,

@@ -8,20 +8,20 @@ type CommonStateProps = {
 	compensationLayerDepth: number
 }
 
-type StateProps = ({
+type ProjectState = CommonStateProps & ({
+	scope: 'project'
 	type: 'intern'
 	headless: false
 } | {
+	scope: 'project'
 	type: 'lang_internal'
 	headless: boolean
-}) & CommonStateProps
+})
 
-type ProjectState = StateProps & {
-	scope: 'project'
-}
-
-type ModuleState = StateProps & {
+type ModuleState = CommonStateProps & {
+	type: 'intern' | 'lang_internal'
 	scope: 'module'
+	headless: boolean
 }
 
 export type State = ProjectState | ModuleState

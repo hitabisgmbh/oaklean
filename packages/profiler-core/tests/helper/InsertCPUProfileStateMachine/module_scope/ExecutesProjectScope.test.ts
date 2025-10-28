@@ -44,7 +44,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
+			externCPUTime: 20
+		})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,

@@ -42,7 +42,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
+			externCPUTime: 60
+		})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
@@ -129,7 +131,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
+			externCPUTime: 30
+		})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
@@ -176,7 +180,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
+			externCPUTime: 100
+		})
 		expect(projectReport.extern.toJSON()).toEqual({
 			'1': {
 				reportVersion: projectReport.reportVersion,
@@ -265,7 +271,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
+			externCPUTime: 50
+		})
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 		expect(projectReport.intern.toJSON()).toBeUndefined()
 		expect(projectReport.extern.toJSON()).toEqual({
@@ -390,7 +398,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
+			externCPUTime: 280
+		})
 		expect(projectReport.intern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 
@@ -477,7 +487,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
+			externCPUTime: 280
+		})
 		expect(projectReport.intern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 
@@ -591,7 +603,9 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 		)
 
-		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
+			externCPUTime: 190
+		})
 		expect(projectReport.intern.toJSON()).toBeUndefined()
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
 

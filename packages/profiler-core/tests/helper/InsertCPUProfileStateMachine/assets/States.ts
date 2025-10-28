@@ -60,5 +60,14 @@ export const STATES: Record<StateIdentifier<State>, State> = {
 		compensationLayerDepth: undefined as any,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		callIdentifier: undefined as any
+	},
+	'module:intern:true': {
+		scope: 'module',
+		type: 'intern',
+		headless: true,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		compensationLayerDepth: undefined as any,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		callIdentifier: undefined as any
 	}
 }

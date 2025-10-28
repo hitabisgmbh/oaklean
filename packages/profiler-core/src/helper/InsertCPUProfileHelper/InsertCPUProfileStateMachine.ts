@@ -289,7 +289,7 @@ export class InsertCPUProfileStateMachine {
 				transition: 'toModule' as const,
 				options: {
 					createLink: currentState.type !== 'lang_internal',
-					headless: false,
+					headless: currentState.headless,
 					nodeModule: WASM_NODE_MODULE,
 					sourceNodeLocation: {
 						relativeFilePath: wasmPath,
@@ -327,7 +327,7 @@ export class InsertCPUProfileStateMachine {
 					transition: 'toModule' as const,
 					options: {
 						createLink: currentState.type !== 'lang_internal',
-						headless: false,
+						headless: currentState.headless,
 						nodeModule: nodeModule,
 						sourceNodeLocation: sourceNodeLocation,
 						presentInOriginalSourceCode: functionIdentifierPresentInOriginalFile
@@ -341,10 +341,18 @@ export class InsertCPUProfileStateMachine {
 		}
 	}
 
+	/**
+	 * performs the state transition and accounting based on the current stack frame and the transition
+	 * 
+	 * @param currentStackFrame 
+	 * @param transition 
+	 * @returns the result of the transition including the next state and accounting info
+	 */
 	async applyTransition(
 		currentStackFrame: StackFrame,
 		transition: Transition
 	): Promise<TransitionResult> {
+		this.applyHeadless(currentStackFrame, transition)
 		switch (transition.transition) {
 			case 'toLangInternal':
 				return await AccountingHelper.accountToLangInternal(
@@ -422,6 +430,39 @@ export class InsertCPUProfileStateMachine {
 				}
 			default:
 				assertUnreachable(transition)
+		}
+	}
+
+	/**
+	 * applies headless accounting if necessary
+	 * 
+	 * @param currentStackFrame 
+	 * @param transition 
+	 */
+	applyHeadless(
+		currentStackFrame: StackFrame,
+		transition: Transition
+	) {
+		// if no intern calls were tracked yet, add the time to the headless cpu time
+		if (currentStackFrame.state.headless && transition.transition !== 'toProject') {
+			switch (transition.transition) {
+				case 'toModule':
+					this.projectReport.headlessSensorValues.addSelfToExtern(currentStackFrame.node.sensorValues)
+					break
+				case 'toLangInternal':
+					this.projectReport.headlessSensorValues.addSelfToLangInternal(currentStackFrame.node.sensorValues)
+					break
+				case 'stayInState':
+					if (currentStackFrame.state.type === 'lang_internal') {
+						this.projectReport.headlessSensorValues.addSelfToLangInternal(
+							currentStackFrame.node.sensorValues
+						)
+					} else {
+						this.projectReport.headlessSensorValues.addSelfToExtern(
+							currentStackFrame.node.sensorValues
+						)
+					}
+			}
 		}
 	}
 }
