@@ -73,6 +73,15 @@ export class UnifiedPath {
 	}
 
 	/**
+	 * Returns the file name of a path (without extension)
+	 * 
+	 * @returns The extension of the path (path/to/index.coffee.md -> index.coffee)
+	 */
+	filename(): string {
+		return path.parse(this.basename()).name
+	}
+
+	/**
 	 * Returns the extension of a path
 	 * 
 	 * @returns The extension of the path (path/to/index.coffee.md -> .md)
