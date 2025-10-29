@@ -9,7 +9,8 @@ import {
 	CPUProfileHelper,
 	STATIC_CONFIG_FILENAME,
 	ResolveFunctionIdentifierHelper,
-	ExternalResourceHelper
+	ExternalResourceHelper,
+	ExportAssetHelper
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 import bare from 'cli-color/bare'
@@ -45,7 +46,7 @@ export default class CPUProfileCommands {
 			.description('Displays the trace of the cpu profile')
 			.argument('<input>', 'input file path')
 			.option('-r, --root-dir <rootdir>', 'specify which root dir should be used, if not set it will be determined by the config file', undefined)
-			.option('-e, --external-resources <external-resources>', 'external resources file path - When provided, this improves file resolution accuracy and ensures source maps are taken into account.', undefined)
+			.option('-e, --external-resources [external-resources]', 'external resources file path - When provided, this improves file resolution accuracy and ensures source maps are taken into account.', undefined)
 			.action(this.trace.bind(this))
 
 		baseCommand
@@ -153,13 +154,23 @@ export default class CPUProfileCommands {
 	async trace(
 		input: string,
 		options: {
-			externalResources?: string,
+			externalResources?: string | true,
 			rootDir?: string
 		}
 	) {
 		let inputPath = new UnifiedPath(input)
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
+		}
+		let externalResourcesInput = options.externalResources
+		if (externalResourcesInput === true) {
+			externalResourcesInput = new ExportAssetHelper(inputPath.dirName()).outputExternalResourceHelperPath(
+				inputPath.filename()
+			).toPlatformString()
+			LoggerHelper.log(
+				'No external resources file provided, attempting to determine one automatically.',
+				`Using: ${externalResourcesInput}`
+			)
 		}
 		const cpuProfile = await CPUProfileHelper.loadFromFile(inputPath)
 		if (cpuProfile === undefined) {
@@ -179,8 +190,8 @@ export default class CPUProfileCommands {
 
 		let resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper | undefined
 		let externalResourceHelper: ExternalResourceHelper | undefined
-		if (options.externalResources !== undefined) {
-			let resourcesHelperPath = new UnifiedPath(options.externalResources)
+		if (externalResourcesInput !== undefined) {
+			let resourcesHelperPath = new UnifiedPath(externalResourcesInput)
 			if (resourcesHelperPath.isRelative()) {
 				resourcesHelperPath = new UnifiedPath(process.cwd()).join(resourcesHelperPath)
 			}
