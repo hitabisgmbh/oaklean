@@ -57,10 +57,6 @@ describe('CPUProfileSourceLocation', () => {
 		expect(instance.isLangInternal).toEqual(false)
 	})
 
-	test('isEmpty', () => {
-		expect(instance.isEmpty).toEqual(false)
-	})
-
 	test('rawUrl', () => {
 		expect(instance.rawUrl).toEqual('node_modules/v8-profiler-next/dispatch.js')
 	})

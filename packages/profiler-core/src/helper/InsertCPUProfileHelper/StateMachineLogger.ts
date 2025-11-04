@@ -110,7 +110,7 @@ export class StateMachineLogger {
 	static logTransition(
 		cpuNode: CPUNode,
 		transition: Transition,
-		accountingInfo: AccountingInfo | null,
+		accountingInfo: AccountingInfo,
 		currentState: State,
 		nextState: State
 	) {
@@ -145,15 +145,10 @@ export class StateMachineLogger {
 				StateMachineLogger.formatTransition({
 					'CPU Node': String(cpuNode.index).padStart(3, '0'),
 					Transition: transition.transition,
-					'Create Link':
-						transition.transition === 'stayInState'
-							? 'false'
-							: transition.options.createLink.toString(),
-					AccountingType:
-						accountingInfo === null ? 'stayInState' : accountingInfo?.type,
+					'Create Link': transition.options.createLink.toString(),
+					AccountingType: accountingInfo.type,
 					FirstTimeVisited:
-						accountingInfo === null ? 'stayInState' :
-						accountingInfo?.accountedSourceNode.firstTimeVisited.toString(),
+						accountingInfo.accountedSourceNode.firstTimeVisited.toString(),
 					'Accounted Hits': `${cpuNode.profilerHits}`,
 					'Accounted CPU Time': `self=${
 						accountingInfo?.accountedSensorValues.selfCPUTime || 0

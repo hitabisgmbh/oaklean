@@ -58,8 +58,6 @@ export class CompensationHelper {
 		}
 	): Compensation | undefined {
 		if (
-			// its not a stayInState transition
-			transitionResult.accountingInfo !== null &&
 			// no link was created
 			transitionResult.accountingInfo.accountedSourceNodeReference === null &&
 			// special case: lang_internal nodes never create links

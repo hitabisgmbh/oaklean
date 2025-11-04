@@ -9,6 +9,7 @@ import { NodeModuleUtils } from './NodeModuleUtils'
 import { CPUProfileSourceLocation } from './CPUProfile/CPUProfileSourceLocation'
 import { ExternalResourceHelper } from './ExternalResourceHelper'
 
+import { UNKNOWN_SCRIPTS_FOLDER_NAME } from '../constants'
 import { SourceMap } from '../model/SourceMap'
 import { NodeModule } from '../model/NodeModule'
 import { ProgramStructureTree } from '../model/ProgramStructureTree'
@@ -207,16 +208,28 @@ export class ResolveFunctionIdentifierHelper {
 				functionIdentifier
 			}
 		}
-		// determine the node module of the source node location if there is one
-		const {
+
+		let {
 			relativeNodeModulePath,
 			nodeModule
-		} = this.nodeModuleFromFilePath(sourceNodeLocation.relativeFilePath)
+		}: NodeModulePerFilePathCacheResult = {
+			relativeNodeModulePath: null,
+			nodeModule: null
+		}
 
-		if (relativeNodeModulePath && nodeModule) {
-			// since the source node location is within a node module
-			// adjust the relativeFilePath so its relative to that node module directory
-			sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(sourceNodeLocation.relativeFilePath)
+		if (sourceNodeLocation.relativeFilePath.toString() !== './') {
+			// determine the node module of the source node location if there is one
+			({ relativeNodeModulePath, nodeModule } =
+				this.nodeModuleFromFilePath(sourceNodeLocation.relativeFilePath))
+
+			if (relativeNodeModulePath && nodeModule) {
+				// since the source node location is within a node module
+				// adjust the relativeFilePath so its relative to that node module directory
+				sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(sourceNodeLocation.relativeFilePath)
+			}
+		} else {
+			sourceNodeLocation.relativeFilePath = new UnifiedPath(UNKNOWN_SCRIPTS_FOLDER_NAME, sourceLocation.scriptID)
+			functionIdentifierPresentInOriginalFile = false
 		}
 
 		if (

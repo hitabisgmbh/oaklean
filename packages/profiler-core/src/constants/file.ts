@@ -5,3 +5,5 @@ export const EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION = '.resources.json'
 export const PERFORMANCE_FILE_NAME = 'performance.json'
 export const EXECUTION_DETAILS_FILE_NAME = 'execution-details.json'
 export const ACCUMULATED_REPORT_FILE_NAME = 'accumulated.oak'
+
+export const UNKNOWN_SCRIPTS_FOLDER_NAME = '<unknown-scripts>'

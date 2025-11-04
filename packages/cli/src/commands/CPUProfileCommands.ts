@@ -264,8 +264,7 @@ export default class CPUProfileCommands {
 				if (resolveFunctionIdentifierHelper !== undefined) {
 					if (
 						!cpuNode.sourceLocation.isLangInternal &&
-						!cpuNode.sourceLocation.isWASM &&
-						!cpuNode.sourceLocation.isEmpty
+						!cpuNode.sourceLocation.isWASM
 					) {
 						const {
 							sourceNodeLocation,

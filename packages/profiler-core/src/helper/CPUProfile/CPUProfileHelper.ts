@@ -45,7 +45,7 @@ export class CPUProfileHelper {
 				0,
 				node.callFrame
 			)
-			if (!location.isLangInternal && !location.isWASM && !location.isEmpty) {
+			if (!location.isLangInternal && !location.isWASM) {
 				node.callFrame.url = location.relativeUrl.toString()
 			}
 		}

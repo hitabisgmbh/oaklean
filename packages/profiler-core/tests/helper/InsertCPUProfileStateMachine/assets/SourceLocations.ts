@@ -180,7 +180,7 @@ export const SOURCE_LOCATIONS_DEFAULT = {
 }
 
 export const SOURCE_LOCATIONS_EMPTY = {
-	'default': new CPUProfileSourceLocation(
+	'default': Object.assign(new CPUProfileSourceLocation(
 		undefined as any,
 		undefined as any,
 		{
@@ -190,5 +190,13 @@ export const SOURCE_LOCATIONS_EMPTY = {
 			lineNumber: 0,
 			columnNumber: 0
 		}
-	)
+	), {
+		resolved: {
+			sourceNodeLocation: {
+				relativeFilePath: new UnifiedPath(UNKNOWN_SCRIPTS_FOLDER_NAME, '1'),
+				functionIdentifier: '{root}' as SourceNodeIdentifier_string
+			},
+			functionIdentifierPresentInOriginalFile: false
+		}
+	})
 }

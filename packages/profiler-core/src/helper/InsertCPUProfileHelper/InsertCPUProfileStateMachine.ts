@@ -128,11 +128,6 @@ export class InsertCPUProfileStateMachine {
 			if (currentStackFrame.result !== undefined) {
 				// second visit of the node, do post processing
 				stack.pop()
-				if (currentStackFrame.result.accountingInfo === null) {
-					// it was a stayInState transition
-					// no post processing needed
-					continue
-				}
 				// state that is about to get left: currentStackFrame.result.nextState
 				// so the parent state is: currentStackFrame.state:
 				const parentState = currentStackFrame.state
@@ -300,44 +295,38 @@ export class InsertCPUProfileStateMachine {
 				}
 			}
 		}
-		if (!sourceLocation.isEmpty) {
-			const {
-				sourceNodeLocation,
-				functionIdentifierPresentInOriginalFile,
-				nodeModule,
-				relativeNodeModulePath
-			} = await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
-				sourceLocation
-			)
+		const {
+			sourceNodeLocation,
+			functionIdentifierPresentInOriginalFile,
+			nodeModule,
+			relativeNodeModulePath
+		} = await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
+			sourceLocation
+		)
 
-			if (!(relativeNodeModulePath && nodeModule)) {
-				// is project
-				return {
-					transition: 'toProject' as const,
-					options: {
-						createLink: currentState.scope === 'project' && currentState.type === 'intern',
-						headless: false,
-						sourceNodeLocation: sourceNodeLocation,
-						presentInOriginalSourceCode: functionIdentifierPresentInOriginalFile
-					}
-				}
-			} else {
-				// is module
-				return {
-					transition: 'toModule' as const,
-					options: {
-						createLink: currentState.type !== 'lang_internal',
-						headless: currentState.headless,
-						nodeModule: nodeModule,
-						sourceNodeLocation: sourceNodeLocation,
-						presentInOriginalSourceCode: functionIdentifierPresentInOriginalFile
-					}
+		if (!(relativeNodeModulePath && nodeModule)) {
+			// is project
+			return {
+				transition: 'toProject' as const,
+				options: {
+					createLink: currentState.scope === 'project' && currentState.type === 'intern',
+					headless: false,
+					sourceNodeLocation: sourceNodeLocation,
+					presentInOriginalSourceCode: functionIdentifierPresentInOriginalFile
 				}
 			}
-		}
-
-		return {
-			transition: 'stayInState' as const
+		} else {
+			// is module
+			return {
+				transition: 'toModule' as const,
+				options: {
+					createLink: currentState.type !== 'lang_internal',
+					headless: currentState.headless,
+					nodeModule: nodeModule,
+					sourceNodeLocation: sourceNodeLocation,
+					presentInOriginalSourceCode: functionIdentifierPresentInOriginalFile
+				}
+			}
 		}
 	}
 
@@ -422,12 +411,6 @@ export class InsertCPUProfileStateMachine {
 				}
 			}
 			break
-			case 'stayInState':
-				// do nothing, stay in the current state
-				return {
-					nextState: currentStackFrame.state,
-					accountingInfo: null
-				}
 			default:
 				assertUnreachable(transition)
 		}
@@ -452,16 +435,6 @@ export class InsertCPUProfileStateMachine {
 				case 'toLangInternal':
 					this.projectReport.headlessSensorValues.addSelfToLangInternal(currentStackFrame.node.sensorValues)
 					break
-				case 'stayInState':
-					if (currentStackFrame.state.type === 'lang_internal') {
-						this.projectReport.headlessSensorValues.addSelfToLangInternal(
-							currentStackFrame.node.sensorValues
-						)
-					} else {
-						this.projectReport.headlessSensorValues.addSelfToExtern(
-							currentStackFrame.node.sensorValues
-						)
-					}
 			}
 		}
 	}

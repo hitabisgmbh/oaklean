@@ -851,7 +851,16 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
-				transition: 'stayInState'
+				transition: 'toProject',
+				options: {
+					createLink: false,
+					headless: false,
+					presentInOriginalSourceCode: false,
+					sourceNodeLocation: {
+						relativeFilePath: new UnifiedPath('./<unknown-scripts>/1'),
+						functionIdentifier: '{root}' as SourceNodeIdentifier_string
+					}
+				}
 			} satisfies Transition)
 		})
 
@@ -863,7 +872,16 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
-				transition: 'stayInState'
+				transition: 'toProject',
+				options: {
+					createLink: false,
+					headless: false,
+					presentInOriginalSourceCode: false,
+					sourceNodeLocation: {
+						relativeFilePath: new UnifiedPath('./<unknown-scripts>/1'),
+						functionIdentifier: '{root}' as SourceNodeIdentifier_string
+					}
+				}
 			} satisfies Transition)
 		})
 
@@ -875,7 +893,16 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
-				transition: 'stayInState'
+				transition: 'toProject',
+				options: {
+					createLink: true,
+					headless: false,
+					presentInOriginalSourceCode: false,
+					sourceNodeLocation: {
+						relativeFilePath: new UnifiedPath('./<unknown-scripts>/1'),
+						functionIdentifier: '{root}' as SourceNodeIdentifier_string
+					}
+				}
 			} satisfies Transition)
 		})
 
@@ -887,7 +914,16 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
-				transition: 'stayInState'
+				transition: 'toProject',
+				options: {
+					createLink: false,
+					headless: false,
+					presentInOriginalSourceCode: false,
+					sourceNodeLocation: {
+						relativeFilePath: new UnifiedPath('./<unknown-scripts>/1'),
+						functionIdentifier: '{root}' as SourceNodeIdentifier_string
+					}
+				}
 			} satisfies Transition)
 		})
 
@@ -899,7 +935,16 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
-				transition: 'stayInState'
+				transition: 'toProject',
+				options: {
+					createLink: false,
+					headless: false,
+					presentInOriginalSourceCode: false,
+					sourceNodeLocation: {
+						relativeFilePath: new UnifiedPath('./<unknown-scripts>/1'),
+						functionIdentifier: '{root}' as SourceNodeIdentifier_string
+					}
+				}
 			} satisfies Transition)
 		})
 
@@ -911,7 +956,16 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
-				transition: 'stayInState'
+				transition: 'toProject',
+				options: {
+					createLink: false,
+					headless: false,
+					presentInOriginalSourceCode: false,
+					sourceNodeLocation: {
+						relativeFilePath: new UnifiedPath('./<unknown-scripts>/1'),
+						functionIdentifier: '{root}' as SourceNodeIdentifier_string
+					}
+				}
 			} satisfies Transition)
 		})
 
@@ -923,7 +977,16 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
 			)
 			expect(transition).toEqual({
-				transition: 'stayInState'
+				transition: 'toProject',
+				options: {
+					createLink: false,
+					headless: false,
+					presentInOriginalSourceCode: false,
+					sourceNodeLocation: {
+						relativeFilePath: new UnifiedPath('./<unknown-scripts>/1'),
+						functionIdentifier: '{root}' as SourceNodeIdentifier_string
+					}
+				}
 			} satisfies Transition)
 		})
 	})

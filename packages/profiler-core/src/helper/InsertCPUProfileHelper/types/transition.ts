@@ -44,12 +44,10 @@ export type ToModuleTransition = {
 export type Transition = 
 	ToProjectTransition |
 	ToLangInternalTransition |
-	ToModuleTransition | {
-		transition: 'stayInState'
-	}
+	ToModuleTransition
 
 export type TransitionResult = {
 	nextState: State
-	accountingInfo: AccountingInfo | null
+	accountingInfo: AccountingInfo
 	compensation?: Compensation
 }
