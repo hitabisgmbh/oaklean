@@ -2,7 +2,9 @@ import {
 	NodeModule,
 	UnifiedPath,
 	CPUProfileSourceLocation,
-	SourceNodeIdentifier_string
+	SourceNodeIdentifier_string,
+	TypescriptHelper,
+	UNKNOWN_SCRIPTS_FOLDER_NAME
 } from '@oaklean/profiler-core/src'
 
 function langInternalFunction(
@@ -103,13 +105,13 @@ const scriptId = (name: string) => {
 	return id;
 };
 
-let globalSourceLocationIndex = 0;
-function projectScopeDefaultFunction(
+function projectScopeNamedFunction(
 	fileName: string,
+	functionName: string,
+	functionIdentifier: string,
 	// index of the function in the file (0, 1, 2, ...)
 	index: number
 ) {
-	const functionName = `projectFunction_${fileName}_${index}`
 	const filePath =  `file:///Users/user/project/src/${fileName}.js`
 	return Object.assign(new CPUProfileSourceLocation(
 		undefined as any,
@@ -125,12 +127,22 @@ function projectScopeDefaultFunction(
 		resolved: {
 			sourceNodeLocation: {
 				relativeFilePath: new UnifiedPath(`src/${fileName}.js`),
-				functionIdentifier:
-					`{function:${functionName}}` as SourceNodeIdentifier_string
+				functionIdentifier
 			},
 			functionIdentifierPresentInOriginalFile: true
 		}
 	})
+}
+
+let globalSourceLocationIndex = 0;
+function projectScopeDefaultFunction(
+	fileName: string,
+	// index of the function in the file (0, 1, 2, ...)
+	index: number
+) {
+	const functionName = `projectFunction_${fileName}_${index}`
+	const functionIdentifier = `{function:${functionName}}` as SourceNodeIdentifier_string
+	return projectScopeNamedFunction(fileName, functionName, functionIdentifier, index+1)
 }
 
 function moduleScopeDefaultFunction(
@@ -169,6 +181,9 @@ export const SOURCE_LOCATIONS_DEFAULT = {
 	'project-fileA-0': projectScopeDefaultFunction('fileA', 0),
 	'project-fileA-1': projectScopeDefaultFunction('fileA', 1),
 	'project-fileA-2': projectScopeDefaultFunction('fileA', 2),
+	'project-fileA-3': projectScopeDefaultFunction('fileA', 3),
+	'project-fileA-4': projectScopeDefaultFunction('fileA', 4),
+	'project-fileA-5': projectScopeDefaultFunction('fileA', 5),
 	'project-fileB-0': projectScopeDefaultFunction('fileB', 0),
 	'project-fileC-0': projectScopeDefaultFunction('fileC', 0),
 	'moduleA-fileA-0': moduleScopeDefaultFunction('moduleA', 'fileA', 0),

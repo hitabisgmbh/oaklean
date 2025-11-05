@@ -37,6 +37,8 @@ type NodeModulePerFilePathCacheResult = ReturnType<typeof NodeModuleUtils.nodeMo
  * If so, it determines the associated Node module.
  */
 export class ResolveFunctionIdentifierHelper {
+	public hideOriginalSourceFileNotExistErrors = false
+
 	private rootDir: UnifiedPath
 	private externalResourceHelper: ExternalResourceHelper
 
@@ -239,22 +241,26 @@ export class ResolveFunctionIdentifierHelper {
 			// The original source file does not exist, only print an error if:
 			// - the source file is NOT part of a node module,
 			//		since node modules often include source maps that point to non-existing files we ignore them
-			LoggerHelper.error(
-				'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: original source file does not exist', {
-					rootDir: this.rootDir.toString(),
-					sources: sourceMap?.sources,
-					url: sourceLocation.absoluteUrl.toString(),
-					lineNumber,
-					columnNumber,
-					triedToParse: originalSourceFileNotFoundError
-				}
-			)
+			if (this.hideOriginalSourceFileNotExistErrors === false) {
+				LoggerHelper.error(
+					'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: original source file does not exist', {
+						rootDir: this.rootDir.toString(),
+						sources: sourceMap?.sources,
+						url: sourceLocation.absoluteUrl.toString(),
+						scriptID: sourceLocation.scriptID,
+						lineNumber,
+						columnNumber,
+						triedToParse: originalSourceFileNotFoundError
+					}
+				)
+			}
 		}
 
 		if (functionIdentifier === '') {
 			LoggerHelper.error(
 				'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
 				url: sourceLocation.absoluteUrl.toString(),
+				scriptID: sourceLocation.scriptID,
 				lineNumber,
 				columnNumber
 			})

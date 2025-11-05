@@ -1036,4 +1036,532 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 		})
 	})
 
+	test('A0 -> (mA.A0 -> A1 || mA.A1 -> A2)', async () => {
+		/*
+			A0: 10 | 110
+			├── mA.A0: 20 | 50
+			│    └── A1: 30 | 30
+			└── mA.A1: 20 | 50
+			     └── A2: 30 | 30
+		*/
+
+		/*
+			Expected:
+			A0: 10 | 110
+			├── mA.A0: 20 | 20
+			└── mA.A1: 20 | 20
+
+			A1: 30 | 30
+			A2: 30 | 30
+
+			mA.A0: 20 | 20
+			mA.A1: 20 | 20
+		*/
+
+		const cpuNode = mockedCPUModel(
+			createLocationTreeCPUModel([
+				SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+				[
+					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], [
+						[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]
+					]],
+					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'], [
+						[SOURCE_LOCATIONS_DEFAULT['project-fileA-2'], []]
+					]],
+				]
+			])
+		)
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.extern.toJSON()).toEqual({
+			'3': {
+				reportVersion: projectReport.reportVersion,
+				kind: ReportKind.measurement,
+				nodeModule: {
+					name: 'moduleA',
+					version: '1.0.0'
+				},
+				headlessSensorValues: {},
+				intern: {
+					'4': {
+						path: './fileA.js',
+						functions: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							},
+							'7': {
+								id: 7,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
+		expect(projectReport.intern.toJSON()).toEqual({
+			'1': {
+				path: './src/fileA.js',
+				functions: {
+					'2': {
+						id: 2,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 1,
+							selfCPUTime: 10,
+							aggregatedCPUTime: 50,
+							externCPUTime: 40
+						},
+						extern: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							},
+							'7': {
+								id: 7,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							}
+						}
+					},
+					'6': {
+						id: 6,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 3,
+							selfCPUTime: 30,
+							aggregatedCPUTime: 30
+						}
+					},
+					'8': {
+						id: 8,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 3,
+							selfCPUTime: 30,
+							aggregatedCPUTime: 30
+						}
+					}
+				}
+			}
+		})
+	})
+
+	test('A0 -> (mA.A0 -> A1 || mA.A1 -> A2 -> mA.A2 -> A3)', async () => {
+		/*
+			A0: 10 | 200
+			├── mA.A0: 20 | 50
+			│    └── A1: 30 | 30
+			└── mA.A1: 20 | 140
+			     └── A2: 30 | 120
+					 			└── mA.A2: 40 | 90
+			     					└── A3: 50 | 50
+		*/
+
+		/*
+			Expected:
+			A0: 10 | 110
+			├── mA.A0: 20 | 20
+			└── mA.A1: 20 | 20
+
+			A1: 30 | 30
+			A2: 30 | 70
+			└── mA.A2: 40 | 40
+			A3: 50 | 50
+
+			mA.A0: 20 | 20
+			mA.A1: 20 | 20
+			mA.A2: 40 | 40
+		*/
+
+		const cpuNode = mockedCPUModel(
+			createLocationTreeCPUModel([
+				SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+				[
+					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], [
+						[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]
+					]],
+					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'], [
+						[SOURCE_LOCATIONS_DEFAULT['project-fileA-2'], [
+							[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-2'], [
+								[SOURCE_LOCATIONS_DEFAULT['project-fileA-3'], []]
+							]],
+						]]
+					]],
+				]
+			])
+		)
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.extern.toJSON()).toEqual({
+			'3': {
+				reportVersion: projectReport.reportVersion,
+				kind: ReportKind.measurement,
+				nodeModule: {
+					name: 'moduleA',
+					version: '1.0.0'
+				},
+				headlessSensorValues: {},
+				intern: {
+					'4': {
+						path: './fileA.js',
+						functions: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							},
+							'7': {
+								id: 7,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							},
+							'9': {
+								id: 9,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 4,
+									selfCPUTime: 40,
+									aggregatedCPUTime: 40
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
+		expect(projectReport.intern.toJSON()).toEqual({
+			'1': {
+				path: './src/fileA.js',
+				functions: {
+					'2': {
+						id: 2,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 1,
+							selfCPUTime: 10,
+							aggregatedCPUTime: 50,
+							externCPUTime: 40
+						},
+						extern: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							},
+							'7': {
+								id: 7,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							}
+						}
+					},
+					'6': {
+						id: 6,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 3,
+							selfCPUTime: 30,
+							aggregatedCPUTime: 30
+						}
+					},
+					'8': {
+						id: 8,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 3,
+							selfCPUTime: 30,
+							aggregatedCPUTime: 70,
+							externCPUTime: 40
+						},
+						extern: {
+							'9': {
+								id: 9,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 4,
+									selfCPUTime: 40,
+									aggregatedCPUTime: 40
+								}
+							}
+						}
+					},
+					'10': {
+						id: 10,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 5,
+							selfCPUTime: 50,
+							aggregatedCPUTime: 50
+						}
+					}
+				}
+			}
+		})
+	})
+
+	test('A0 -> mA.A0 -> (A1 -> mA.A1 -> A3 || A2 -> mA.A2 -> A4 -> A5)', async () => {
+		/*
+			A0: 10 | 330
+			└── mA.A0: 20 | 320
+					├── A1: 30 | 120
+					|		└── mA.A1: 40 | 90
+					|				└── A3: 50 | 50
+					└── A2: 30 | 180
+							└── mA.A2: 40 | 150
+									└── A4: 50 | 110
+											└── A5: 60 | 60
+		*/
+
+		/*
+			Expected:
+			A0: 10 | 30
+			└── mA.A0: 20 | 20
+
+			A1: 30 | 70
+			└── mA.A1: 40 | 40
+			A2: 30 | 70
+			└── mA.A2: 40 | 40
+			A3: 50 | 50
+			A4: 50 | 110
+			└── A5: 60 | 60
+			A5: 60 | 60
+
+			mA.A0: 20 | 20
+			mA.A1: 40 | 40
+			mA.A2: 40 | 40
+		*/
+
+		const cpuNode = mockedCPUModel(
+			createLocationTreeCPUModel([
+				SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+				[
+					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], [
+						[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], [
+							[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'], [
+								[SOURCE_LOCATIONS_DEFAULT['project-fileA-3'], []]
+							]]
+						]],
+						[SOURCE_LOCATIONS_DEFAULT['project-fileA-2'], [
+							[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-2'], [
+									[SOURCE_LOCATIONS_DEFAULT['project-fileA-4'], [
+										[SOURCE_LOCATIONS_DEFAULT['project-fileA-5'], []]
+									]]
+							]]
+						]],
+					]],
+				]
+			])
+		)
+
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
+
+		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
+		expect(projectReport.extern.toJSON()).toEqual({
+			'3': {
+				reportVersion: projectReport.reportVersion,
+				kind: ReportKind.measurement,
+				nodeModule: {
+					name: 'moduleA',
+					version: '1.0.0'
+				},
+				headlessSensorValues: {},
+				intern: {
+					'4': {
+						path: './fileA.js',
+						functions: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							},
+							'7': {
+								id: 7,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 4,
+									selfCPUTime: 40,
+									aggregatedCPUTime: 40
+								}
+							},
+							'10': {
+								id: 10,
+								type: SourceNodeMetaDataType.SourceNode,
+								sensorValues: {
+									profilerHits: 4,
+									selfCPUTime: 40,
+									aggregatedCPUTime: 40
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
+		expect(projectReport.intern.toJSON()).toEqual({
+			'1': {
+				path: './src/fileA.js',
+				functions: {
+					'2': {
+						id: 2,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 1,
+							selfCPUTime: 10,
+							aggregatedCPUTime: 30,
+							externCPUTime: 20
+						},
+						extern: {
+							'5': {
+								id: 5,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 2,
+									selfCPUTime: 20,
+									aggregatedCPUTime: 20
+								}
+							}
+						}
+					},
+					'6': {
+						id: 6,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 3,
+							selfCPUTime: 30,
+							aggregatedCPUTime: 70,
+							externCPUTime: 40
+						},
+						extern: {
+							'7': {
+								id: 7,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 4,
+									selfCPUTime: 40,
+									aggregatedCPUTime: 40
+								}
+							}
+						}
+					},
+					'8': {
+						id: 8,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 5,
+							selfCPUTime: 50,
+							aggregatedCPUTime: 50
+						}
+					},
+					'9': {
+						id: 9,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 3,
+							selfCPUTime: 30,
+							aggregatedCPUTime: 70,
+							externCPUTime: 40
+						},
+						extern: {
+							'10': {
+								id: 10,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 4,
+									selfCPUTime: 40,
+									aggregatedCPUTime: 40
+								}
+							}
+						}
+					},
+					'11': {
+						id: 11,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 5,
+							selfCPUTime: 50,
+							aggregatedCPUTime: 110,
+							internCPUTime: 60
+						},
+						intern: {
+							'12': {
+								id: 12,
+								type: SourceNodeMetaDataType.InternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 6,
+									selfCPUTime: 60,
+									aggregatedCPUTime: 60
+								}
+							}
+						}
+					},
+					'12': {
+						id: 12,
+						type: SourceNodeMetaDataType.SourceNode,
+						sensorValues: {
+							profilerHits: 6,
+							selfCPUTime: 60,
+							aggregatedCPUTime: 60
+						}
+					}
+				}
+			}
+		})
+	})
+
 })
