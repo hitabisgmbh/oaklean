@@ -42,6 +42,14 @@ export default class JestCommands {
 				'also measure the reproduction of the reports and outputs a report (this will take longer, but is useful for performance comparisons)'
 			)
 			.action(this.verify.bind(this))
+
+		baseCommand
+			.command('inspect-profiles')
+			.description(
+				'Inspects all reports and cpu profiles in the jests output directory and verifies their consistency'
+			)
+			.action(this.inspectCPUProfiles.bind(this))
+		
 	}
 
 	static init() {
@@ -101,7 +109,7 @@ export default class JestCommands {
 					continue // Skip the accumulated report itself
 				}
 
-				const title = ExportAssetHelper.titleFromReportFilePath(reportPath)
+				const title = exportAssetHelper.titleFromReportFilePath(reportPath)
 				const assetPath = exportAssetHelper
 					.outputDir()
 					.pathTo(reportPath.dirName())
@@ -235,4 +243,95 @@ export default class JestCommands {
 			LoggerHelper.warn('The reports are not equal')
 		}
 	}
+	async inspectCPUProfiles() {
+		const profilerConfig = ProfilerConfig.autoResolve()
+
+		const exportAssetHelper = new ExportAssetHelper(
+			profilerConfig.getOutDir().join('jest')
+		)
+
+		const accumulatedProjectReportPath =
+			exportAssetHelper.outputAccumulatedReportPath()
+
+		const reportPaths = exportAssetHelper.allReportPathsInOutputDir()
+
+		let totalNodeCount = 0,
+			totalSourceNodeLocationCount = 0,
+			totalSampleCount = 0,
+			totalHits = 0,
+			totalCPUTime = 0
+
+		for (const reportPath of reportPaths) {
+			if (reportPath.toString() === accumulatedProjectReportPath.toString()) {
+					continue // Skip the accumulated report itself
+				}
+
+			const title = exportAssetHelper.titleFromReportFilePath(reportPath)
+			const cpuProfilePath = exportAssetHelper.outputCPUProfilePath(title)
+
+			const report = ProjectReport.loadFromFile(reportPath, 'bin')
+			if (!report) {
+				LoggerHelper.error(`ProjectReport could not be found: ${reportPath}`)
+				continue
+			}
+
+			const cpuProfile = await CPUProfileHelper.loadFromFile(cpuProfilePath)
+			if (cpuProfile === undefined) {
+				LoggerHelper.error(
+					`CPU profile could not be loaded from ${cpuProfilePath.toPlatformString()}. ` +
+					'Please make sure the file exists and is a valid CPU profile.'
+				)
+				return
+			}
+
+			const inspectResult = await CPUProfileHelper.inspect(cpuProfile)
+			totalNodeCount += inspectResult.nodeCount
+			totalSourceNodeLocationCount += inspectResult.sourceNodeLocationCount
+			totalSampleCount += inspectResult.sampleCount
+			totalHits += inspectResult.totalHits
+			totalCPUTime += inspectResult.totalCPUTime
+
+			const reportsTotal = report.totalAndMaxMetaData().total.sensorValues.aggregatedCPUTime
+
+			if (reportsTotal !== inspectResult.totalCPUTime) {
+				LoggerHelper.warn(
+					`Inconsistent CPU time in report: ${title}.\n` +
+					`Profile CPU Time: ${inspectResult.totalCPUTime}\n` +
+					`Report CPU Time: ${reportsTotal}`
+				)
+			} else {
+				LoggerHelper.success(
+					`Consistent CPU time in report: ${title}. CPU Time: ${reportsTotal}`
+				)
+			}
+		}
+		LoggerHelper.table([
+			{
+				type: 'Files Inspected',
+				value: reportPaths.length
+			},
+			{
+				type: 'Total Node Count',
+				value: totalNodeCount
+			},
+			{
+				type: 'Source Node Location Count',
+				value: totalSourceNodeLocationCount
+			},
+			{
+				type: 'Sample Count',
+				value: totalSampleCount
+			},
+			{
+				type: 'Total Hits',
+				value: totalHits
+			},
+			{
+				type: 'Total CPU Time',
+				value: totalCPUTime,
+				unit: 'µs'
+			}
+		], ['type', 'value', 'unit'])
+	}
+
 }
