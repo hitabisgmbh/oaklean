@@ -4,8 +4,16 @@ import { AccountingInfo, Compensation } from './types/accounting'
 
 import { LoggerHelper } from '../LoggerHelper'
 import { CPUNode } from '../CPUProfile/CPUNode'
+import { SourceNodeMetaData } from '../../model'
+import { SourceNodeMetaDataType_Reference } from '../../types'
 
 export class StateMachineLogger {
+	static formatReference = LoggerHelper.treeStyleKeyValues([
+		'CPU Time',
+		'CPU Energy',
+		'RAM Energy'
+	] as const, 29)
+
 	static formatState = LoggerHelper.treeStyleKeyValues([
 		'Depth',
 		'CPU Node',
@@ -18,7 +26,7 @@ export class StateMachineLogger {
 		'CPU Time',
 		'CPU Energy',
 		'RAM Energy'
-	] as const)
+	] as const, 29)
 
 	static logState(depth: number, cpuNode: CPUNode, currentState: State) {
 		/*
@@ -63,10 +71,38 @@ export class StateMachineLogger {
 					Type: currentState.type,
 					Headless: currentState.headless.toString(),
 					'Profiler Hits': `${sensorValues.profilerHits}`,
-					'CPU Time': `self=${sensorValues.selfCPUTime} µs | total=${sensorValues.aggregatedCPUTime} µs`,
-					'CPU Energy': `self=${sensorValues.selfCPUEnergyConsumption} mJ | total=${sensorValues.aggregatedCPUEnergyConsumption} mJ`,
-					'RAM Energy': `self=${sensorValues.selfRAMEnergyConsumption} mJ | total=${sensorValues.aggregatedRAMEnergyConsumption} mJ`
+					'CPU Time': `self=${sensorValues.selfCPUTime} µs | total=${sensorValues.aggregatedCPUTime} µs | l=${sensorValues.langInternalCPUTime} µs | i=${sensorValues.internCPUTime} µs | e=${sensorValues.externCPUTime} µs`,
+					'CPU Energy': `self=${sensorValues.selfCPUEnergyConsumption} mJ | total=${sensorValues.aggregatedCPUEnergyConsumption} mJ | l=${sensorValues.langInternalCPUEnergyConsumption} mJ | i=${sensorValues.internCPUEnergyConsumption} mJ | e=${sensorValues.externCPUEnergyConsumption} mJ `,
+					'RAM Energy': `self=${sensorValues.selfRAMEnergyConsumption} mJ | total=${sensorValues.aggregatedRAMEnergyConsumption} mJ | l=${sensorValues.langInternalRAMEnergyConsumption} mJ | i=${sensorValues.internRAMEnergyConsumption} mJ | e=${sensorValues.externRAMEnergyConsumption} mJ`,
 				})
+		)
+		const iterators = {
+			'LANG_INTERNAL': currentState.callIdentifier.sourceNode.lang_internal.values(),
+			'INTERN': currentState.callIdentifier.sourceNode.intern.values(),
+			'EXTERN': currentState.callIdentifier.sourceNode.extern.values()
+		}
+		for (const [type, iterator] of Object.entries(iterators)) {
+			let hasEntries = false
+			for (const referenceSourceNode of iterator) {
+				if (hasEntries === false) {
+					LoggerHelper.log(LoggerHelper.warnString(`${type} REFERENCES`))
+					hasEntries = true
+				}
+				StateMachineLogger.logSourceNodeReference(referenceSourceNode)
+			}
+		}
+	}
+
+	static logSourceNodeReference(
+		referenceSourceNode: SourceNodeMetaData<SourceNodeMetaDataType_Reference>
+	) {
+		LoggerHelper.log(
+			`SourceNodeID: ${referenceSourceNode.id.toString()}\n` + 
+			StateMachineLogger.formatReference({
+				'CPU Time': `self=${referenceSourceNode.sensorValues.selfCPUTime} µs | total=${referenceSourceNode.sensorValues.aggregatedCPUTime} µs`,
+				'CPU Energy': `self=${referenceSourceNode.sensorValues.selfCPUEnergyConsumption} mJ | total=${referenceSourceNode.sensorValues.aggregatedCPUEnergyConsumption} mJ`,
+				'RAM Energy': `self=${referenceSourceNode.sensorValues.selfRAMEnergyConsumption} mJ | total=${referenceSourceNode.sensorValues.aggregatedRAMEnergyConsumption} mJ`
+			})
 		)
 	}
 
@@ -105,7 +141,7 @@ export class StateMachineLogger {
 		'Accounted CPU Time',
 		'Accounted CPU Energy',
 		'Accounted RAM Energy'
-	] as const)
+	] as const, 29)
 
 	static logTransition(
 		cpuNode: CPUNode,
@@ -183,7 +219,7 @@ export class StateMachineLogger {
 		'Compensated CPU Time',
 		'Compensated CPU Energy',
 		'Compensated RAM Energy'
-	] as const)
+	] as const, 29)
 
 	static logCompensation(
 		depth: number,
@@ -193,7 +229,7 @@ export class StateMachineLogger {
 		title: 'CREATE COMPENSATION' | 'APPLY COMPENSATION'
 	) {
 		/*
-			[CREATE COMPENSATION | APPLY COMPENSATION] moduleFunction_fileA_0 (./fileA.js)
+			[CREATE COMPENSATION | APPLY COMPENSATION] 2 moduleFunction_fileA_0 (./fileA.js)
 			├─ Depth                  : 2
 			├─ CPU Node               : 002
 			├─ ReportID               : 1
@@ -206,7 +242,7 @@ export class StateMachineLogger {
 			├─ Compensated RAM Energy : self=0 mJ | total=0 mJ
 		*/
 		if (currentState.callIdentifier.sourceNode === null) {
-			LoggerHelper.log(LoggerHelper.errorString(`[${title}]`), '(root)')
+			LoggerHelper.log(LoggerHelper.errorString(`[${title}]`), compensation.id.toString(), `(${cpuNode.sourceLocation.rawFunctionName})`, '~', '(root)')
 			return
 		}
 
@@ -222,6 +258,9 @@ export class StateMachineLogger {
 
 		LoggerHelper.log(
 			LoggerHelper.errorString(`[${title}]`),
+			compensation.id.toString(),
+			`(${cpuNode.sourceLocation.rawFunctionName})`,
+			'~',
 			`${sourceNodeIndex.functionName}`,
 			`(${sourceNodeIndex.pathIndex.identifier})`,
 			'\n' +

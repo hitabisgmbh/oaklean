@@ -50,7 +50,11 @@ export class InsertCPUProfileStateMachine {
 	callRelationTracker: CallRelationTracker
 	awaiterStack: AwaiterStack
 
-	debug: boolean = false
+	debug: {
+		transitions: boolean,
+		states: boolean
+		compensations: boolean
+	} | undefined
 
 	constructor(reportToApply: ProjectReport) {
 		this.projectReport = reportToApply
@@ -152,7 +156,7 @@ export class InsertCPUProfileStateMachine {
 					// remove it from the compensation layer tracking
 					this.callRelationTracker.removeCompensationLayerRecord(currentState.callIdentifier)
 				}
-				if (this.debug) {
+				if (this.debug?.states) {
 					StateMachineLogger.logState(
 						currentStackFrame.depth + 1,
 						currentStackFrame.node,
@@ -169,7 +173,7 @@ export class InsertCPUProfileStateMachine {
 						parentState,
 						compensation,
 						accountingInfo,
-						this.debug ? {
+						this.debug?.compensations ? {
 							depth: currentStackFrame.depth
 						} : undefined
 					)
@@ -179,7 +183,7 @@ export class InsertCPUProfileStateMachine {
 						CompensationHelper.propagateCompensation(
 							currentStackFrame.parent,
 							compensation,
-							this.debug ? {
+							this.debug?.compensations ? {
 								depth: currentStackFrame.depth,
 								node: currentStackFrame.node,
 								currentState
@@ -188,7 +192,7 @@ export class InsertCPUProfileStateMachine {
 					}
 				}
 
-				if (this.debug) {
+				if (this.debug?.transitions) {
 					StateMachineLogger.logLeaveTransition(
 						currentStackFrame.result.nextState,
 						currentStackFrame.state
@@ -201,7 +205,7 @@ export class InsertCPUProfileStateMachine {
 			}
 
 			// PROCESSING OF THE NODE (first visit)
-			if (this.debug) {
+			if (this.debug?.states) {
 				StateMachineLogger.logState(
 					currentStackFrame.depth,
 					currentStackFrame.node,
@@ -222,7 +226,7 @@ export class InsertCPUProfileStateMachine {
 				transition
 			)
 
-			if (this.debug) {
+			if (this.debug?.transitions) {
 				StateMachineLogger.logTransition(
 					currentStackFrame.node,
 					transition,
@@ -237,7 +241,7 @@ export class InsertCPUProfileStateMachine {
 				currentStackFrame.node,
 				currentStackFrame.state,
 				currentStackFrame.result,
-				this.debug ? {
+				this.debug?.compensations ? {
 					depth: currentStackFrame.depth,
 					node: currentStackFrame.node
 				} : undefined

@@ -83,7 +83,7 @@ export class CompensationHelper {
 				StateMachineLogger.logCompensation(
 					debug.depth,
 					debug.node,
-					currentState,
+					transitionResult.nextState,
 					compensation,
 					'CREATE COMPENSATION'
 				)
@@ -131,6 +131,11 @@ export class CompensationHelper {
 			)
 		}
 
+		if (accountingInfo.accountedSourceNodeReference === null) {
+			// no link was created, nothing more to compensate
+			return
+		}
+
 		if (debug !== undefined) {
 			StateMachineLogger.logCompensation(
 				debug.depth,
@@ -139,11 +144,6 @@ export class CompensationHelper {
 				compensation,
 				'APPLY COMPENSATION'
 			)
-		}
-
-		if (accountingInfo.accountedSourceNodeReference === null) {
-			// no link was created, nothing more to compensate
-			return
 		}
 
 		// if the current reference was already visited before
@@ -156,9 +156,12 @@ export class CompensationHelper {
 				-1
 			)
 
-
 		if (accountingInfo.accountedSourceNodeReference.reference === undefined) {
 			return
+		}
+
+		if (debug !== undefined) {
+			LoggerHelper.warn(`[REFERENCE-COMPENSATION] ${accountingInfo.accountedSourceNodeReference.reference.id}`)
 		}
 
 		// only compensate (lang_internal|intern|extern) when there was a link created
@@ -237,6 +240,7 @@ export class CompensationHelper {
 				LoggerHelper.log(
 					LoggerHelper.warnString('[CARRY-COMPENSATION]') +
 					` ${compensation.id} -> ${parentStackFrame.result.compensation.id}\n` +
+						`├─ CPU Node                      : ${debugInfo.node.index}\n` + 
 						`├─ Compensation ID               : ${compensation.id}\n` + 
 						// eslint-disable-next-line max-len
 						`├─ Carried CPU Time              : created=${compensation.createdComp?.aggregatedCPUTime} | µs carried=${compensation.carriedComp.aggregatedCPUTime} µs \n` + 
@@ -246,11 +250,11 @@ export class CompensationHelper {
 						`├─ Carried RAM Energy            : created=${compensation.createdComp?.aggregatedRAMEnergyConsumption} | carried=${compensation.carriedComp.aggregatedRAMEnergyConsumption} µs \n` +
 						`├─ Parent Compensation ID        : ${compensation.id}\n` +
 						// eslint-disable-next-line max-len
-						`├─ Parent Compensated CPU Time   : created=${parentStackFrame.result.compensation.createdComp?.selfCPUTime} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedCPUTime} µs \n` + 
+						`├─ Parent Compensated CPU Time   : created=${parentStackFrame.result.compensation.createdComp?.aggregatedCPUTime} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedCPUTime} µs \n` + 
 						// eslint-disable-next-line max-len
-						`├─ Parent Compensated CPU Energy : created=${parentStackFrame.result.compensation.createdComp?.selfCPUEnergyConsumption} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedCPUEnergyConsumption} µs \n` +
+						`├─ Parent Compensated CPU Energy : created=${parentStackFrame.result.compensation.createdComp?.aggregatedCPUEnergyConsumption} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedCPUEnergyConsumption} µs \n` +
 						// eslint-disable-next-line max-len
-						`├─ Parent Compensated RAM Energy : created=${parentStackFrame.result.compensation.createdComp?.selfRAMEnergyConsumption} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedRAMEnergyConsumption} µs \n`
+						`├─ Parent Compensated RAM Energy : created=${parentStackFrame.result.compensation.createdComp?.aggregatedRAMEnergyConsumption} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedRAMEnergyConsumption} µs \n`
 				)
 				StateMachineLogger.logState(
 					debugInfo.depth + 1,
