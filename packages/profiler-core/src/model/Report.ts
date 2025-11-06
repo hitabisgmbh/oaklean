@@ -49,6 +49,8 @@ import {
 let currentInternID = 0
 
 export class Report extends BaseModel {
+	private _frozen = false
+
 	reportVersion: string
 	kind: ReportKind
 	relativeRootDir?: UnifiedPath
@@ -77,6 +79,9 @@ export class Report extends BaseModel {
 	normalize(
 		newGlobalIndex: GlobalIndex
 	) {
+		if (this._frozen) {
+			throw new Error('Cannot modify a frozen Report')
+		}
 		function sortIDsByPath(
 			input: ModelMap<PathID_number, SourceFileMetaData>
 		): PathID_number[] {
@@ -133,6 +138,14 @@ export class Report extends BaseModel {
 		this._lang_internal = new_lang_internal
 		this._intern = new_intern
 		this._extern = new_extern
+	}
+
+	get isFrozen() {
+		return this._frozen
+	}
+
+	unfreeze() {
+		this._frozen = false
 	}
 
 	get headlessSensorValues() {
@@ -215,6 +228,9 @@ export class Report extends BaseModel {
 		filePath: LangInternalPath_string,
 		functionIdentifier: LangInternalSourceNodeIdentifier_string,
 	) {
+		if (this._frozen) {
+			throw new Error('Cannot modify a frozen Report')
+		}
 		const pathIndex = this.getLangInternalPathIndex('upsert', filePath)
 		const filePathID = pathIndex.id as PathID_number
 
@@ -237,6 +253,9 @@ export class Report extends BaseModel {
 		filePath: UnifiedPath_string,
 		functionIdentifier: SourceNodeIdentifier_string
 	) {
+		if (this._frozen) {
+			throw new Error('Cannot modify a frozen Report')
+		}
 		const filePathIndex = this.getPathIndex('upsert', filePath)
 		const filePathID = filePathIndex.id as PathID_number
 
@@ -260,6 +279,9 @@ export class Report extends BaseModel {
 		nodeModule: NodeModule,
 		functionIdentifier: SourceNodeIdentifier_string
 	) {
+		if (this._frozen) {
+			throw new Error('Cannot modify a frozen Report')
+		}
 		const moduleIndex = this.moduleIndex.globalIndex.getModuleIndex('upsert', nodeModule.identifier)
 
 		// check if filePath is in extern
@@ -481,6 +503,7 @@ export class Report extends BaseModel {
 			result.relativeRootDir = new UnifiedPath(data.relativeRootDir as unknown as string)
 		}
 		result.reportVersion = data.reportVersion
+		result._frozen = true
 
 		return result
 	}
@@ -770,6 +793,7 @@ export class Report extends BaseModel {
 		if (headlessSensorValues) {
 			result.headlessSensorValues = headlessSensorValues
 		}
+		result._frozen = true
 
 		return {
 			instance: result,
