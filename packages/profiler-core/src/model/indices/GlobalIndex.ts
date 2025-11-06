@@ -20,6 +20,8 @@ import {
 } from '../../types'
 
 export class GlobalIndex extends BaseModel {
+	private _frozen = false
+
 	currentId: number
 	moduleMap: ModelMap<NodeModuleIdentifier_string, ModuleIndex>
 	engineModule: NodeModule
@@ -39,6 +41,24 @@ export class GlobalIndex extends BaseModel {
 		SourceNodeID_number,
 		SourceNodeIndex<SourceNodeIndexType.SourceNode>
 		>('number')
+	}
+
+	get isFrozen() {
+		return this._frozen
+	}
+
+	throwIfFrozen() {
+		if (this.isFrozen) {
+			throw new Error('GlobalIndex is frozen and cannot be modified')
+		}
+	}
+
+	freeze() {
+		this._frozen = true
+	}
+
+	unfreeze() {
+		this._frozen = false
 	}
 
 	toBuffer(): Buffer {
@@ -74,6 +94,7 @@ export class GlobalIndex extends BaseModel {
 				)
 			)
 		}
+		result.freeze()
 
 		return result
 	}
@@ -142,6 +163,7 @@ export class GlobalIndex extends BaseModel {
 				case 'get':
 					return undefined as R
 				case 'upsert':
+					this.throwIfFrozen()
 					moduleIndex = new ModuleIndex(
 						moduleIdentifier,
 						this
@@ -170,6 +192,7 @@ export class GlobalIndex extends BaseModel {
 				case 'get':
 					return undefined as R
 				case 'upsert':
+					this.throwIfFrozen()
 					moduleIndex = new ModuleIndex(
 						moduleIdentifier,
 						this

@@ -43,6 +43,10 @@ export class ModuleIndex extends BaseModel {
 		this.reversePathMap = new ModelMap<PathID_number, PathIndex>('number')
 	}
 
+	throwIfFrozen() {
+		this.globalIndex.throwIfFrozen()
+	}
+
 	insertToOtherIndex(globalIndex: GlobalIndex): ModuleIndex {
 		return globalIndex.getModuleIndex('upsert', this.identifier)
 	}
@@ -129,6 +133,7 @@ export class ModuleIndex extends BaseModel {
 					case 'get':
 						return undefined as R
 					case 'upsert': {
+						this.throwIfFrozen()
 						let slicedPath = new UnifiedPath('./').join(...pathParts.slice(0, i + 1)).toString()
 						if (slicedPath.startsWith('./node:') || slicedPath === './') {
 							slicedPath = slicedPath.slice(2) as UnifiedPath_string
@@ -150,6 +155,7 @@ export class ModuleIndex extends BaseModel {
 						case 'get':
 							return undefined as R
 						case 'upsert':
+							this.throwIfFrozen()
 							pathIndex.selfAssignId()
 							if (pathIndex.file === undefined) {
 								pathIndex.file = new ModelMap<
@@ -169,6 +175,7 @@ export class ModuleIndex extends BaseModel {
 						case 'get':
 							return undefined as R
 						case 'upsert':
+							this.throwIfFrozen()
 							pathIndex.children = new ModelMap<UnifiedPathPart_string, PathIndex>('string')
 							break
 						default:
