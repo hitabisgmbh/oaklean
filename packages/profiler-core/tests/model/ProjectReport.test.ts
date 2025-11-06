@@ -408,33 +408,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			})
 		})
 
-		test('throws instance test when report is frozen and modification is attempted', () => {
-			instance.freeze()
-			expect(() => {
-				const nodeModule = new NodeModule('module', '1.2.3')
-				const {
-					sourceNodeMetaData
-				} = instance.addToExtern(
-					new UnifiedPath('./file'),
-					nodeModule,
-					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
-				)
-				sourceNodeMetaData.addToSensorValues({
-					// cpu time
-					selfCPUTime: 222 as MicroSeconds_number,
-					aggregatedCPUTime: 222 as MicroSeconds_number,
-
-					// cpu energy
-					selfCPUEnergyConsumption: 444 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 444 as MilliJoule_number,
-
-					// ram energy
-					selfRAMEnergyConsumption: 444 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 444 as MilliJoule_number
-				})
-			}).toThrowError('Report is frozen and cannot be modified')
-		})
-
 		describe('getCPUTimeFromFile', () => {
 			test('should return the getCPUTimeFromFile correctly', () => {
 				expect(instance.getMetaDataFromFile(

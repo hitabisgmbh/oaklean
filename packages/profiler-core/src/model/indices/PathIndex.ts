@@ -54,10 +54,6 @@ export class PathIndex extends BaseModel {
 		SourceNodeIndex<SourceNodeIndexType.SourceNode>>('number')
 	}
 
-	throwIfFrozen() {
-		this.moduleIndex.throwIfFrozen()
-	}
-
 	private _containsUncommittedChanges?: boolean
 	public get containsUncommittedChanges(): boolean {
 		return this._containsUncommittedChanges === undefined ? false : true
@@ -208,7 +204,6 @@ export class PathIndex extends BaseModel {
 					case 'get':
 						return undefined as R
 					case 'upsert':
-						this.throwIfFrozen()
 						sourceNodeIndex = new SourceNodeIndex(
 							SourceNodeIdentifierHelper.join(sourceNodeIdentifierParts.slice(0, i+1)),
 							this,
@@ -227,7 +222,6 @@ export class PathIndex extends BaseModel {
 						case 'get':
 							return undefined as R
 						case 'upsert':
-							this.throwIfFrozen()
 							sourceNodeIndex.type = SourceNodeIndexType.SourceNode
 							sourceNodeIndex.selfAssignId()
 							break
@@ -242,7 +236,6 @@ export class PathIndex extends BaseModel {
 						case 'get':
 							return undefined as R
 						case 'upsert':
-							this.throwIfFrozen()
 							sourceNodeIndex.children = new ModelMap<
 							SourceNodeIdentifierPart_string,
 							SourceNodeIndex<SourceNodeIndexType>

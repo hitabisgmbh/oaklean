@@ -203,56 +203,6 @@ describe('GlobalIndex', () => {
 
 			expect(instance.currentId).toBe(5)
 		})
-
-		test('throw when manipulating a frozen instance', () => {
-			const globalIdentifier = new GlobalIdentifier(
-				'./abc/def' as UnifiedPath_string,
-				'{root}' as SourceNodeIdentifier_string
-			)
-
-			function expectThrowOnFrozen(action: () => void) {
-				instance.freeze()
-				expect(() => {
-					action()
-				}).toThrowError('GlobalIndex is frozen and cannot be modified')
-				instance.unfreeze()
-				expect(() => {
-					action()
-				}).not.toThrow()
-			}
-
-			let id0, id1, id2, id3
-			expectThrowOnFrozen(() => {
-				id0 = instance.getModuleIndex('upsert')?.id
-			})
-
-			expectThrowOnFrozen(() => {
-				id1 = instance.getModuleIndex('upsert', 'expect@29.5.0' as NodeModuleIdentifier_string)?.id
-			})
-			expect(id1 !== undefined && id1 > -1).toBeTruthy()
-			expectThrowOnFrozen(() => {
-				id2 = instance.getLangInternalIndex('upsert')?.id
-			})
-			expect(id2 !== undefined && id2 > -1).toBeTruthy()
-			expectThrowOnFrozen(() => {
-				id3 = instance.getSourceNodeIndex('upsert', globalIdentifier)?.id
-			})
-			expect(id3 !== undefined && id3 > -1).toBeTruthy()
-
-			expect(instance.currentId).toBe(5)
-
-			// check that get returns the values that were previously upsert
-			const get_id0 = instance.getModuleIndex('get')?.id
-			expect(id0 === get_id0).toBeTruthy()
-			const get_id1 = instance.getModuleIndex('get', 'expect@29.5.0' as NodeModuleIdentifier_string)?.id
-			expect(id1 === get_id1).toBeTruthy()
-			const get_id2 = instance.getLangInternalIndex('get')?.id
-			expect(id2 === get_id2).toBeTruthy()
-			const get_id3 = instance.getSourceNodeIndex('get', globalIdentifier)?.id
-			expect(id3 === get_id3).toBeTruthy()
-
-			expect(instance.currentId).toBe(5)
-		})
 	})
 
 	describe('deserialization', () => {
@@ -261,7 +211,6 @@ describe('GlobalIndex', () => {
 				JSON.stringify(EXPECTED_INDEX),
 				NodeModule.currentEngineModule()
 			)
-			expect(instanceFromString.isFrozen).toBe(true)
 			expect(instanceFromString.toJSON()).toEqual(EXPECTED_INDEX)
 
 			// check wether it stays the same after inserting the same entries
@@ -276,7 +225,6 @@ describe('GlobalIndex', () => {
 				EXPECTED_INDEX,
 				NodeModule.currentEngineModule()
 			)
-			expect(instanceFromObject.isFrozen).toBe(true)
 			expect(instanceFromObject.toJSON()).toEqual(EXPECTED_INDEX)
 
 			// check wether it stays the same after inserting the same entries
@@ -290,7 +238,6 @@ describe('GlobalIndex', () => {
 			JSON.stringify(EXPECTED_INDEX),
 			NodeModule.currentEngineModule()
 		)
-		expect(instance.isFrozen).toBe(true)
 		runInstanceTests('deserialized instance related', instance)
 	})
 })

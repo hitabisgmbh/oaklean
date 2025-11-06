@@ -41,10 +41,6 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		) as SourceNodeIndexID<T>
 	}
 
-	throwIfFrozen() {
-		this.pathIndex.throwIfFrozen()
-	}
-
 	private _notPresentInOriginalSourceCode?: boolean
 	public get presentInOriginalSourceCode() : boolean {
 		return this._notPresentInOriginalSourceCode === undefined ? true : false
