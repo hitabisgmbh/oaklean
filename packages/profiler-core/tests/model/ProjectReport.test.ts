@@ -796,20 +796,16 @@ describe('ProjectReport', () => {
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
 			const reportFromString = ProjectReport.fromJSON(JSON.stringify(EXAMPLE_PROJECT_REPORT))
-			expect(reportFromString.isFrozen).toBe(true)
 			expect(reportFromString.toJSON()).toEqual(EXAMPLE_PROJECT_REPORT)
 		})
 
 		test('deserialization from object', () => {
 			const reportFromObject = ProjectReport.fromJSON(EXAMPLE_PROJECT_REPORT)
-			expect(reportFromObject.isFrozen).toBe(true)
 			expect(reportFromObject.toJSON()).toEqual(EXAMPLE_PROJECT_REPORT)
 		})
 
 		runInstanceTests('deserialized instance related', () => {
 			const reportFromString = ProjectReport.fromJSON(JSON.stringify(EXAMPLE_PROJECT_REPORT))
-			reportFromString.unfreeze()
-			expect(reportFromString.isFrozen).toBe(false)
 			return reportFromString
 		})
 	})
@@ -819,15 +815,12 @@ describe('ProjectReport', () => {
 
 		test('consume from buffer', () => {
 			const { instance, remainingBuffer } = ProjectReport.consumeFromBuffer(buffer)
-			expect(instance.isFrozen).toBe(true)
 			expect(instance.toJSON()).toEqual(EXAMPLE_PROJECT_REPORT)
 			expect(remainingBuffer.byteLength).toBe(0)
 		})
 
 		runInstanceTests('consume from buffer instance related', () => {
 			const { instance } = ProjectReport.consumeFromBuffer(buffer)
-			instance.unfreeze()
-			expect(instance.isFrozen).toBe(false)
 			return instance
 		})
 	})
