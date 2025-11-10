@@ -18,8 +18,9 @@ import {
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
-import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper/InsertCPUProfileHelper'
 import { ExternalResourceHelper } from '../helper/ExternalResourceHelper'
+import { ResolveFunctionIdentifierHelper } from '../helper/ResolveFunctionIdentifierHelper'
+import { InsertCPUProfileStateMachine } from '../helper/InsertCPUProfileHelper/InsertCPUProfileStateMachine'
 // Types
 import {
 	ReportKind,
@@ -242,11 +243,15 @@ export class ProjectReport extends Report {
 		externalResourceHelper: ExternalResourceHelper,
 		metricsDataCollection?: MetricsDataCollection
 	) {
-		await InsertCPUProfileHelper.insertCPUProfile(
-			this,
+		const stateMachine = new InsertCPUProfileStateMachine(this)
+		const resolveFunctionIdentifierHelper = new ResolveFunctionIdentifierHelper(
 			rootDir,
+			externalResourceHelper
+		)
+		await stateMachine.insertCPUProfile(
+			rootDir,
+			resolveFunctionIdentifierHelper,
 			profile,
-			externalResourceHelper,
 			metricsDataCollection
 		)
 	}

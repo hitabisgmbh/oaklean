@@ -227,42 +227,6 @@ export class AccountingHelper {
 			})
 		}
 
-		if (
-			!currentCallIdentifier.isAwaiterSourceNode &&
-			awaiterStack.length > 0
-		) {
-			/*
-				The current source node is not an awaiter
-				but there is an awaiter in the source file and the current source node was called by it.
-				If the current source node was already using the awaiter (as an intern call) in the call tree,
-				subtract the current aggregated measurements, since they are already accounted
-			*/
-			const lastAwaiterNode = awaiterStack[awaiterStack.length - 1]
-			if (lastAwaiterNode === undefined) {
-				throw new Error('InsertCPUProfileHelper.accountToIntern: expected an awaiter in awaiterStack')
-			}
-			if (
-				callRelationTracker.isCallRecorded(
-					new CallIdentifier(
-						currentState.callIdentifier.report,
-						lastAwaiterNode.awaiter,
-						currentState.compensationLayerDepth
-					)) && lastAwaiterNode.awaiterParent === accountedSourceNode
-			) {
-				// the async function resolved when the awaiter was called,
-				// the last function call was the child function of the awaiter (fulfilled, rejected or step)
-				// and the current source node is the async function that called the awaiter
-
-				const awaiterInternChild = accountedSourceNode.intern.get(
-					lastAwaiterNode.awaiter.id
-				)
-				if (awaiterInternChild !== undefined) {
-					awaiterInternChild.sensorValues.addToAggregated(sensorValues, -1)
-					accountedSourceNode.sensorValues.addToIntern(sensorValues, -1)
-				}
-			}
-		}
-
 		if (transition.options.createLink) {
 			const alreadyLinked = callRelationTracker.linkCallToParent(
 				currentCallIdentifier,

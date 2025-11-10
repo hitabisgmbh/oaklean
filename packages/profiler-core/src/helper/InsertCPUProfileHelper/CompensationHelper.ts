@@ -12,16 +12,6 @@ import { SensorValues } from '../../model/SensorValues'
 let COMPENSATION_ID_COUNTER = 1
 
 export class CompensationHelper {
-	static totalCompensationSensorValues(
-		compensation: Compensation
-	): SensorValues {
-		return compensation.createdComp === null ?
-			compensation.carriedComp :
-			compensation.carriedComp.addToAggregated(
-				compensation.createdComp
-			)
-	}
-
 	static createCompForParent(
 		compensation: Compensation
 	): Compensation {
@@ -42,9 +32,7 @@ export class CompensationHelper {
 	) {
 		target.carriedComp = SensorValues.sum(
 			target.carriedComp,
-			CompensationHelper.totalCompensationSensorValues(
-				add
-			)
+			add.createdComp || add.carriedComp
 		)
 	}
 
