@@ -684,12 +684,11 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				sourceFileMetaData.totalSourceNodeMetaData().sum,
 				sourceFileMetaData.maxSourceNodeMetaData()
 			)
-			const fileNode = this.insertLangInternalPath(
+			this.insertLangInternalPath(
 				filePathIndex.identifier as LangInternalPath_string,
 				aggregatedSourceNodeMetaData,
 				sourceFileMetaData
 			)
-			fileNode.sourceFileMetaData = sourceFileMetaData
 		}
 
 		for (const [filePathID, sourceFileMetaData] of projectReport.intern.entries()) {
@@ -708,12 +707,11 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				sourceFileMetaData.maxSourceNodeMetaData()
 			)
 
-			const fileNode = this.insertPath(
+			this.insertPath(
 				filePathParts,
 				aggregatedSourceNodeMetaData,
 				sourceFileMetaData,
 			)
-			fileNode.sourceFileMetaData = sourceFileMetaData
 		}
 	}
 
