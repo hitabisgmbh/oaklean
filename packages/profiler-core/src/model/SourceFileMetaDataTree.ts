@@ -693,9 +693,9 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		this.externChildren.set(moduleReport.nodeModule.identifier, child)
 	}
 
-	addInternReport(projectReport: Report) {
-		for (const [filePathID, sourceFileMetaData] of projectReport.lang_internal.entries()) {
-			const filePathIndex = projectReport.getPathIndexByID(filePathID)
+	addInternReport(report: Report) {
+		for (const [filePathID, sourceFileMetaData] of report.lang_internal.entries()) {
+			const filePathIndex = report.getPathIndexByID(filePathID)
 			
 			if (filePathIndex === undefined) {
 				throw new Error(
@@ -708,15 +708,15 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				sourceFileMetaData.maxSourceNodeMetaData()
 			)
 			this.insertLangInternalPath(
-				projectReport.internID,
+				report.internID,
 				filePathIndex.identifier as LangInternalPath_string,
 				aggregatedSourceNodeMetaData,
 				sourceFileMetaData
 			)
 		}
 
-		for (const [filePathID, sourceFileMetaData] of projectReport.intern.entries()) {
-			const filePathIndex = projectReport.getPathIndexByID(filePathID)
+		for (const [filePathID, sourceFileMetaData] of report.intern.entries()) {
+			const filePathIndex = report.getPathIndexByID(filePathID)
 
 			if (filePathIndex === undefined) {
 				throw new Error(
@@ -732,7 +732,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			)
 
 			this.insertPath(
-				projectReport.internID,
+				report.internID,
 				filePathParts,
 				aggregatedSourceNodeMetaData,
 				sourceFileMetaData,
