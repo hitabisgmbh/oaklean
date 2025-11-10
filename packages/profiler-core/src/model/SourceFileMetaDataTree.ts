@@ -9,6 +9,7 @@ import {
 	AggregatedSourceNodeMetaData,
 } from './SourceFileMetaData'
 import { SourceNodeMetaData } from './SourceNodeMetaData'
+import { SourceNodeGraph } from './SourceNodeGraph'
 import { Report } from './Report'
 import { ProjectReport } from './ProjectReport'
 import { ModuleReport } from './ModuleReport'
@@ -674,26 +675,29 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		)
 	}
 
-	addExternReport(moduleReport: ModuleReport, index: ModuleIndex) {
+	addExternReport(sourceNodeGraph: SourceNodeGraph, moduleReport: ModuleReport, index: ModuleIndex) {
 		const child = new SourceFileMetaDataTree(
 			SourceFileMetaDataTreeType.Module,
 			new UnifiedPath('node_modules/' + moduleReport.nodeModule.identifier),
 			index
 		)
-		child.addInternReport(moduleReport)
+		child.addInternReport(sourceNodeGraph, moduleReport)
 		for (const [moduleID, externModuleReport] of moduleReport.extern.entries()) {
 			const childIndex = index.globalIndex.getModuleIndexByID(moduleID)
 			if (childIndex === undefined) {
 				throw new Error('SourceFileMetaDataTree.addExternReport: could not resolve module index')
 			}
-			child.addExternReport(externModuleReport, childIndex)
+			child.addExternReport(sourceNodeGraph, externModuleReport, childIndex)
 		}
 		this.addToAggregatedExternSourceNodeMetaDataOfTree(child.totalAggregatedSourceMetaData)
 
 		this.externChildren.set(moduleReport.nodeModule.identifier, child)
 	}
 
-	addInternReport(report: Report) {
+	addInternReport(
+		sourceNodeGraph: SourceNodeGraph,
+		report: Report
+	) {
 		for (const [filePathID, sourceFileMetaData] of report.lang_internal.entries()) {
 			const filePathIndex = report.getPathIndexByID(filePathID)
 			
@@ -704,7 +708,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			}
 
 			const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
-				sourceFileMetaData.totalSourceNodeMetaData().sum,
+				sourceFileMetaData.totalSourceNodeMetaData(sourceNodeGraph).sum,
 				sourceFileMetaData.maxSourceNodeMetaData()
 			)
 			this.insertLangInternalPath(
@@ -727,7 +731,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			const filePathParts = new UnifiedPath(filePathIndex.identifier).split()
 
 			const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
-				sourceFileMetaData.totalSourceNodeMetaData().sum,
+				sourceFileMetaData.totalSourceNodeMetaData(sourceNodeGraph).sum,
 				sourceFileMetaData.maxSourceNodeMetaData()
 			)
 
@@ -745,14 +749,14 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			throw new Error('SourceFileMetaDataTree.addProjectReport: can only be executed on root nodes')
 		}
 
-		this.addInternReport(projectReport)
+		this.addInternReport(projectReport.asSourceNodeGraph(), projectReport)
 
 		for (const [moduleID, externModuleReport] of projectReport.extern.entries()) {
 			const childIndex = this.index.getModuleIndexByID(moduleID)
 			if (childIndex === undefined) {
 				throw new Error('SourceFileMetaDataTree.addExternReport: could not resolve module index')
 			}
-			this.addExternReport(externModuleReport, childIndex)
+			this.addExternReport(projectReport.asSourceNodeGraph(), externModuleReport, childIndex)
 		}
 	}
 
@@ -774,6 +778,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 	}
 
 	filter(
+		sourceNodeGraph: SourceNodeGraph,
 		includedFilterPath: string | undefined,
 		excludedFilterPath: string | undefined
 	) {
@@ -856,10 +861,11 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		}
 
 		// call the filter function
-		return this._filter(filterPaths, filterReferences)
+		return this._filter(sourceNodeGraph, filterPaths, filterReferences)
 	}
 
 	_filter(
+		sourceNodeGraph: SourceNodeGraph,
 		filterPaths: (pathIndex: PathIndex) => boolean,
 		filterReferences: (references: ModelMap<PathID_number, SensorValues>) => void
 	): {
@@ -900,7 +906,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			}
 
 			const max = this.linkedMetaData.sourceFileMetaData.maxSourceNodeMetaData()
-			const total = this.linkedMetaData.sourceFileMetaData.totalSourceNodeMetaData()
+			const total = this.linkedMetaData.sourceFileMetaData.totalSourceNodeMetaData(sourceNodeGraph)
 			filterReferences(total.intern)
 			filterReferences(total.extern)
 			filterReferences(total.langInternal)
@@ -949,7 +955,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 					externReferences: filteredExtern,
 					langInternalReferences: filteredLangInternal,
 					containsFiles: filteredContainsFiles
-				} = child._filter(filterPaths, filterReferences)
+				} = child._filter(sourceNodeGraph, filterPaths, filterReferences)
 				if (filteredChild) {
 					node.langInternalChildren.set(langInternalPath, filteredChild)
 
@@ -1009,7 +1015,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 					externReferences: filteredExtern,
 					langInternalReferences: filteredLangInternal,
 					containsFiles: filteredContainsFiles
-				} = child._filter(filterPaths, filterReferences)
+				} = child._filter(sourceNodeGraph, filterPaths, filterReferences)
 				if (filteredChild) {
 					node.internChildren.set(internPath, filteredChild)
 
@@ -1066,7 +1072,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			for (const [moduleIdentifier, child] of this.externChildren.entries()) {
 				const {
 					node: filteredChild
-				} = child._filter(filterPaths, filterReferences)
+				} = child._filter(sourceNodeGraph, filterPaths, filterReferences)
 				if (filteredChild) {
 					node.externChildren.set(moduleIdentifier, filteredChild)
 

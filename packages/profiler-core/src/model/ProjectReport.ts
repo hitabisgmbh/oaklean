@@ -7,6 +7,7 @@ import { SystemInformation } from './SystemInformation'
 import { MetricsDataCollection } from './interfaces/MetricsDataCollection'
 import { GlobalIndex } from './indices/GlobalIndex'
 import { ModuleIndex } from './indices/ModuleIndex'
+import { SourceNodeGraph } from './SourceNodeGraph'
 
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import {
@@ -33,6 +34,8 @@ export class ProjectReport extends Report {
 	executionDetails: IProjectReportExecutionDetails
 	projectMetaData: IProjectMetaData
 	globalIndex: GlobalIndex
+
+	private _sourceNodeGraph: SourceNodeGraph | undefined
 
 	constructor(
 		executionDetails: IProjectReportExecutionDetails,
@@ -65,6 +68,14 @@ export class ProjectReport extends Report {
 				projectID: usedConfig.getProjectIdentifier()
 			}
 		}
+	}
+
+	asSourceNodeGraph() : SourceNodeGraph {
+		if (this._sourceNodeGraph === undefined) {
+			const graph = SourceNodeGraph.fromProjectReport(this)
+			this._sourceNodeGraph = graph
+		}
+		return this._sourceNodeGraph
 	}
 
 	normalize() {

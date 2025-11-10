@@ -5,6 +5,7 @@ import { SourceFileMetaDataTree } from '../../src/model/SourceFileMetaDataTree'
 import { SourceNodeMetaData } from '../../src/model/SourceNodeMetaData'
 import { ModelMap } from '../../src/model/ModelMap'
 import { ProjectReport } from '../../src/model/ProjectReport'
+import { SourceNodeGraph } from '../../src/model/SourceNodeGraph'
 import { SourceFileMetaData, AggregatedSourceNodeMetaData } from '../../src/model/SourceFileMetaData'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { SensorValues } from '../../src/model/SensorValues'
@@ -34,6 +35,7 @@ describe('SourceFileMetaDataTree', () => {
 	describe('instance related', () => {
 		let globalIndex: GlobalIndex
 		let instance: SourceFileMetaDataTree<SourceFileMetaDataTreeType.Root>
+		let sourceNodeGraph: SourceNodeGraph
 
 		beforeEach(() => {
 			globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
@@ -42,6 +44,7 @@ describe('SourceFileMetaDataTree', () => {
 				undefined,
 				globalIndex
 			)
+			sourceNodeGraph = new SourceNodeGraph()
 			const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex(
 				'upsert',
 				'./directory/file' as UnifiedPath_string
@@ -66,7 +69,7 @@ describe('SourceFileMetaDataTree', () => {
 			)
 
 			const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
-				sourceFileMetaData.totalSourceNodeMetaData().sum,
+				sourceFileMetaData.totalSourceNodeMetaData(sourceNodeGraph).sum,
 				sourceFileMetaData.maxSourceNodeMetaData()
 			)
 
@@ -304,7 +307,7 @@ describe('SourceFileMetaDataTree', () => {
 					}, pathIndex)
 
 					const aggregatedSourceNodeMetaData = new AggregatedSourceNodeMetaData(
-						sourceFileMetaData.totalSourceNodeMetaData().sum,
+						sourceFileMetaData.totalSourceNodeMetaData(sourceNodeGraph).sum,
 						sourceFileMetaData.maxSourceNodeMetaData()
 					)
 
@@ -754,7 +757,11 @@ describe('SourceFileMetaDataTree', () => {
 			if (projectReport === undefined) {
 				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example001.oak.json')
 			}
-			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport).filter(undefined, undefined).node!
+			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport).filter(
+				projectReport.asSourceNodeGraph(),
+				undefined,
+				undefined
+			).node!
 
 			const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example001.json')
 			if (UPDATE_TEST_REPORTS) {
@@ -776,7 +783,11 @@ describe('SourceFileMetaDataTree', () => {
 				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example002.oak.json')
 			}
 
-			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport).filter(undefined, undefined).node!
+			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport).filter(
+				projectReport.asSourceNodeGraph(),
+				undefined,
+				undefined
+			).node!
 			if (UPDATE_TEST_REPORTS) {
 				tree.storeToFile(expectedSourceFileMetaDataTreePath, 'pretty-json')
 			}
