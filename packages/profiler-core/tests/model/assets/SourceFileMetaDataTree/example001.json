@@ -108,99 +108,102 @@
       "type": "File",
       "filePath": "./",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "",
-        "functions": {
-          "2": {
-            "id": 2,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1896,
-              "selfCPUTime": 9831,
-              "aggregatedCPUTime": 9831
-            }
-          },
-          "3": {
-            "id": 3,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1
-            }
-          },
-          "4": {
-            "id": 4,
-            "type": 1,
-            "sensorValues": {
-              "aggregatedCPUTime": 1275250
-            }
-          },
-          "5": {
-            "id": 5,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 10,
-              "selfCPUTime": 42,
-              "aggregatedCPUTime": 42
-            }
-          },
-          "6": {
-            "id": 6,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 62444,
-              "selfCPUTime": 378345,
-              "aggregatedCPUTime": 846138
-            }
-          },
-          "7": {
-            "id": 7,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 93829,
-              "selfCPUTime": 387673,
-              "aggregatedCPUTime": 392878
-            }
-          },
-          "8": {
-            "id": 8,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1
-            }
-          },
-          "9": {
-            "id": 9,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 7,
-              "aggregatedCPUTime": 1265419
-            }
-          },
-          "10": {
-            "id": 10,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 18566,
-              "selfCPUTime": 99886,
-              "aggregatedCPUTime": 99886
-            }
-          },
-          "11": {
-            "id": 11,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 850,
-              "selfCPUTime": 5244,
-              "aggregatedCPUTime": 5244
-            }
-          },
-          "12": {
-            "id": 12,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 128,
-              "selfCPUTime": 876,
-              "aggregatedCPUTime": 876
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "",
+          "functions": {
+            "2": {
+              "id": 2,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1896,
+                "selfCPUTime": 9831,
+                "aggregatedCPUTime": 9831
+              }
+            },
+            "3": {
+              "id": 3,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1
+              }
+            },
+            "4": {
+              "id": 4,
+              "type": 1,
+              "sensorValues": {
+                "aggregatedCPUTime": 1275250
+              }
+            },
+            "5": {
+              "id": 5,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 10,
+                "selfCPUTime": 42,
+                "aggregatedCPUTime": 42
+              }
+            },
+            "6": {
+              "id": 6,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 62444,
+                "selfCPUTime": 378345,
+                "aggregatedCPUTime": 846138
+              }
+            },
+            "7": {
+              "id": 7,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 93829,
+                "selfCPUTime": 387673,
+                "aggregatedCPUTime": 392878
+              }
+            },
+            "8": {
+              "id": 8,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1
+              }
+            },
+            "9": {
+              "id": 9,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 7,
+                "aggregatedCPUTime": 1265419
+              }
+            },
+            "10": {
+              "id": 10,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 18566,
+                "selfCPUTime": 99886,
+                "aggregatedCPUTime": 99886
+              }
+            },
+            "11": {
+              "id": 11,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 850,
+                "selfCPUTime": 5244,
+                "aggregatedCPUTime": 5244
+              }
+            },
+            "12": {
+              "id": 12,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 128,
+                "selfCPUTime": 876,
+                "aggregatedCPUTime": 876
+              }
             }
           }
         }
@@ -249,16 +252,19 @@
       "type": "File",
       "filePath": "./node:domain",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:domain",
-        "functions": {
-          "14": {
-            "id": 14,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 22,
-              "selfCPUTime": 167,
-              "aggregatedCPUTime": 377
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:domain",
+          "functions": {
+            "14": {
+              "id": 14,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 22,
+                "selfCPUTime": 167,
+                "aggregatedCPUTime": 377
+              }
             }
           }
         }
@@ -307,77 +313,80 @@
       "type": "File",
       "filePath": "./node:events",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:events",
-        "functions": {
-          "16": {
-            "id": 16,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1812,
-              "selfCPUTime": 10704,
-              "aggregatedCPUTime": 10745
-            }
-          },
-          "17": {
-            "id": 17,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 15,
-              "selfCPUTime": 124,
-              "aggregatedCPUTime": 124
-            }
-          },
-          "18": {
-            "id": 18,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 31,
-              "selfCPUTime": 83,
-              "aggregatedCPUTime": 10828
-            }
-          },
-          "19": {
-            "id": 19,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 13,
-              "selfCPUTime": 292,
-              "aggregatedCPUTime": 292
-            }
-          },
-          "20": {
-            "id": 20,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 34,
-              "selfCPUTime": 210,
-              "aggregatedCPUTime": 210
-            }
-          },
-          "21": {
-            "id": 21,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 10
-            }
-          },
-          "22": {
-            "id": 22,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 401,
-              "selfCPUTime": 2579,
-              "aggregatedCPUTime": 15493
-            }
-          },
-          "23": {
-            "id": 23,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 159,
-              "selfCPUTime": 879,
-              "aggregatedCPUTime": 1046
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:events",
+          "functions": {
+            "16": {
+              "id": 16,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1812,
+                "selfCPUTime": 10704,
+                "aggregatedCPUTime": 10745
+              }
+            },
+            "17": {
+              "id": 17,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 15,
+                "selfCPUTime": 124,
+                "aggregatedCPUTime": 124
+              }
+            },
+            "18": {
+              "id": 18,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 31,
+                "selfCPUTime": 83,
+                "aggregatedCPUTime": 10828
+              }
+            },
+            "19": {
+              "id": 19,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 13,
+                "selfCPUTime": 292,
+                "aggregatedCPUTime": 292
+              }
+            },
+            "20": {
+              "id": 20,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 34,
+                "selfCPUTime": 210,
+                "aggregatedCPUTime": 210
+              }
+            },
+            "21": {
+              "id": 21,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 10
+              }
+            },
+            "22": {
+              "id": 22,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 401,
+                "selfCPUTime": 2579,
+                "aggregatedCPUTime": 15493
+              }
+            },
+            "23": {
+              "id": 23,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 159,
+                "selfCPUTime": 879,
+                "aggregatedCPUTime": 1046
+              }
             }
           }
         }
@@ -426,42 +435,45 @@
       "type": "File",
       "filePath": "./node:inspector",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:inspector",
-        "functions": {
-          "25": {
-            "id": 25,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 33,
-              "selfCPUTime": 125,
-              "aggregatedCPUTime": 5205
-            }
-          },
-          "26": {
-            "id": 26,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1232,
-              "selfCPUTime": 4703,
-              "aggregatedCPUTime": 5080
-            }
-          },
-          "27": {
-            "id": 27,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1,
-              "aggregatedCPUTime": 42
-            }
-          },
-          "28": {
-            "id": 28,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 651,
-              "selfCPUTime": 2914,
-              "aggregatedCPUTime": 395792
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:inspector",
+          "functions": {
+            "25": {
+              "id": 25,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 33,
+                "selfCPUTime": 125,
+                "aggregatedCPUTime": 5205
+              }
+            },
+            "26": {
+              "id": 26,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1232,
+                "selfCPUTime": 4703,
+                "aggregatedCPUTime": 5080
+              }
+            },
+            "27": {
+              "id": 27,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1,
+                "aggregatedCPUTime": 42
+              }
+            },
+            "28": {
+              "id": 28,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 651,
+                "selfCPUTime": 2914,
+                "aggregatedCPUTime": 395792
+              }
             }
           }
         }
@@ -506,14 +518,17 @@
       "type": "File",
       "filePath": "./node:internal/async_hooks",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/async_hooks",
-        "functions": {
-          "30": {
-            "id": 30,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/async_hooks",
+          "functions": {
+            "30": {
+              "id": 30,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1
+              }
             }
           }
         }
@@ -562,34 +577,37 @@
       "type": "File",
       "filePath": "./node:internal/console/constructor",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/console/constructor",
-        "functions": {
-          "32": {
-            "id": 32,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 199,
-              "selfCPUTime": 1002,
-              "aggregatedCPUTime": 1002
-            }
-          },
-          "33": {
-            "id": 33,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1289,
-              "selfCPUTime": 7878,
-              "aggregatedCPUTime": 467291
-            }
-          },
-          "34": {
-            "id": 34,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 2157,
-              "selfCPUTime": 12588,
-              "aggregatedCPUTime": 459371
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/console/constructor",
+          "functions": {
+            "32": {
+              "id": 32,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 199,
+                "selfCPUTime": 1002,
+                "aggregatedCPUTime": 1002
+              }
+            },
+            "33": {
+              "id": 33,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1289,
+                "selfCPUTime": 7878,
+                "aggregatedCPUTime": 467291
+              }
+            },
+            "34": {
+              "id": 34,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 2157,
+                "selfCPUTime": 12588,
+                "aggregatedCPUTime": 459371
+              }
             }
           }
         }
@@ -638,16 +656,19 @@
       "type": "File",
       "filePath": "./node:internal/linkedlist",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/linkedlist",
-        "functions": {
-          "36": {
-            "id": 36,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 2,
-              "selfCPUTime": 42,
-              "aggregatedCPUTime": 42
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/linkedlist",
+          "functions": {
+            "36": {
+              "id": 36,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 2,
+                "selfCPUTime": 42,
+                "aggregatedCPUTime": 42
+              }
             }
           }
         }
@@ -696,23 +717,26 @@
       "type": "File",
       "filePath": "./node:internal/priority_queue",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/priority_queue",
-        "functions": {
-          "38": {
-            "id": 38,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 9,
-              "selfCPUTime": 42,
-              "aggregatedCPUTime": 42
-            }
-          },
-          "39": {
-            "id": 39,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 2
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/priority_queue",
+          "functions": {
+            "38": {
+              "id": 38,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 9,
+                "selfCPUTime": 42,
+                "aggregatedCPUTime": 42
+              }
+            },
+            "39": {
+              "id": 39,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 2
+              }
             }
           }
         }
@@ -758,21 +782,24 @@
       "type": "File",
       "filePath": "./node:internal/process/task_queues",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/process/task_queues",
-        "functions": {
-          "41": {
-            "id": 41,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1
-            }
-          },
-          "42": {
-            "id": 42,
-            "type": 1,
-            "sensorValues": {
-              "aggregatedCPUTime": 1265419
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/process/task_queues",
+          "functions": {
+            "41": {
+              "id": 41,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1
+              }
+            },
+            "42": {
+              "id": 42,
+              "type": 1,
+              "sensorValues": {
+                "aggregatedCPUTime": 1265419
+              }
             }
           }
         }
@@ -821,43 +848,46 @@
       "type": "File",
       "filePath": "./node:internal/stream_base_commons",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/stream_base_commons",
-        "functions": {
-          "44": {
-            "id": 44,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 88,
-              "selfCPUTime": 624,
-              "aggregatedCPUTime": 1875
-            }
-          },
-          "45": {
-            "id": 45,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1980,
-              "selfCPUTime": 11132,
-              "aggregatedCPUTime": 16376
-            }
-          },
-          "46": {
-            "id": 46,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 807,
-              "selfCPUTime": 4753,
-              "aggregatedCPUTime": 104639
-            }
-          },
-          "47": {
-            "id": 47,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 31,
-              "selfCPUTime": 250,
-              "aggregatedCPUTime": 123140
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/stream_base_commons",
+          "functions": {
+            "44": {
+              "id": 44,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 88,
+                "selfCPUTime": 624,
+                "aggregatedCPUTime": 1875
+              }
+            },
+            "45": {
+              "id": 45,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1980,
+                "selfCPUTime": 11132,
+                "aggregatedCPUTime": 16376
+              }
+            },
+            "46": {
+              "id": 46,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 807,
+                "selfCPUTime": 4753,
+                "aggregatedCPUTime": 104639
+              }
+            },
+            "47": {
+              "id": 47,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 31,
+                "selfCPUTime": 250,
+                "aggregatedCPUTime": 123140
+              }
             }
           }
         }
@@ -906,25 +936,28 @@
       "type": "File",
       "filePath": "./node:internal/streams/readable",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/streams/readable",
-        "functions": {
-          "49": {
-            "id": 49,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 392,
-              "selfCPUTime": 1920,
-              "aggregatedCPUTime": 12748
-            }
-          },
-          "50": {
-            "id": 50,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 51,
-              "selfCPUTime": 83,
-              "aggregatedCPUTime": 1087
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/streams/readable",
+          "functions": {
+            "49": {
+              "id": 49,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 392,
+                "selfCPUTime": 1920,
+                "aggregatedCPUTime": 12748
+              }
+            },
+            "50": {
+              "id": 50,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 51,
+                "selfCPUTime": 83,
+                "aggregatedCPUTime": 1087
+              }
             }
           }
         }
@@ -973,52 +1006,55 @@
       "type": "File",
       "filePath": "./node:internal/streams/writable",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/streams/writable",
-        "functions": {
-          "52": {
-            "id": 52,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 250,
-              "selfCPUTime": 1503,
-              "aggregatedCPUTime": 134269
-            }
-          },
-          "53": {
-            "id": 53,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 180,
-              "selfCPUTime": 1458,
-              "aggregatedCPUTime": 1458
-            }
-          },
-          "54": {
-            "id": 54,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 14,
-              "selfCPUTime": 124,
-              "aggregatedCPUTime": 124
-            }
-          },
-          "55": {
-            "id": 55,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 421,
-              "selfCPUTime": 1954,
-              "aggregatedCPUTime": 136223
-            }
-          },
-          "56": {
-            "id": 56,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1124,
-              "selfCPUTime": 7454,
-              "aggregatedCPUTime": 133891
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/streams/writable",
+          "functions": {
+            "52": {
+              "id": 52,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 250,
+                "selfCPUTime": 1503,
+                "aggregatedCPUTime": 134269
+              }
+            },
+            "53": {
+              "id": 53,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 180,
+                "selfCPUTime": 1458,
+                "aggregatedCPUTime": 1458
+              }
+            },
+            "54": {
+              "id": 54,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 14,
+                "selfCPUTime": 124,
+                "aggregatedCPUTime": 124
+              }
+            },
+            "55": {
+              "id": 55,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 421,
+                "selfCPUTime": 1954,
+                "aggregatedCPUTime": 136223
+              }
+            },
+            "56": {
+              "id": 56,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1124,
+                "selfCPUTime": 7454,
+                "aggregatedCPUTime": 133891
+              }
             }
           }
         }
@@ -1067,39 +1103,42 @@
       "type": "File",
       "filePath": "./node:internal/timers",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/timers",
-        "functions": {
-          "58": {
-            "id": 58,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1
-            }
-          },
-          "59": {
-            "id": 59,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 14,
-              "selfCPUTime": 41,
-              "aggregatedCPUTime": 167
-            }
-          },
-          "60": {
-            "id": 60,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 15,
-              "selfCPUTime": 83,
-              "aggregatedCPUTime": 83
-            }
-          },
-          "61": {
-            "id": 61,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/timers",
+          "functions": {
+            "58": {
+              "id": 58,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1
+              }
+            },
+            "59": {
+              "id": 59,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 14,
+                "selfCPUTime": 41,
+                "aggregatedCPUTime": 167
+              }
+            },
+            "60": {
+              "id": 60,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 15,
+                "selfCPUTime": 83,
+                "aggregatedCPUTime": 83
+              }
+            },
+            "61": {
+              "id": 61,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1
+              }
             }
           }
         }
@@ -1148,16 +1187,19 @@
       "type": "File",
       "filePath": "./node:internal/tty",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/tty",
-        "functions": {
-          "63": {
-            "id": 63,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 42631,
-              "selfCPUTime": 243213,
-              "aggregatedCPUTime": 244089
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/tty",
+          "functions": {
+            "63": {
+              "id": 63,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 42631,
+                "selfCPUTime": 243213,
+                "aggregatedCPUTime": 244089
+              }
             }
           }
         }
@@ -1206,16 +1248,19 @@
       "type": "File",
       "filePath": "./node:internal/util/colors",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/util/colors",
-        "functions": {
-          "65": {
-            "id": 65,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 8095,
-              "selfCPUTime": 45725,
-              "aggregatedCPUTime": 289521
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/util/colors",
+          "functions": {
+            "65": {
+              "id": 65,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 8095,
+                "selfCPUTime": 45725,
+                "aggregatedCPUTime": 289521
+              }
             }
           }
         }
@@ -1264,31 +1309,34 @@
       "type": "File",
       "filePath": "./node:internal/util/debuglog",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/util/debuglog",
-        "functions": {
-          "67": {
-            "id": 67,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1,
-              "selfCPUTime": 42,
-              "aggregatedCPUTime": 42
-            }
-          },
-          "68": {
-            "id": 68,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1
-            }
-          },
-          "69": {
-            "id": 69,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1,
-              "aggregatedCPUTime": 42
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/util/debuglog",
+          "functions": {
+            "67": {
+              "id": 67,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1,
+                "selfCPUTime": 42,
+                "aggregatedCPUTime": 42
+              }
+            },
+            "68": {
+              "id": 68,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1
+              }
+            },
+            "69": {
+              "id": 69,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1,
+                "aggregatedCPUTime": 42
+              }
             }
           }
         }
@@ -1337,25 +1385,28 @@
       "type": "File",
       "filePath": "./node:internal/util/inspect",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/util/inspect",
-        "functions": {
-          "71": {
-            "id": 71,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 177,
-              "selfCPUTime": 1209,
-              "aggregatedCPUTime": 2166
-            }
-          },
-          "72": {
-            "id": 72,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 164,
-              "selfCPUTime": 958,
-              "aggregatedCPUTime": 958
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/util/inspect",
+          "functions": {
+            "71": {
+              "id": 71,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 177,
+                "selfCPUTime": 1209,
+                "aggregatedCPUTime": 2166
+              }
+            },
+            "72": {
+              "id": 72,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 164,
+                "selfCPUTime": 958,
+                "aggregatedCPUTime": 958
+              }
             }
           }
         }
@@ -1404,16 +1455,19 @@
       "type": "File",
       "filePath": "./node:internal/validators",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:internal/validators",
-        "functions": {
-          "74": {
-            "id": 74,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 19,
-              "selfCPUTime": 125,
-              "aggregatedCPUTime": 125
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:internal/validators",
+          "functions": {
+            "74": {
+              "id": 74,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 19,
+                "selfCPUTime": 125,
+                "aggregatedCPUTime": 125
+              }
             }
           }
         }
@@ -1462,41 +1516,44 @@
       "type": "File",
       "filePath": "./node:net",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:net",
-        "functions": {
-          "76": {
-            "id": 76,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 6
-            }
-          },
-          "77": {
-            "id": 77,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 500,
-              "selfCPUTime": 2715,
-              "aggregatedCPUTime": 2715
-            }
-          },
-          "78": {
-            "id": 78,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 25,
-              "selfCPUTime": 125,
-              "aggregatedCPUTime": 126313
-            }
-          },
-          "79": {
-            "id": 79,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 53,
-              "selfCPUTime": 333,
-              "aggregatedCPUTime": 126188
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:net",
+          "functions": {
+            "76": {
+              "id": 76,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 6
+              }
+            },
+            "77": {
+              "id": 77,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 500,
+                "selfCPUTime": 2715,
+                "aggregatedCPUTime": 2715
+              }
+            },
+            "78": {
+              "id": 78,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 25,
+                "selfCPUTime": 125,
+                "aggregatedCPUTime": 126313
+              }
+            },
+            "79": {
+              "id": 79,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 53,
+                "selfCPUTime": 333,
+                "aggregatedCPUTime": 126188
+              }
             }
           }
         }
@@ -1541,31 +1598,34 @@
       "type": "File",
       "filePath": "./node:path",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:path",
-        "functions": {
-          "81": {
-            "id": 81,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1
-            }
-          },
-          "82": {
-            "id": 82,
-            "type": 1,
-            "sensorValues": {}
-          },
-          "83": {
-            "id": 83,
-            "type": 1,
-            "sensorValues": {}
-          },
-          "84": {
-            "id": 84,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 1
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:path",
+          "functions": {
+            "81": {
+              "id": 81,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1
+              }
+            },
+            "82": {
+              "id": 82,
+              "type": 1,
+              "sensorValues": {}
+            },
+            "83": {
+              "id": 83,
+              "type": 1,
+              "sensorValues": {}
+            },
+            "84": {
+              "id": 84,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 1
+              }
             }
           }
         }
@@ -1614,16 +1674,19 @@
       "type": "File",
       "filePath": "./node:timers",
       "internChildren": {},
-      "sourceFileMetaData": {
-        "path": "node:timers",
-        "functions": {
-          "86": {
-            "id": 86,
-            "type": 1,
-            "sensorValues": {
-              "profilerHits": 27,
-              "selfCPUTime": 125,
-              "aggregatedCPUTime": 375
+      "linkedMetaData": {
+        "internReportID": 1,
+        "sourceFileMetaData": {
+          "path": "node:timers",
+          "functions": {
+            "86": {
+              "id": 86,
+              "type": 1,
+              "sensorValues": {
+                "profilerHits": 27,
+                "selfCPUTime": 125,
+                "aggregatedCPUTime": 375
+              }
             }
           }
         }
@@ -1909,146 +1972,149 @@
                           "type": "File",
                           "filePath": "./packages/profiler-core/dist/src/helper/InspectorHelper.js",
                           "internChildren": {},
-                          "sourceFileMetaData": {
-                            "path": "./packages/profiler-core/dist/src/helper/InspectorHelper.js",
-                            "functions": {
-                              "89": {
-                                "id": 89,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 16,
-                                  "selfCPUTime": 41,
-                                  "aggregatedCPUTime": 396041,
-                                  "internCPUTime": 395958,
-                                  "langInternalCPUTime": 42
-                                },
-                                "lang_internal": {
-                                  "27": {
-                                    "id": 27,
-                                    "type": 2,
-                                    "sensorValues": {
-                                      "profilerHits": 1,
-                                      "aggregatedCPUTime": 42
-                                    }
-                                  }
-                                },
-                                "intern": {
-                                  "90": {
-                                    "id": 90,
-                                    "type": 3,
-                                    "sensorValues": {
-                                      "aggregatedCPUTime": 395792
+                          "linkedMetaData": {
+                            "internReportID": 1,
+                            "sourceFileMetaData": {
+                              "path": "./packages/profiler-core/dist/src/helper/InspectorHelper.js",
+                              "functions": {
+                                "89": {
+                                  "id": 89,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 16,
+                                    "selfCPUTime": 41,
+                                    "aggregatedCPUTime": 396041,
+                                    "internCPUTime": 395958,
+                                    "langInternalCPUTime": 42
+                                  },
+                                  "lang_internal": {
+                                    "27": {
+                                      "id": 27,
+                                      "type": 2,
+                                      "sensorValues": {
+                                        "profilerHits": 1,
+                                        "aggregatedCPUTime": 42
+                                      }
                                     }
                                   },
-                                  "91": {
-                                    "id": 91,
-                                    "type": 3,
-                                    "sensorValues": {
-                                      "profilerHits": 4,
-                                      "selfCPUTime": 41,
-                                      "aggregatedCPUTime": 166
+                                  "intern": {
+                                    "90": {
+                                      "id": 90,
+                                      "type": 3,
+                                      "sensorValues": {
+                                        "aggregatedCPUTime": 395792
+                                      }
+                                    },
+                                    "91": {
+                                      "id": 91,
+                                      "type": 3,
+                                      "sensorValues": {
+                                        "profilerHits": 4,
+                                        "selfCPUTime": 41,
+                                        "aggregatedCPUTime": 166
+                                      }
                                     }
                                   }
-                                }
-                              },
-                              "90": {
-                                "id": 90,
-                                "type": 0,
-                                "sensorValues": {
-                                  "aggregatedCPUTime": 395792,
-                                  "langInternalCPUTime": 395792
                                 },
-                                "lang_internal": {
-                                  "28": {
-                                    "id": 28,
-                                    "type": 2,
-                                    "sensorValues": {
-                                      "profilerHits": 651,
-                                      "selfCPUTime": 2914,
-                                      "aggregatedCPUTime": 395792
-                                    }
-                                  }
-                                }
-                              },
-                              "91": {
-                                "id": 91,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 4,
-                                  "selfCPUTime": 41,
-                                  "aggregatedCPUTime": 396041,
-                                  "internCPUTime": 396000
-                                },
-                                "intern": {
-                                  "93": {
-                                    "id": 93,
-                                    "type": 3,
-                                    "sensorValues": {
-                                      "profilerHits": 21,
-                                      "selfCPUTime": 84,
-                                      "aggregatedCPUTime": 396000
-                                    }
-                                  }
-                                }
-                              },
-                              "92": {
-                                "id": 92,
-                                "type": 0,
-                                "sensorValues": {},
-                                "lang_internal": {
-                                  "18": {
-                                    "id": 18,
-                                    "type": 2,
-                                    "sensorValues": {}
-                                  }
-                                }
-                              },
-                              "93": {
-                                "id": 93,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 21,
-                                  "selfCPUTime": 84,
-                                  "aggregatedCPUTime": 396000,
-                                  "internCPUTime": 395916
-                                },
-                                "intern": {
-                                  "89": {
-                                    "id": 89,
-                                    "type": 3,
-                                    "sensorValues": {
-                                      "profilerHits": 9,
-                                      "selfCPUTime": 41,
-                                      "aggregatedCPUTime": 395875
-                                    }
+                                "90": {
+                                  "id": 90,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "aggregatedCPUTime": 395792,
+                                    "langInternalCPUTime": 395792
                                   },
-                                  "94": {
-                                    "id": 94,
-                                    "type": 3,
-                                    "sensorValues": {
-                                      "profilerHits": 7,
-                                      "selfCPUTime": 41,
-                                      "aggregatedCPUTime": 41
+                                  "lang_internal": {
+                                    "28": {
+                                      "id": 28,
+                                      "type": 2,
+                                      "sensorValues": {
+                                        "profilerHits": 651,
+                                        "selfCPUTime": 2914,
+                                        "aggregatedCPUTime": 395792
+                                      }
                                     }
                                   }
-                                }
-                              },
-                              "94": {
-                                "id": 94,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 7,
-                                  "selfCPUTime": 41,
-                                  "aggregatedCPUTime": 41
-                                }
-                              },
-                              "95": {
-                                "id": 95,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 1,
-                                  "selfCPUTime": 42,
-                                  "aggregatedCPUTime": 42
+                                },
+                                "91": {
+                                  "id": 91,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 4,
+                                    "selfCPUTime": 41,
+                                    "aggregatedCPUTime": 396041,
+                                    "internCPUTime": 396000
+                                  },
+                                  "intern": {
+                                    "93": {
+                                      "id": 93,
+                                      "type": 3,
+                                      "sensorValues": {
+                                        "profilerHits": 21,
+                                        "selfCPUTime": 84,
+                                        "aggregatedCPUTime": 396000
+                                      }
+                                    }
+                                  }
+                                },
+                                "92": {
+                                  "id": 92,
+                                  "type": 0,
+                                  "sensorValues": {},
+                                  "lang_internal": {
+                                    "18": {
+                                      "id": 18,
+                                      "type": 2,
+                                      "sensorValues": {}
+                                    }
+                                  }
+                                },
+                                "93": {
+                                  "id": 93,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 21,
+                                    "selfCPUTime": 84,
+                                    "aggregatedCPUTime": 396000,
+                                    "internCPUTime": 395916
+                                  },
+                                  "intern": {
+                                    "89": {
+                                      "id": 89,
+                                      "type": 3,
+                                      "sensorValues": {
+                                        "profilerHits": 9,
+                                        "selfCPUTime": 41,
+                                        "aggregatedCPUTime": 395875
+                                      }
+                                    },
+                                    "94": {
+                                      "id": 94,
+                                      "type": 3,
+                                      "sensorValues": {
+                                        "profilerHits": 7,
+                                        "selfCPUTime": 41,
+                                        "aggregatedCPUTime": 41
+                                      }
+                                    }
+                                  }
+                                },
+                                "94": {
+                                  "id": 94,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 7,
+                                    "selfCPUTime": 41,
+                                    "aggregatedCPUTime": 41
+                                  }
+                                },
+                                "95": {
+                                  "id": 95,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 1,
+                                    "selfCPUTime": 42,
+                                    "aggregatedCPUTime": 42
+                                  }
                                 }
                               }
                             }
@@ -2097,54 +2163,57 @@
                           "type": "File",
                           "filePath": "./packages/profiler-core/dist/src/helper/PathUtils.js",
                           "internChildren": {},
-                          "sourceFileMetaData": {
-                            "path": "./packages/profiler-core/dist/src/helper/PathUtils.js",
-                            "functions": {
-                              "97": {
-                                "id": 97,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 1,
-                                  "selfCPUTime": 42,
-                                  "aggregatedCPUTime": 42
-                                },
-                                "lang_internal": {
-                                  "81": {
-                                    "id": 81,
-                                    "type": 2,
-                                    "sensorValues": {
-                                      "profilerHits": 1
+                          "linkedMetaData": {
+                            "internReportID": 1,
+                            "sourceFileMetaData": {
+                              "path": "./packages/profiler-core/dist/src/helper/PathUtils.js",
+                              "functions": {
+                                "97": {
+                                  "id": 97,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 1,
+                                    "selfCPUTime": 42,
+                                    "aggregatedCPUTime": 42
+                                  },
+                                  "lang_internal": {
+                                    "81": {
+                                      "id": 81,
+                                      "type": 2,
+                                      "sensorValues": {
+                                        "profilerHits": 1
+                                      }
+                                    }
+                                  },
+                                  "intern": {
+                                    "98": {
+                                      "id": 98,
+                                      "type": 3,
+                                      "sensorValues": {
+                                        "profilerHits": 1
+                                      }
                                     }
                                   }
                                 },
-                                "intern": {
-                                  "98": {
-                                    "id": 98,
-                                    "type": 3,
-                                    "sensorValues": {
-                                      "profilerHits": 1
-                                    }
+                                "98": {
+                                  "id": 98,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 1
                                   }
-                                }
-                              },
-                              "98": {
-                                "id": 98,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 1
-                                }
-                              },
-                              "99": {
-                                "id": 99,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 1
                                 },
-                                "intern": {
-                                  "97": {
-                                    "id": 97,
-                                    "type": 3,
-                                    "sensorValues": {}
+                                "99": {
+                                  "id": 99,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 1
+                                  },
+                                  "intern": {
+                                    "97": {
+                                      "id": 97,
+                                      "type": 3,
+                                      "sensorValues": {}
+                                    }
                                   }
                                 }
                               }
@@ -2194,16 +2263,19 @@
                           "type": "File",
                           "filePath": "./packages/profiler-core/dist/src/helper/PerformanceHelper.js",
                           "internChildren": {},
-                          "sourceFileMetaData": {
-                            "path": "./packages/profiler-core/dist/src/helper/PerformanceHelper.js",
-                            "functions": {
-                              "101": {
-                                "id": 101,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 1,
-                                  "selfCPUTime": 41,
-                                  "aggregatedCPUTime": 41
+                          "linkedMetaData": {
+                            "internReportID": 1,
+                            "sourceFileMetaData": {
+                              "path": "./packages/profiler-core/dist/src/helper/PerformanceHelper.js",
+                              "functions": {
+                                "101": {
+                                  "id": 101,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 1,
+                                    "selfCPUTime": 41,
+                                    "aggregatedCPUTime": 41
+                                  }
                                 }
                               }
                             }
@@ -2293,31 +2365,34 @@
                           "type": "File",
                           "filePath": "./packages/profiler-core/dist/src/model/ProfilerConfig.js",
                           "internChildren": {},
-                          "sourceFileMetaData": {
-                            "path": "./packages/profiler-core/dist/src/model/ProfilerConfig.js",
-                            "functions": {
-                              "103": {
-                                "id": 103,
-                                "type": 0,
-                                "sensorValues": {
-                                  "aggregatedCPUTime": 42,
-                                  "internCPUTime": 42
-                                },
-                                "intern": {
-                                  "97": {
-                                    "id": 97,
-                                    "type": 3,
-                                    "sensorValues": {
-                                      "profilerHits": 1,
-                                      "selfCPUTime": 42,
-                                      "aggregatedCPUTime": 42
-                                    }
+                          "linkedMetaData": {
+                            "internReportID": 1,
+                            "sourceFileMetaData": {
+                              "path": "./packages/profiler-core/dist/src/model/ProfilerConfig.js",
+                              "functions": {
+                                "103": {
+                                  "id": 103,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "aggregatedCPUTime": 42,
+                                    "internCPUTime": 42
                                   },
-                                  "105": {
-                                    "id": 105,
-                                    "type": 3,
-                                    "sensorValues": {
-                                      "profilerHits": 1
+                                  "intern": {
+                                    "97": {
+                                      "id": 97,
+                                      "type": 3,
+                                      "sensorValues": {
+                                        "profilerHits": 1,
+                                        "selfCPUTime": 42,
+                                        "aggregatedCPUTime": 42
+                                      }
+                                    },
+                                    "105": {
+                                      "id": 105,
+                                      "type": 3,
+                                      "sensorValues": {
+                                        "profilerHits": 1
+                                      }
                                     }
                                   }
                                 }
@@ -2405,40 +2480,43 @@
                           "type": "File",
                           "filePath": "./packages/profiler-core/dist/src/system/UnifiedPath.js",
                           "internChildren": {},
-                          "sourceFileMetaData": {
-                            "path": "./packages/profiler-core/dist/src/system/UnifiedPath.js",
-                            "functions": {
-                              "105": {
-                                "id": 105,
-                                "type": 0,
-                                "sensorValues": {
-                                  "profilerHits": 1
-                                },
-                                "lang_internal": {
-                                  "82": {
-                                    "id": 82,
-                                    "type": 2,
-                                    "sensorValues": {}
+                          "linkedMetaData": {
+                            "internReportID": 1,
+                            "sourceFileMetaData": {
+                              "path": "./packages/profiler-core/dist/src/system/UnifiedPath.js",
+                              "functions": {
+                                "105": {
+                                  "id": 105,
+                                  "type": 0,
+                                  "sensorValues": {
+                                    "profilerHits": 1
+                                  },
+                                  "lang_internal": {
+                                    "82": {
+                                      "id": 82,
+                                      "type": 2,
+                                      "sensorValues": {}
+                                    }
+                                  },
+                                  "intern": {
+                                    "106": {
+                                      "id": 106,
+                                      "type": 3,
+                                      "sensorValues": {}
+                                    }
                                   }
                                 },
-                                "intern": {
-                                  "106": {
-                                    "id": 106,
-                                    "type": 3,
-                                    "sensorValues": {}
-                                  }
-                                }
-                              },
-                              "106": {
-                                "id": 106,
-                                "type": 0,
-                                "sensorValues": {},
-                                "intern": {
-                                  "99": {
-                                    "id": 99,
-                                    "type": 3,
-                                    "sensorValues": {
-                                      "profilerHits": 1
+                                "106": {
+                                  "id": 106,
+                                  "type": 0,
+                                  "sensorValues": {},
+                                  "intern": {
+                                    "99": {
+                                      "id": 99,
+                                      "type": 3,
+                                      "sensorValues": {
+                                        "profilerHits": 1
+                                      }
                                     }
                                   }
                                 }
@@ -2597,114 +2675,117 @@
                   "type": "File",
                   "filePath": "./packages/profiler/examples/example001.ts",
                   "internChildren": {},
-                  "sourceFileMetaData": {
-                    "path": "./packages/profiler/examples/example001.ts",
-                    "functions": {
-                      "108": {
-                        "id": 108,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 870,
-                          "selfCPUTime": 5123,
-                          "aggregatedCPUTime": 867628,
-                          "internCPUTime": 862505
-                        },
-                        "intern": {
-                          "109": {
-                            "id": 109,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 2698,
-                              "selfCPUTime": 16408,
-                              "aggregatedCPUTime": 862505
-                            }
-                          }
-                        }
-                      },
-                      "109": {
-                        "id": 109,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 2698,
-                          "selfCPUTime": 16408,
-                          "aggregatedCPUTime": 862546,
-                          "langInternalCPUTime": 846138
-                        },
-                        "lang_internal": {
-                          "6": {
-                            "id": 6,
-                            "type": 2,
-                            "sensorValues": {
-                              "profilerHits": 62444,
-                              "selfCPUTime": 378345,
-                              "aggregatedCPUTime": 846138
-                            }
-                          }
-                        }
-                      },
-                      "110": {
-                        "id": 110,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 116,
-                          "selfCPUTime": 500,
-                          "aggregatedCPUTime": 868960,
-                          "internCPUTime": 868085,
-                          "langInternalCPUTime": 375
-                        },
-                        "lang_internal": {
-                          "86": {
-                            "id": 86,
-                            "type": 2,
-                            "sensorValues": {
-                              "profilerHits": 27,
-                              "selfCPUTime": 125,
-                              "aggregatedCPUTime": 375
+                  "linkedMetaData": {
+                    "internReportID": 1,
+                    "sourceFileMetaData": {
+                      "path": "./packages/profiler/examples/example001.ts",
+                      "functions": {
+                        "108": {
+                          "id": 108,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 870,
+                            "selfCPUTime": 5123,
+                            "aggregatedCPUTime": 867628,
+                            "internCPUTime": 862505
+                          },
+                          "intern": {
+                            "109": {
+                              "id": 109,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 2698,
+                                "selfCPUTime": 16408,
+                                "aggregatedCPUTime": 862505
+                              }
                             }
                           }
                         },
-                        "intern": {
-                          "108": {
-                            "id": 108,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 870,
-                              "selfCPUTime": 5123,
-                              "aggregatedCPUTime": 867628
+                        "109": {
+                          "id": 109,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 2698,
+                            "selfCPUTime": 16408,
+                            "aggregatedCPUTime": 862546,
+                            "langInternalCPUTime": 846138
+                          },
+                          "lang_internal": {
+                            "6": {
+                              "id": 6,
+                              "type": 2,
+                              "sensorValues": {
+                                "profilerHits": 62444,
+                                "selfCPUTime": 378345,
+                                "aggregatedCPUTime": 846138
+                              }
+                            }
+                          }
+                        },
+                        "110": {
+                          "id": 110,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 116,
+                            "selfCPUTime": 500,
+                            "aggregatedCPUTime": 868960,
+                            "internCPUTime": 868085,
+                            "langInternalCPUTime": 375
+                          },
+                          "lang_internal": {
+                            "86": {
+                              "id": 86,
+                              "type": 2,
+                              "sensorValues": {
+                                "profilerHits": 27,
+                                "selfCPUTime": 125,
+                                "aggregatedCPUTime": 375
+                              }
                             }
                           },
-                          "109": {
-                            "id": 109,
-                            "type": 3,
-                            "sensorValues": {
-                              "aggregatedCPUTime": 41
-                            }
-                          },
-                          "112": {
-                            "id": 112,
-                            "type": 3,
-                            "sensorValues": {
-                              "aggregatedCPUTime": 416
+                          "intern": {
+                            "108": {
+                              "id": 108,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 870,
+                                "selfCPUTime": 5123,
+                                "aggregatedCPUTime": 867628
+                              }
+                            },
+                            "109": {
+                              "id": 109,
+                              "type": 3,
+                              "sensorValues": {
+                                "aggregatedCPUTime": 41
+                              }
+                            },
+                            "112": {
+                              "id": 112,
+                              "type": 3,
+                              "sensorValues": {
+                                "aggregatedCPUTime": 416
+                              }
                             }
                           }
-                        }
-                      },
-                      "113": {
-                        "id": 113,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 2,
-                          "aggregatedCPUTime": 868960,
-                          "internCPUTime": 868960
                         },
-                        "intern": {
-                          "110": {
-                            "id": 110,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 116,
-                              "selfCPUTime": 500,
-                              "aggregatedCPUTime": 868960
+                        "113": {
+                          "id": 113,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 2,
+                            "aggregatedCPUTime": 868960,
+                            "internCPUTime": 868960
+                          },
+                          "intern": {
+                            "110": {
+                              "id": 110,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 116,
+                                "selfCPUTime": 500,
+                                "aggregatedCPUTime": 868960
+                              }
                             }
                           }
                         }
@@ -2806,168 +2887,171 @@
                   "type": "File",
                   "filePath": "./packages/profiler/src/Profiler.ts",
                   "internChildren": {},
-                  "sourceFileMetaData": {
-                    "path": "./packages/profiler/src/Profiler.ts",
-                    "functions": {
-                      "112": {
-                        "id": 112,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 6,
-                          "aggregatedCPUTime": 416,
-                          "internCPUTime": 416
-                        },
-                        "intern": {
-                          "101": {
-                            "id": 101,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 1,
-                              "selfCPUTime": 41,
-                              "aggregatedCPUTime": 41
-                            }
+                  "linkedMetaData": {
+                    "internReportID": 1,
+                    "sourceFileMetaData": {
+                      "path": "./packages/profiler/src/Profiler.ts",
+                      "functions": {
+                        "112": {
+                          "id": 112,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 6,
+                            "aggregatedCPUTime": 416,
+                            "internCPUTime": 416
                           },
-                          "119": {
-                            "id": 119,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 14,
-                              "selfCPUTime": 84,
-                              "aggregatedCPUTime": 125
-                            }
-                          },
-                          "121": {
-                            "id": 121,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 2,
-                              "selfCPUTime": 41,
-                              "aggregatedCPUTime": 250
+                          "intern": {
+                            "101": {
+                              "id": 101,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 1,
+                                "selfCPUTime": 41,
+                                "aggregatedCPUTime": 41
+                              }
+                            },
+                            "119": {
+                              "id": 119,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 14,
+                                "selfCPUTime": 84,
+                                "aggregatedCPUTime": 125
+                              }
+                            },
+                            "121": {
+                              "id": 121,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 2,
+                                "selfCPUTime": 41,
+                                "aggregatedCPUTime": 250
+                              }
                             }
                           }
-                        }
-                      },
-                      "121": {
-                        "id": 121,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 2,
-                          "selfCPUTime": 41,
-                          "aggregatedCPUTime": 416,
-                          "internCPUTime": 375
                         },
-                        "intern": {
-                          "124": {
-                            "id": 124,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 57,
-                              "selfCPUTime": 209,
-                              "aggregatedCPUTime": 375
+                        "121": {
+                          "id": 121,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 2,
+                            "selfCPUTime": 41,
+                            "aggregatedCPUTime": 416,
+                            "internCPUTime": 375
+                          },
+                          "intern": {
+                            "124": {
+                              "id": 124,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 57,
+                                "selfCPUTime": 209,
+                                "aggregatedCPUTime": 375
+                              }
                             }
                           }
-                        }
-                      },
-                      "122": {
-                        "id": 122,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 1,
-                          "aggregatedCPUTime": 42,
-                          "internCPUTime": 42
                         },
-                        "intern": {
-                          "103": {
-                            "id": 103,
-                            "type": 3,
-                            "sensorValues": {
-                              "aggregatedCPUTime": 42
-                            }
+                        "122": {
+                          "id": 122,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 1,
+                            "aggregatedCPUTime": 42,
+                            "internCPUTime": 42
                           },
-                          "105": {
-                            "id": 105,
-                            "type": 3,
-                            "sensorValues": {}
-                          }
-                        }
-                      },
-                      "123": {
-                        "id": 123,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 47,
-                          "selfCPUTime": 209,
-                          "aggregatedCPUTime": 396417,
-                          "internCPUTime": 396208
-                        },
-                        "intern": {
-                          "89": {
-                            "id": 89,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 7,
-                              "aggregatedCPUTime": 396041
-                            }
-                          },
-                          "92": {
-                            "id": 92,
-                            "type": 3,
-                            "sensorValues": {}
-                          },
-                          "115": {
-                            "id": 115,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 2,
-                              "aggregatedCPUTime": 125
-                            }
-                          },
-                          "122": {
-                            "id": 122,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 1,
-                              "aggregatedCPUTime": 42
+                          "intern": {
+                            "103": {
+                              "id": 103,
+                              "type": 3,
+                              "sensorValues": {
+                                "aggregatedCPUTime": 42
+                              }
+                            },
+                            "105": {
+                              "id": 105,
+                              "type": 3,
+                              "sensorValues": {}
                             }
                           }
-                        }
-                      },
-                      "124": {
-                        "id": 124,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 57,
-                          "selfCPUTime": 209,
-                          "aggregatedCPUTime": 375,
-                          "internCPUTime": 166
                         },
-                        "intern": {
-                          "112": {
-                            "id": 112,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 6,
-                              "aggregatedCPUTime": 166
+                        "123": {
+                          "id": 123,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 47,
+                            "selfCPUTime": 209,
+                            "aggregatedCPUTime": 396417,
+                            "internCPUTime": 396208
+                          },
+                          "intern": {
+                            "89": {
+                              "id": 89,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 7,
+                                "aggregatedCPUTime": 396041
+                              }
+                            },
+                            "92": {
+                              "id": 92,
+                              "type": 3,
+                              "sensorValues": {}
+                            },
+                            "115": {
+                              "id": 115,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 2,
+                                "aggregatedCPUTime": 125
+                              }
+                            },
+                            "122": {
+                              "id": 122,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 1,
+                                "aggregatedCPUTime": 42
+                              }
                             }
                           }
-                        }
-                      },
-                      "125": {
-                        "id": 125,
-                        "type": 0,
-                        "sensorValues": {
-                          "profilerHits": 1,
-                          "aggregatedCPUTime": 396417,
-                          "internCPUTime": 396417
                         },
-                        "intern": {
-                          "123": {
-                            "id": 123,
-                            "type": 3,
-                            "sensorValues": {
-                              "profilerHits": 47,
-                              "selfCPUTime": 209,
-                              "aggregatedCPUTime": 396417
+                        "124": {
+                          "id": 124,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 57,
+                            "selfCPUTime": 209,
+                            "aggregatedCPUTime": 375,
+                            "internCPUTime": 166
+                          },
+                          "intern": {
+                            "112": {
+                              "id": 112,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 6,
+                                "aggregatedCPUTime": 166
+                              }
+                            }
+                          }
+                        },
+                        "125": {
+                          "id": 125,
+                          "type": 0,
+                          "sensorValues": {
+                            "profilerHits": 1,
+                            "aggregatedCPUTime": 396417,
+                            "internCPUTime": 396417
+                          },
+                          "intern": {
+                            "123": {
+                              "id": 123,
+                              "type": 3,
+                              "sensorValues": {
+                                "profilerHits": 47,
+                                "selfCPUTime": 209,
+                                "aggregatedCPUTime": 396417
+                              }
                             }
                           }
                         }
@@ -3065,44 +3149,47 @@
                       "type": "File",
                       "filePath": "./packages/profiler/src/model/V8Profiler.ts",
                       "internChildren": {},
-                      "sourceFileMetaData": {
-                        "path": "./packages/profiler/src/model/V8Profiler.ts",
-                        "functions": {
-                          "115": {
-                            "id": 115,
-                            "type": 0,
-                            "sensorValues": {
-                              "profilerHits": 2,
-                              "aggregatedCPUTime": 125,
-                              "externCPUTime": 125
-                            },
-                            "extern": {
-                              "118": {
-                                "id": 118,
-                                "type": 4,
-                                "sensorValues": {
-                                  "aggregatedCPUTime": 125
+                      "linkedMetaData": {
+                        "internReportID": 1,
+                        "sourceFileMetaData": {
+                          "path": "./packages/profiler/src/model/V8Profiler.ts",
+                          "functions": {
+                            "115": {
+                              "id": 115,
+                              "type": 0,
+                              "sensorValues": {
+                                "profilerHits": 2,
+                                "aggregatedCPUTime": 125,
+                                "externCPUTime": 125
+                              },
+                              "extern": {
+                                "118": {
+                                  "id": 118,
+                                  "type": 4,
+                                  "sensorValues": {
+                                    "aggregatedCPUTime": 125
+                                  }
                                 }
                               }
-                            }
-                          },
-                          "119": {
-                            "id": 119,
-                            "type": 0,
-                            "sensorValues": {
-                              "profilerHits": 14,
-                              "selfCPUTime": 84,
-                              "aggregatedCPUTime": 125,
-                              "externCPUTime": 41
                             },
-                            "extern": {
-                              "120": {
-                                "id": 120,
-                                "type": 4,
-                                "sensorValues": {
-                                  "profilerHits": 1,
-                                  "selfCPUTime": 41,
-                                  "aggregatedCPUTime": 41
+                            "119": {
+                              "id": 119,
+                              "type": 0,
+                              "sensorValues": {
+                                "profilerHits": 14,
+                                "selfCPUTime": 84,
+                                "aggregatedCPUTime": 125,
+                                "externCPUTime": 41
+                              },
+                              "extern": {
+                                "120": {
+                                  "id": 120,
+                                  "type": 4,
+                                  "sensorValues": {
+                                    "profilerHits": 1,
+                                    "selfCPUTime": 41,
+                                    "aggregatedCPUTime": 41
+                                  }
                                 }
                               }
                             }
@@ -3206,16 +3293,19 @@
           "type": "File",
           "filePath": "./",
           "internChildren": {},
-          "sourceFileMetaData": {
-            "path": "",
-            "functions": {
-              "126": {
-                "id": 126,
-                "type": 1,
-                "sensorValues": {
-                  "profilerHits": 1,
-                  "selfCPUTime": 125,
-                  "aggregatedCPUTime": 125
+          "linkedMetaData": {
+            "internReportID": 3,
+            "sourceFileMetaData": {
+              "path": "",
+              "functions": {
+                "126": {
+                  "id": 126,
+                  "type": 1,
+                  "sensorValues": {
+                    "profilerHits": 1,
+                    "selfCPUTime": 125,
+                    "aggregatedCPUTime": 125
+                  }
                 }
               }
             }
@@ -3268,35 +3358,38 @@
           "type": "File",
           "filePath": "./dispatch.js",
           "internChildren": {},
-          "sourceFileMetaData": {
-            "path": "./dispatch.js",
-            "functions": {
-              "118": {
-                "id": 118,
-                "type": 0,
-                "sensorValues": {
-                  "aggregatedCPUTime": 125,
-                  "langInternalCPUTime": 125
-                },
-                "lang_internal": {
-                  "126": {
-                    "id": 126,
-                    "type": 2,
-                    "sensorValues": {
-                      "profilerHits": 1,
-                      "selfCPUTime": 125,
-                      "aggregatedCPUTime": 125
+          "linkedMetaData": {
+            "internReportID": 3,
+            "sourceFileMetaData": {
+              "path": "./dispatch.js",
+              "functions": {
+                "118": {
+                  "id": 118,
+                  "type": 0,
+                  "sensorValues": {
+                    "aggregatedCPUTime": 125,
+                    "langInternalCPUTime": 125
+                  },
+                  "lang_internal": {
+                    "126": {
+                      "id": 126,
+                      "type": 2,
+                      "sensorValues": {
+                        "profilerHits": 1,
+                        "selfCPUTime": 125,
+                        "aggregatedCPUTime": 125
+                      }
                     }
                   }
-                }
-              },
-              "120": {
-                "id": 120,
-                "type": 0,
-                "sensorValues": {
-                  "profilerHits": 1,
-                  "selfCPUTime": 41,
-                  "aggregatedCPUTime": 41
+                },
+                "120": {
+                  "id": 120,
+                  "type": 0,
+                  "sensorValues": {
+                    "profilerHits": 1,
+                    "selfCPUTime": 41,
+                    "aggregatedCPUTime": 41
+                  }
                 }
               }
             }

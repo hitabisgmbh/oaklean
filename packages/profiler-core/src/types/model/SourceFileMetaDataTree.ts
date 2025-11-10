@@ -36,6 +36,10 @@ export type UnifiedPath_stringOnlyForPathNode<T> =
 export type IGlobalIndexOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? IGlobalIndex : undefined
 export type IEngineModuleOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? INodeModule : undefined
 
+export type ILinkedMetaData = {
+	internReportID: number,
+	sourceFileMetaData: ISourceFileMetaData
+}
 
 export interface ISourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> {
 	headlessSensorValues?: ISensorValues
@@ -51,7 +55,7 @@ export interface ISourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> {
 	UnifiedPathPart_string,
 	ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Directory | SourceFileMetaDataTreeType.File>>
 	externChildren?: Record<NodeModuleIdentifier_string, ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Module>>
-	sourceFileMetaData?: ISourceFileMetaData
+	linkedMetaData?: ILinkedMetaData
 	globalIndex: IGlobalIndexOnlyForRootNode<T>
 	engineModule: IEngineModuleOnlyForRootNode<T>
 }

@@ -71,6 +71,7 @@ describe('SourceFileMetaDataTree', () => {
 			)
 
 			instance.insertPath(
+				0,
 				new UnifiedPath('./directory/file').split(),
 				aggregatedSourceNodeMetaData,
 				sourceFileMetaData
@@ -209,7 +210,9 @@ describe('SourceFileMetaDataTree', () => {
 								type: SourceFileMetaDataTreeType.File,
 								filePath: './directory/file' as UnifiedPath_string,
 								internChildren: {},
-								sourceFileMetaData: {
+								linkedMetaData: {
+									internReportID: 0,
+									sourceFileMetaData: {
 									path: './directory/file' as UnifiedPath_string,
 									functions: {
 										[instance.index.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./directory/file}{root}.{class:Class}.{method:method}' as GlobalSourceNodeIdentifier_string)).id]: {
@@ -222,6 +225,7 @@ describe('SourceFileMetaDataTree', () => {
 											}
 										} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
 									}
+								}
 								}
 							}
 						}
@@ -305,6 +309,7 @@ describe('SourceFileMetaDataTree', () => {
 					)
 
 					instance.insertPath(
+						0,
 						new UnifiedPath('./directory/file').split(),
 						aggregatedSourceNodeMetaData,
 						sourceFileMetaData

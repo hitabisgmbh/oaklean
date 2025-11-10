@@ -53,6 +53,11 @@ type IndexTypeMap = {
 
 type IndexPerType<T extends SourceFileMetaDataTreeType> = IndexTypeMap[T]
 
+type LinkedMetaData = {
+	internReportID: number,
+	sourceFileMetaData: SourceFileMetaData
+}
+
 export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extends BaseModel{
 	private _headlessSensorValues?: SensorValues
 	private _aggregatedLangInternalSourceNodeMetaData?: AggregatedSourceNodeMetaData
@@ -68,7 +73,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 	SourceFileMetaDataTree<SourceFileMetaDataTreeType.Directory | SourceFileMetaDataTreeType.File>>
 	private _externChildren?: ModelMap<
 	NodeModuleIdentifier_string, SourceFileMetaDataTree<SourceFileMetaDataTreeType.Module>>
-	sourceFileMetaData?: SourceFileMetaData
+	
+	linkedMetaData?: LinkedMetaData
 
 	index: IndexPerType<T>
 
@@ -271,7 +277,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 
 	validate() {
 		if (this.type === SourceFileMetaDataTreeType.File) {
-			this.sourceFileMetaData?.validate()
+			this.linkedMetaData?.sourceFileMetaData.validate()
 			return
 		}
 
@@ -337,7 +343,10 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			internChildren: this.internChildren.toJSON<
 			ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Directory | SourceFileMetaDataTreeType.File>>() || {},
 			externChildren: this.externChildren.toJSON<ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Module>>(),
-			sourceFileMetaData: this.sourceFileMetaData?.toJSON(),
+			linkedMetaData: this.linkedMetaData === undefined ? undefined : {
+				internReportID: this.linkedMetaData.internReportID,
+				sourceFileMetaData: this.linkedMetaData.sourceFileMetaData.toJSON()	
+			},
 			globalIndex: (this.isRoot() ? this.index.toJSON() : undefined) as IGlobalIndexOnlyForRootNode<T>,
 			engineModule: (
 				this.isRoot() ? this.index.engineModule.toJSON() : undefined) as IEngineModuleOnlyForRootNode<T>,
@@ -401,11 +410,16 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				AggregatedSourceNodeMetaData.fromJSON(data.aggregatedExternSourceMetaData)
 		}
 
-		if (data.sourceFileMetaData) {
+		if (data.linkedMetaData !== undefined) {
 			if (index === undefined) {
 				throw new Error('SourceFileMetaDataTree.fromJSON: pathIndex is missing')
 			}
-			result.sourceFileMetaData = SourceFileMetaData.fromJSON(data.sourceFileMetaData, index as PathIndex)
+			result.linkedMetaData = {
+				internReportID: data.linkedMetaData.internReportID,
+				sourceFileMetaData: SourceFileMetaData.fromJSON(
+					data.linkedMetaData.sourceFileMetaData, index as PathIndex
+				)
+			}
 		}
 		if (data.langInternalChildren) {
 			for (const [langInternalPath, subTree] of Object.entries(data.langInternalChildren)) {
@@ -563,6 +577,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 	}
 
 	insertLangInternalPath(
+		internReportID: number,
 		langInternalPath: LangInternalPath_string,
 		aggregatedSourceNodeMetaData: AggregatedSourceNodeMetaData,
 		sourceFileMetaData: SourceFileMetaData,
@@ -583,7 +598,10 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				new UnifiedPath(langInternalPath),
 				pathIndex
 			)
-			child.sourceFileMetaData = sourceFileMetaData
+			child.linkedMetaData = {
+				internReportID,
+				sourceFileMetaData				
+			}
 			child.addToAggregatedInternSourceNodeMetaDataOfTree(aggregatedSourceNodeMetaData)
 			this.langInternalChildren.set(langInternalPath, child)
 			return child
@@ -596,6 +614,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 	}
 
 	insertPath(
+		internReportID: number,
 		filePathParts: UnifiedPathPart_string[],
 		aggregatedSourceNodeMetaData: AggregatedSourceNodeMetaData,
 		sourceFileMetaData: SourceFileMetaData,
@@ -617,7 +636,10 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 					filePath.join(filePathParts[0]),
 					pathIndex
 				)
-				child.sourceFileMetaData = sourceFileMetaData
+				child.linkedMetaData = {
+					internReportID,
+					sourceFileMetaData
+				}
 				child.addToAggregatedInternSourceNodeMetaDataOfTree(aggregatedSourceNodeMetaData)
 				this.internChildren.set(filePathParts[0], child)
 				return child
@@ -645,6 +667,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			this.internChildren.set(filePathParts[0], child)
 		}
 		return child.insertPath(
+			internReportID,
 			filePathParts.slice(1),
 			aggregatedSourceNodeMetaData,
 			sourceFileMetaData,
@@ -685,6 +708,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 				sourceFileMetaData.maxSourceNodeMetaData()
 			)
 			this.insertLangInternalPath(
+				projectReport.internID,
 				filePathIndex.identifier as LangInternalPath_string,
 				aggregatedSourceNodeMetaData,
 				sourceFileMetaData
@@ -708,6 +732,7 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			)
 
 			this.insertPath(
+				projectReport.internID,
 				filePathParts,
 				aggregatedSourceNodeMetaData,
 				sourceFileMetaData,
@@ -863,19 +888,19 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		node.headlessSensorValues = SensorValues.fromJSON(
 			this.headlessSensorValues.toJSON()
 		)
-		node.sourceFileMetaData = this.sourceFileMetaData
+		node.linkedMetaData = this.linkedMetaData
 
 		if (SourceFileMetaDataTree.isFileNode(this)) {
-			if (this.sourceFileMetaData === undefined) {
-				throw new Error('SourceFileMetaDataTree.filter: sourceFileMetaData is undefined')
+			if (this.linkedMetaData === undefined) {
+				throw new Error('SourceFileMetaDataTree.filter: linkedMetaData is undefined')
 			}
-			const pathID = this.sourceFileMetaData.pathIndex.id
+			const pathID = this.linkedMetaData.sourceFileMetaData.pathIndex.id
 			if (pathID === undefined) {
 				throw new Error('SourceFileMetaDataTree.filter: pathID is undefined')
 			}
 
-			const max = this.sourceFileMetaData.maxSourceNodeMetaData()
-			const total = this.sourceFileMetaData.totalSourceNodeMetaData()
+			const max = this.linkedMetaData.sourceFileMetaData.maxSourceNodeMetaData()
+			const total = this.linkedMetaData.sourceFileMetaData.totalSourceNodeMetaData()
 			filterReferences(total.intern)
 			filterReferences(total.extern)
 			filterReferences(total.langInternal)
