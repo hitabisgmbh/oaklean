@@ -39,7 +39,9 @@ import {
 	IReport,
 	ReportType,
 	ISourceFileMetaData,
-	IModuleReport
+	IModuleReport,
+	SourceNodeID_number,
+	SourceNodeMetaDataType_Node
 } from '../types'
 
 
@@ -72,6 +74,98 @@ export class Report extends BaseModel {
 		this.kind = kind
 		this.moduleIndex = moduleIndex
 		this.internID = currentInternID++
+	}
+
+	/**
+	 * Resolve a source node ID to its corresponding source node metadata within this report.
+	 * @param report - The report to which the source node belongs (necessary for lang internal and extern).
+	 * @param globalIndex - The global index of the project report.
+	 * @param sourceNodeID - The unique identifier of the source node to resolve.
+	 * @returns An object containing either the resolved report, source file metadata, and source node metadata,
+	 *          or an error indication if the resolution fails.
+	 */
+	resolveSourceNodeID(
+		globalIndex: GlobalIndex,
+		sourceNodeID: SourceNodeID_number
+	): {
+		error: true
+	 } | {
+		error: true,
+		report: ProjectReport | ModuleReport
+	 } | {
+		error: true
+		report: ProjectReport | ModuleReport,
+		sourceFileMetaData: SourceFileMetaData,
+	 } | {
+		error: false,
+		report: ProjectReport | ModuleReport,
+		sourceFileMetaData: SourceFileMetaData,
+		sourceNode: SourceNodeMetaData<SourceNodeMetaDataType_Node>
+	 } {
+		const sourceNodeIndex = globalIndex.getSourceNodeIndexByID(sourceNodeID)
+		if (sourceNodeIndex === undefined) {
+			throw new Error(
+				'Report.getSourceNodeMetaDataByID: could not resolve source node index from sourceNodeID: ' +
+				sourceNodeID.toString()
+			)
+		}
+		const pathIndex = sourceNodeIndex.pathIndex
+		if (pathIndex.id === undefined) {
+			return {
+				error: true
+			}
+		}
+		const moduleIndex = pathIndex.moduleIndex
+
+		const reportToCheck = moduleIndex.identifier === '{node}' || this.moduleIndex === moduleIndex ?
+			(this as unknown as ModuleReport | ProjectReport) :
+			this.extern.get(moduleIndex.id as ModuleID_number)
+
+		if (reportToCheck === undefined) {
+			return {
+				error: true
+			}
+		}
+
+		if (reportToCheck !== undefined) {
+			const sourceFileMetaData = reportToCheck.getSourceFileMetaDataByPathID(pathIndex.id)
+			if (sourceFileMetaData === undefined) {
+				return {
+					error: true,
+					report: reportToCheck
+				}
+			}
+			const sourceNode = sourceFileMetaData.functions.get(sourceNodeID)
+			if (sourceNode === undefined) {
+				return {
+					error: true,
+					report: reportToCheck,
+					sourceFileMetaData
+				}
+			}
+			return {
+				error: false,
+				report: reportToCheck,
+				sourceFileMetaData,
+				sourceNode
+			}
+		}
+		return {
+			error: true,
+			report: reportToCheck
+		}
+	}
+
+	getSourceFileMetaDataByPathID(pathID: PathID_number) {
+		let sourceFileMetaData = this.lang_internal.get(pathID)
+		if (sourceFileMetaData !== undefined) {
+			return sourceFileMetaData
+		}
+		sourceFileMetaData = this.intern.get(pathID)
+		if (sourceFileMetaData !== undefined) {
+			return sourceFileMetaData
+		}
+		return undefined
 	}
 
 	normalize(
