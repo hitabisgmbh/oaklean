@@ -23,6 +23,7 @@
 
     /* Type Checking */
     "strict": true,                                      /* Enable all strict type-checking options. */
+    "moduleDetection": "force",
     "noImplicitAny": true,                               /* Enable error reporting for expressions and declarations with an implied 'any' type. */
 
     /* Completeness */

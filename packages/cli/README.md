@@ -45,6 +45,8 @@ Commands:
 
   jest                  Commands to inspect the jest profiler format. This is mostly used for debugging purposes
      - verify Checks wether the accumulate report of the jest-test-environment would be generated the same way with this version
+     - inspect-profiles Inspects all reports and cpu profiles in the jests output directory and verifies their consistency
+     - verify-trees Checks all sub reports in the output directory for SourceFileMetaDataTree consistency
 
   metrics-data|md       commands to convert or inspect the metrics data collection format
      - show Displays the metrics data collection as a table

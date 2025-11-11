@@ -1,5 +1,11 @@
 import * as fs from 'fs'
 
+// Test assets
+import {
+	EXAMPLE_SYSTEM_INFORMATION,
+	EXAMPLE_EXECUTION_DETAILS
+} from './assets/ProjectReport/ExecutionDetails'
+
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { ProjectReport } from '../../src/model/ProjectReport'
 import {
@@ -14,19 +20,18 @@ import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { PermissionHelper } from '../../src/helper/PermissionHelper'
 import { ExternalResourceHelper } from '../../src/helper/ExternalResourceHelper'
 import { LoggerHelper } from '../../src/helper/LoggerHelper'
+// Types
 import {
 	UnifiedPath_string,
 	UnifiedPathPart_string,
 	IProjectReport,
 	ProjectIdentifier_string,
 	ProjectReportOrigin,
-	IProjectReportExecutionDetails,
 	ISourceNodeMetaData,
 	SourceNodeMetaDataType,
 	SourceNodeIdentifier_string,
 	SourceNodeIdentifierPart_string,
 	NodeModuleIdentifier_string,
-	ISystemInformation,
 	GitHash_string,
 	SensorInterfaceType,
 	ISensorValues,
@@ -43,42 +48,6 @@ import {
 const CURRENT_DIR = new UnifiedPath(__dirname)
 const ROOT_DIR = CURRENT_DIR.join('..', '..', '..', '..')
 
-const EXAMPLE_SYSTEM_INFORMATION: ISystemInformation = JSON.parse(
-	fs.readFileSync(CURRENT_DIR.join('assets', 'SystemInformation', 'example.json').toString()).toString()
-) as ISystemInformation
-
-const EXAMPLE_EXECUTION_DETAILS = {
-	origin: ProjectReportOrigin.pure,
-	commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
-	commitTimestamp: 1687845481077,
-	timestamp: 1687845481077,
-	highResolutionBeginTime: '887518894424000',
-	highResolutionStopTime: '887518904424000',
-	uncommittedChanges: false,
-	systemInformation: EXAMPLE_SYSTEM_INFORMATION,
-	languageInformation: {
-		name: 'node',
-		version: '20.11.1'
-	},
-	runTimeOptions: {
-		seeds: {
-			'Math.random': '0'
-		},
-		v8: {
-			cpu: {
-				sampleInterval: 1 as MicroSeconds_number
-			}
-		},
-		sensorInterface: {
-			type: SensorInterfaceType.powermetrics,
-			options: {
-				sampleInterval: 1000 as MicroSeconds_number,
-				outputFilePath: '<anonymized>'
-			}
-		}
-	}
-} satisfies IProjectReportExecutionDetails
-
 const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 	reportVersion: VERSION,
 	kind: ReportKind.measurement,
@@ -86,7 +55,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 	projectMetaData: {
 		projectID: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
 	},
-	lang_internalHeadlessSensorValues: {},
+	headlessSensorValues: {},
 	executionDetails: EXAMPLE_EXECUTION_DETAILS,
 	globalIndex: {
 		currentId: 11,
@@ -241,7 +210,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 				name: '@oaklean/profiler-core',
 				version: '0.0.4',
 			},
-			lang_internalHeadlessSensorValues: {},
+			headlessSensorValues: {},
 			intern: {
 				[8 as PathID_number]: {
 					path: './test.js' as UnifiedPath_string,
@@ -377,14 +346,6 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			expect(ProjectReport.loadFromFile).toBeTruthy()
 		})
 
-		it('should have a method addSensorValuesToIntern()', () => {
-			expect(instance.addSensorValuesToIntern).toBeTruthy()
-		})
-
-		it('should have a method addSensorValuesToIntern()', () => {
-			expect(instance.addSensorValuesToIntern).toBeTruthy()
-		})
-
 		it('should have a method insertCPUProfile()', () => {
 			expect(instance.insertCPUProfile).toBeTruthy()
 		})
@@ -404,25 +365,26 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 		test('addCPUTimeToExtern', () => {
 			const nodeModule = new NodeModule('module', '1.2.3')
 
-			instance.addSensorValuesToExtern(
+			const {
+				sourceNodeMetaData
+			} = instance.addToExtern(
 				new UnifiedPath('./file'),
 				nodeModule,
 				'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
-				{
-					cpuTime: {
-						selfCPUTime: 222 as MicroSeconds_number,
-						aggregatedCPUTime: 222 as MicroSeconds_number
-					},
-					cpuEnergyConsumption: {
-						selfCPUEnergyConsumption: 444 as MilliJoule_number,
-						aggregatedCPUEnergyConsumption: 444 as MilliJoule_number
-					},
-					ramEnergyConsumption: {
-						selfRAMEnergyConsumption: 444 as MilliJoule_number,
-						aggregatedRAMEnergyConsumption: 444 as MilliJoule_number
-					}
-				}
 			)
+			sourceNodeMetaData.addToSensorValues({
+				// cpu time
+				selfCPUTime: 222 as MicroSeconds_number,
+				aggregatedCPUTime: 222 as MicroSeconds_number,
+
+				// cpu energy
+				selfCPUEnergyConsumption: 444 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 444 as MilliJoule_number,
+
+				// ram energy
+				selfRAMEnergyConsumption: 444 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 444 as MilliJoule_number
+			})
 			const moduleID = instance.globalIndex.getModuleIndex('get', nodeModule.identifier)?.id as ModuleID_number
 
 			expect(instance.extern.get(moduleID)?.getMetaDataFromFile(
@@ -516,24 +478,23 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			})
 
 			test('absolute paths', () => {
-				instance.addSensorValuesToIntern(
+				const sourceNodeMetaData = instance.addToIntern(
 					new UnifiedPath('/abs/path/to/file').toString(),
 					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
-					{
-						cpuTime: {
-							selfCPUTime: 456 as MicroSeconds_number,
-							aggregatedCPUTime: 456 as MicroSeconds_number
-						},
-						cpuEnergyConsumption: {
-							selfCPUEnergyConsumption: 912 as MilliJoule_number,
-							aggregatedCPUEnergyConsumption: 912 as MilliJoule_number
-						},
-						ramEnergyConsumption: {
-							selfRAMEnergyConsumption: 912 as MilliJoule_number,
-							aggregatedRAMEnergyConsumption: 912 as MilliJoule_number
-						}
-					}
 				)
+				sourceNodeMetaData.addToSensorValues({
+					// cpu time
+					selfCPUTime: 456 as MicroSeconds_number,
+					aggregatedCPUTime: 456 as MicroSeconds_number,
+					
+					// cpu energy
+					selfCPUEnergyConsumption: 912 as MilliJoule_number,
+					aggregatedCPUEnergyConsumption: 912 as MilliJoule_number,
+
+					// ram energy
+					selfRAMEnergyConsumption: 912 as MilliJoule_number,
+					aggregatedRAMEnergyConsumption: 912 as MilliJoule_number
+				})
 				instance.relativeRootDir = undefined
 				expect(instance.getMetaDataFromFile(
 					new UnifiedPath('./report.oak'),
@@ -708,119 +669,125 @@ describe('ProjectReport', () => {
 		})
 		instance.relativeRootDir = new UnifiedPath('./')
 
-		const firstNode = instance.addSensorValuesToIntern(
+		const firstNode = instance.addToIntern(
 			new UnifiedPath('./dist/test.js').toString(), // path does not exist in reality 
-			'{root}.{class:Class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
+			'{root}.{class:Class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+		)
+		firstNode.addToSensorValues(
 			{
-				cpuTime: {
-					selfCPUTime: 20 as MicroSeconds_number,
-					aggregatedCPUTime: 30 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 40 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 60 as MilliJoule_number
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 40 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 60 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 20 as MicroSeconds_number,
+				aggregatedCPUTime: 30 as MicroSeconds_number,
+				
+				// cpu energy
+				selfCPUEnergyConsumption: 40 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
+				
+				// ram energy
+				selfRAMEnergyConsumption: 40 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 60 as MilliJoule_number
 			}
 		)
+
 		firstNode.addSensorValuesToLangInternal(
 			new GlobalIdentifier(
 				'' as UnifiedPath_string,
 				'{root}' as SourceNodeIdentifier_string
 			),
 			{
-				cpuTime: {
-					selfCPUTime: 0 as MicroSeconds_number,
-					aggregatedCPUTime: 10 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 0 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 20 as MilliJoule_number
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 0 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 20 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 0 as MicroSeconds_number,
+				aggregatedCPUTime: 10 as MicroSeconds_number,
+
+				// cpu energy
+				selfCPUEnergyConsumption: 0 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 20 as MilliJoule_number,
+
+				// ram energy
+				selfRAMEnergyConsumption: 0 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 20 as MilliJoule_number
 			}
 		)
-		const secondNode = instance.addSensorValuesToIntern(
+		const secondNode = instance.addToIntern(
 			new UnifiedPath('./dist/test.js').toString(), // path does not exist in reality 
-			'{root}.{class:Class}.{method:method2}' as SourceNodeIdentifier_string,
-			{
-				cpuTime: {
-					selfCPUTime: 30 as MicroSeconds_number,
-					aggregatedCPUTime: 60 as MicroSeconds_number,
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 60 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 120 as MilliJoule_number,
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 60 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 120 as MilliJoule_number,
-				}
-			}
+			'{root}.{class:Class}.{method:method2}' as SourceNodeIdentifier_string
 		)
+		secondNode.addToSensorValues(	{
+			// cpu time
+			selfCPUTime: 30 as MicroSeconds_number,
+			aggregatedCPUTime: 60 as MicroSeconds_number,
+			// cpu energy
+
+			selfCPUEnergyConsumption: 60 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 120 as MilliJoule_number,
+
+			// ram energy
+			selfRAMEnergyConsumption: 60 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 120 as MilliJoule_number
+		})
+
 		secondNode.addSensorValuesToLangInternal(
 			new GlobalIdentifier(
 				'' as UnifiedPath_string,
 				'{root}' as SourceNodeIdentifier_string
 			),
 			{
-				cpuTime: {
-					selfCPUTime: 0 as MicroSeconds_number,
-					aggregatedCPUTime: 30 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 0 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 0 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 60 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 0 as MicroSeconds_number,
+				aggregatedCPUTime: 30 as MicroSeconds_number,
+				
+				// cpu energy
+				selfCPUEnergyConsumption: 0 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
+				
+				// ram energy
+				selfRAMEnergyConsumption: 0 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 60 as MilliJoule_number
 			}
 		)
 
-		instance.addSensorValuesToExtern(
+		const {
+			sourceNodeMetaData: externNode1
+		} = instance.addToExtern(
 			new UnifiedPath('./test.js'), // path does not exist in reality 
 			nodeModule, // points to the profiler core package itself
-			'{root}.{class:Package}.{method:method}' as SourceNodeIdentifier_string,
+			'{root}.{class:Package}.{method:method}' as SourceNodeIdentifier_string
+		)
+		externNode1.addToSensorValues(
 			{
-				cpuTime: {
-					selfCPUTime: 10 as MicroSeconds_number,
-					aggregatedCPUTime: 10 as MicroSeconds_number,
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 20 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 20 as MilliJoule_number,
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 20 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 20 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 10 as MicroSeconds_number,
+				aggregatedCPUTime: 10 as MicroSeconds_number,
+				// cpu energy
+				selfCPUEnergyConsumption: 20 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 20 as MilliJoule_number,
+				
+				// ram energy
+				selfRAMEnergyConsumption: 20 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 20 as MilliJoule_number
 			}
 		)
-		instance.addSensorValuesToExtern(
+		const {
+			sourceNodeMetaData: externNode2
+		} = instance.addToExtern(
 			new UnifiedPath('./test.js'), // path does not exist in reality 
 			nodeModule, // points to the profiler core package itself
-			'{root}.{class:Package}.{method:method2}' as SourceNodeIdentifier_string,
+			'{root}.{class:Package}.{method:method2}' as SourceNodeIdentifier_string
+		)
+
+		externNode2.addToSensorValues(
 			{
-				cpuTime: {
-					selfCPUTime: 80 as MicroSeconds_number,
-					aggregatedCPUTime: 80 as MicroSeconds_number,
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 160 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 160 as MilliJoule_number,
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 160 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 160 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 80 as MicroSeconds_number,
+				aggregatedCPUTime: 80 as MicroSeconds_number,
+			
+				// cpu energy
+				selfCPUEnergyConsumption: 160 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 160 as MilliJoule_number,
+			
+				// ram energy
+				selfRAMEnergyConsumption: 160 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 160 as MilliJoule_number
 			}
 		)
 		return instance

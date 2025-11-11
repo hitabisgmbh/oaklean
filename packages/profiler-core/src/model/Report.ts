@@ -33,16 +33,15 @@ import {
 	SourceNodeMetaDataType,
 	ReportKind,
 	NodeModuleIdentifier_string,
-	IPureCPUTime,
-	IPureCPUEnergyConsumption,
-	IPureRAMEnergyConsumption,
 	ModuleID_number,
 	IndexRequestType,
 	PathID_number,
 	IReport,
 	ReportType,
 	ISourceFileMetaData,
-	IModuleReport
+	IModuleReport,
+	SourceNodeID_number,
+	SourceNodeMetaDataType_Node
 } from '../types'
 
 
@@ -55,7 +54,7 @@ export class Report extends BaseModel {
 	reportVersion: string
 	kind: ReportKind
 	relativeRootDir?: UnifiedPath
-	private _lang_internalHeadlessSensorValues?: SensorValues
+	private _headlessSensorValues?: SensorValues
 	private _lang_internal?: ModelMap<PathID_number, SourceFileMetaData>
 	private _intern?: ModelMap<PathID_number, SourceFileMetaData>
 	private _extern?: ModelMap<ModuleID_number, ModuleReport>
@@ -75,6 +74,98 @@ export class Report extends BaseModel {
 		this.kind = kind
 		this.moduleIndex = moduleIndex
 		this.internID = currentInternID++
+	}
+
+	/**
+	 * Resolve a source node ID to its corresponding source node metadata within this report.
+	 * @param report - The report to which the source node belongs (necessary for lang internal and extern).
+	 * @param globalIndex - The global index of the project report.
+	 * @param sourceNodeID - The unique identifier of the source node to resolve.
+	 * @returns An object containing either the resolved report, source file metadata, and source node metadata,
+	 *          or an error indication if the resolution fails.
+	 */
+	resolveSourceNodeID(
+		globalIndex: GlobalIndex,
+		sourceNodeID: SourceNodeID_number
+	): {
+		error: true
+	 } | {
+		error: true,
+		report: ProjectReport | ModuleReport
+	 } | {
+		error: true
+		report: ProjectReport | ModuleReport,
+		sourceFileMetaData: SourceFileMetaData,
+	 } | {
+		error: false,
+		report: ProjectReport | ModuleReport,
+		sourceFileMetaData: SourceFileMetaData,
+		sourceNode: SourceNodeMetaData<SourceNodeMetaDataType_Node>
+	 } {
+		const sourceNodeIndex = globalIndex.getSourceNodeIndexByID(sourceNodeID)
+		if (sourceNodeIndex === undefined) {
+			throw new Error(
+				'Report.getSourceNodeMetaDataByID: could not resolve source node index from sourceNodeID: ' +
+				sourceNodeID.toString()
+			)
+		}
+		const pathIndex = sourceNodeIndex.pathIndex
+		if (pathIndex.id === undefined) {
+			return {
+				error: true
+			}
+		}
+		const moduleIndex = pathIndex.moduleIndex
+
+		const reportToCheck = moduleIndex.identifier === '{node}' || this.moduleIndex === moduleIndex ?
+			(this as unknown as ModuleReport | ProjectReport) :
+			this.extern.get(moduleIndex.id as ModuleID_number)
+
+		if (reportToCheck === undefined) {
+			return {
+				error: true
+			}
+		}
+
+		if (reportToCheck !== undefined) {
+			const sourceFileMetaData = reportToCheck.getSourceFileMetaDataByPathID(pathIndex.id)
+			if (sourceFileMetaData === undefined) {
+				return {
+					error: true,
+					report: reportToCheck
+				}
+			}
+			const sourceNode = sourceFileMetaData.functions.get(sourceNodeID)
+			if (sourceNode === undefined) {
+				return {
+					error: true,
+					report: reportToCheck,
+					sourceFileMetaData
+				}
+			}
+			return {
+				error: false,
+				report: reportToCheck,
+				sourceFileMetaData,
+				sourceNode
+			}
+		}
+		return {
+			error: true,
+			report: reportToCheck
+		}
+	}
+
+	getSourceFileMetaDataByPathID(pathID: PathID_number) {
+		let sourceFileMetaData = this.lang_internal.get(pathID)
+		if (sourceFileMetaData !== undefined) {
+			return sourceFileMetaData
+		}
+		sourceFileMetaData = this.intern.get(pathID)
+		if (sourceFileMetaData !== undefined) {
+			return sourceFileMetaData
+		}
+		return undefined
 	}
 
 	normalize(
@@ -138,15 +229,15 @@ export class Report extends BaseModel {
 		this._extern = new_extern
 	}
 
-	get lang_internalHeadlessSensorValues() {
-		if (this._lang_internalHeadlessSensorValues === undefined) {
-			this._lang_internalHeadlessSensorValues = new SensorValues({})
+	get headlessSensorValues() {
+		if (this._headlessSensorValues === undefined) {
+			this._headlessSensorValues = new SensorValues({})
 		}
-		return this._lang_internalHeadlessSensorValues
+		return this._headlessSensorValues
 	}
 
-	set lang_internalHeadlessSensorValues(value: SensorValues) {
-		this._lang_internalHeadlessSensorValues = value
+	set headlessSensorValues(value: SensorValues) {
+		this._headlessSensorValues = value
 	}
 
 	get lang_internal(): ModelMap<PathID_number, SourceFileMetaData> {
@@ -236,28 +327,6 @@ export class Report extends BaseModel {
 		)
 	}
 
-	// IMPORTANT to change when new measurement type gets added
-	addSensorValuesToLangInternal(
-		filePath: LangInternalPath_string,
-		functionIdentifier: LangInternalSourceNodeIdentifier_string,
-		{
-			cpuTime,
-			cpuEnergyConsumption,
-			ramEnergyConsumption
-		}: {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption,
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		}
-	): SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNode> {
-		const sourceNodeMetaData = this.addToLangInternal(
-			filePath,
-			functionIdentifier
-		)
-		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
-		return sourceNodeMetaData
-	}
-
 	addToIntern(
 		filePath: UnifiedPath_string,
 		functionIdentifier: SourceNodeIdentifier_string
@@ -278,28 +347,6 @@ export class Report extends BaseModel {
 			functionIdentifier,
 			SourceNodeMetaDataType.SourceNode
 		)
-	}
-
-	// IMPORTANT to change when new measurement type gets added
-	addSensorValuesToIntern(
-		filePath: UnifiedPath_string,
-		functionIdentifier: SourceNodeIdentifier_string,
-		{
-			cpuTime,
-			cpuEnergyConsumption,
-			ramEnergyConsumption
-		}: {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption,
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		}
-	): SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> {
-		const sourceNodeMetaData = this.addToIntern(
-			filePath,
-			functionIdentifier
-		)
-		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
-		return sourceNodeMetaData
 	}
 
 	addToExtern(
@@ -324,40 +371,6 @@ export class Report extends BaseModel {
 			sourceNodeMetaData: sourceNodeMetaData
 		}
 	}
-
-	// IMPORTANT to change when new measurement type gets added
-	addSensorValuesToExtern(
-		filePath: UnifiedPath,
-		nodeModule: NodeModule,
-		functionIdentifier: SourceNodeIdentifier_string,
-		{
-			cpuTime,
-			cpuEnergyConsumption,
-			ramEnergyConsumption
-		}: {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		}
-	): {
-			report: ModuleReport,
-			sourceNodeMetaData: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
-		} {
-		const {
-			report,
-			sourceNodeMetaData
-		} = this.addToExtern(
-			filePath,
-			nodeModule,
-			functionIdentifier,
-		)
-		sourceNodeMetaData.addToSensorValues({ cpuTime, cpuEnergyConsumption, ramEnergyConsumption })
-		return {
-			report,
-			sourceNodeMetaData
-		}
-	}
-
 	/**
 	 * Returns the meta data of a file
 	 * 
@@ -476,7 +489,7 @@ export class Report extends BaseModel {
 			reportVersion: this.reportVersion,
 			kind: this.kind,
 			relativeRootDir: this.relativeRootDir?.toJSON(),
-			lang_internalHeadlessSensorValues: this.lang_internalHeadlessSensorValues.toJSON(),
+			headlessSensorValues: this.headlessSensorValues.toJSON(),
 			lang_internal: this.lang_internal.toJSON<ISourceFileMetaData>(),
 			intern: this.intern.toJSON<ISourceFileMetaData>(),
 			extern: this.extern.toJSON<IModuleReport>(),
@@ -515,8 +528,8 @@ export class Report extends BaseModel {
 			}
 		}
 
-		if (data.lang_internalHeadlessSensorValues) {
-			result.lang_internalHeadlessSensorValues = SensorValues.fromJSON(data.lang_internalHeadlessSensorValues)
+		if (data.headlessSensorValues) {
+			result.headlessSensorValues = SensorValues.fromJSON(data.headlessSensorValues)
 		}
 
 		if (data.intern) {
@@ -614,7 +627,7 @@ export class Report extends BaseModel {
 		const version = args[0].reportVersion
 		result.reportVersion = version
 
-		const lang_internalHeadlessSensorValues: SensorValues[] = []
+		const headlessSensorValues: SensorValues[] = []
 		const valuesToMerge: {
 			lang_internal: Record<LangInternalPath_string, SourceFileMetaData[]>,
 			intern: Record<UnifiedPath_string, SourceFileMetaData[]>,
@@ -629,7 +642,7 @@ export class Report extends BaseModel {
 			if (currentProjectReport.reportVersion !== version) {
 				throw new Error('ProjectReport.merge: Project reports versions are not compatible')
 			}
-			lang_internalHeadlessSensorValues.push(currentProjectReport.lang_internalHeadlessSensorValues)
+			headlessSensorValues.push(currentProjectReport.headlessSensorValues)
 
 			for (const [langInternalPathID, sourceFileMetaData] of currentProjectReport.lang_internal.entries()) {
 				const langInternalPathIndex = currentProjectReport.getPathIndexByID(langInternalPathID)
@@ -706,7 +719,7 @@ export class Report extends BaseModel {
 				ModuleReport.merge(nodeModuleIndex, ...moduleReports)
 			)
 		}
-		result.lang_internalHeadlessSensorValues = SensorValues.sum(...lang_internalHeadlessSensorValues)
+		result.headlessSensorValues = SensorValues.sum(...headlessSensorValues)
 
 		return result
 	}
@@ -726,7 +739,7 @@ export class Report extends BaseModel {
 		// if current Oaklean version is greater or equal to 0.1.4
 		// add lang_internal_headless_cpu_time to the buffer
 		if (VersionHelper.compare(this.reportVersion, '0.1.4') >= 0) {
-			buffers.push(this.lang_internalHeadlessSensorValues.toBuffer())
+			buffers.push(this.headlessSensorValues.toBuffer())
 		}
 
 		buffers.push(
@@ -777,16 +790,16 @@ export class Report extends BaseModel {
 			remainingBuffer = newRemainingBuffer3
 		}
 
-		let langInternalHeadLessSensorValues: SensorValues | undefined = undefined
+		let headlessSensorValues: SensorValues | undefined = undefined
 		// if the version of the Report is greater or equal to 0.1.4
 		// consume lang_internal_headless_cpu_time from the buffer
 		if (VersionHelper.compare(reportVersion, '0.1.4') >= 0) {
 			const {
-				instance: langInternalHeadLessSensorValues_instance,
+				instance: headlessSensorValues_instance,
 				remainingBuffer: newRemainingBuffer3_1
 			} = SensorValues.consumeFromBuffer(remainingBuffer)
 			remainingBuffer = newRemainingBuffer3_1
-			langInternalHeadLessSensorValues = langInternalHeadLessSensorValues_instance
+			headlessSensorValues = headlessSensorValues_instance
 		}
 
 		// if the version of the Report is less or equal to 0.1.4
@@ -848,8 +861,8 @@ export class Report extends BaseModel {
 		result._intern = intern
 		result._lang_internal = lang_internal
 		result._extern = extern
-		if (langInternalHeadLessSensorValues) {
-			result.lang_internalHeadlessSensorValues = langInternalHeadLessSensorValues
+		if (headlessSensorValues) {
+			result.headlessSensorValues = headlessSensorValues
 		}
 
 		return {

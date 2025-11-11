@@ -27,7 +27,7 @@ export interface IReport {
 	reportVersion: string,
 	kind: ReportKind,
 	relativeRootDir?: UnifiedPath_string
-	lang_internalHeadlessSensorValues?: ISensorValues
+	headlessSensorValues?: ISensorValues
 	lang_internal?: Record<PathID_number, ISourceFileMetaData>
 	intern?: Record<PathID_number, ISourceFileMetaData>
 	extern?: Record<ModuleID_number, IModuleReport>

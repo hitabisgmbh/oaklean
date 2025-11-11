@@ -6,7 +6,6 @@ import {
 } from '@oaklean/profiler'
 import {
 	ProfilerConfig,
-	APP_NAME,
 	SensorInterfaceType,
 	LoggerHelper,
 	PerformanceHelper,
@@ -24,7 +23,7 @@ export default async function () {
 	}
 	const performance = new PerformanceHelper()
 	performance.start('jestEnv.setup')
-	LoggerHelper.log(`\n(${APP_NAME} Profiler) Clean up Measurements`)
+	LoggerHelper.appPrefix.log('Clean up Measurements')
 	performance.start('jestEnv.setup.resolveConfig')
 	const profilerConfig = ProfilerConfig.autoResolve()
 	performance.stop('jestEnv.setup.resolveConfig')
@@ -32,15 +31,13 @@ export default async function () {
 		profilerConfig.getOutDir().join('jest')
 	)
 
-	LoggerHelper.log(`(${APP_NAME} Profiler) V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
+	LoggerHelper.appPrefix.log(`V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
 	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
 	const sensorInterfaceOptions = profilerConfig.getSensorInterfaceOptions()
 	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
 	if (sensorInterfaceOptions !== undefined) {
-		LoggerHelper.log(`(${APP_NAME} Profiler) Using SensorInterface: `, profilerConfig.getSensorInterfaceType())
-		LoggerHelper.log(
-			`(${APP_NAME} Profiler) SensorInterface Sample Interval: ${sensorInterfaceOptions.sampleInterval}ms`
-		)
+		LoggerHelper.appPrefix.log('Using SensorInterface: ', profilerConfig.getSensorInterfaceType())
+		LoggerHelper.appPrefix.log(`SensorInterface Sample Interval: ${sensorInterfaceOptions.sampleInterval}ms`)
 
 		performance.start('jestEnv.setup.Profiler.getSensorInterface')
 		const sensorInterface = Profiler.getSensorInterface(profilerConfig)
@@ -50,30 +47,30 @@ export default async function () {
 			const canBeExecuted = await sensorInterface.canBeExecuted()
 			performance.stop('jestEnv.setup.sensorInterface.canBeExecuted')
 			if (canBeExecuted === false) {
-				LoggerHelper.error(
-					`(${APP_NAME} Profiler) Sensor Interface cannot be executed with these permissions`
+				LoggerHelper.appPrefix.error(
+					'Sensor Interface cannot be executed with these permissions'
 				)
 			} else {
 				if (sensorInterface.type() === SensorInterfaceType.perf) {
 					const availableMeasurementTypes = await (
 						sensorInterface as PerfSensorInterface).availableMeasurementTypes()
-					LoggerHelper.log(
-						`(${APP_NAME} Profiler) Measure CPU Energy: ` +
+					LoggerHelper.appPrefix.log(
+						'Measure CPU Energy: ' +
 						`${availableMeasurementTypes[PerfEvent.ENERGY_CORES]}`
 					)
-					LoggerHelper.log(
-						`(${APP_NAME} Profiler) Measure RAM Energy: ` +
+					LoggerHelper.appPrefix.log(
+						'Measure RAM Energy: ' +
 						`${availableMeasurementTypes[PerfEvent.ENERGY_RAM]}`
 					)
 				}
 			}
 		} else {
-			LoggerHelper.log(`(${APP_NAME} Profiler) Something went wrong loading the SensorInterface`)
+			LoggerHelper.appPrefix.log('Something went wrong loading the SensorInterface')
 		}
 
 	} else {
-		LoggerHelper.log(
-			`(${APP_NAME} Profiler) no SensorInterface configured ` +
+		LoggerHelper.appPrefix.log(
+			'no SensorInterface configured ' +
 			'(no energy measurements will be collected, only cpu time)'
 		)
 	}

@@ -9,6 +9,7 @@ import { NodeModuleUtils } from './NodeModuleUtils'
 import { CPUProfileSourceLocation } from './CPUProfile/CPUProfileSourceLocation'
 import { ExternalResourceHelper } from './ExternalResourceHelper'
 
+import { UNKNOWN_SCRIPTS_FOLDER_NAME } from '../constants'
 import { SourceMap } from '../model/SourceMap'
 import { NodeModule } from '../model/NodeModule'
 import { ProgramStructureTree } from '../model/ProgramStructureTree'
@@ -36,6 +37,8 @@ type NodeModulePerFilePathCacheResult = ReturnType<typeof NodeModuleUtils.nodeMo
  * If so, it determines the associated Node module.
  */
 export class ResolveFunctionIdentifierHelper {
+	public hideOriginalSourceFileNotExistErrors = false
+
 	private rootDir: UnifiedPath
 	private externalResourceHelper: ExternalResourceHelper
 
@@ -207,16 +210,28 @@ export class ResolveFunctionIdentifierHelper {
 				functionIdentifier
 			}
 		}
-		// determine the node module of the source node location if there is one
-		const {
+
+		let {
 			relativeNodeModulePath,
 			nodeModule
-		} = this.nodeModuleFromFilePath(sourceNodeLocation.relativeFilePath)
+		}: NodeModulePerFilePathCacheResult = {
+			relativeNodeModulePath: null,
+			nodeModule: null
+		}
 
-		if (relativeNodeModulePath && nodeModule) {
-			// since the source node location is within a node module
-			// adjust the relativeFilePath so its relative to that node module directory
-			sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(sourceNodeLocation.relativeFilePath)
+		if (sourceNodeLocation.relativeFilePath.toString() !== './') {
+			// determine the node module of the source node location if there is one
+			({ relativeNodeModulePath, nodeModule } =
+				this.nodeModuleFromFilePath(sourceNodeLocation.relativeFilePath))
+
+			if (relativeNodeModulePath && nodeModule) {
+				// since the source node location is within a node module
+				// adjust the relativeFilePath so its relative to that node module directory
+				sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(sourceNodeLocation.relativeFilePath)
+			}
+		} else {
+			sourceNodeLocation.relativeFilePath = new UnifiedPath(UNKNOWN_SCRIPTS_FOLDER_NAME, sourceLocation.scriptID)
+			functionIdentifierPresentInOriginalFile = false
 		}
 
 		if (
@@ -226,22 +241,26 @@ export class ResolveFunctionIdentifierHelper {
 			// The original source file does not exist, only print an error if:
 			// - the source file is NOT part of a node module,
 			//		since node modules often include source maps that point to non-existing files we ignore them
-			LoggerHelper.error(
-				'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: original source file does not exist', {
-					rootDir: this.rootDir.toString(),
-					sources: sourceMap?.sources,
-					url: sourceLocation.absoluteUrl.toString(),
-					lineNumber,
-					columnNumber,
-					triedToParse: originalSourceFileNotFoundError
-				}
-			)
+			if (this.hideOriginalSourceFileNotExistErrors === false) {
+				LoggerHelper.error(
+					'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: original source file does not exist', {
+						rootDir: this.rootDir.toString(),
+						sources: sourceMap?.sources,
+						url: sourceLocation.absoluteUrl.toString(),
+						scriptID: sourceLocation.scriptID,
+						lineNumber,
+						columnNumber,
+						triedToParse: originalSourceFileNotFoundError
+					}
+				)
+			}
 		}
 
 		if (functionIdentifier === '') {
 			LoggerHelper.error(
 				'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: functionIdentifier should not be empty', {
 				url: sourceLocation.absoluteUrl.toString(),
+				scriptID: sourceLocation.scriptID,
 				lineNumber,
 				columnNumber
 			})

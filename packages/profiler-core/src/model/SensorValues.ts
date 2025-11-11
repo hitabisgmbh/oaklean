@@ -269,6 +269,7 @@ export class SensorValues extends BaseModel {
 		}
 	}
 
+	// IMPORTANT to change when new measurement type gets added
 	public static sum(...args: SensorValues[]): SensorValues {
 		const result = new SensorValues({})
 
@@ -309,6 +310,7 @@ export class SensorValues extends BaseModel {
 		return result
 	}
 
+	// IMPORTANT to change when new measurement type gets added
 	public static max(...args: SensorValues[]): SensorValues {
 		const result = new SensorValues({})
 
@@ -384,6 +386,7 @@ export class SensorValues extends BaseModel {
 		return result
 	}
 
+	// IMPORTANT to change when new measurement type gets added
 	public static equals(...args: SensorValues[]) {
 		if (args.length === 0) {
 			return true
@@ -532,6 +535,7 @@ export class SensorValues extends BaseModel {
 			other.selfRAMEnergyConsumption,
 			sign
 		)
+		return this
 	}
 
 	// IMPORTANT to change when new measurement type gets added
@@ -554,6 +558,7 @@ export class SensorValues extends BaseModel {
 			other.aggregatedRAMEnergyConsumption,
 			sign
 		)
+		return this
 	}
 
 
@@ -577,6 +582,7 @@ export class SensorValues extends BaseModel {
 			other.aggregatedRAMEnergyConsumption,
 			sign
 		)
+		return this
 	}
 
 	// IMPORTANT to change when new measurement type gets added
@@ -599,6 +605,30 @@ export class SensorValues extends BaseModel {
 			other.aggregatedRAMEnergyConsumption,
 			sign
 		)
+		return this
+	}
+
+	// IMPORTANT to change when new measurement type gets added
+	addSelfToExtern(
+		other: SensorValues | Partial<ISensorValues>,
+		sign = 1
+	) {
+		this.externCPUTime = UnitHelper.sumMicroSeconds(
+			this.externCPUTime,
+			other.selfCPUTime,
+			sign
+		)
+		this.externCPUEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.externCPUEnergyConsumption,
+			other.selfCPUEnergyConsumption,
+			sign
+		)
+		this.externRAMEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.externRAMEnergyConsumption,
+			other.selfRAMEnergyConsumption,
+			sign
+		)
+		return this
 	}
 
 	// IMPORTANT to change when new measurement type gets added
@@ -621,6 +651,30 @@ export class SensorValues extends BaseModel {
 			other.aggregatedRAMEnergyConsumption,
 			sign
 		)
+		return this
+	}
+
+	// IMPORTANT to change when new measurement type gets added
+	addSelfToLangInternal(
+		other: SensorValues | Partial<ISensorValues>,
+		sign = 1
+	) {
+		this.langInternalCPUTime = UnitHelper.sumMicroSeconds(
+			this.langInternalCPUTime,
+			other.selfCPUTime,
+			sign
+		)
+		this.langInternalCPUEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.langInternalCPUEnergyConsumption,
+			other.selfCPUEnergyConsumption,
+			sign
+		)
+		this.langInternalRAMEnergyConsumption = UnitHelper.sumMilliJoule(
+			this.langInternalRAMEnergyConsumption,
+			other.selfRAMEnergyConsumption,
+			sign
+		)
+		return this
 	}
 
 	add({

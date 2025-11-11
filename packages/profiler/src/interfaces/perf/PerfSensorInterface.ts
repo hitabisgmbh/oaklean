@@ -43,14 +43,18 @@ export class PerfSensorInterface extends BaseSensorInterface {
 
 	private _availableMeasurementTypes: MeasurementTypeAvailable | undefined
 
+	private _platform: NodeJS.Platform
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private cleanExit: ((...args: any[]) => void) | undefined
 
 	constructor(options: IPerfSensorInterfaceOptions, debugOptions?: {
 		startTime: NanoSeconds_BigInt,
-		stopTime: NanoSeconds_BigInt
+		stopTime: NanoSeconds_BigInt,
+		platform?: 'linux'
 	}) {
 		super()
+		this._platform = debugOptions?.platform ?? process.platform
 		this._executable = 'perf'
 		this._options = options
 		
@@ -79,6 +83,11 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	}
 
 	async canBeExecuted(): Promise<boolean> {
+		if (this._platform !== 'linux') {
+			LoggerHelper.appPrefix.error('PerfSensorInterface: This sensor interface can only be used on Linux. Your platform:', this._platform)
+			return false
+		}
+
 		const availableMeasurementTypes = await this.availableMeasurementTypes()
 
 		return availableMeasurementTypes[PerfEvent.ENERGY_CORES] ||

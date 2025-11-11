@@ -7,6 +7,7 @@ import { SystemInformation } from './SystemInformation'
 import { MetricsDataCollection } from './interfaces/MetricsDataCollection'
 import { GlobalIndex } from './indices/GlobalIndex'
 import { ModuleIndex } from './indices/ModuleIndex'
+import { SourceNodeGraph } from './SourceNodeGraph'
 
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 import {
@@ -17,8 +18,9 @@ import {
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
-import { InsertCPUProfileHelper } from '../helper/InsertCPUProfileHelper'
 import { ExternalResourceHelper } from '../helper/ExternalResourceHelper'
+import { ResolveFunctionIdentifierHelper } from '../helper/ResolveFunctionIdentifierHelper'
+import { InsertCPUProfileStateMachine } from '../helper/InsertCPUProfileHelper/InsertCPUProfileStateMachine'
 // Types
 import {
 	ReportKind,
@@ -33,6 +35,8 @@ export class ProjectReport extends Report {
 	executionDetails: IProjectReportExecutionDetails
 	projectMetaData: IProjectMetaData
 	globalIndex: GlobalIndex
+
+	private _sourceNodeGraph: SourceNodeGraph | undefined
 
 	constructor(
 		executionDetails: IProjectReportExecutionDetails,
@@ -65,6 +69,14 @@ export class ProjectReport extends Report {
 				projectID: usedConfig.getProjectIdentifier()
 			}
 		}
+	}
+
+	asSourceNodeGraph() : SourceNodeGraph {
+		if (this._sourceNodeGraph === undefined) {
+			const graph = SourceNodeGraph.fromProjectReport(this)
+			this._sourceNodeGraph = graph
+		}
+		return this._sourceNodeGraph
 	}
 
 	normalize() {
@@ -231,11 +243,15 @@ export class ProjectReport extends Report {
 		externalResourceHelper: ExternalResourceHelper,
 		metricsDataCollection?: MetricsDataCollection
 	) {
-		await InsertCPUProfileHelper.insertCPUProfile(
-			this,
+		const stateMachine = new InsertCPUProfileStateMachine(this)
+		const resolveFunctionIdentifierHelper = new ResolveFunctionIdentifierHelper(
 			rootDir,
+			externalResourceHelper
+		)
+		await stateMachine.insertCPUProfile(
+			rootDir,
+			resolveFunctionIdentifierHelper,
 			profile,
-			externalResourceHelper,
 			metricsDataCollection
 		)
 	}

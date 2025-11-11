@@ -778,8 +778,8 @@
   "reportVersion": "0.1.5",
   "kind": 0,
   "relativeRootDir": "../../../../../..",
-  "lang_internalHeadlessSensorValues": {
-    "selfCPUTime": 9831
+  "headlessSensorValues": {
+    "langInternalCPUTime": 9831
   },
   "lang_internal": {
     "1": {
@@ -1445,7 +1445,7 @@
             "profilerHits": 16,
             "selfCPUTime": 41,
             "aggregatedCPUTime": 396041,
-            "internCPUTime": 395958,
+            "internCPUTime": 791833,
             "langInternalCPUTime": 42
           },
           "lang_internal": {
@@ -1472,7 +1472,7 @@
               "sensorValues": {
                 "profilerHits": 4,
                 "selfCPUTime": 41,
-                "aggregatedCPUTime": 166
+                "aggregatedCPUTime": 396041
               }
             }
           }
@@ -1840,7 +1840,7 @@
           "sensorValues": {
             "profilerHits": 6,
             "aggregatedCPUTime": 416,
-            "internCPUTime": 416
+            "internCPUTime": 582
           },
           "intern": {
             "101": {
@@ -1867,7 +1867,7 @@
               "sensorValues": {
                 "profilerHits": 2,
                 "selfCPUTime": 41,
-                "aggregatedCPUTime": 250
+                "aggregatedCPUTime": 416
               }
             }
           }
@@ -2052,7 +2052,7 @@
       },
       "reportVersion": "0.1.5",
       "kind": 0,
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "lang_internal": {
         "1": {
           "path": "",

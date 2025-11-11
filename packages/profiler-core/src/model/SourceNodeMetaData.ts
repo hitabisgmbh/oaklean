@@ -13,17 +13,16 @@ import {
 	SourceNodeIndexType,
 	IndexRequestType,
 	SourceNodeMetaDataType,
+	SourceNodeMetaDataType_Node,
 	ISourceNodeMetaData,
 	PathID_number,
-	IPureCPUTime,
-	IPureCPUEnergyConsumption,
-	IPureRAMEnergyConsumption,
 	MilliJoule_number,
 	LangInternalPath_string,
 	SourceNodeIdentifier_string,
 	UnifiedPath_string,
 	GlobalSourceNodeIdentifier_string,
-	MicroSeconds_number
+	MicroSeconds_number,
+	ISensorValues
 } from '../types'
 
 function areNumbersClose(a: number, b: number, epsilon = 1e-10) {
@@ -32,20 +31,17 @@ function areNumbersClose(a: number, b: number, epsilon = 1e-10) {
 
 export type SourceNodeMetaDataTypeNotAggregate = Exclude<SourceNodeMetaDataType, SourceNodeMetaDataType.Aggregate>
 
-type SourceNodeMetaDataTypeWithChildren =
-SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
-
-type LangInternalMap<T> = T extends SourceNodeMetaDataTypeWithChildren ? ModelMap<
+type LangInternalMap<T> = T extends SourceNodeMetaDataType_Node ? ModelMap<
 SourceNodeID_number,
 SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
 > : never
 
-type InternMap<T> = T extends SourceNodeMetaDataTypeWithChildren ? ModelMap<
+type InternMap<T> = T extends SourceNodeMetaDataType_Node ? ModelMap<
 SourceNodeID_number,
 SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
 > : never
 
-type ExternMap<T> = T extends SourceNodeMetaDataTypeWithChildren ? ModelMap<
+type ExternMap<T> = T extends SourceNodeMetaDataType_Node ? ModelMap<
 SourceNodeID_number,
 SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
 > : never
@@ -453,7 +449,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 	}
 
 	static couldHaveChildren(object: SourceNodeMetaData<SourceNodeMetaDataType>):
-		object is SourceNodeMetaData<SourceNodeMetaDataTypeWithChildren> {
+		object is SourceNodeMetaData<SourceNodeMetaDataType_Node> {
 		return object.type === SourceNodeMetaDataType.SourceNode ||
 		object.type === SourceNodeMetaDataType.LangInternalSourceNode
 	}
@@ -488,45 +484,15 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		return this._extern as ExternMap<T>
 	}
 
-	// IMPORTANT to change when new measurement type gets added
-	addToSensorValues({
-		cpuTime,
-		cpuEnergyConsumption,
-		ramEnergyConsumption
-	}: {
-		cpuTime: IPureCPUTime,
-		cpuEnergyConsumption: IPureCPUEnergyConsumption,
-		ramEnergyConsumption: IPureRAMEnergyConsumption
-	}): SourceNodeMetaData<T> {
-		this.sensorValues.selfCPUTime = this.sensorValues.selfCPUTime +
-			(cpuTime.selfCPUTime || 0) as MicroSeconds_number
-		this.sensorValues.aggregatedCPUTime = this.sensorValues.aggregatedCPUTime +
-			(cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
-
-		this.sensorValues.selfCPUEnergyConsumption =
-			this.sensorValues.selfCPUEnergyConsumption +
-		(cpuEnergyConsumption.selfCPUEnergyConsumption || 0) as MilliJoule_number
-		this.sensorValues.aggregatedCPUEnergyConsumption =
-			this.sensorValues.aggregatedCPUEnergyConsumption +
-		(cpuEnergyConsumption.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-		
-		this.sensorValues.selfRAMEnergyConsumption =
-			this.sensorValues.selfRAMEnergyConsumption +
-			(ramEnergyConsumption.selfRAMEnergyConsumption || 0) as MilliJoule_number
-		this.sensorValues.aggregatedRAMEnergyConsumption =
-			this.sensorValues.aggregatedRAMEnergyConsumption +
-			(ramEnergyConsumption.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+	addToSensorValues(values: SensorValues | Partial<ISensorValues>): SourceNodeMetaData<T> {
+		this.sensorValues.addToSelf(values)
+		this.sensorValues.addToAggregated(values)
 		return this
 	}
 
-	// IMPORTANT to change when new measurement type gets added
 	addSensorValuesToLangInternal(
 		identifier: GlobalIdentifier,
-		values: {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption,
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		}
+		values: SensorValues | Partial<ISensorValues>
 	): SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference> {
 		if (!SourceNodeMetaData.couldHaveChildren(this)) {
 			throw new Error('Cannot only add sensor values to langInternal for SourceNode and LangInternalSourceNode')
@@ -548,32 +514,14 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			)
 			this.lang_internal.set(sourceNodeID, sourceNodeMetaData)
 		}
-		sourceNodeMetaData.addToSensorValues({
-			cpuTime: values.cpuTime,
-			cpuEnergyConsumption: values.cpuEnergyConsumption,
-			ramEnergyConsumption: values.ramEnergyConsumption
-		})
-		this.sensorValues.langInternalCPUTime = this.sensorValues.langInternalCPUTime +
-			(values.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
-
-		this.sensorValues.langInternalCPUEnergyConsumption =
-			this.sensorValues.langInternalCPUEnergyConsumption +
-		(values.cpuEnergyConsumption.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-
-		this.sensorValues.langInternalRAMEnergyConsumption =
-			this.sensorValues.langInternalRAMEnergyConsumption +
-			(values.ramEnergyConsumption.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+		this.sensorValues.addToLangInternal(values)
+		sourceNodeMetaData.addToSensorValues(values)
 		return sourceNodeMetaData
 	}
 
-	// IMPORTANT to change when new measurement type gets added
 	addSensorValuesToIntern(
 		identifier: GlobalIdentifier,
-		values: {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption,
-			ramEnergyConsumption: IPureRAMEnergyConsumption,
-		}
+		values: SensorValues | Partial<ISensorValues>,
 	): SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> {
 		if (!SourceNodeMetaData.couldHaveChildren(this)) {
 			throw new Error('Cannot only add sensor values to intern for SourceNode and LangInternalSourceNode')
@@ -594,32 +542,14 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			)
 			this.intern.set(sourceNodeID, sourceNodeMetaData)
 		}
-		sourceNodeMetaData.addToSensorValues({
-			cpuTime: values.cpuTime,
-			cpuEnergyConsumption: values.cpuEnergyConsumption,
-			ramEnergyConsumption: values.ramEnergyConsumption
-		})
-		this.sensorValues.internCPUTime = this.sensorValues.internCPUTime +
-			(values.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
-
-		this.sensorValues.internCPUEnergyConsumption =
-			this.sensorValues.internCPUEnergyConsumption +	
-		(values.cpuEnergyConsumption.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-		
-		this.sensorValues.internRAMEnergyConsumption =
-			this.sensorValues.internRAMEnergyConsumption +
-			(values.ramEnergyConsumption.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+		this.sensorValues.addToIntern(values)
+		sourceNodeMetaData.addToSensorValues(values)
 		return sourceNodeMetaData
 	}
 
-	// IMPORTANT to change when new measurement type gets added
 	addSensorValuesToExtern(
 		identifier: GlobalIdentifier,
-		values: {
-			cpuTime: IPureCPUTime,
-			cpuEnergyConsumption: IPureCPUEnergyConsumption,
-			ramEnergyConsumption: IPureRAMEnergyConsumption
-		}
+		values: SensorValues | Partial<ISensorValues>,
 	): SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> {
 		if (!SourceNodeMetaData.couldHaveChildren(this)) {
 			throw new Error('Cannot only add sensor values to extern for SourceNode and LangInternalSourceNode')
@@ -640,21 +570,8 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			)
 			this.extern.set(sourceNodeID, sourceNodeMetaData)	
 		}
-		sourceNodeMetaData.addToSensorValues({
-			cpuTime: values.cpuTime,
-			cpuEnergyConsumption: values.cpuEnergyConsumption,
-			ramEnergyConsumption: values.ramEnergyConsumption
-		})
-		this.sensorValues.externCPUTime = this.sensorValues.externCPUTime +
-			(values.cpuTime.aggregatedCPUTime || 0) as MicroSeconds_number
-
-		this.sensorValues.externCPUEnergyConsumption =
-			this.sensorValues.externCPUEnergyConsumption +	
-		(values.cpuEnergyConsumption.aggregatedCPUEnergyConsumption || 0) as MilliJoule_number
-	
-		this.sensorValues.externRAMEnergyConsumption =
-			this.sensorValues.externRAMEnergyConsumption +
-			(values.ramEnergyConsumption.aggregatedRAMEnergyConsumption || 0) as MilliJoule_number
+		this.sensorValues.addToExtern(values)
+		sourceNodeMetaData.addToSensorValues(values)
 		return sourceNodeMetaData
 	}
 

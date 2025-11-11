@@ -8,7 +8,8 @@ import {
 	IPureCPUEnergyConsumption,
 	IPureRAMEnergyConsumption,
 	EnergyValuesType,
-	MicroSeconds_number
+	MicroSeconds_number,
+	ISensorValues
 } from '../../types'
 
 export enum CPUNodeType {
@@ -68,6 +69,13 @@ export class CPUNode {
 		return (this._aggregatedEnergyConsumption = [totalCPU, totalRAM])
 	}
 
+	get cpuTime(): IPureCPUTime {
+		return {
+			selfCPUTime: this.cpuNode.selfTime as MicroSeconds_number,
+			aggregatedCPUTime: this.cpuNode.aggregateTime as MicroSeconds_number
+		}
+	}
+
 	get cpuEnergyConsumption(): IPureCPUEnergyConsumption {
 		return {
 			selfCPUEnergyConsumption: this.selfCPUEnergyConsumption,
@@ -82,20 +90,32 @@ export class CPUNode {
 		}
 	}
 
+	// IMPORTANT to change when new measurement type gets added
+	get sensorValues(): ISensorValues {
+		return {
+			...this.cpuTime,
+			...this.cpuEnergyConsumption,
+			...this.ramEnergyConsumption
+		}
+	}
+
 	get index(): number {
 		return this._index
 	}
 
-	get cpuTime(): IPureCPUTime {
-		return {
-			selfCPUTime: this.cpuNode.selfTime as MicroSeconds_number,
-			aggregatedCPUTime: this.cpuNode.aggregateTime as MicroSeconds_number
-		}
+	get childrenCount(): number {
+		return this.cpuNode.children.length
 	}
 
 	*children() {
 		for (const childId of this.cpuNode.children) {
 			yield this.cpuModel.getNode(childId)
+		}
+	}
+
+	*reversedChildren() {
+		for (let i = this.cpuNode.children.length - 1; i >= 0; i--) {
+			yield this.cpuModel.getNode(this.cpuNode.children[i])
 		}
 	}
 }

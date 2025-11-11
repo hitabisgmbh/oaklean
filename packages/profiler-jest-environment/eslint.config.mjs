@@ -3,6 +3,14 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import config from '../../eslint.config.mjs'
 
 export default defineConfig(
-	config,
-	globalIgnores(['**/*.js'])
+	{
+		extends: config,
+		languageOptions: {
+			parserOptions: {
+				tsconfigRootDir: import.meta.dirname,
+				project: ['./tsconfig.json']
+			}
+		}
+	},
+	globalIgnores(['*.js'])
 )
