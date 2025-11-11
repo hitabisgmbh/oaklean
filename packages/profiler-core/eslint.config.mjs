@@ -1,17 +1,14 @@
 // @ts-check
 import { defineConfig, globalIgnores } from 'eslint/config'
 import config from '../../eslint.config.mjs'
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-    
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(
 	{
 		extends: config,
 		languageOptions: {
 			parserOptions: {
-				tsconfigRootDir: __dirname
+				tsconfigRootDir: import.meta.dirname,
+				project: ['./tsconfig.eslint.json']
 			}
 		}
 	},

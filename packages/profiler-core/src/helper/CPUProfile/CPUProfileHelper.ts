@@ -2,11 +2,14 @@ import * as fs from 'fs'
 
 import type { Protocol as Cdp } from 'devtools-protocol'
 
+import { CPUModel } from './CPUModel'
+import { CPUNode } from './CPUNode'
 import { CPUProfileSourceLocation } from './CPUProfileSourceLocation'
 
 import { UnifiedPath } from '../../system/UnifiedPath'
 import { LoggerHelper } from '../LoggerHelper'
 import { JSONHelper } from '../JSONHelper'
+import { NanoSeconds_BigInt } from '../../types'
 
 export class CPUProfileHelper {
 	/**
@@ -45,7 +48,7 @@ export class CPUProfileHelper {
 				0,
 				node.callFrame
 			)
-			if (!location.isLangInternal && !location.isWASM && !location.isEmpty) {
+			if (!location.isLangInternal && !location.isWASM) {
 				node.callFrame.url = location.relativeUrl.toString()
 			}
 		}
@@ -69,6 +72,37 @@ export class CPUProfileHelper {
 				`Error loading CPU profile from ${cpuProfilePath.toPlatformString()}: ${error}`
 			)
 			return undefined
+		}
+	}
+
+	static async inspect(cpuProfile: Cdp.Profiler.Profile) {
+		const cpuModel = new CPUModel(
+			new UnifiedPath(__dirname).join('..'),
+			cpuProfile,
+			BigInt(0) as NanoSeconds_BigInt
+		)
+
+		const nodeCount = cpuModel.INodes.length
+		const sourceNodeLocationCount = cpuModel.CPUProfileSourceLocations.length
+		const sampleCount = cpuModel.samples.length
+		let totalHits = 0
+		let totalCPUTime = 0
+
+		function traverse(cpuNode: CPUNode) {
+			for (const child of cpuNode.children()) {
+				totalCPUTime += child.cpuTime.selfCPUTime || 0
+				totalHits += child.profilerHits
+				traverse(child)
+			}
+		}
+		traverse(cpuModel.getNode(0))
+
+		return {
+			nodeCount,
+			sourceNodeLocationCount,
+			sampleCount,
+			totalHits,
+			totalCPUTime,
 		}
 	}
 

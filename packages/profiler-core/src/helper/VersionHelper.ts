@@ -5,9 +5,9 @@ export class VersionHelper {
 	 * @param version - The version to compare.
 	 * @param to - The version to compare to.
 	 * @returns The comparison
-	 * 	1 if version is greater than to
-	 * 	- 1 if version is less than to
-	 * 	0 if version is equal to to
+	 * 	- 1 if version is greater than to
+	 * 	- -1 if version is less than to
+	 * 	- 0 if version is equal to to
 	 **/
 	static compare(version: string, to: string): number {
 		const versionParts = version.split('.')

@@ -58,12 +58,12 @@ export class ExportAssetHelper {
 		return this.outputDir().join(ACCUMULATED_REPORT_FILE_NAME)
 	}
 
-	static titleFromReportFilePath(
+	titleFromReportFilePath(
 		reportFilePath: UnifiedPath
 	): string {
-		const fileName = reportFilePath.basename()
-		if (fileName.endsWith(REPORT_FILE_EXTENSION)) {
-			return fileName.slice(0, -REPORT_FILE_EXTENSION.length)
+		const titlePath = this.outputDir().pathTo(reportFilePath).toString()
+		if (titlePath.endsWith(REPORT_FILE_EXTENSION)) {
+			return titlePath.slice(0, -REPORT_FILE_EXTENSION.length)
 		}
 		throw new Error(
 			`Invalid report file path: ${reportFilePath.toPlatformString()}. Expected to end

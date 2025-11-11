@@ -6,6 +6,8 @@ import { SensorValues } from '../../src/model/SensorValues'
 import { GlobalIndex } from '../../src/model/indices/GlobalIndex'
 import { PathIndex } from '../../src/model/indices/PathIndex'
 import { NodeModule } from '../../src/model/NodeModule'
+import { ModelMap } from '../../src/model/ModelMap'
+import { SourceNodeGraph } from '../../src/model/SourceNodeGraph'
 import {
 	ISourceFileMetaData,
 	SourceNodeMetaDataType,
@@ -20,7 +22,6 @@ import {
 	IAggregatedSourceNodeMetaData,
 	PathID_number
 } from '../../src/types'
-import { ModelMap } from '../../src'
 
 const EXAMPLE_SOURCE_FILE_META_DATA: ISourceFileMetaData = {
 	path: './file.js' as UnifiedPath_string,
@@ -180,13 +181,17 @@ describe('AggregatedSourceNodeMetaData', () => {
 
 function runInstanceTests(
 	title: string,
-	preDefinedInstance: () => SourceFileMetaData
+	preDefinedInstance: () => {
+		instance: SourceFileMetaData,
+		sourceNodeGraph: SourceNodeGraph
+	}
 ) {
 	describe(title, () => {
 		let instance: SourceFileMetaData
+		let sourceNodeGraph: SourceNodeGraph
 
 		beforeEach(() => {
-			instance = preDefinedInstance()
+			({ instance, sourceNodeGraph } = preDefinedInstance())
 		})
 
 		it('instance should be an instanceof SourceFileMetaData', () => {
@@ -255,7 +260,7 @@ function runInstanceTests(
 		})
 
 		test('totalSourceNodeMetaData', () => {
-			const result = instance.totalSourceNodeMetaData()
+			const result = instance.totalSourceNodeMetaData(sourceNodeGraph)
 			expect(Object.keys(result).length).toBe(4)
 
 			expect({
@@ -342,18 +347,17 @@ describe('SourceFileMetaData', () => {
 			SourceNodeMetaDataType.SourceNode
 		)
 		node1.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 2 as MicroSeconds_number,
-				aggregatedCPUTime: 2 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {
-				selfCPUEnergyConsumption: 4 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 4 as MilliJoule_number
-			},
-			ramEnergyConsumption: {
-				selfRAMEnergyConsumption: 4 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 4 as MilliJoule_number
-			}
+			// cpu time
+			selfCPUTime: 2 as MicroSeconds_number,
+			aggregatedCPUTime: 2 as MicroSeconds_number,
+
+			// cpu energy
+			selfCPUEnergyConsumption: 4 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 4 as MilliJoule_number,
+
+			// ram energy
+			selfRAMEnergyConsumption: 4 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 4 as MilliJoule_number
 		})
 		node1.sensorValues.profilerHits += 1
 
@@ -362,18 +366,17 @@ describe('SourceFileMetaData', () => {
 			SourceNodeMetaDataType.SourceNode
 		)
 		node2.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 3 as MicroSeconds_number,
-				aggregatedCPUTime: 3 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {
-				selfCPUEnergyConsumption: 6 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 6 as MilliJoule_number
-			},
-			ramEnergyConsumption: {
-				selfRAMEnergyConsumption: 6 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 6 as MilliJoule_number
-			}
+			// cpu time
+			selfCPUTime: 3 as MicroSeconds_number,
+			aggregatedCPUTime: 3 as MicroSeconds_number,
+		
+			// cpu energy
+			selfCPUEnergyConsumption: 6 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 6 as MilliJoule_number,
+		
+			// ram energy
+			selfRAMEnergyConsumption: 6 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 6 as MilliJoule_number
 		})
 		node2.sensorValues.profilerHits += 1
 
@@ -382,22 +385,24 @@ describe('SourceFileMetaData', () => {
 			SourceNodeMetaDataType.SourceNode
 		)
 		node3.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 2 as MicroSeconds_number,
-				aggregatedCPUTime: 2 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {
-				selfCPUEnergyConsumption: 4 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 4 as MilliJoule_number
-			},
-			ramEnergyConsumption: {
-				selfRAMEnergyConsumption: 4 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 4 as MilliJoule_number
-			}
+			// cpu time
+			selfCPUTime: 2 as MicroSeconds_number,
+			aggregatedCPUTime: 2 as MicroSeconds_number,
+		
+			// cpu energy
+			selfCPUEnergyConsumption: 4 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 4 as MilliJoule_number,
+		
+			// ram energy
+			selfRAMEnergyConsumption: 4 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 4 as MilliJoule_number
 		})
 		node3.sensorValues.profilerHits += 1
 
-		return instance
+		return {
+			instance,
+			sourceNodeGraph: new SourceNodeGraph()
+		}
 	})
 
 	describe('deserialization', () => {
@@ -428,7 +433,10 @@ describe('SourceFileMetaData', () => {
 			const instanceFromString = SourceFileMetaData.fromJSON(
 				JSON.stringify(EXAMPLE_SOURCE_FILE_META_DATA), pathIndex
 			)
-			return instanceFromString
+			return {
+				instance: instanceFromString,
+				sourceNodeGraph: new SourceNodeGraph()
+			}
 		})
 	})
 
@@ -449,7 +457,10 @@ describe('SourceFileMetaData', () => {
 
 		runInstanceTests('consume from buffer instance related', () => {
 			const { instance } = SourceFileMetaData.consumeFromBuffer(buffer, globalIndex)
-			return instance
+			return {
+				instance,
+				sourceNodeGraph: new SourceNodeGraph()
+			}
 		})
 	})
 
@@ -1180,73 +1191,46 @@ describe('SourceFileMetaData', () => {
 		)
 
 		methodD.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 1 as MicroSeconds_number,
-				aggregatedCPUTime: 1 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {},
-			ramEnergyConsumption: {}
+			selfCPUTime: 1 as MicroSeconds_number,
+			aggregatedCPUTime: 1 as MicroSeconds_number
 		})
 
 		methodA.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 1 as MicroSeconds_number,
-				aggregatedCPUTime: 6 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {},
-			ramEnergyConsumption: {}
+			selfCPUTime: 1 as MicroSeconds_number,
+			aggregatedCPUTime: 6 as MicroSeconds_number
 		})
 		methodA.addSensorValuesToIntern(
 			methodB.globalIdentifier(),
 			{
-				cpuTime: {
-					aggregatedCPUTime: 5 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {},
-				ramEnergyConsumption: {}
+				aggregatedCPUTime: 5 as MicroSeconds_number
 			}
 		)
 
 		methodB.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 2 as MicroSeconds_number,
-				aggregatedCPUTime: 5 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {},
-			ramEnergyConsumption: {}
+			selfCPUTime: 2 as MicroSeconds_number,
+			aggregatedCPUTime: 5 as MicroSeconds_number
 		})
 		methodB.addSensorValuesToIntern(
 			methodC.globalIdentifier(),
 			{
-				cpuTime: {
-					aggregatedCPUTime: 3 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {},
-				ramEnergyConsumption: {}
+				aggregatedCPUTime: 3 as MicroSeconds_number
 			}
 		)
 
 		methodC.addToSensorValues({
-			cpuTime: {
-				selfCPUTime: 2 as MicroSeconds_number,
-				aggregatedCPUTime: 3 as MicroSeconds_number
-			},
-			cpuEnergyConsumption: {},
-			ramEnergyConsumption: {}
+			selfCPUTime: 2 as MicroSeconds_number,
+			aggregatedCPUTime: 3 as MicroSeconds_number
 		})
 
 		methodC.addSensorValuesToIntern(
 			methodD.globalIdentifier(),
 			{
-				cpuTime: {
-					aggregatedCPUTime: 1 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {},
-				ramEnergyConsumption: {}
+				aggregatedCPUTime: 1 as MicroSeconds_number
 			}
 		)
 
-		const result = sourceFileMetaDataA.totalSourceNodeMetaData()
+		const sourceNodeGraph = new SourceNodeGraph()
+		const result = sourceFileMetaDataA.totalSourceNodeMetaData(sourceNodeGraph)
 
 		expect(result.sum.toJSON()).toEqual({
 			type: 5,

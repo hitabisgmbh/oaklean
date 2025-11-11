@@ -13,16 +13,25 @@ export default defineConfig(
 		// rules not applied to test files
 		rules: {
 			'@typescript-eslint/no-non-null-assertion': 'error',
-			'max-len': ['error', { code: 120, ignoreTrailingComments: true, ignoreStrings: true, ignoreRegExpLiterals: true }],
+			'max-len': [
+				'error',
+				{
+					code: 120,
+					ignoreTrailingComments: true,
+					ignoreStrings: true,
+					ignoreRegExpLiterals: true
+				}
+			]
 		},
 		ignores: ['**/*.test.ts']
 	},
 	{
 		plugins: {
 			'@stylistic': stylistic,
-			'import': eslintPluginImport
+			import: eslintPluginImport
 		},
 		rules: {
+			'@typescript-eslint/switch-exhaustiveness-check': 'error',
 			'@typescript-eslint/naming-convention': [
 				'warn',
 				{
@@ -77,6 +86,7 @@ export default defineConfig(
 	globalIgnores([
 		'**/*.d.ts',
 		'**/node_modules/**',
+		'**/coverage/**/*',
 		'**/jest.config.js',
 		'**/eslint.config.mjs'
 	])

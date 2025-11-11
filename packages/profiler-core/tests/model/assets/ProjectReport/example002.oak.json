@@ -1110,8 +1110,8 @@
   "reportVersion": "0.1.5",
   "kind": 0,
   "relativeRootDir": "../../../../../..",
-  "lang_internalHeadlessSensorValues": {
-    "selfCPUTime": 84
+  "headlessSensorValues": {
+    "langInternalCPUTime": 84
   },
   "lang_internal": {
     "1": {
@@ -1298,7 +1298,7 @@
             "profilerHits": 13,
             "selfCPUTime": 83,
             "aggregatedCPUTime": 430541,
-            "internCPUTime": 430416,
+            "internCPUTime": 860707,
             "langInternalCPUTime": 42
           },
           "lang_internal": {
@@ -1326,7 +1326,7 @@
               "sensorValues": {
                 "profilerHits": 5,
                 "selfCPUTime": 41,
-                "aggregatedCPUTime": 208
+                "aggregatedCPUTime": 430499
               }
             }
           }
@@ -1617,7 +1617,7 @@
             "profilerHits": 6,
             "selfCPUTime": 42,
             "aggregatedCPUTime": 333,
-            "internCPUTime": 291
+            "internCPUTime": 416
           },
           "intern": {
             "38": {
@@ -1641,7 +1641,7 @@
               "type": 3,
               "sensorValues": {
                 "profilerHits": 1,
-                "aggregatedCPUTime": 208
+                "aggregatedCPUTime": 333
               }
             }
           }
@@ -1820,7 +1820,7 @@
       },
       "reportVersion": "0.1.5",
       "kind": 0,
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "lang_internal": {
         "1": {
           "path": "",
@@ -2338,7 +2338,7 @@
           },
           "reportVersion": "0.1.5",
           "kind": 0,
-          "lang_internalHeadlessSensorValues": {},
+          "headlessSensorValues": {},
           "intern": {
             "84": {
               "path": "./lib/clean.js",
@@ -3702,7 +3702,7 @@
       },
       "reportVersion": "0.1.5",
       "kind": 0,
-      "lang_internalHeadlessSensorValues": {},
+      "headlessSensorValues": {},
       "lang_internal": {
         "1": {
           "path": "",

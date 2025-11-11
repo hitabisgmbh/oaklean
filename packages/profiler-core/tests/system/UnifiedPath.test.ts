@@ -51,6 +51,26 @@ describe('UnifiedPath', () => {
 		).toBe('file')
 	})
 
+	it('fileName()', () => {
+		const filePath = '/path/to/a/file.test.txt'
+
+		const pFile = new UnifiedPath(filePath)
+
+		expect(
+			pFile.filename()
+		).toBe('file.test')
+	})
+
+	it('extname()', () => {
+		const filePath = '/path/to/a/file.test.txt'
+
+		const pFile = new UnifiedPath(filePath)
+
+		expect(
+			pFile.extname()
+		).toBe('.txt')
+	})
+
 	it('pathTo()', () => {
 		const dirPath = '/path/to/dir'
 		const dirPathDeeper = '/path/to/a/deeper/dir'

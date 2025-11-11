@@ -3,7 +3,6 @@ import { Session } from 'inspector'
 
 import seedrandom from 'seedrandom'
 import {
-	APP_NAME,
 	ProfilerConfig,
 	ProjectReport,
 	IProjectReportExecutionDetails,
@@ -19,7 +18,8 @@ import {
 	ExternalResourceHelper,
 	RegistryHelper,
 	ExportAssetHelper,
-	CPUProfileHelper
+	CPUProfileHelper,
+	SensorInterfaceType
 } from '@oaklean/profiler-core'
 
 import { V8Profiler } from './model/V8Profiler'
@@ -69,7 +69,7 @@ export class Profiler {
 	static getSensorInterface(config: ProfilerConfig) {
 		const sensorInterfaceType = config.getSensorInterfaceType()
 		switch (sensorInterfaceType) {
-			case 'powermetrics': {
+			case SensorInterfaceType.powermetrics: {
 				const options = config.getSensorInterfaceOptions()
 				if (options === undefined) {
 					throw new Error('Profiler.getSensorInterface: sensorInterfaceOptions are not defined')
@@ -77,7 +77,7 @@ export class Profiler {
 				options.outputFilePath = config.getOutDir().join(options.outputFilePath).toPlatformString()
 				return new PowerMetricsSensorInterface(options)
 			}
-			case 'perf': {
+			case SensorInterfaceType.perf: {
 				const options = config.getSensorInterfaceOptions()
 				if (options === undefined) {
 					throw new Error('Profiler.getSensorInterface: sensorInterfaceOptions are not defined')
@@ -85,7 +85,7 @@ export class Profiler {
 				options.outputFilePath = config.getOutDir().join(options.outputFilePath).toPlatformString()
 				return new PerfSensorInterface(options)
 			}
-			case 'windows': {
+			case SensorInterfaceType.windows: {
 				const options = config.getSensorInterfaceOptions()
 				if (options === undefined) {
 					throw new Error('Profiler.getSensorInterface: sensorInterfaceOptions are not defined')
@@ -93,6 +93,8 @@ export class Profiler {
 				options.outputFilePath = config.getOutDir().join(options.outputFilePath).toPlatformString()
 				return new WindowsSensorInterface(options)
 			}
+			case undefined:
+				return undefined
 		}
 	}
 
@@ -115,7 +117,7 @@ export class Profiler {
 		async function resolve(origin: string) {
 			if (!stopped) {
 				stopped = true
-				LoggerHelper.log(`(${APP_NAME} Profiler) Finish Measurement, please wait...`)
+				LoggerHelper.appPrefix.log('Finish Measurement, please wait...')
 				await profiler.finish(title)
 				process.removeListener('exit', exitResolve)
 				process.removeListener('SIGINT', sigIntResolve)
@@ -127,7 +129,7 @@ export class Profiler {
 			}
 		}
 
-		LoggerHelper.log(`(${APP_NAME} Profiler) Measurement started`)
+		LoggerHelper.appPrefix.log('Measurement started')
 		await profiler.start(title)
 
 		process.on('exit', exitResolve)
@@ -216,8 +218,10 @@ export class Profiler {
 		if (this._sensorInterface !== undefined && !await this._sensorInterface.couldBeExecuted()) {
 			// remove sensor interface from execution details since it cannot be executed
 			this.executionDetails.runTimeOptions.sensorInterface = undefined
-			LoggerHelper.warn(`(${APP_NAME} Profiler) Warning: ` + 
-				'Sensor Interface can not be executed, no energy measurements will be collected')
+			LoggerHelper.appPrefix.warn(
+				'Warning: ' + 
+				'Sensor Interface can not be executed, no energy measurements will be collected'
+			)
 		}
 		performance.stop('Profiler.start.sensorInterface.couldBeExecuted')
 

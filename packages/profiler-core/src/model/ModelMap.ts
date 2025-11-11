@@ -7,6 +7,7 @@ import {
 } from '../types'
 
 export type ModelMapKeyType = UnifiedPath_string | string | number
+export type ModelValueKeyType = BaseModel | string | number | Set<string | number>
 
 enum ModelMapValueType {
 	string = 0,
@@ -14,7 +15,7 @@ enum ModelMapValueType {
 	object = 2
 }
 
-export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | string | number)> extends BaseModel {
+export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKeyType> extends BaseModel {
 	private _map: Map<TKEY, TVALUE>
 	private _keyType: 'string' | 'number'
 	
@@ -34,8 +35,12 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 				result[key] = value as T
 			} else if (typeof value === 'number') {
 				result[key] = value as T
+			} else if (value instanceof Set) { 
+				result[key] = Array.from(value) as unknown as T
 			} else {
-				result[key] = (value as BaseModel).toJSON() as T
+				result[key] = (
+					value as Exclude<ModelValueKeyType, string | number | Set<string | number>>
+				).toJSON() as T
 			}
 		}
 		return result
@@ -43,7 +48,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 
 	static fromJSON<
 		TKEY extends ModelMapKeyType,
-		TVALUE extends (BaseModel | string | number)
+		TVALUE extends ModelValueKeyType
 	>(
 		json: string | object,
 		keyType: 'string' | 'number',
@@ -60,7 +65,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 
 		const result = new ModelMap<TKEY, TVALUE>(keyType)
 
-		for (const [key, value] of Object.entries(data)) {
+		for (const [key, value] of Object.entries(data) as [TKEY, TVALUE][]) {
 			if (typeof value === 'string' || typeof value === 'number') {
 				result.set(key as TKEY, value as TVALUE)
 			} else {
@@ -76,7 +81,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 	toBuffer(): Buffer {
 		const buffers = [BufferHelper.UIntToBuffer(this._map.size)]
 		for (const [key, value] of this._map) {
-			switch (typeof key) {
+			switch ((typeof key) as TKEY) {
 				case 'string':
 					buffers.push(BufferHelper.String2LToBuffer(key as string))
 					break
@@ -86,7 +91,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 				default:
 					throw new Error('ModelMap.toBuffer: unexpected type of key')
 			}
-			switch (typeof value) {
+			switch ((typeof value) as TVALUE) {
 				case 'string':
 					buffers.push(
 						BufferHelper.UInt8ToBuffer(ModelMapValueType.string),
@@ -102,7 +107,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 				default:
 					buffers.push(
 						BufferHelper.UInt8ToBuffer(ModelMapValueType.object),
-						value.toBuffer()
+						(value as BaseModel).toBuffer()
 					)
 			}
 		}
@@ -111,7 +116,7 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends (BaseModel | 
 
 	static consumeFromBuffer<
 		TKEY extends ModelMapKeyType,
-		TVALUE extends (BaseModel | string | number)
+		TVALUE extends ModelValueKeyType
 	>(
 		buffer: Buffer,
 		keyType: 'string' | 'number',

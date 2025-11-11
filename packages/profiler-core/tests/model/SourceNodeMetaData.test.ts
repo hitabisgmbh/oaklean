@@ -195,18 +195,17 @@ describe('SourceNodeMetaData', () => {
 				'{root}.{function:main}' as SourceNodeIdentifier_string
 			),
 			{
-				cpuTime: {
-					selfCPUTime: 234 as MicroSeconds_number,
-					aggregatedCPUTime: 567 as MicroSeconds_number
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 468 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 1134 as MilliJoule_number
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 468 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 1134 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 234 as MicroSeconds_number,
+				aggregatedCPUTime: 567 as MicroSeconds_number,
+				
+				// cpu energy
+				selfCPUEnergyConsumption: 468 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 1134 as MilliJoule_number,
+
+				// ram energy
+				selfRAMEnergyConsumption: 468 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 1134 as MilliJoule_number
 			}
 		)
 		instance.addSensorValuesToIntern(
@@ -215,18 +214,17 @@ describe('SourceNodeMetaData', () => {
 				'{root}.{function:logMessage}' as SourceNodeIdentifier_string
 			),
 			{
-				cpuTime: {
-					selfCPUTime: 345 as MicroSeconds_number,
-					aggregatedCPUTime: 678 as MicroSeconds_number,
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 690 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 1356 as MilliJoule_number
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 690 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 1356 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 345 as MicroSeconds_number,
+				aggregatedCPUTime: 678 as MicroSeconds_number,
+				
+				// cpu energy
+				selfCPUEnergyConsumption: 690 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 1356 as MilliJoule_number,
+				
+				// ram energy
+				selfRAMEnergyConsumption: 690 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 1356 as MilliJoule_number
 			}
 		)
 
@@ -236,18 +234,17 @@ describe('SourceNodeMetaData', () => {
 				'{setTimeout}' as SourceNodeIdentifier_string
 			),
 			{
-				cpuTime: {
-					selfCPUTime: 456 as MicroSeconds_number,
-					aggregatedCPUTime: 789 as MicroSeconds_number,
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 912 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 1578 as MilliJoule_number
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 912 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 1578 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 456 as MicroSeconds_number,
+				aggregatedCPUTime: 789 as MicroSeconds_number,
+				
+				// cpu energy
+				selfCPUEnergyConsumption: 912 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 1578 as MilliJoule_number,
+				
+				// ram energy
+				selfRAMEnergyConsumption: 912 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 1578 as MilliJoule_number
 			}
 		)
 		instance.addSensorValuesToLangInternal(
@@ -256,18 +253,17 @@ describe('SourceNodeMetaData', () => {
 				'{consoleCall}' as SourceNodeIdentifier_string
 			),
 			{
-				cpuTime: {
-					selfCPUTime: 567 as MicroSeconds_number,
-					aggregatedCPUTime: 8910 as MicroSeconds_number,
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 1134 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 17820 as MilliJoule_number
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 1134 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 17820 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 567 as MicroSeconds_number,
+				aggregatedCPUTime: 8910 as MicroSeconds_number,
+				
+				// cpu energy
+				selfCPUEnergyConsumption: 1134 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 17820 as MilliJoule_number,
+				
+				// ram energy
+				selfRAMEnergyConsumption: 1134 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 17820 as MilliJoule_number
 			}
 		)
 
@@ -281,18 +277,17 @@ describe('SourceNodeMetaData', () => {
 				)
 			),
 			{
-				cpuTime: {
-					selfCPUTime: 567 as MicroSeconds_number,
-					aggregatedCPUTime: 8910 as MicroSeconds_number,
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 1134 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 17820 as MilliJoule_number
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 1134 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 17820 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 567 as MicroSeconds_number,
+				aggregatedCPUTime: 8910 as MicroSeconds_number,
+				
+				// cpu energy
+				selfCPUEnergyConsumption: 1134 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 17820 as MilliJoule_number,
+
+				// ram energy
+				selfRAMEnergyConsumption: 1134 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 17820 as MilliJoule_number
 			}
 		)
 		instance.addSensorValuesToExtern(
@@ -305,18 +300,17 @@ describe('SourceNodeMetaData', () => {
 				)
 			),
 			{
-				cpuTime: {
-					selfCPUTime: 678 as MicroSeconds_number,
-					aggregatedCPUTime: 91011 as MicroSeconds_number,
-				},
-				cpuEnergyConsumption: {
-					selfCPUEnergyConsumption: 1356 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 182022 as MilliJoule_number
-				},
-				ramEnergyConsumption: {
-					selfRAMEnergyConsumption: 1356 as MilliJoule_number,
-					aggregatedRAMEnergyConsumption: 182022 as MilliJoule_number
-				}
+				// cpu time
+				selfCPUTime: 678 as MicroSeconds_number,
+				aggregatedCPUTime: 91011 as MicroSeconds_number,
+				
+				// cpu energy
+				selfCPUEnergyConsumption: 1356 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 182022 as MilliJoule_number,
+				
+				// ram energy
+				selfRAMEnergyConsumption: 1356 as MilliJoule_number,
+				aggregatedRAMEnergyConsumption: 182022 as MilliJoule_number
 			}
 		)
 		return instance

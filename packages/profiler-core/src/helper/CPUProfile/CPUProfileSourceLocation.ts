@@ -22,6 +22,7 @@ export class CPUProfileSourceLocation {
 	private _rootDir: UnifiedPath
 
 	private _type: CPUProfileSourceLocationType
+	private _isEmpty: boolean
 	private _scriptID: ScriptID_string
 	private _rawUrl: string
 	private _absoluteUrl?: UnifiedPath
@@ -36,6 +37,7 @@ export class CPUProfileSourceLocation {
 		this._index = locationId
 		this._callFrame = callFrame
 		this._rootDir = rootDir
+		this._isEmpty = false
 
 		// determine the type of the source location
 		if (
@@ -50,11 +52,9 @@ export class CPUProfileSourceLocation {
 			this.callFrame.url.startsWith('webpack-internal://')
 		) {
 			this._type = CPUProfileSourceLocationType.WEBPACK
-		} else if (this.callFrame.url === '') {
-			// important that this the last check, since node internal urls are also sometimes empty
-			this._type = CPUProfileSourceLocationType.EMPTY
 		} else {
 			this._type = CPUProfileSourceLocationType.DEFAULT
+			this._isEmpty = (this.callFrame.url === '')
 		}
 		
 		// determine the script id
@@ -89,7 +89,7 @@ export class CPUProfileSourceLocation {
 	}
 
 	get isEmpty() {
-		return this._type === CPUProfileSourceLocationType.EMPTY
+		return this._isEmpty
 	}
 
 	get isWASM() {

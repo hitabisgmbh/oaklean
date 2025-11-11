@@ -106,7 +106,11 @@ export default class ReportCommands {
 			return
 		}
 
-		const tree = SourceFileMetaDataTree.fromProjectReport(report).filter(undefined, undefined).node
+		const tree = SourceFileMetaDataTree.fromProjectReport(report).filter(
+			report.asSourceNodeGraph(),
+			undefined,
+			undefined
+		).node
 		if (tree === null) {
 			LoggerHelper.error('Could not create SourceFileMetaDataTree')
 			return
@@ -234,22 +238,22 @@ export default class ReportCommands {
 		LoggerHelper.table([
 			{
 				type: 'cpu time',
-				headless: report.lang_internalHeadlessSensorValues.selfCPUTime,
-				'non-headless': total.sensorValues.aggregatedCPUTime - report.lang_internalHeadlessSensorValues.selfCPUTime,
+				headless: report.headlessSensorValues.selfCPUTime,
+				'non-headless': total.sensorValues.aggregatedCPUTime - report.headlessSensorValues.selfCPUTime,
 				total: total.sensorValues.aggregatedCPUTime,
 				unit: 'µs'
 			},
 			{
 				type: 'cpu energy',
-				headless: report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption,
-				'non-headless': total.sensorValues.aggregatedCPUEnergyConsumption - report.lang_internalHeadlessSensorValues.selfCPUEnergyConsumption,
+				headless: report.headlessSensorValues.selfCPUEnergyConsumption,
+				'non-headless': total.sensorValues.aggregatedCPUEnergyConsumption - report.headlessSensorValues.selfCPUEnergyConsumption,
 				total: total.sensorValues.aggregatedCPUEnergyConsumption,
 				unit: 'mJ'
 			},
 			{
 				type: 'ram energy',
-				headless: report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption,
-				'non-headless': total.sensorValues.aggregatedRAMEnergyConsumption - report.lang_internalHeadlessSensorValues.selfRAMEnergyConsumption,
+				headless: report.headlessSensorValues.selfRAMEnergyConsumption,
+				'non-headless': total.sensorValues.aggregatedRAMEnergyConsumption - report.headlessSensorValues.selfRAMEnergyConsumption,
 				total: total.sensorValues.aggregatedRAMEnergyConsumption,
 				unit: 'mJ'
 			},

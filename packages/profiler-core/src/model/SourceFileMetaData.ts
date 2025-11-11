@@ -6,6 +6,7 @@ import {
 } from './SourceNodeMetaData'
 import { WASM_NODE_MODULE } from './NodeModule'
 import { SensorValues } from './SensorValues'
+import { SourceNodeGraph } from './SourceNodeGraph'
 import { PathIndex } from './indices/PathIndex'
 import { GlobalIndex } from './indices/GlobalIndex'
 import { SourceNodeIndex } from './indices/SourceNodeIndex'
@@ -385,7 +386,9 @@ export class SourceFileMetaData extends BaseModel {
 	 * 		langInternal // the sum of all langInternal references of each function in the file
 	 * }
 	 */
-	totalSourceNodeMetaData(): {
+	totalSourceNodeMetaData(
+		graph: SourceNodeGraph
+	): {
 		sum: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
 		intern: ModelMap<PathID_number, SensorValues>,
 		extern: ModelMap<PathID_number, SensorValues>,

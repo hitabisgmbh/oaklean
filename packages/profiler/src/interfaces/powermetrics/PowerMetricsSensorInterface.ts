@@ -37,6 +37,8 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 	private _startTime: NanoSeconds_BigInt | undefined
 	private _stopTime: NanoSeconds_BigInt | undefined
 
+	private _platform: NodeJS.Platform
+
 	private _eventHandler: EventHandler<EventMap>
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,9 +46,11 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 
 	constructor(options: IPowerMetricsSensorInterfaceOptions, debugOptions?: {
 		startTime: NanoSeconds_BigInt,
-		stopTime: NanoSeconds_BigInt
+		stopTime: NanoSeconds_BigInt,
+		platform?: 'darwin'
 	}) {
 		super()
+		this._platform = debugOptions?.platform ?? process.platform
 		this._executable = 'powermetrics'
 		this._options = options
 		this._commandLineArgs = [
@@ -72,6 +76,11 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 
 	canBeExecuted(): Promise<boolean> {
 		return new Promise((resolve) => {
+			if (this._platform !== 'darwin') {
+			LoggerHelper.appPrefix.error('PowerMetricsSensorInterface: This sensor interface can only be used on MacOS. Your platform:', this._platform)
+				resolve(false)
+				return
+			}
 			try {
 				const childProcess = spawn(this._executable, {
 					detached: false,
