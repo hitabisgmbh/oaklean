@@ -145,18 +145,6 @@ export class SourceNodeGraph {
 					sourceNodeReference.id
 				)
 				if (source.error === true) {
-					console.log(JSON.stringify((report as any).nodeModule, null, 2))
-					console.log(JSON.stringify(sourceNodeMetaData, null, 2))
-					console.log(JSON.stringify(source, null, 2))
-					console.log(
-						JSON.stringify(
-							globalIndex.getSourceNodeIndexByID(
-								sourceNodeReference.id
-							)?.pathIndex.moduleIndex,
-							null,
-							2
-						)
-					)
 					throw new Error(
 						'SourceNodeGraph.insertSourceNode: cannot resolve source source node for reference id: ' +
 							sourceNodeReference.id.toString()

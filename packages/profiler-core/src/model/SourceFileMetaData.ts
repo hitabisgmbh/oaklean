@@ -387,6 +387,7 @@ export class SourceFileMetaData extends BaseModel {
 	 * }
 	 */
 	totalSourceNodeMetaData(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		graph: SourceNodeGraph
 	): {
 		sum: SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,

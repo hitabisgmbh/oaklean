@@ -219,9 +219,7 @@ function runInstanceTests(
 		test('foreach', () => {
 			const forEachValues: ModelSetValueType[] = []
 			function manipulateItem(
-				value: SubClass | string | number,
-				value2: SubClass | string | number,
-				set: Set<ModelSetValueType>
+				value: SubClass | string | number
 			) {
 				forEachValues.push(value)
 			}
