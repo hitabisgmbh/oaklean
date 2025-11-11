@@ -106,7 +106,11 @@ export default class ReportCommands {
 			return
 		}
 
-		const tree = SourceFileMetaDataTree.fromProjectReport(report).filter(undefined, undefined).node
+		const tree = SourceFileMetaDataTree.fromProjectReport(report).filter(
+			report.asSourceNodeGraph(),
+			undefined,
+			undefined
+		).node
 		if (tree === null) {
 			LoggerHelper.error('Could not create SourceFileMetaDataTree')
 			return

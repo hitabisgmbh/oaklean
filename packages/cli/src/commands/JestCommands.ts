@@ -12,7 +12,8 @@ import {
 	ExternalResourceHelper,
 	MetricsDataCollection,
 	ReportKind,
-	CPUProfileHelper
+	CPUProfileHelper,
+	SourceFileMetaDataTree
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
@@ -50,6 +51,12 @@ export default class JestCommands {
 			)
 			.action(this.inspectCPUProfiles.bind(this))
 		
+		baseCommand
+			.command('verify-trees')
+			.description(
+				'Checks all sub reports in the output directory for SourceFileMetaDataTree consistency'
+			)
+			.action(this.verifyTrees.bind(this))
 	}
 
 	static init() {
@@ -243,6 +250,7 @@ export default class JestCommands {
 			LoggerHelper.warn('The reports are not equal')
 		}
 	}
+
 	async inspectCPUProfiles() {
 		const profilerConfig = ProfilerConfig.autoResolve()
 
@@ -334,4 +342,64 @@ export default class JestCommands {
 		], ['type', 'value', 'unit'])
 	}
 
+	async verifyTrees() {
+		const profilerConfig = ProfilerConfig.autoResolve()
+
+		const exportAssetHelper = new ExportAssetHelper(
+			profilerConfig.getOutDir().join('jest')
+		)
+
+		const reportPaths = exportAssetHelper.allReportPathsInOutputDir()
+
+		let totalDiff = 0
+
+		for (const reportPath of reportPaths) {
+			const projectReport = ProjectReport.loadFromFile(reportPath, 'bin')
+
+			if (!projectReport) {
+				LoggerHelper.error(`ProjectReport could not be found: ${reportPath}`)
+				continue
+			}
+
+			const sourceFileMetaDataTree = SourceFileMetaDataTree.fromProjectReport(
+        projectReport
+      ).filter(projectReport.asSourceNodeGraph(), undefined, undefined).node
+
+			if (!sourceFileMetaDataTree) {
+				LoggerHelper.error(`SourceFileMetaDataTree could not be constructed from ProjectReport: ${reportPath}`)
+				continue
+			}
+
+			const total = projectReport.totalAndMaxMetaData().total
+
+			const treeSum = sourceFileMetaDataTree.aggregatedInternSourceMetaData.total.sensorValues.aggregatedCPUTime +
+				sourceFileMetaDataTree.headlessSensorValues.langInternalCPUTime +
+				sourceFileMetaDataTree.headlessSensorValues.externCPUTime
+			
+			// const treeSum = sourceFileMetaDataTree.aggregatedInternSourceMetaData.total.sensorValues.selfCPUTime +
+			// 	sourceFileMetaDataTree.aggregatedLangInternalSourceNodeMetaData.total.sensorValues.selfCPUTime +
+			// 	sourceFileMetaDataTree.aggregatedExternSourceMetaData.total.sensorValues.selfCPUTime
+
+			const diff = total.sensorValues.aggregatedCPUTime - treeSum
+			totalDiff += diff
+
+			if (diff !== 0) {
+				LoggerHelper.error(
+					`Inconsistent SourceFileMetaDataTree in report: ${reportPath.toPlatformString()}.\n` +
+					'Tree sum does not match total CPU time.\n',
+					`Tree Sum: ${treeSum}`,
+					`Total CPU Time: ${total.sensorValues.aggregatedCPUTime}`,
+					`Difference: ${diff}`
+				)
+				continue
+			}
+		}
+		if (totalDiff === 0) {
+			LoggerHelper.success('All SourceFileMetaDataTrees are consistent.')
+		} else {
+			LoggerHelper.error(
+				`Total CPU time difference across all reports: ${totalDiff}`
+			)
+		}
+	}
 }
