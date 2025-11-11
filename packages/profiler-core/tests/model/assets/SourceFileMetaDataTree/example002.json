@@ -37,7 +37,7 @@
         "profilerHits": 51,
         "selfCPUTime": 209,
         "aggregatedCPUTime": 430958,
-        "internCPUTime": 430958,
+        "internCPUTime": 860707,
         "externCPUTime": 10958,
         "langInternalCPUTime": 430208
       }
@@ -590,7 +590,7 @@
             "profilerHits": 51,
             "selfCPUTime": 209,
             "aggregatedCPUTime": 430958,
-            "internCPUTime": 430958,
+            "internCPUTime": 860707,
             "externCPUTime": 10958,
             "langInternalCPUTime": 430208
           }
@@ -637,7 +637,7 @@
                 "profilerHits": 24,
                 "selfCPUTime": 126,
                 "aggregatedCPUTime": 430541,
-                "internCPUTime": 430458,
+                "internCPUTime": 860707,
                 "langInternalCPUTime": 430208
               }
             }
@@ -683,7 +683,7 @@
                     "profilerHits": 24,
                     "selfCPUTime": 126,
                     "aggregatedCPUTime": 430541,
-                    "internCPUTime": 430458,
+                    "internCPUTime": 860707,
                     "langInternalCPUTime": 430208
                   }
                 }
@@ -729,7 +729,7 @@
                         "profilerHits": 24,
                         "selfCPUTime": 126,
                         "aggregatedCPUTime": 430541,
-                        "internCPUTime": 430458,
+                        "internCPUTime": 860707,
                         "langInternalCPUTime": 430208
                       }
                     }
@@ -775,7 +775,7 @@
                             "profilerHits": 24,
                             "selfCPUTime": 126,
                             "aggregatedCPUTime": 430541,
-                            "internCPUTime": 430458,
+                            "internCPUTime": 860707,
                             "langInternalCPUTime": 430208
                           }
                         }
@@ -821,7 +821,7 @@
                                 "profilerHits": 24,
                                 "selfCPUTime": 126,
                                 "aggregatedCPUTime": 430541,
-                                "internCPUTime": 430458,
+                                "internCPUTime": 860707,
                                 "langInternalCPUTime": 430208
                               }
                             }
@@ -851,7 +851,7 @@
                                     "profilerHits": 13,
                                     "selfCPUTime": 83,
                                     "aggregatedCPUTime": 430541,
-                                    "internCPUTime": 430416,
+                                    "internCPUTime": 860707,
                                     "langInternalCPUTime": 42
                                   },
                                   "lang_internal": {
@@ -879,7 +879,7 @@
                                       "sensorValues": {
                                         "profilerHits": 5,
                                         "selfCPUTime": 41,
-                                        "aggregatedCPUTime": 208
+                                        "aggregatedCPUTime": 430499
                                       }
                                     }
                                   }
@@ -1675,7 +1675,7 @@
                             "profilerHits": 6,
                             "selfCPUTime": 42,
                             "aggregatedCPUTime": 333,
-                            "internCPUTime": 291
+                            "internCPUTime": 416
                           },
                           "intern": {
                             "38": {
@@ -1699,7 +1699,7 @@
                               "type": 3,
                               "sensorValues": {
                                 "profilerHits": 1,
-                                "aggregatedCPUTime": 208
+                                "aggregatedCPUTime": 333
                               }
                             }
                           }

@@ -2083,7 +2083,7 @@
             "profilerHits": 29,
             "selfCPUTime": 124,
             "aggregatedCPUTime": 826582,
-            "internCPUTime": 826374,
+            "internCPUTime": 1652540,
             "langInternalCPUTime": 84
           },
           "lang_internal": {
@@ -2111,7 +2111,7 @@
               "sensorValues": {
                 "profilerHits": 9,
                 "selfCPUTime": 82,
-                "aggregatedCPUTime": 374
+                "aggregatedCPUTime": 826540
               }
             }
           }
@@ -2524,7 +2524,7 @@
             "profilerHits": 12,
             "selfCPUTime": 42,
             "aggregatedCPUTime": 749,
-            "internCPUTime": 707
+            "internCPUTime": 998
           },
           "intern": {
             "103": {
@@ -2551,7 +2551,7 @@
               "sensorValues": {
                 "profilerHits": 3,
                 "selfCPUTime": 41,
-                "aggregatedCPUTime": 458
+                "aggregatedCPUTime": 749
               }
             }
           }
