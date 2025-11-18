@@ -117,11 +117,6 @@ export default class JestCommands {
 				}
 
 				const title = exportAssetHelper.titleFromReportFilePath(reportPath)
-				const assetPath = exportAssetHelper
-					.outputDir()
-					.pathTo(reportPath.dirName())
-					.join(title)
-					.toString()
 
 				const report = new ProjectReport(
 					expectedReport.executionDetails,
@@ -129,11 +124,11 @@ export default class JestCommands {
 				)
 
 				const metricsDataCollectionPath =
-					exportAssetHelper.outputMetricsDataCollectionPath(assetPath)
+					exportAssetHelper.outputMetricsDataCollectionPath(title)
 				const externalResourceHelperPath =
-					exportAssetHelper.outputExternalResourceHelperPath(assetPath)
+					exportAssetHelper.outputExternalResourceHelperPath(title)
 				const v8CPUProfilePath =
-					exportAssetHelper.outputCPUProfilePath(assetPath)
+					exportAssetHelper.outputCPUProfilePath(title)
 
 				const cpuProfile = await CPUProfileHelper.loadFromFile(v8CPUProfilePath)
 
@@ -180,12 +175,12 @@ export default class JestCommands {
 						expectedReport.hash()
 					)
 					report.storeToFile(
-						verifyExportAssetHelper.outputReportPath(assetPath),
+						verifyExportAssetHelper.outputReportPath(title),
 						'pretty-json',
 						profilerConfig
 					)
 					expectedReport.storeToFile(
-						verifyExportAssetHelper.outputReportPath(assetPath + '-expected'),
+						verifyExportAssetHelper.outputReportPath(title + '-expected'),
 						'pretty-json',
 						profilerConfig
 					)
