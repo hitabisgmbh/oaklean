@@ -10,7 +10,8 @@ import {
 	MetricsDataCollectionType,
 	MilliJoule_number,
 	SensorInterfaceType,
-	LoggerHelper
+	LoggerHelper,
+	EventHandler
 } from '@oaklean/profiler-core'
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
@@ -33,6 +34,10 @@ export type MeasurementTypeAvailable = {
 	[PerfEvent.ENERGY_RAM]: boolean
 }
 
+type EventMap = { 
+	measurementCaptured: [];
+}
+
 export class PerfSensorInterface extends BaseSensorInterface {
 	private _executable: string
 	private _options: IPerfSensorInterfaceOptions
@@ -44,6 +49,9 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	private _availableMeasurementTypes: MeasurementTypeAvailable | undefined
 
 	private _platform: NodeJS.Platform
+
+	private _eventHandler: EventHandler<EventMap>
+	private _fileWatcher: fs.StatWatcher | undefined
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private cleanExit: ((...args: any[]) => void) | undefined
@@ -63,6 +71,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 			this._stopTime = debugOptions.stopTime
 			this._couldBeExecuted = true
 		}
+		this._eventHandler = new EventHandler()
 	}
 
 	type(): SensorInterfaceType {
@@ -281,11 +290,24 @@ export class PerfSensorInterface extends BaseSensorInterface {
 			}
 		}
 
+		this._fileWatcher = fs.watchFile(this._options.outputFilePath, (curr, prev) => {
+			if (curr.size > prev.size) {
+				this._eventHandler.fire('measurementCaptured')
+			}
+		})
+
 		process.on('exit', this.cleanExit) // add event listener to close perf if the parent process exits
 
 		// detach from current node.js process
 		this._childProcess.unref()
 		await TimeHelper.sleep(1000 + this._options.sampleInterval) // wait to ensure measurements started, since the measurements only starts at full seconds
+	}
+
+	/*
+		Blocks until the first measurements started
+	*/
+	async measurementStarted(): Promise<void> {
+		await this._eventHandler.waitForFirstEventCall('measurementCaptured')
 	}
 
 	async stopProfiling() {
@@ -295,7 +317,12 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		if (this._childProcess === undefined) {
 			return
 		}
-		await TimeHelper.sleep(1000 + this._options.sampleInterval) // wait to capture last measurement
+		// wait to capture last measurement
+		await this._eventHandler.awaitEventCall('measurementCaptured')
+
+		if (this._fileWatcher !== undefined) {
+			fs.unwatchFile(this._options.outputFilePath)
+		}
 		this._childProcess.kill('SIGIO') // flush all buffered output
 		this._stopTime = TimeHelper.getCurrentHighResolutionTime()
 		this._childProcess.kill('SIGTERM')
