@@ -11,7 +11,8 @@ import {
 	MilliJoule_number,
 	SensorInterfaceType,
 	PermissionHelper,
-	LoggerHelper
+	LoggerHelper,
+	EventHandler
 } from '@oaklean/profiler-core'
 import {
 	getPlatformSpecificBinaryPath,
@@ -20,6 +21,10 @@ import {
 } from '@oaklean/windows-sensorinterface'
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
+
+type EventMap = { 
+	measurementCaptured: [];
+}
 
 /**
  * This SensorInterface uses the data provided by the libre hardware monitor command line tool.
@@ -44,6 +49,9 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 
 	private _platform: NodeJS.Platform
 
+	private _fileWatcher: fs.StatWatcher | undefined
+	private _eventHandler: EventHandler<EventMap>
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private cleanExit: ((...args: any[]) => void) | undefined
 
@@ -64,6 +72,14 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 			this._offsetTime = debugOptions.offsetTime
 			this._couldBeExecuted = true
 		}
+		this._eventHandler = new EventHandler()
+	}
+
+	/*
+		Blocks until the first measurements started
+	*/
+	async measurementStarted(): Promise<void> {
+		await this._eventHandler.waitForFirstEventCall('measurementCaptured')
 	}
 
 	type(): SensorInterfaceType {
@@ -252,6 +268,13 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 				this._childProcess?.stdout?.removeListener('data', onFirstCapture)
 			}
 		}
+
+		this._fileWatcher = fs.watchFile(this._options.outputFilePath, (curr, prev) => {
+			if (curr.size > prev.size) {
+				this._eventHandler.fire('measurementCaptured')
+			}
+		})
+
 		this._childProcess.stdout?.on('data', onFirstCapture)
 
 		process.on('exit', this.cleanExit) // add event listener to close powermetrics if the parent process exits
