@@ -301,7 +301,12 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 		if (this._childProcess === undefined) {
 			return
 		}
-		await TimeHelper.sleep(1000 + this._options.sampleInterval) // wait to capture last measurement
+		// wait to capture last measurement
+		await this._eventHandler.awaitEventCall('measurementCaptured')
+
+		if (this._fileWatcher !== undefined) {
+			fs.unwatchFile(this._options.outputFilePath)
+		}
 		this._stopTime = TimeHelper.getCurrentHighResolutionTime()
 		this._childProcess.kill('SIGTERM')
 		let seconds = 0
