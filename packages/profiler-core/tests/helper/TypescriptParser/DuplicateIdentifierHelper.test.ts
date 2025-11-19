@@ -154,8 +154,7 @@ describe('handle duplicate identifier', () => {
 									`${i + 1}`
 								) as SourceNodeIdentifierPart_string
 							)
-
-							root.children.set(duplicateChild.identifier, duplicateChild)
+							root.addChildren(duplicateChild)
 						}
 					})
 				})

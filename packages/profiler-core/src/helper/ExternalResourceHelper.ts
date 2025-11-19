@@ -17,7 +17,8 @@ import {
 	INodeModule,
 	UnifiedPath_string,
 	ScriptID_string,
-	IExternalResourceFileInfo
+	IExternalResourceFileInfo,
+	ProgramStructureTreeType
 } from '../types'
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 
@@ -379,7 +380,7 @@ export class ExternalResourceHelper {
 	parseFile(
 		relativePath: UnifiedPath | UnifiedPath_string,
 		filePath: UnifiedPath | UnifiedPath_string,
-	): ProgramStructureTree | null {
+	): ProgramStructureTree<ProgramStructureTreeType.Root> | null {
 		const fileInfo = this.fileInfoFromPath(relativePath, filePath)
 		if (fileInfo === null) {
 			return null

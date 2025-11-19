@@ -18,6 +18,8 @@ import {
 	SourceNodeIdentifierPart_string
 } from '../types'
 
+type NodeLocationString = `${NodeLocation['line']}:${NodeLocation['column']}`
+
 export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramStructureTreeType> extends BaseModel {
 	id: number
 	type: T
@@ -25,9 +27,11 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 	identifier: SourceNodeIdentifierPart_string
 	beginLoc: NodeLocation
 	endLoc: NodeLocation
-	children: ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>
+	
 	parent: T extends ProgramStructureTreeType.Root ? null : ProgramStructureTree
 
+	private _children: ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>
+	private _childrenByBeginLoc: Map<NodeLocationString, ProgramStructureTree>
 	private identifierBySourceLocationCache: Map<string, SourceNodeIdentifier_string>
 	private containsLocationCache: Map<string, boolean>
 	private sourceLocationOfIdentifierCache: Map<SourceNodeIdentifier_string, NodeLocationRange | null>
@@ -55,7 +59,8 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		this.identifier = identifier
 		this.beginLoc = beginLoc
 		this.endLoc = endLoc
-		this.children = new ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>('string')
+		this._children = new ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>('string')
+		this._childrenByBeginLoc = new Map()
 
 		// Cache initialization
 		this.identifierBySourceLocationCache = new Map()
@@ -63,16 +68,77 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		this.sourceLocationOfIdentifierCache = new Map()
 	}
 
+	hasChildren(sourceNodeIdentifierPart: SourceNodeIdentifierPart_string) {
+		return this._children.has(sourceNodeIdentifierPart)
+	}
+
+	getChildren(sourceNodeIdentifierPart: SourceNodeIdentifierPart_string) {
+		return this._children.get(sourceNodeIdentifierPart)
+	}
+
+	childrenValues() {
+		return this._children.values()
+	}
+
+	childrenEntries() {
+		return this._children.entries()
+	}
+
+	get childrenSize() {
+		return this._children.size
+	}
+
+	addChildren(child: ProgramStructureTree) {
+		this._children.set(child.identifier, child)
+		this._childrenByBeginLoc.set(
+			`${child.beginLoc.line}:${child.beginLoc.column}`,
+			child
+		)
+	}
+
+	static compareNodeLocations(
+		a: NodeLocationString,
+		b: NodeLocationString
+	): number {
+		const [aLine, aColumn] = a.split(':').map(Number)
+		const [bLine, bColumn] = b.split(':').map(Number)
+
+		if (aLine < bLine) {
+			return -1
+		}
+		if (aLine > bLine) {
+			return 1
+		}
+		if (aColumn < bColumn) {
+			return -1
+		}
+		if (aColumn > bColumn) {
+			return 1
+		}
+		return 0
+	}
+
+	private _sortedChildrenKeys: NodeLocationString[] | undefined
+	get sortedChildrenKeys(): NodeLocationString[] {
+		if (this._sortedChildrenKeys === undefined) {
+			this._sortedChildrenKeys = Array.from(this._childrenByBeginLoc.keys()).sort(
+				ProgramStructureTree.compareNodeLocations
+			)
+		}
+		return this._sortedChildrenKeys
+	}
+
+
 	numberOfLeafs(): number {
 		const traverse = (currentNode: ProgramStructureTree): number => {
-			if (currentNode.children.size === 0) {
+			if (currentNode._children.size === 0) {
 				if (currentNode.type === ProgramStructureTreeType.Root) {
 					return 0
 				}
 				return 1
 			}
 			let count = 0
-			for (const child of currentNode.children.values()) {
+			for (const child of currentNode._children.values()) {
 				count += traverse(child)
 			}
 			return count
@@ -96,7 +162,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 			const result: PSTIdentifierHierarchy = {
 				type: currentNode.type
 			}
-			for (const [childIdentifier, child] of currentNode.children.entries()) {
+			for (const [childIdentifier, child] of currentNode._children.entries()) {
 				const children = result.children || {}
 				children[childIdentifier] = traverse(child)
 				result.children = children
@@ -115,7 +181,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 			identifier: this.identifier,
 			beginLoc: this.beginLoc,
 			endLoc: this.endLoc,
-			children: this.children.toJSON<IProgramStructureTree>() || {}
+			children: this._children.toJSON<IProgramStructureTree>() || {}
 		}
 	}
 
@@ -164,7 +230,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		)
 
 		for (const key of Object.keys(data.children) as SourceNodeIdentifierPart_string[]) {
-			result.children.set(key, ProgramStructureTree.fromJSON(data.children[key]))
+			result.addChildren(ProgramStructureTree.fromJSON(data.children[key]))
 		}
 
 		return result
@@ -196,6 +262,8 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		identifier: SourceNodeIdentifier_string,
 		node: ProgramStructureTree
 	} | undefined {
+		const lookupKey: NodeLocationString = `${targetLoc.line}:${targetLoc.column}`
+
 		const traverse = (
 			identifier: SourceNodeIdentifier_string,
 			currentNode: ProgramStructureTree
@@ -203,9 +271,41 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 			identifier:	SourceNodeIdentifier_string,
 			node: ProgramStructureTree
 		} => {
-			for (const [childIdentifier, child] of currentNode.children.entries()) {
-				if (child.containsLocation(targetLoc)) {
-					return traverse((identifier + '.' + childIdentifier) as SourceNodeIdentifier_string, child)
+			if (currentNode._children.size === 0) {
+				return {
+					identifier,
+					node: currentNode
+				}
+			}
+
+			const childrenBeginLocations = currentNode.sortedChildrenKeys
+			let beginIndex = 0
+			let endIndex = currentNode._children.size - 1
+			let pivotIndex: number
+
+			while (beginIndex <= endIndex) {
+				pivotIndex = Math.floor((beginIndex + endIndex) / 2)
+				const pivotBeginLocation = childrenBeginLocations[pivotIndex]
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const child = currentNode._childrenByBeginLoc.get(pivotBeginLocation)!
+				const comp = ProgramStructureTree.compareNodeLocations(lookupKey, pivotBeginLocation)
+
+				if (comp === 0) {
+					return {
+						identifier: (identifier + '.' + child.identifier) as SourceNodeIdentifier_string,
+						node: child
+					}
+				}
+				if (comp === -1) {
+					endIndex = pivotIndex - 1
+				} else {
+					if (child.containsLocation(targetLoc)) {
+						return traverse(
+							(identifier + '.' + child.identifier) as SourceNodeIdentifier_string,
+							child
+						)
+					}
+					beginIndex = pivotIndex + 1
 				}
 			}
 			return {
@@ -259,7 +359,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 				}
 
 				const shiftedIdentifierStack = identifierStack.slice(1)
-				for (const child of currentNode.children.values()) {
+				for (const child of currentNode._children.values()) {
 					const result = traverse(shiftedIdentifierStack, child)
 					if (result) {
 						return result

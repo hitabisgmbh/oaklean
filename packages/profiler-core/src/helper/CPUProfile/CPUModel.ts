@@ -203,6 +203,7 @@ export class CPUModel {
 				this,
 				this.cpuModel.nodes[index]
 			)
+			this._cpuNodes.set(index, node)
 		}
 		return node
 		
