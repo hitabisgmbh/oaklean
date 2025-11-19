@@ -167,6 +167,10 @@ export class ProfilerConfig implements IProfilerConfig {
 		return this.runtimeOptions.sensorInterface?.type
 	}
 
+	static getSensorInterfaceType(json: IProfilerConfigFileRepresentation): SensorInterfaceType | undefined {
+		return json.runtimeOptions?.sensorInterface?.type
+	}
+
 	getSensorInterfaceOptions():
 	IPowerMetricsSensorInterfaceOptions |
 	IPerfSensorInterfaceOptions |
@@ -300,6 +304,16 @@ export class ProfilerConfig implements IProfilerConfig {
 		PermissionHelper.writeFileWithUserPermission(
 			filePath,
 			JSON.stringify(this, null, 2)
+		)
+	}
+
+	static storeIntermediateToFile(
+		filePath: UnifiedPath,
+		config: IProfilerConfigFileRepresentation
+	) {
+		PermissionHelper.writeFileWithUserPermission(
+			filePath,
+			JSON.stringify(config, null, 2)
 		)
 	}
 

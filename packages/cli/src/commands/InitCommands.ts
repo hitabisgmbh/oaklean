@@ -1,4 +1,5 @@
 import os from 'os'
+import * as fs from 'fs'
 
 import {
 	ProfilerConfig,
@@ -8,7 +9,10 @@ import {
 	MicroSeconds_number,
 	RegistryOptions,
 	LoggerHelper,
-	STATIC_CONFIG_FILENAME
+	STATIC_CONFIG_FILENAME,
+	IProfilerConfigFileRepresentation,
+	UnifiedPath,
+	STATIC_LOCAL_CONFIG_FILENAME
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 import { confirm, select } from '@inquirer/prompts'
@@ -26,29 +30,59 @@ export default class InitCommands {
 	}
 
 	async initCommand() {
-		const config = await this.configureConfig()
-		LoggerHelper.log(JSON.stringify(config, null, 2))
+		const {
+			mainConfig,
+			localConfig
+		} = await this.configureConfig()
+		LoggerHelper.appPrefix.success('[Main Config]')
+		LoggerHelper.log(JSON.stringify(mainConfig, null, 2))
+		LoggerHelper.appPrefix.success('[Local Config]')
+		LoggerHelper.log(JSON.stringify(localConfig, null, 2))
 
 		if (await this.confirmConfigFileContent() === false) {
 			return
 		}
-		if (config.getSensorInterfaceType() === SensorInterfaceType.perf) {
-			LoggerHelper.log('perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
+		if (ProfilerConfig.getSensorInterfaceType(localConfig) === SensorInterfaceType.perf) {
+			LoggerHelper.appPrefix.log('perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
 		}
-		config.storeToFile(config.filePath)
+		const localConfigPath = new UnifiedPath(process.cwd()).join(STATIC_LOCAL_CONFIG_FILENAME)
+		const existMainConfig = fs.existsSync(mainConfig.filePath.toPlatformString())
+		const existLocalConfig = fs.existsSync(localConfigPath.toPlatformString())
+		if (existMainConfig || existLocalConfig) {
+			let message = 'The following config files already exist:\n'
+			if (existMainConfig) {
+				message += ` - ${mainConfig.filePath.toPlatformString()}\n`
+			}
+			if (existLocalConfig) {
+				message += ` - ${localConfigPath.toPlatformString()}\n`
+			}
+			LoggerHelper.appPrefix.warn(message)
+			if (await this.confirmOverwriteContent() === false) {
+				return
+			}
+		}
+		mainConfig.storeToFile(mainConfig.filePath)
+		ProfilerConfig.storeIntermediateToFile(
+			localConfigPath,
+			localConfig
+		)
 	}
 
-	async configureConfig(): Promise<ProfilerConfig> {
+	async configureConfig(): Promise<{
+		mainConfig: ProfilerConfig,
+		localConfig: IProfilerConfigFileRepresentation
+	}> {
 		const config = ProfilerConfig.getDefaultConfig()
-
+		const localConfig: IProfilerConfigFileRepresentation = {}
+		localConfig.runtimeOptions = {}
 		// select sensor interface
 		const selectedSensorInterface = await this.selectSensorInterface()
 		switch (selectedSensorInterface) {
 			case undefined:
-				config.runtimeOptions.sensorInterface = undefined
+				localConfig.runtimeOptions.sensorInterface = undefined
 				break
 			case SensorInterfaceType.perf:
-				config.runtimeOptions.sensorInterface = {
+				localConfig.runtimeOptions.sensorInterface = {
 					type: SensorInterfaceType.perf,
 					options: {
 						outputFilePath: 'energy-measurements.txt',
@@ -57,7 +91,7 @@ export default class InitCommands {
 				}
 				break
 			case SensorInterfaceType.powermetrics:
-				config.runtimeOptions.sensorInterface = {
+				localConfig.runtimeOptions.sensorInterface = {
 					type: SensorInterfaceType.powermetrics,
 					options: {
 						outputFilePath: 'energy-measurements.plist',
@@ -66,7 +100,7 @@ export default class InitCommands {
 				}
 				break
 			case SensorInterfaceType.windows:
-				config.runtimeOptions.sensorInterface = {
+				localConfig.runtimeOptions.sensorInterface = {
 					type: SensorInterfaceType.windows,
 					options: {
 						outputFilePath: 'energy-measurements.csv',
@@ -80,12 +114,24 @@ export default class InitCommands {
 
 		config.projectOptions.identifier = Crypto.uniqueID() as ProjectIdentifier_string
 		config.registryOptions = undefined as unknown as RegistryOptions
-		return config
+		// remove runtime options from main config
+		config.runtimeOptions = undefined as unknown as typeof config.runtimeOptions
+		return {
+			mainConfig: config,
+			localConfig: localConfig
+		}
 	}
 
 	async confirmConfigFileContent() {
 		return await confirm({
 			message: 'Is this OK? (yes)',
+			default: true
+		})
+	}
+
+	async confirmOverwriteContent() {
+		return await confirm({
+			message: 'Are you sure you want to override the existing files? (yes)',
 			default: true
 		})
 	}
