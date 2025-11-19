@@ -163,7 +163,7 @@ export class TypescriptParser {
 		sourceCode: string,
 		scriptKind: 'TSX' | 'TS' = 'TS',
 		onDuplicateIdentifier?: OnDuplicateIdentifierCallback
-	): ProgramStructureTree {
+	): ProgramStructureTree<ProgramStructureTreeType.Root> {
 		return TypescriptParser.parseTSSourceFile(
 			filePath,
 			TypescriptParser.codeToTSSourceFile(filePath, sourceCode, scriptKind),
@@ -175,8 +175,8 @@ export class TypescriptParser {
 		filePath: UnifiedPath | UnifiedPath_string,
 		sourceFile: ts.SourceFile,
 		onDuplicateIdentifier?: OnDuplicateIdentifierCallback
-	) {
-		const root: ProgramStructureTree = new ProgramStructureTree(
+	): ProgramStructureTree<ProgramStructureTreeType.Root> {
+		const root = new ProgramStructureTree(
 			null,
 			0,
 			ProgramStructureTreeType.Root,
@@ -197,7 +197,7 @@ export class TypescriptParser {
 					'TypescriptParser.parseFile: subTree.parent is null, this should never happen'
 				)
 			}
-			const found = subTree.parent.children.get(subTree.identifier)
+			const found = subTree.parent.getChildren(subTree.identifier)
 			if (found !== undefined) {
 				const duplicatesAreExpected =
 					HANDLE_DUPLICATE_IDENTIFIERS[subTree.type] !== undefined &&
@@ -222,7 +222,7 @@ export class TypescriptParser {
 				}
 			}
 			parentTraverseNodeInfo.counters.childrenCounter++
-			subTree.parent.children.set(subTree.identifier, subTree)
+			subTree.parent.addChildren(subTree)
 		}
 
 		const enterNode = (

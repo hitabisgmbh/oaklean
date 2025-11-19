@@ -16,7 +16,8 @@ import { ProgramStructureTree } from '../model/ProgramStructureTree'
 import { UnifiedPath } from '../system/UnifiedPath'
 import {
 	UnifiedPath_string,
-	ResolvedSourceNodeLocation
+	ResolvedSourceNodeLocation,
+	ProgramStructureTreeType
 } from '../types'
 
 type ResolveFunctionIdentifierResult = {
@@ -43,9 +44,9 @@ export class ResolveFunctionIdentifierHelper {
 	private externalResourceHelper: ExternalResourceHelper
 
 	// script id -> PST
-	private PSTperNodeScript: Map<string, ProgramStructureTree>
+	private PSTperNodeScript: Map<string, ProgramStructureTree<ProgramStructureTreeType.Root>>
 	// file path -> PST
-	private PSTperOriginalFile: Map<UnifiedPath_string, ProgramStructureTree | null>
+	private PSTperOriginalFile: Map<UnifiedPath_string, ProgramStructureTree<ProgramStructureTreeType.Root> | null>
 	// cpu profile source location id -> cached ResolveFunctionIdentifierResult
 	private functionIdentifierCache: Map<number, ResolveFunctionIdentifierResult>
 	
@@ -92,9 +93,15 @@ export class ResolveFunctionIdentifierHelper {
 			return functionIdentifierCacheResult
 		}
 
-		let programStructureTreeNodeScript: ProgramStructureTree | undefined =
-			this.PSTperNodeScript.get(sourceLocation.scriptID)
-		let programStructureTreeOriginal: ProgramStructureTree | undefined | null = undefined
+		let programStructureTreeNodeScript:
+			| ProgramStructureTree<ProgramStructureTreeType.Root>
+			| undefined
+			= this.PSTperNodeScript.get(sourceLocation.scriptID)
+		let programStructureTreeOriginal:
+			| ProgramStructureTree<ProgramStructureTreeType.Root>
+			| undefined
+			| null =
+			undefined
 		const { lineNumber, columnNumber } = sourceLocation.sourceLocation
 		let functionIdentifierPresentInOriginalFile = true
 		let sourceNodeLocation: ResolvedSourceNodeLocation | undefined = undefined

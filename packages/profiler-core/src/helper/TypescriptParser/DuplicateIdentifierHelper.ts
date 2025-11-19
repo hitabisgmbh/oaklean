@@ -75,7 +75,7 @@ export class DuplicateIdentifierHelper {
 			let counter = 1
 			while (
 				tree.parent !== null &&
-				tree.parent.children.has(`${baseIdentifier}:${counter})}` as SourceNodeIdentifierPart_string)
+				tree.parent.hasChildren(`${baseIdentifier}:${counter})}` as SourceNodeIdentifierPart_string)
 			) {
 				counter++
 			}
@@ -85,7 +85,7 @@ export class DuplicateIdentifierHelper {
 			let counter = 1
 			while (
 				tree.parent !== null &&
-				tree.parent.children.has(`${baseIdentifier}:${counter}}` as SourceNodeIdentifierPart_string)
+				tree.parent.hasChildren(`${baseIdentifier}:${counter}}` as SourceNodeIdentifierPart_string)
 			) {
 				counter++
 			}

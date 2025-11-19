@@ -55,7 +55,7 @@ export class CPUNode {
 	}
 
 	get aggregatedEnergyConsumption(): [MilliJoule_number, MilliJoule_number] {
-		if (this._aggregatedEnergyConsumption) {
+		if (this._aggregatedEnergyConsumption !== undefined) {
 			return this._aggregatedEnergyConsumption
 		}
 

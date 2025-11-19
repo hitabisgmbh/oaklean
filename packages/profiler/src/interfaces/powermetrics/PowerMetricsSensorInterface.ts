@@ -44,6 +44,9 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private cleanExit: ((...args: any[]) => void) | undefined
 
+	private _fileWatcher: fs.StatWatcher | undefined
+
+
 	constructor(options: IPowerMetricsSensorInterfaceOptions, debugOptions?: {
 		startTime: NanoSeconds_BigInt,
 		stopTime: NanoSeconds_BigInt,
@@ -202,9 +205,11 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 				this._childProcess.kill('SIGTERM')
 			}
 		}
-
-		this._childProcess.stderr?.on('data', async () => {
-			this._eventHandler.fire('measurementCaptured')
+		
+		this._fileWatcher = fs.watchFile(this._options.outputFilePath, (curr, prev) => {
+			if (curr.size > prev.size) {
+				this._eventHandler.fire('measurementCaptured')
+			}
 		})
 
 		process.on('exit', this.cleanExit) // add event listener to close powermetrics if the parent process exits
@@ -229,6 +234,11 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		}
 		// wait to capture last measurement
 		await this._eventHandler.awaitEventCall('measurementCaptured')
+
+		if (this._fileWatcher !== undefined) {
+			fs.unwatchFile(this._options.outputFilePath)
+		}
+
 
 		this._childProcess.kill('SIGIO') // flush all buffered output
 		this._stopTime = TimeHelper.getCurrentHighResolutionTime()
