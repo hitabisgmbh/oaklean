@@ -46,8 +46,8 @@ export default class InitCommands {
 			LoggerHelper.appPrefix.log('perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
 		}
 		const localConfigPath = new UnifiedPath(process.cwd()).join(STATIC_LOCAL_CONFIG_FILENAME)
-		const existMainConfig = fs.existsSync(mainConfig.filePath.toPlatformString())
-		const existLocalConfig = fs.existsSync(localConfigPath.toPlatformString())
+		const existMainConfig = this.configAlreadyExists(mainConfig.filePath)
+		const existLocalConfig = this.configAlreadyExists(localConfigPath)
 		if (existMainConfig || existLocalConfig) {
 			let message = 'The following config files already exist:\n'
 			if (existMainConfig) {
@@ -66,6 +66,10 @@ export default class InitCommands {
 			localConfigPath,
 			localConfig
 		)
+	}
+
+	configAlreadyExists(path: UnifiedPath): boolean {
+		return fs.existsSync(path.toPlatformString())
 	}
 
 	async configureConfig(): Promise<{

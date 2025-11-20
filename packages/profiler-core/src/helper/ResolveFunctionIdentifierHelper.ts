@@ -38,7 +38,7 @@ type NodeModulePerFilePathCacheResult = ReturnType<typeof NodeModuleUtils.nodeMo
  * If so, it determines the associated Node module.
  */
 export class ResolveFunctionIdentifierHelper {
-	public hideOriginalSourceFileNotExistErrors = false
+	public hideOriginalSourceFileNotExistErrors = true
 
 	private rootDir: UnifiedPath
 	private externalResourceHelper: ExternalResourceHelper

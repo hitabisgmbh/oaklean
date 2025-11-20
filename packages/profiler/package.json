@@ -51,12 +51,10 @@
 		"v8-profiler-next": "^1.10.0"
 	},
 	"devDependencies": {
-		"@types/html-minifier": "4.0.2",
 		"@types/plist": "^3.0.5",
 		"@types/seedrandom": "^3.0.5",
 		"cross-env": "^7.0.3",
 		"devtools-protocol": "^0.0.1140464",
-		"html-minifier": "4.0.0",
 		"rimraf": "^4.4.1"
 	}
 }

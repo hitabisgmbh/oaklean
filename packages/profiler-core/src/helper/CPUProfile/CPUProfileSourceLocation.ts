@@ -36,6 +36,8 @@ export class CPUProfileSourceLocation {
 	) {
 		this._index = locationId
 		this._callFrame = callFrame
+		// ensure scriptId is a string, sometimes it is a number
+		this._callFrame.scriptId = this._callFrame.scriptId.toString()
 		this._rootDir = rootDir
 		this._isEmpty = false
 

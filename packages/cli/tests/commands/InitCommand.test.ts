@@ -164,7 +164,9 @@ describe('InitCommands', () => {
 		describe('confirmConfigFileContent + confirmOverwriteContent_spy', () => {
 			let confirmConfigFileContent_spy: jest.SpyInstance
 			let confirmOverwriteContent_spy: jest.SpyInstance
+			let configAlreadyExists_spy: jest.SpyInstance
 			let configStoreToFile_spy: jest.SpyInstance
+			let intermediateConfigStoreToFile_spy: jest.SpyInstance
 			let configureConfig_spy: jest.SpyInstance
 			let consoleLog_spy: jest.SpyInstance
 			let consoleSuccessLog_spy: jest.SpyInstance
@@ -173,8 +175,11 @@ describe('InitCommands', () => {
 			beforeEach(() => {
 				confirmConfigFileContent_spy = jest.spyOn(initCommands, 'confirmConfigFileContent')
 				confirmOverwriteContent_spy = jest.spyOn(initCommands, 'confirmOverwriteContent')
+				configAlreadyExists_spy = jest.spyOn(initCommands, 'configAlreadyExists')
 				configStoreToFile_spy = jest.spyOn(ProfilerConfig.prototype, 'storeToFile')
 				configStoreToFile_spy.mockImplementation(() => undefined)
+				intermediateConfigStoreToFile_spy = jest.spyOn(ProfilerConfig, 'storeIntermediateToFile')
+				intermediateConfigStoreToFile_spy.mockImplementation(() => undefined)
 				configureConfig_spy = jest.spyOn(initCommands, 'configureConfig')
 				consoleLog_spy = jest.spyOn(LoggerHelper, 'log')
 				consoleLog_spy.mockImplementation(() => undefined)
@@ -188,6 +193,8 @@ describe('InitCommands', () => {
 				confirmConfigFileContent_spy.mockRestore()
 				confirmOverwriteContent_spy.mockRestore()
 				configStoreToFile_spy.mockRestore()
+				intermediateConfigStoreToFile_spy.mockRestore()
+				configAlreadyExists_spy.mockRestore()
 			})
 
 			test('returns true with perf', async () => {
@@ -213,6 +220,10 @@ describe('InitCommands', () => {
 				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
 				expect(consoleLog_spy).toHaveBeenCalledWith('[Oaklean] perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
 				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
+				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
+					new UnifiedPath(process.cwd()).join('.oaklean.local'),
+					localConfig
+				)
 			})
 
 			test('returns true with powermetrics', async () => {
@@ -237,6 +248,10 @@ describe('InitCommands', () => {
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
 				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
 				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
+				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
+					new UnifiedPath(process.cwd()).join('.oaklean.local'),
+					localConfig
+				)
 			})
 
 			test('returns true with none', async () => {
@@ -261,9 +276,14 @@ describe('InitCommands', () => {
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
 				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
 				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
+				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
+					new UnifiedPath(process.cwd()).join('.oaklean.local'),
+					localConfig
+				)
 			})
 
 			test('returns true + false', async () => {
+				configAlreadyExists_spy.mockReturnValue(true)
 				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
 					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
@@ -280,13 +300,13 @@ describe('InitCommands', () => {
 
 				await initCommands.initCommand()
 
-				await initCommands.initCommand()
-
 				expect(consoleLog_spy).not.toHaveBeenCalledWith()
 				expect(configStoreToFile_spy).not.toHaveBeenCalled()
+				expect(intermediateConfigStoreToFile_spy).not.toHaveBeenCalled()
 			})
 
-			test('returns false', async () => {
+			test('returns false + false', async () => {
+				configAlreadyExists_spy.mockReturnValue(true)
 				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
 					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
@@ -300,11 +320,13 @@ describe('InitCommands', () => {
 				})
 				configureConfig_spy.mockResolvedValue(mainConfig)
 				confirmConfigFileContent_spy.mockResolvedValue(false)
+				confirmOverwriteContent_spy.mockResolvedValue(false)
 
 				await initCommands.initCommand()
 
 				expect(consoleLog_spy).not.toHaveBeenCalledWith()
 				expect(configStoreToFile_spy).not.toHaveBeenCalled()
+				expect(intermediateConfigStoreToFile_spy).not.toHaveBeenCalled()
 			})
 		})
 
