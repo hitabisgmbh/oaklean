@@ -282,6 +282,7 @@ describe('ProfilerConfig', () => {
 				expect(config).toBeDefined()
 			} else {
 				expect(config).toEqual({
+					extends: '.oaklean.local',
 					filePath: configFilePath,
 					exportOptions: {
 						outDir: 'profile-path',
@@ -532,6 +533,7 @@ describe('ProfilerConfig', () => {
 
 			expect(config?.toJSON()).toEqual({
 				...DEFAULT_PROFILER_CONFIG,
+				extends: undefined,
 				projectOptions: {
 					identifier: '42c89abd-3877-4039-99e8-c36d6dd74ddd'
 				}

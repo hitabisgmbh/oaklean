@@ -88,103 +88,202 @@ describe('InitCommands', () => {
 			test('with none', async () => {
 				selectSensorInterface_spy.mockResolvedValue(undefined)
 
-				const config = await initCommands.configureConfig()
+				const {
+					mainConfig,
+					localConfig
+				} = await initCommands.configureConfig()
 
-				expect(config.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
+				expect(mainConfig.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
 
-				expect(config.toJSON()).toEqual(GENERATED_NONE_CONFIG_JSON)
+				expect(mainConfig.toJSON()).toEqual({
+					...GENERATED_NONE_CONFIG_JSON,
+					runtimeOptions: undefined
+				})
+
+				expect(localConfig).toEqual({
+					runtimeOptions: GENERATED_NONE_CONFIG_JSON.runtimeOptions
+				})
 			})
 
 			test('with perf', async () => {
 				selectSensorInterface_spy.mockResolvedValue(SensorInterfaceType.perf)
 
-				const config = await initCommands.configureConfig()
+				const {
+					mainConfig,
+					localConfig
+				} = await initCommands.configureConfig()
 
-				expect(config.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
+				expect(mainConfig.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
 
-				expect(config.toJSON()).toEqual(GENERATED_PERF_CONFIG_JSON)
+				expect(mainConfig.toJSON()).toEqual({
+					...GENERATED_PERF_CONFIG_JSON,
+					runtimeOptions: undefined
+				})
+
+				expect(localConfig).toEqual({
+					runtimeOptions: GENERATED_PERF_CONFIG_JSON.runtimeOptions
+				})
 			})
 
 			test('with powermetrics', async () => {
 				selectSensorInterface_spy.mockResolvedValue(SensorInterfaceType.powermetrics)
 
-				const config = await initCommands.configureConfig()
+				const {
+					mainConfig,
+					localConfig
+				} = await initCommands.configureConfig()
 
-				expect(config.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
+				expect(mainConfig.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
 
-				expect(config.toJSON()).toEqual(GENERATED_POWERMETRICS_CONFIG_JSON)
+				expect(mainConfig.toJSON()).toEqual({
+					...GENERATED_POWERMETRICS_CONFIG_JSON,
+					runtimeOptions: undefined
+				})
+
+				expect(localConfig).toEqual({
+					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
+				})
 			})
 		})
 
-		describe('confirmConfigFileContent', () => {
+		describe('confirmConfigFileContent + confirmOverwriteContent_spy', () => {
 			let confirmConfigFileContent_spy: jest.SpyInstance
+			let confirmOverwriteContent_spy: jest.SpyInstance
 			let configStoreToFile_spy: jest.SpyInstance
 			let configureConfig_spy: jest.SpyInstance
 			let consoleLog_spy: jest.SpyInstance
+			let consoleSuccessLog_spy: jest.SpyInstance
+			let consoleWarnLog_spy: jest.SpyInstance
 
 			beforeEach(() => {
 				confirmConfigFileContent_spy = jest.spyOn(initCommands, 'confirmConfigFileContent')
+				confirmOverwriteContent_spy = jest.spyOn(initCommands, 'confirmOverwriteContent')
 				configStoreToFile_spy = jest.spyOn(ProfilerConfig.prototype, 'storeToFile')
 				configStoreToFile_spy.mockImplementation(() => undefined)
 				configureConfig_spy = jest.spyOn(initCommands, 'configureConfig')
 				consoleLog_spy = jest.spyOn(LoggerHelper, 'log')
 				consoleLog_spy.mockImplementation(() => undefined)
+				consoleSuccessLog_spy = jest.spyOn(LoggerHelper.appPrefix, 'success')
+				consoleSuccessLog_spy.mockImplementation(() => undefined)
+				consoleWarnLog_spy = jest.spyOn(LoggerHelper.appPrefix, 'warn')
+				consoleWarnLog_spy.mockImplementation(() => undefined)
 			})
 
 			afterEach(() => {
 				confirmConfigFileContent_spy.mockRestore()
+				confirmOverwriteContent_spy.mockRestore()
 				configStoreToFile_spy.mockRestore()
 			})
 
 			test('returns true with perf', async () => {
-				const demoConfig = new ProfilerConfig(
+				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
 					ProfilerConfig.intermediateFromJSON(GENERATED_PERF_CONFIG_JSON) as IProfilerConfig
 				)
-				configureConfig_spy.mockResolvedValue(demoConfig)
+				const localConfig = {
+					runtimeOptions: GENERATED_PERF_CONFIG_JSON.runtimeOptions
+				}
+				configureConfig_spy.mockResolvedValue({
+					mainConfig: mainConfig,
+					localConfig: localConfig
+				})
 				confirmConfigFileContent_spy.mockResolvedValue(true)
+				confirmOverwriteContent_spy.mockResolvedValue(true)
 
 				await initCommands.initCommand()
 
-				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(demoConfig, null, 2))
-				expect(consoleLog_spy).toHaveBeenCalledWith('perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
-				expect(configStoreToFile_spy).toHaveBeenCalledWith(demoConfig.filePath)
+				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
+				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(mainConfig, null, 2))
+				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
+				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
+				expect(consoleLog_spy).toHaveBeenCalledWith('[Oaklean] perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
+				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
 			})
 
 			test('returns true with powermetrics', async () => {
-				const demoConfig = new ProfilerConfig(
+				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
 					ProfilerConfig.intermediateFromJSON(GENERATED_POWERMETRICS_CONFIG_JSON) as IProfilerConfig
 				)
-				configureConfig_spy.mockResolvedValue(demoConfig)
+				const localConfig = {
+					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
+				}
+				configureConfig_spy.mockResolvedValue({
+					mainConfig: mainConfig,
+					localConfig: localConfig
+				})
 				confirmConfigFileContent_spy.mockResolvedValue(true)
+				confirmOverwriteContent_spy.mockResolvedValue(true)
 
 				await initCommands.initCommand()
 
-				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(demoConfig, null, 2))
-				expect(configStoreToFile_spy).toHaveBeenCalledWith(demoConfig.filePath)
+				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
+				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(mainConfig, null, 2))
+				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
+				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
+				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
 			})
 
 			test('returns true with none', async () => {
-				const demoConfig = new ProfilerConfig(
+				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
 					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
 				)
-				configureConfig_spy.mockResolvedValue(demoConfig)
+				const localConfig = {
+					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
+				}
+				configureConfig_spy.mockResolvedValue({
+					mainConfig: mainConfig,
+					localConfig: localConfig
+				})
 				confirmConfigFileContent_spy.mockResolvedValue(true)
+				confirmOverwriteContent_spy.mockResolvedValue(true)
 
 				await initCommands.initCommand()
 
-				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(demoConfig, null, 2))
-				expect(configStoreToFile_spy).toHaveBeenCalledWith(demoConfig.filePath)
+				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
+				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(mainConfig, null, 2))
+				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
+				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
+				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
 			})
 
-			test('returns false', async () => {
-				const demoConfig = new ProfilerConfig(
+			test('returns true + false', async () => {
+				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
 					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
 				)
-				configureConfig_spy.mockResolvedValue(demoConfig)
+				const localConfig = {
+					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
+				}
+				configureConfig_spy.mockResolvedValue({
+					mainConfig: mainConfig,
+					localConfig: localConfig
+				})
+				confirmConfigFileContent_spy.mockResolvedValue(true)
+				confirmOverwriteContent_spy.mockResolvedValue(false)
+
+				await initCommands.initCommand()
+
+				await initCommands.initCommand()
+
+				expect(consoleLog_spy).not.toHaveBeenCalledWith()
+				expect(configStoreToFile_spy).not.toHaveBeenCalled()
+			})
+
+			test('returns false', async () => {
+				const mainConfig = new ProfilerConfig(
+					new UnifiedPath(process.cwd()).join('.oaklean'),
+					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
+				)
+				const localConfig = {
+					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
+				}
+				configureConfig_spy.mockResolvedValue({
+					mainConfig: mainConfig,
+					localConfig: localConfig
+				})
+				configureConfig_spy.mockResolvedValue(mainConfig)
 				confirmConfigFileContent_spy.mockResolvedValue(false)
 
 				await initCommands.initCommand()

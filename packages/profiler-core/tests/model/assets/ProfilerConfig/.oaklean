@@ -1,4 +1,5 @@
 {
+	"extends": ".oaklean.local",
 	"exportOptions": {
 		"outDir": "profile-path",
 		"outHistoryDir": "profiles-history-path",

@@ -74,7 +74,7 @@ export default class InitCommands {
 	}> {
 		const config = ProfilerConfig.getDefaultConfig()
 		const localConfig: IProfilerConfigFileRepresentation = {}
-		localConfig.runtimeOptions = {}
+		localConfig.runtimeOptions = config.runtimeOptions
 		// select sensor interface
 		const selectedSensorInterface = await this.selectSensorInterface()
 		switch (selectedSensorInterface) {
