@@ -74,7 +74,7 @@ export default class InitCommands {
 	}> {
 		const config = ProfilerConfig.getDefaultConfig()
 		const localConfig: IProfilerConfigFileRepresentation = {}
-		localConfig.runtimeOptions = config.runtimeOptions
+		localConfig.runtimeOptions = {}
 		// select sensor interface
 		const selectedSensorInterface = await this.selectSensorInterface()
 		switch (selectedSensorInterface) {
@@ -115,7 +115,7 @@ export default class InitCommands {
 		config.projectOptions.identifier = Crypto.uniqueID() as ProjectIdentifier_string
 		config.registryOptions = undefined as unknown as RegistryOptions
 		// remove runtime options from main config
-		config.runtimeOptions = undefined as unknown as typeof config.runtimeOptions
+		config.runtimeOptions.sensorInterface = undefined
 		return {
 			mainConfig: config,
 			localConfig: localConfig

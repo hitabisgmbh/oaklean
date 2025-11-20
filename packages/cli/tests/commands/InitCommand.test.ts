@@ -97,11 +97,16 @@ describe('InitCommands', () => {
 
 				expect(mainConfig.toJSON()).toEqual({
 					...GENERATED_NONE_CONFIG_JSON,
-					runtimeOptions: undefined
+					runtimeOptions: {
+						...GENERATED_NONE_CONFIG_JSON.runtimeOptions,
+						sensorInterface: undefined
+					}
 				})
 
 				expect(localConfig).toEqual({
-					runtimeOptions: GENERATED_NONE_CONFIG_JSON.runtimeOptions
+					runtimeOptions: {
+						sensorInterface: GENERATED_NONE_CONFIG_JSON.runtimeOptions.sensorInterface
+					}
 				})
 			})
 
@@ -117,11 +122,16 @@ describe('InitCommands', () => {
 
 				expect(mainConfig.toJSON()).toEqual({
 					...GENERATED_PERF_CONFIG_JSON,
-					runtimeOptions: undefined
+					runtimeOptions: {
+						...GENERATED_PERF_CONFIG_JSON.runtimeOptions,
+						sensorInterface: undefined
+					}
 				})
 
 				expect(localConfig).toEqual({
-					runtimeOptions: GENERATED_PERF_CONFIG_JSON.runtimeOptions
+					runtimeOptions: {
+						sensorInterface: GENERATED_PERF_CONFIG_JSON.runtimeOptions.sensorInterface
+					}
 				})
 			})
 
@@ -137,11 +147,16 @@ describe('InitCommands', () => {
 
 				expect(mainConfig.toJSON()).toEqual({
 					...GENERATED_POWERMETRICS_CONFIG_JSON,
-					runtimeOptions: undefined
+					runtimeOptions: {
+						...GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions,
+						sensorInterface: undefined
+					}
 				})
 
 				expect(localConfig).toEqual({
-					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
+					runtimeOptions: {
+						sensorInterface: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions.sensorInterface
+					}
 				})
 			})
 		})
