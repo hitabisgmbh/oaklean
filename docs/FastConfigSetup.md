@@ -10,7 +10,7 @@ Select a sensor interface (recommended for your platform: perf)
   windows (Windows only)
 energy measurements on Linux (Intel & AMD CPUs only)
 ```
-4. The cli asks you to confirm your choice and generates a valid `.oaklean` config file for you:
+4. The cli asks you to confirm your choice and generates a valid `.oaklean` and `.oaklean.local` config file for you:
 ```
 ✔ Select a sensor interface (recommended for your platform: powermetrics) perf (Linux only)
 [Oaklean] [Main Config]
@@ -50,8 +50,8 @@ energy measurements on Linux (Intel & AMD CPUs only)
 }
 ? Is this OK? (yes) (Y/n)
 ```
-##### Available Sensor Interfaces
 
+##### Available Sensor Interfaces
 | SensorInterface | Operating System |
 | --------------- | ---------------- |
 | powermetrics		| macOS						 |

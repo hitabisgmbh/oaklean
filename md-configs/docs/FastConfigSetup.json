@@ -1,0 +1,4 @@
+{
+	"build": "./docs/FastConfigSetup.md",
+	"files": ["./md-configs/docs/FastConfigSetup.md"]
+}

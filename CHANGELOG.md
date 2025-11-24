@@ -2,8 +2,13 @@
 # Change Log
 
 ## 0.1.5
+### Added
+- Support for webpack
+- Support for `.jsx` and `.tsx` files - Oaklean can now be used with Next.js
+
 ### Improvement
 - Added support for frameworks that modify or transform the original source code.
+- Enhanced the isolation of `node_modules` measurements from the user’s source code, even when the `node_modules` execute user code.
 
 ### Fixes
 - Fixed a bug that caused incorrect measurements in __awaiter functions.

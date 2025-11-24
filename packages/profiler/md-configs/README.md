@@ -4,14 +4,10 @@ A library to measure the energy consumption of your javascript/typescript code
 
 ## Usage
 
-#### 1. Installation
-`npm add @oaklean/profiler`
-
-#### 2. Create a `.oaklean` config file
-
+#### 1. Setup
 #include "../../docs/FastConfigSetup.md"
 
-#### 3. Measure your code
+#### 2. Measure your code
 
 - Option 1 (Code Injection):
 	> :warning: On Windows, this feature is not fully supported yet.
@@ -44,6 +40,6 @@ A library to measure the energy consumption of your javascript/typescript code
 	// export the measurements into the output directory (defined via the `.oaklean` config) `<rootDir>/<outDir>/<report-name>/`
 	```
 
-#### 4. Interpret the measurements and determine the source code locations with the most energy consumption
+#### 3. Interpret the measurements and determine the source code locations with the most energy consumption
 
 #include "../../docs/InterpretMeasurements.md"

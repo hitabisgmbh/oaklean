@@ -1,0 +1,2 @@
+- <a href="https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean" target="_blank">VS Code Extension - Visual Studio Marketplace</a>
+- <a href="https://open-vsx.org/extension/HitabisGmbH/oaklean" target="_blank">VS Code Extension - Open VSX Registry</a>

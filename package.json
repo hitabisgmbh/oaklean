@@ -42,7 +42,7 @@
 		"test-gen": "npx jest-test-gen",
 		"publish-registry-mandatory": "sh ./.deploy/publish-mandatory.sh",
 		"publish-registry-optional": "sh ./.deploy/publish-optional.sh",
-		"generate-docs": "markdown-include md-configs/README.json && npm run generate-docs -ws"
+		"generate-docs": "markdown-include md-configs/README.json && markdown-include md-configs/docs/FirstSteps.json && markdown-include md-configs/docs/FastConfigSetup.json && npm run generate-docs -ws"
 	},
 	"files": [],
 	"devDependencies": {

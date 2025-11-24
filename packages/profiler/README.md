@@ -4,11 +4,7 @@ A library to measure the energy consumption of your javascript/typescript code
 
 ## Usage
 
-#### 1. Installation
-`npm add @oaklean/profiler`
-
-#### 2. Create a `.oaklean` config file
-
+#### 1. Setup
 The CLI can be used to easily setup a `.oaklean` config file.
 1. Install oaklean: `npm add @oaklean/profiler`
 2. Run the init script: `npx oak init`
@@ -21,7 +17,7 @@ Select a sensor interface (recommended for your platform: perf)
   windows (Windows only)
 energy measurements on Linux (Intel & AMD CPUs only)
 ```
-4. The cli asks you to confirm your choice and generates a valid `.oaklean` config file for you:
+4. The cli asks you to confirm your choice and generates a valid `.oaklean` and `.oaklean.local` config file for you:
 ```
 ✔ Select a sensor interface (recommended for your platform: powermetrics) perf (Linux only)
 [Oaklean] [Main Config]
@@ -61,8 +57,8 @@ energy measurements on Linux (Intel & AMD CPUs only)
 }
 ? Is this OK? (yes) (Y/n)
 ```
-##### Available Sensor Interfaces
 
+##### Available Sensor Interfaces
 | SensorInterface | Operating System |
 | --------------- | ---------------- |
 | powermetrics		| macOS						 |
@@ -78,7 +74,7 @@ If you want to how to setup the Sensor Interfaces and how to make them work with
 > :mag: **How measurements work**<br>
 > During the test execution measurements are collected with a sample based approach. So for every n - microseconds it collects a v8 cpu profile and energy measurements of the sensor interface. You can adjust the sampling rate with the `sampleInterval` options in the `.oaklean` config file above.
 
-#### 3. Measure your code
+#### 2. Measure your code
 
 - Option 1 (Code Injection):
 	> :warning: On Windows, this feature is not fully supported yet.
@@ -111,7 +107,7 @@ If you want to how to setup the Sensor Interfaces and how to make them work with
 	// export the measurements into the output directory (defined via the `.oaklean` config) `<rootDir>/<outDir>/<report-name>/`
 	```
 
-#### 4. Interpret the measurements and determine the source code locations with the most energy consumption
+#### 3. Interpret the measurements and determine the source code locations with the most energy consumption
 
 The `Oaklean` VSCode Extension lets you to interpret the measurements. It integrates the energy measurements directly into your IDE.
 

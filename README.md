@@ -2,8 +2,11 @@
 <details>
 	<summary>Table of Contents</summary>
 	<ol>
-	 <li>
+	 	<li>
 			<a href="#why-oaklean">Why oaklean?</a>
+		</li>
+		<li>
+			<a href="#first-steps">First Steps</a>
 		</li>
 		<li>
 			<a href="#docs">Docs</a>
@@ -16,6 +19,9 @@
 
 ## Why Oaklean?
 Oaklean is a groundbreaking software solution that helps developers visualize and optimize the energy consumption of NodeJS applications. Through an innovative VSCode extension and an integration into test frameworks, the system identifies energy-intensive code sections and suggests eco-friendly alternatives. The goal is to raise awareness of responsible resource management in software development, aiming to achieve both ecological and economic benefits.
+
+## First Steps
+To see how to setup oaklean in your repository please look into [First Steps](./docs/FirstSteps.md)
 
 ## Docs
 - [Fast Config Setup](./docs/FastConfigSetup.md)<br>
@@ -41,8 +47,9 @@ You can find a detailed description of how to use it [here](./packages/profiler-
 3. The `Oaklean` VSCode Extension lets you to interpret the measurements. It integrates the energy measurements directly into your IDE.
 
 	**You can find it here:**
-	- <a href="https://github.com/hitabisgmbh/oaklean-vscode" target="_blank">Github</a>
-	- <a href="https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean" target="_blank">VS Code Extension</a>
+	- <a href="https://github.com/hitabisgmbh/oaklean-vscode" target="_blank">VS Code Extension - Github Repository</a>
+	- <a href="https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean" target="_blank">VS Code Extension - Visual Studio Marketplace</a>
+	- <a href="https://open-vsx.org/extension/HitabisGmbH/oaklean" target="_blank">VS Code Extension - Open VSX Registry</a>
 
 	**Features**
 	By using code highlighting it points out which source code locations consume the most energy:

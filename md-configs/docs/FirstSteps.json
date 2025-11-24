@@ -1,0 +1,4 @@
+{
+	"build": "./docs/FirstSteps.md",
+	"files": ["./md-configs/docs/FirstSteps.md"]
+}
