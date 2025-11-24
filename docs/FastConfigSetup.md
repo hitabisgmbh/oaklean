@@ -12,8 +12,10 @@ energy measurements on Linux (Intel & AMD CPUs only)
 ```
 4. The cli asks you to confirm your choice and generates a valid `.oaklean` config file for you:
 ```
-? Select a sensor interface (recommended for your platform: perf) perf (Linux only)
+✔ Select a sensor interface (recommended for your platform: powermetrics) perf (Linux only)
+[Oaklean] [Main Config]
 {
+  "extends": ".oaklean.local",
   "exportOptions": {
     "outDir": "profiles/",
     "outHistoryDir": "profiles_history/",
@@ -31,7 +33,12 @@ energy measurements on Linux (Intel & AMD CPUs only)
       "cpu": {
         "sampleInterval": 1
       }
-    },
+    }
+  }
+}
+[Oaklean] [Local Config]
+{
+  "runtimeOptions": {
     "sensorInterface": {
       "type": "perf",
       "options": {

@@ -55,8 +55,8 @@ Commands:
 ```
 
 ## Fast Config Setup
-The `@oaklean/cli` can be used to easily setup a `.oaklean` config file.
-1. Install the cli: `npm add --save-dev @oaklean/cli`
+The CLI can be used to easily setup a `.oaklean` config file.
+1. Install oaklean: `npm add @oaklean/profiler`
 2. Run the init script: `npx oak init`
 3. It will ask you which sensor interface should be used for energy measurements:
 ```
@@ -69,8 +69,10 @@ energy measurements on Linux (Intel & AMD CPUs only)
 ```
 4. The cli asks you to confirm your choice and generates a valid `.oaklean` config file for you:
 ```
-? Select a sensor interface (recommended for your platform: perf) perf (Linux only)
+✔ Select a sensor interface (recommended for your platform: powermetrics) perf (Linux only)
+[Oaklean] [Main Config]
 {
+  "extends": ".oaklean.local",
   "exportOptions": {
     "outDir": "profiles/",
     "outHistoryDir": "profiles_history/",
@@ -88,7 +90,12 @@ energy measurements on Linux (Intel & AMD CPUs only)
       "cpu": {
         "sampleInterval": 1
       }
-    },
+    }
+  }
+}
+[Oaklean] [Local Config]
+{
+  "runtimeOptions": {
     "sensorInterface": {
       "type": "perf",
       "options": {

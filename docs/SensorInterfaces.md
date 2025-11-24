@@ -10,6 +10,9 @@ Currently, there are two sensor interfaces:
 | [perf](#perf-sensor-interface)            | linux            | yes<br><a href="#running-without-root-privileges">(read below to see<br> how it works<br> without root privileges)</a> |
 | [windows](#windows-sensor-interface)			    | windows          | yes											|
 
+> :warning: **Configure the Sensor Interface in the .oaklean.local config file**<br>
+> We strongly recommend configuring the Sensor Interface in a dedicated `.oaklean.local` file, read here more about how and why: [Local Oaklean Config](Config.md#local-oaklean-config)
+
 ## Power Metrics Sensor Interface
 `powermetrics` is a tool for macOS that provides detailed information about power consumption and energy use of the system, it comes **pre-installed** on macOS and can handle **Apple Silicon** and **Intel** machines.
 
@@ -19,7 +22,7 @@ It can be executed from command line with command:`powermetrics`
 > Unfortunately `powermetrics` needs root priviliges and we haven't discovered a work around yet.
 
 ### How to use it?
-In order to use the `powermetrics` Sensor Interface simple add this to the `.oaklean` config file in your project:
+In order to use the `powermetrics` Sensor Interface simple add this to the `.oaklean` or to the `.oaklean.local` config file in your project:
 ```json
 // .oaklean
 {
@@ -59,7 +62,7 @@ We are currently working on a solution to make the powermetrics interface availa
 Remember, `perf` is available on various other Linux distributions as well. If you need installation instructions for a specific distribution not listed here, you can easily find them by searching online or referring to the documentation for your particular system!
 
 ### How to use it?
-In order to use the `perf` Sensor Interface simple add this to the `.oaklean` config file in your project:
+In order to use the `perf` Sensor Interface simple add this to the `.oaklean` or to the `.oaklean.local` config file in your project:
 ```json
 // .oaklean
 {
@@ -116,7 +119,7 @@ The Windows Sensor Interface is a .NET binary developed for Oaklean. It uses the
 > To ensure correct permissions during measurement, we highly recommend opening a shell (e.g., PowerShell) with administrator privileges and running the measurement from there.
 
 ### How to use it?
-In order to use the Windows Sensor Interface simple add this to the `.oaklean` config file in your project:
+In order to use the Windows Sensor Interface simple add this to the `.oaklean` or to the `.oaklean.local` config file in your project:
 ```json
 // .oaklean
 {

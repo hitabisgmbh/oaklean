@@ -8,6 +8,7 @@ The schema of a `.oaklean` config file looks like this:
 ```json
 // .oaklean
 {
+	"extends": ".oaklean.local",
 	"projectOptions": {...},
 	"exportOptions": {...},
 	"runtimeOptions": {...},
@@ -16,6 +17,27 @@ The schema of a `.oaklean` config file looks like this:
 ```
 **Only the project options are mandatory.**
 
+## Local Oaklean Config
+We strongly recommend configuring the Sensor Interface in a dedicated `.oaklean.local` file and then extending it from your main `.oaklean` configuration.
+
+This approach allows you to exclude `.oaklean.local` from version control, so each developer can maintain their own machine-specific setup. This is especially useful when the same repository is used across different platforms (macOS, Windows, Linux), ensuring accurate and consistent measurements without forcing a shared configuration.
+
+```json
+// .oaklean
+{
+	"extends": ".oaklean.local",
+	...
+}
+```
+
+```json
+// .oaklean.local
+{
+	"runtimeOptions": {
+		"sensorInterface": {...}
+	}
+}
+```
 
 ## Available options
 
