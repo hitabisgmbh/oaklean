@@ -24,7 +24,7 @@ It can be executed from command line with command:`powermetrics`
 ### How to use it?
 In order to use the `powermetrics` Sensor Interface simple add this to the `.oaklean` or to the `.oaklean.local` config file in your project:
 ```json
-// .oaklean
+// .oaklean or .oaklean.local
 {
 	...
 	"runtimeOptions": {
@@ -64,7 +64,7 @@ Remember, `perf` is available on various other Linux distributions as well. If y
 ### How to use it?
 In order to use the `perf` Sensor Interface simple add this to the `.oaklean` or to the `.oaklean.local` config file in your project:
 ```json
-// .oaklean
+// .oaklean or .oaklean.local
 {
 	...
 	"runtimeOptions": {
@@ -121,7 +121,7 @@ The Windows Sensor Interface is a .NET binary developed for Oaklean. It uses the
 ### How to use it?
 In order to use the Windows Sensor Interface simple add this to the `.oaklean` or to the `.oaklean.local` config file in your project:
 ```json
-// .oaklean
+// .oaklean or .oaklean.local
 {
 	...
 	"runtimeOptions": {
