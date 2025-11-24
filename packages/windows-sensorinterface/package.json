@@ -1,6 +1,6 @@
 {
 	"name": "@oaklean/windows-sensorinterface",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"author": "Hitabis GmbH",
 	"license": "MIT",
 	"description": "A library that provides a binary that utilizes the LibreHardwareMonitor library to capture energy measurements on Windows",
