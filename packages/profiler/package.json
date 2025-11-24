@@ -45,7 +45,7 @@
 	"dependencies": {
 		"@jest/environment": "^29.4.3",
 		"@oaklean/profiler-core": "0.1.5",
-		"@oaklean/windows-sensorinterface": "0.1.0",
+		"@oaklean/windows-sensorinterface": "0.1.1",
 		"plist": "^3.1.0",
 		"seedrandom": "^3.0.5",
 		"v8-profiler-next": "^1.10.0"
