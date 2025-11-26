@@ -182,7 +182,7 @@ export default class ReportCommands {
 			}
 
 			for (const pathIndex of moduleIndex.reversePathMap.values()) {
-				const relativeNodeModulePath = new UnifiedPath(nodeModule.name, pathIndex.identifier)
+				const relativeNodeModulePath = new UnifiedPath(nodeModule.name).join(pathIndex.identifier)
 				const filePath = nodeModulePath.join(relativeNodeModulePath).toPlatformString()
 				if (!fs.existsSync(filePath)) {
 					LoggerHelper.error(`Could not find file ${relativeNodeModulePath}`)

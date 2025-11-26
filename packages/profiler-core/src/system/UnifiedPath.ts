@@ -11,12 +11,8 @@ export class UnifiedPath {
 	private readonly _unifiedPath: string
 	private _parts: UnifiedPathPart_string[] | undefined
 
-	constructor(...args: string[]) {
-		if (args.length === 0 || args.length === 1) {
-			this._unifiedPath = PathUtils.unifyPath(args[0] || '')
-		} else {
-			this._unifiedPath = PathUtils.unifyPath(args.join('/'))
-		}
+	constructor(arg?: string) {
+		this._unifiedPath = PathUtils.unifyPath(arg || '')
 	}
 
 	static fromPathParts(parts: string[]) {

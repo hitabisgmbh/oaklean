@@ -237,7 +237,9 @@ export class ResolveFunctionIdentifierHelper {
 				sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(sourceNodeLocation.relativeFilePath)
 			}
 		} else {
-			sourceNodeLocation.relativeFilePath = new UnifiedPath(UNKNOWN_SCRIPTS_FOLDER_NAME, sourceLocation.scriptID)
+			sourceNodeLocation.relativeFilePath = new UnifiedPath(
+				UNKNOWN_SCRIPTS_FOLDER_NAME
+			).join(sourceLocation.scriptID)
 			functionIdentifierPresentInOriginalFile = false
 		}
 
