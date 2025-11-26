@@ -779,8 +779,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 
 	filter(
 		sourceNodeGraph: SourceNodeGraph,
-		includedFilterPath: string | undefined,
-		excludedFilterPath: string | undefined
+		includedFilterPathString: string | undefined,
+		excludedFilterPathString: string | undefined
 	) {
 		const self = this // eslint-disable-line @typescript-eslint/no-this-alias
 		const includeCache = new Map<number, boolean>()
@@ -788,11 +788,14 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		const pathIndexCache = new Map<number, PathIndex>()
 
 		// Normalize filter paths
-		if (includedFilterPath && !(includedFilterPath.endsWith('/*') || includedFilterPath.endsWith('/'))) {
-			includedFilterPath = includedFilterPath + '/*'
-		} else if (includedFilterPath && includedFilterPath.endsWith('/')) {
-			includedFilterPath = includedFilterPath + '*'
+		if (includedFilterPathString && !(includedFilterPathString.endsWith('/*') || includedFilterPathString.endsWith('/'))) {
+			includedFilterPathString = includedFilterPathString + '/*'
+		} else if (excludedFilterPathString && excludedFilterPathString.endsWith('/')) {
+			excludedFilterPathString = excludedFilterPathString + '*'
 		}
+
+		const includedFilterPathList = includedFilterPathString ? includedFilterPathString.split(',') : []
+		const excludedFilterPathList = excludedFilterPathString ? excludedFilterPathString.split(',') : []
 
 		// check if the path is included/excluded in the filter
 		function checkGlob(
@@ -832,14 +835,68 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 			let isExcludedNode = excludeCache.get(pathIndex.id)
 
 			if (isIncludedNode === undefined) {
-				isIncludedNode = includedFilterPath ? checkGlob(pathIndex.identifier, includedFilterPath) : true
+				if (includedFilterPathList.length === 0) {
+					// if no include filter is set, all are included
+					isIncludedNode = true
+				} else if (pathIndex.moduleIndex.identifier === '{node}') {
+					// always include lang_internal functions
+					isIncludedNode = true
+				} else {
+					let pathToCompare: UnifiedPath_string | LangInternalPath_string = pathIndex.identifier
+					if (pathIndex.moduleIndex.identifier !== '{self}') {
+						// add module prefix
+						pathToCompare = new UnifiedPath('node_modules').join(
+							pathIndex.moduleIndex.identifier,
+							pathIndex.identifier
+						).toString()
+					}
+					// remove ./ prefix
+					if (pathToCompare.startsWith('./')) {
+						pathToCompare = pathToCompare.substring(2) as UnifiedPath_string | LangInternalPath_string
+					}
+					isIncludedNode = false
+					for (const includedFilterPath of includedFilterPathList) {
+						if (checkGlob(pathToCompare, includedFilterPath)) {
+							// only needs to be included in one filter to be included
+							isIncludedNode = true
+							break
+						}
+					}
+				}
 				includeCache.set(
 					pathIndex.id,
 					isIncludedNode
 				)
 			}
 			if (isExcludedNode === undefined) {
-				isExcludedNode = excludedFilterPath ? checkGlob(pathIndex.identifier, excludedFilterPath) : false
+				if (excludedFilterPathList.length === 0) {
+					// if no exclude filter is set, none are excluded
+					isExcludedNode = false
+				} else if (pathIndex.moduleIndex.identifier === '{node}') {
+					// never exclude lang_internal functions
+					isExcludedNode = false
+				} else {
+					let pathToCompare: UnifiedPath_string | LangInternalPath_string = pathIndex.identifier
+					if (pathIndex.moduleIndex.identifier !== '{self}') {
+						// add module prefix
+						pathToCompare = new UnifiedPath('node_modules').join(
+							pathIndex.moduleIndex.identifier,
+							pathIndex.identifier
+						).toString()
+					}
+					// remove ./ prefix
+					if (pathToCompare.startsWith('./')) {
+						pathToCompare = pathToCompare.substring(2) as UnifiedPath_string | LangInternalPath_string
+					}
+					isExcludedNode = false
+					for (const excludedFilterPath of excludedFilterPathList) {
+						if (checkGlob(pathToCompare, excludedFilterPath)) {
+							// only needs to be excluded in one filter to be excluded
+							isExcludedNode = true
+							break
+						}
+					}
+				}
 				excludeCache.set(
 					pathIndex.id,
 					isExcludedNode
