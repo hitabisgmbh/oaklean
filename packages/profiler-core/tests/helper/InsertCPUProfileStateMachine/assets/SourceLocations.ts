@@ -208,7 +208,7 @@ export const SOURCE_LOCATIONS_EMPTY = {
 	), {
 		resolved: {
 			sourceNodeLocation: {
-				relativeFilePath: new UnifiedPath(UNKNOWN_SCRIPTS_FOLDER_NAME, '1'),
+				relativeFilePath: new UnifiedPath(UNKNOWN_SCRIPTS_FOLDER_NAME).join('1'),
 				functionIdentifier: '{root}' as SourceNodeIdentifier_string
 			},
 			functionIdentifierPresentInOriginalFile: false
