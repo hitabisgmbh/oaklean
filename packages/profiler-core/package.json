@@ -38,7 +38,7 @@
 		"test-update": "npx cross-env UPDATE_TEST_REPORTS=1 npx jest --coverage",
 		"test-measure": "npx cross-env ENABLE_MEASUREMENTS=1 OAKLEAN_ENABLE_PERFORMANCE_TRACKING=1 npx jest --runInBand",
 		"publish-registry": "npm publish",
-		"generate-docs": ""
+		"generate-docs": "markdown-include md-configs/README.json"
 	},
 	"dependencies": {
 		"@jest/environment": "^29.4.3",

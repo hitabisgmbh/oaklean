@@ -1,6 +1,14 @@
-# `@oaklean/cli`
+![oaklean-header](https://github.com/hitabisgmbh/oaklean/blob/main/images/oaklean-header.jpg?raw=true)
 
+# `@oaklean/cli`
 A command-line interface that provides utilities for parsing, inspecting, and converting the .oak file format, as well as interfaces used in the `@oaklean` suite.
+
+## Table of Contents
+
+- [Usage](#usage)
+- [Fast Config Setup](#fast-config-setup)
+- [Development](#development)
+- [For More Information](#for-more-information)
 
 ## Usage
 
@@ -128,3 +136,18 @@ If you want to how to setup the Sensor Interfaces and how to make them work with
 To build the tool, execute npm run build.
 
 To make the tool available on your system and enable the `oak` command, simply run `npm run setup`. This command not only builds the tool but also updates your system's version of `@oaklean/cli` to the newly built one.
+
+## For More Information
+### Website
+* [Oaklean Website](https://www.oaklean.io/)
+
+### Github Links
+* [Oaklean Profiler](https://github.com/hitabisgmbh/oaklean)
+* [Oaklean VS Code Extension](https://github.com/hitabisgmbh/oaklean-vscode)
+
+### NPM Packages
+* [Oaklean Packages](https://www.npmjs.com/search?q=%40oaklean)
+
+### VS Code Extension
+* [Oaklean Extension - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean)
+* [Oaklean Extension - Open VSX Registry](https://open-vsx.org/extension/HitabisGmbH/oaklean)

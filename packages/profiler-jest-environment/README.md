@@ -1,16 +1,28 @@
+![oaklean-header](https://github.com/hitabisgmbh/oaklean/blob/main/images/oaklean-header.jpg?raw=true)
+
 # `@oaklean/jest-profiler-environment`
 
 A jest environment to collect energy measurements on source code level during test execution.
 
 Supports Jest versions 28 & 29.
 
+## Table of Contents
+
+- [Usage](#usage)
+	- [Installation](#installation)
+	- [Configure Jest](#configure-jest)
+	- [Configure Oaklean](#configure-oaklean)
+	- [Collect Energy Measurements](#collect-energy-measurements)
+	- [Interpret The Measurements](#interpret-the-measurements)
+- [For More Information](#for-more-information)
+
 ## Usage
 
-#### 1. Installation
+### Installation
 `npm add --save-dev @oaklean/profiler-jest-environment`
 
-#### 2. Add the `@oaklean/jest-profiler-environment` to the jest config
-
+### Configure Jest
+Add the `@oaklean/jest-profiler-environment` to the jest config:<br>
 Adjust the jest config like this:
 ```javascript
 module.exports = {
@@ -22,7 +34,7 @@ module.exports = {
 }
 ```
 
-#### 3. Create a `.oaklean` config file
+### Configure Oaklean
 The CLI can be used to easily setup a `.oaklean` config file.
 1. Install oaklean: `npm add @oaklean/profiler`
 2. Run the init script: `npx oak init`
@@ -92,7 +104,7 @@ If you want to how to setup the Sensor Interfaces and how to make them work with
 > :mag: **How measurements work**<br>
 > During the test execution measurements are collected with a sample based approach. So for every n - microseconds it collects a v8 cpu profile and energy measurements of the sensor interface. You can adjust the sampling rate with the `sampleInterval` options in the `.oaklean` config file above.
 
-#### 4. Run the tests to collect energy measurements
+### Collect Energy Measurements
 > :warning: **The measurement data is NOT automatically collected**<br>
 To enable measurements during test execution you must set an environment variable beforehand (ENABLE_MEASUREMENTS=1).
 When running Jest tests with this environment variable, the measurement data should be saved in the specified output directory.
@@ -103,8 +115,7 @@ It is mandatory to run Jest with the --runInBand option. This ensures that the t
 Execute the tests:
 `ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand`
 
-#### 5. Interpret the measurements and determine the source code locations with the most energy consumption
-
+### Interpret The Measurements
 The `Oaklean` VSCode Extension lets you to interpret the measurements. It integrates the energy measurements directly into your IDE.
 
 **You can find it here:**
@@ -118,3 +129,18 @@ It provides code highlighting to point out which source code locations consume t
 It also provides multiple features to determine the components that consume the most energy, including node modules:
 <br>
 ![vscode-explorer-img](https://github.com/hitabisgmbh/oaklean/blob/main/images/vscode-explorer.png?raw=true)
+
+## For More Information
+### Website
+* [Oaklean Website](https://www.oaklean.io/)
+
+### Github Links
+* [Oaklean Profiler](https://github.com/hitabisgmbh/oaklean)
+* [Oaklean VS Code Extension](https://github.com/hitabisgmbh/oaklean-vscode)
+
+### NPM Packages
+* [Oaklean Packages](https://www.npmjs.com/search?q=%40oaklean)
+
+### VS Code Extension
+* [Oaklean Extension - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean)
+* [Oaklean Extension - Open VSX Registry](https://open-vsx.org/extension/HitabisGmbH/oaklean)

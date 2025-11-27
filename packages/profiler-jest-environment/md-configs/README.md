@@ -1,16 +1,28 @@
+![oaklean-header](https://github.com/hitabisgmbh/oaklean/blob/main/images/oaklean-header.jpg?raw=true)
+
 # `@oaklean/jest-profiler-environment`
 
 A jest environment to collect energy measurements on source code level during test execution.
 
 Supports Jest versions 28 & 29.
 
+## Table of Contents
+
+- [Usage](#usage)
+	- [Installation](#installation)
+	- [Configure Jest](#configure-jest)
+	- [Configure Oaklean](#configure-oaklean)
+	- [Collect Energy Measurements](#collect-energy-measurements)
+	- [Interpret The Measurements](#interpret-the-measurements)
+- [For More Information](#for-more-information)
+
 ## Usage
 
-#### 1. Installation
+### Installation
 `npm add --save-dev @oaklean/profiler-jest-environment`
 
-#### 2. Add the `@oaklean/jest-profiler-environment` to the jest config
-
+### Configure Jest
+Add the `@oaklean/jest-profiler-environment` to the jest config:<br>
 Adjust the jest config like this:
 ```javascript
 module.exports = {
@@ -22,10 +34,10 @@ module.exports = {
 }
 ```
 
-#### 3. Create a `.oaklean` config file
+### Configure Oaklean
 #include "../../docs/FastConfigSetup.md"
 
-#### 4. Run the tests to collect energy measurements
+### Collect Energy Measurements
 > :warning: **The measurement data is NOT automatically collected**<br>
 To enable measurements during test execution you must set an environment variable beforehand (ENABLE_MEASUREMENTS=1).
 When running Jest tests with this environment variable, the measurement data should be saved in the specified output directory.
@@ -36,6 +48,8 @@ It is mandatory to run Jest with the --runInBand option. This ensures that the t
 Execute the tests:
 `ENABLE_MEASUREMENTS=1 npx jest --coverage --runInBand`
 
-#### 5. Interpret the measurements and determine the source code locations with the most energy consumption
-
+### Interpret The Measurements
 #include "../../docs/InterpretMeasurements.md"
+
+## For More Information
+#include "../../md-configs/components/links/all-links.md"

@@ -1,6 +1,14 @@
-# `@oaklean/cli`
+![oaklean-header](https://github.com/hitabisgmbh/oaklean/blob/main/images/oaklean-header.jpg?raw=true)
 
+# `@oaklean/cli`
 A command-line interface that provides utilities for parsing, inspecting, and converting the .oak file format, as well as interfaces used in the `@oaklean` suite.
+
+## Table of Contents
+
+- [Usage](#usage)
+- [Fast Config Setup](#fast-config-setup)
+- [Development](#development)
+- [For More Information](#for-more-information)
 
 ## Usage
 
@@ -61,3 +69,6 @@ Commands:
 To build the tool, execute npm run build.
 
 To make the tool available on your system and enable the `oak` command, simply run `npm run setup`. This command not only builds the tool but also updates your system's version of `@oaklean/cli` to the newly built one.
+
+## For More Information
+#include "../../md-configs/components/links/all-links.md"

@@ -1,13 +1,22 @@
-# `@oaklean/profiler`
+![oaklean-header](https://github.com/hitabisgmbh/oaklean/blob/main/images/oaklean-header.jpg?raw=true)
 
+# `@oaklean/profiler`
 A library to measure the energy consumption of your javascript/typescript code
+
+## Table of Contents
+
+- [Usage](#usage)
+	- [Setup](#setup)
+	- [Measure your code](#measure-your-code)
+	- [Interpret the measurements](#interpret-the-measurements-and-determine-the-source-code-locations-with-the-most-energy-consumption)
+- [For More Information](#for-more-information)
 
 ## Usage
 
-#### 1. Setup
+### Setup
 #include "../../docs/FastConfigSetup.md"
 
-#### 2. Measure your code
+### Measure your code
 
 - Option 1 (Code Injection):
 	> :warning: On Windows, this feature is not fully supported yet.
@@ -40,6 +49,9 @@ A library to measure the energy consumption of your javascript/typescript code
 	// export the measurements into the output directory (defined via the `.oaklean` config) `<rootDir>/<outDir>/<report-name>/`
 	```
 
-#### 3. Interpret the measurements and determine the source code locations with the most energy consumption
+### Interpret the measurements and determine the source code locations with the most energy consumption
 
 #include "../../docs/InterpretMeasurements.md"
+
+## For More Information
+#include "../../md-configs/components/links/all-links.md"

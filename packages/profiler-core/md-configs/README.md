@@ -5,16 +5,4 @@
 The `@oaklean/profiler-core` package provides all basic functions to work with the `.oak` file format. It allows parsing the `.oak` file format as well as tools for analyzing the measurement values. It also provides all necessary capabilities required for precise source code measurement, including interpreting V8 CPU profiler reports, parsing JavaScript/TypeScript source files, and transforming source code of test frameworks like Jest.
 
 ## For More Information
-### Website
-* [Oaklean Website](https://www.oaklean.io/)
-
-### Github Links
-* [Oaklean Profiler](https://github.com/hitabisgmbh/oaklean)
-* [Oaklean VS Code Extension](https://github.com/hitabisgmbh/oaklean-vscode)
-
-### NPM Packages
-* [Oaklean Packages](https://www.npmjs.com/search?q=%40oaklean)
-
-### VS Code Extension
-* [Oaklean Extension - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean)
-* [Oaklean Extension - Open VSX Registry](https://open-vsx.org/extension/HitabisGmbH/oaklean)
+#include "../../md-configs/components/links/all-links.md"

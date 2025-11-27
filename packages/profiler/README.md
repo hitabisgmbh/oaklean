@@ -1,10 +1,19 @@
-# `@oaklean/profiler`
+![oaklean-header](https://github.com/hitabisgmbh/oaklean/blob/main/images/oaklean-header.jpg?raw=true)
 
+# `@oaklean/profiler`
 A library to measure the energy consumption of your javascript/typescript code
+
+## Table of Contents
+
+- [Usage](#usage)
+	- [Setup](#setup)
+	- [Measure your code](#measure-your-code)
+	- [Interpret the measurements](#interpret-the-measurements-and-determine-the-source-code-locations-with-the-most-energy-consumption)
+- [For More Information](#for-more-information)
 
 ## Usage
 
-#### 1. Setup
+### Setup
 The CLI can be used to easily setup a `.oaklean` config file.
 1. Install oaklean: `npm add @oaklean/profiler`
 2. Run the init script: `npx oak init`
@@ -74,7 +83,7 @@ If you want to how to setup the Sensor Interfaces and how to make them work with
 > :mag: **How measurements work**<br>
 > During the test execution measurements are collected with a sample based approach. So for every n - microseconds it collects a v8 cpu profile and energy measurements of the sensor interface. You can adjust the sampling rate with the `sampleInterval` options in the `.oaklean` config file above.
 
-#### 2. Measure your code
+### Measure your code
 
 - Option 1 (Code Injection):
 	> :warning: On Windows, this feature is not fully supported yet.
@@ -107,7 +116,7 @@ If you want to how to setup the Sensor Interfaces and how to make them work with
 	// export the measurements into the output directory (defined via the `.oaklean` config) `<rootDir>/<outDir>/<report-name>/`
 	```
 
-#### 3. Interpret the measurements and determine the source code locations with the most energy consumption
+### Interpret the measurements and determine the source code locations with the most energy consumption
 
 The `Oaklean` VSCode Extension lets you to interpret the measurements. It integrates the energy measurements directly into your IDE.
 
@@ -122,3 +131,18 @@ It provides code highlighting to point out which source code locations consume t
 It also provides multiple features to determine the components that consume the most energy, including node modules:
 <br>
 ![vscode-explorer-img](https://github.com/hitabisgmbh/oaklean/blob/main/images/vscode-explorer.png?raw=true)
+
+## For More Information
+### Website
+* [Oaklean Website](https://www.oaklean.io/)
+
+### Github Links
+* [Oaklean Profiler](https://github.com/hitabisgmbh/oaklean)
+* [Oaklean VS Code Extension](https://github.com/hitabisgmbh/oaklean-vscode)
+
+### NPM Packages
+* [Oaklean Packages](https://www.npmjs.com/search?q=%40oaklean)
+
+### VS Code Extension
+* [Oaklean Extension - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=HitabisGmbH.oaklean)
+* [Oaklean Extension - Open VSX Registry](https://open-vsx.org/extension/HitabisGmbH/oaklean)
