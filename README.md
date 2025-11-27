@@ -14,10 +14,10 @@
 - [First Steps](#first-steps)
 - [Docs](#docs)
 - [Getting Started](#getting-started)
+- [For More Information](#for-more-information)
 - [Contributing](#contributing)
 	- [Contributing Guide](#contributing-guide)
 	- [Packages](#packages)
-- [For More Information](#for-more-information)
 - [Credits](#credits)
 - [License](#license)
 
