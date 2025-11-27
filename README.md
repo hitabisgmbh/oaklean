@@ -1,3 +1,11 @@
+<p align="center">
+  <a href="https://www.npmjs.com/package/@oaklean/profiler"><img src="https://img.shields.io/npm/v/@oaklean/profiler" alt="npm version"></a>
+  <a href="https://github.com/hitabisgmbh/oaklean/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Oaklean is released under the MIT license."></a>
+</p>
+<p align="center">
+  <a href="https://github.com/hitabisgmbh/oaklean/actions/workflows/profiler.yml"><img alt="GitHub CI Status" src="https://img.shields.io/github/actions/workflow/status/hitabisgmbh/oaklean/profiler.yml?label=CI&logo=GitHub"></a>
+</p>
+
 <!-- TABLE OF CONTENTS -->
 <details>
 	<summary>Table of Contents</summary>
@@ -60,3 +68,16 @@ You can find a detailed description of how to use it [here](./packages/profiler-
 		<br>
 		<img src="./images/vscode-explorer.png" width="300px">
 		<br>
+
+## Contributing
+Check out our [contributing guide](./CONTRIBUTE.md) to understand our development workflow, learn how to suggest bug fixes and enhancements, and discover how to build and test your changes in Oaklean.
+
+## Credits
+This project exists thanks to all the people who [contribute](https://github.com/hitabisgmbh/oaklean/graphs/contributors)
+
+<a href="https://github.com/hitabisgmbh/oaklean/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=hitabisgmbh/oaklean" />
+</a>
+
+## License
+Oaklean is [MIT licensed](./LICENSE)
