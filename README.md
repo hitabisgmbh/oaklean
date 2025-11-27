@@ -7,7 +7,7 @@
 </p>
 
 <div align="center">
-  <img src="images/oaklean-header.jpg" alt="Logo" style="max-width: 910px; height: auto;">
+  <img src="images/oaklean-header.jpg" alt="Logo" style="max-width: 70%; height: auto;">
 </div>
 
 <!-- TABLE OF CONTENTS -->
