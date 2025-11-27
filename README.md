@@ -6,6 +6,11 @@
   <a href="https://github.com/hitabisgmbh/oaklean/actions/workflows/profiler.yml"><img alt="GitHub CI Status" src="https://img.shields.io/github/actions/workflow/status/hitabisgmbh/oaklean/profiler.yml?label=CI&logo=GitHub"></a>
 </p>
 
+<!-- A spacer -->
+<p>&nbsp;</p>
+
+<p align="center"><img src="images/app_icon512x512.png" width="50%"/></p>
+
 <!-- TABLE OF CONTENTS -->
 <details>
 	<summary>Table of Contents</summary>
