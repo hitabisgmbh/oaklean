@@ -14,10 +14,10 @@
 - [First Steps](#first-steps)
 - [Docs](#docs)
 - [Getting Started](#getting-started)
+- [For More Information](#for-more-information)
 - [Contributing](#contributing)
 	- [Contributing Guide](#contributing-guide)
 	- [Packages](#packages)
-- [For More Information](#for-more-information)
 - [Credits](#credits)
 - [License](#license)
 
@@ -74,7 +74,7 @@ You can find a detailed description of how to use it [here](./packages/profiler-
 
 ## Contributing
 
-### [Contributing Guide](CONTRIBUTING.md)
+### [Contributing Guide](CONTRIBUTE.md)
 
 Check out our [contributing guide](./CONTRIBUTE.md) to understand our development workflow, learn how to suggest bug fixes and enhancements, and discover how to build and test your changes in Oaklean.
 
