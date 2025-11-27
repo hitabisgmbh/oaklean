@@ -108,4 +108,34 @@ jobs:
     - env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}">.npmrc
-    - run: npm run publish-registry
+    - run: npm run publish-registry-mandatory
+  
+  optional-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    container:
+      image: node:20.11.1
+    environment:
+      name: optional-deploy
+    if: github.event_name == 'workflow_dispatch' 
+    timeout-minutes: 60
+    env:
+      NODE_ENV: production
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 20
+    - uses: actions/cache@v4
+      with:
+        path: node_modules/
+        key: default
+    - uses: actions/download-artifact@v4
+      with:
+        name: build
+        path: |-
+          ./packages/
+    - run: npm ci
+    - env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}">.npmrc
+    - run: npm run publish-registry-optional
