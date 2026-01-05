@@ -61,11 +61,9 @@
 	"devDependencies": {
 		"@oaklean/profiler-jest-environment": "0.1.6",
 		"@types/cli-color": "^2.0.6",
-		"@types/glob": "^8.1.0",
 		"@types/glob-to-regexp": "^0.4.4",
 		"@types/oboe": "^2.1.4",
-		"@types/uuid": "^9.0.2",
-		"cross-env": "^7.0.3",
-		"rimraf": "^4.4.1"
+		"cross-env": "^10.1.0",
+		"rimraf": "^6.1.2"
 	}
 }

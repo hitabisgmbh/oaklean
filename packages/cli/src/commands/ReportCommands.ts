@@ -42,7 +42,7 @@ export default class ReportCommands {
 		baseCommand
 			.command('check')
 			.description('Checks wether all files in the profiler format are present')
-			.option('-sn, --source-nodes', 'Specifies if source nodes should also be checked', false)
+			.option('--sn, --source-nodes', 'Specifies if source nodes should also be checked', false)
 			.argument('<input>', 'input file path')
 			.action(this.check.bind(this))
 
@@ -50,7 +50,7 @@ export default class ReportCommands {
 			.command('inspect')
 			.description('Displays an overview of the reports stats')
 			.argument('<input>', 'input file path')
-			.option('-lm, --list-modules', 'Displays a list of node modules', false)
+			.option('--lm, --list-modules', 'Displays a list of node modules', false)
 			.action(this.inspect.bind(this))
 	}
 
