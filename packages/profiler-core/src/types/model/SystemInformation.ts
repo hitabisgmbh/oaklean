@@ -70,6 +70,7 @@ export interface ISystemInformation_Memory {
 	buffers: number
 	cached: number
 	slab: number
+	reclaimable: number
 	swaptotal: number
 	swapused: number
 	swapfree: number

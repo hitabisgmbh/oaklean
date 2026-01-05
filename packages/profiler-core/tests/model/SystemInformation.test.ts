@@ -78,17 +78,18 @@ describe('SystemInformation', () => {
 
 		jest.spyOn(si, 'mem').mockResolvedValue({
 			total: 68719476736,
-			free: 22707240960,
-			used: 46012219392,
-			active: 22927867904,
-			available: 45791592448,
-			buffcache: 23084351488,
+			free: 7562002432,
+			used: 61157474304,
+			active: 26543980544,
+			available: 42175496192,
+			buffcache: 34613493760,
 			buffers: 0,
 			cached: 0,
 			slab: 0,
-			swaptotal: 0,
-			swapused: 0,
-			swapfree: 0,
+			reclaimable: 29025796096,
+			swaptotal: 3221225472,
+			swapused: 1477244354.56,
+			swapfree: 1743981117.44,
 			writeback: null,
 			dirty: null
 		})
