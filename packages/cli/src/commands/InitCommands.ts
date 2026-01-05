@@ -116,7 +116,7 @@ export default class InitCommands {
 				break
 		}
 
-		config.projectOptions.identifier = Crypto.uniqueID() as ProjectIdentifier_string
+		config.projectOptions.identifier = await Crypto.uniqueID() as ProjectIdentifier_string
 		config.registryOptions = undefined as unknown as RegistryOptions
 		// remove runtime options from main config
 		config.runtimeOptions.sensorInterface = undefined

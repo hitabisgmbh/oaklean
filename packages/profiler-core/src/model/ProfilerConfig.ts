@@ -73,9 +73,9 @@ export class ProfilerConfig implements IProfilerConfig {
 
 	static printZodError(err: zod.ZodError) {
 		LoggerHelper.error('ProfilerConfig.verifyConfig: Invalid config')
-		for (const subError of err.errors) {
+		for (const issue of err.issues) {
 			LoggerHelper.error(
-				`${subError.path.join('.')} - ${subError.message}`
+				`${issue.path.join('.')} - ${issue.message}`
 			)
 		}
 	}

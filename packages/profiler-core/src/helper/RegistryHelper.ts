@@ -28,7 +28,7 @@ export class RegistryHelper {
 
 		const formData = new FormData()
 		formData.append('file', new Blob([new Uint8Array(compressedBuffer)]), 'filename.txt')
-		formData.append('auth', AuthenticationHelper.getAuthentication())
+		formData.append('auth', await AuthenticationHelper.getAuthentication())
 
 		try {
 			const result = await axios.post(usedConfig.getRegistryUploadUrl(), formData, {

@@ -144,7 +144,7 @@ describe('NodeModule', () => {
 			const existingNodeModule = NodeModule.fromNodeModulePath(nodeModulePath)
 
 			expect(existingNodeModule?.name).toBe('find-up')
-			expect(existingNodeModule?.version).toBe('6.3.0')
+			expect(existingNodeModule?.version).toBe('8.0.0')
 		})
 
 		test('load non existing node module', () => {

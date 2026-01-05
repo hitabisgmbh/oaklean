@@ -1,4 +1,4 @@
-import { SourceMapConsumer, RawSourceMap, MappedPosition } from 'source-map'
+import { SourceMapConsumer, RawSourceMap, NullableMappedPosition } from 'source-map'
 
 import { BaseModel } from './BaseModel'
 
@@ -58,10 +58,10 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		this.ignoreList = ignoreList
 	}
 
-	public get numberOfLinesInCompiledFile() : number {
+	public async numberOfLinesInCompiledFile() : Promise<number> {
 		if (this._numberOfLinesInCompiledFile === undefined) {
-			let maxLine = 0
-			this.asConsumer().eachMapping((mapping) => {
+			let maxLine = 0;
+			(await this.asConsumer()).eachMapping((mapping) => {
 				if (mapping.generatedLine > maxLine) {
 					maxLine = mapping.generatedLine
 				}
@@ -190,10 +190,10 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return Buffer.from(JSON.stringify(data)).toString('base64')
 	}
 
-	asConsumer(): SourceMapConsumer {
+	async asConsumer(): Promise<SourceMapConsumer> {
 		if (!this._consumer) {
-			this._consumer = new SourceMapConsumer({
-				version: this.version.toString(),
+			this._consumer = await new SourceMapConsumer({
+				version: this.version,
 				file: this.file,
 				sourceRoot: this.sourceRoot,
 				sources: this.sources,
@@ -205,8 +205,8 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return this._consumer
 	}
 
-	getOriginalSourceLocation(line: number, column: number): MappedPosition | undefined {
-		const originalPosition = this.asConsumer().originalPositionFor(
+	async getOriginalSourceLocation(line: number, column: number): Promise<NullableMappedPosition | undefined> {
+		const originalPosition = (await this.asConsumer()).originalPositionFor(
 			{ line, column })
 
 		if (!originalPosition.source) {
