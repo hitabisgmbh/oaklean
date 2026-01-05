@@ -1,6 +1,6 @@
 {
 	"name": "@oaklean/profiler-core",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"author": "Hitabis GmbH",
 	"license": "MIT",
 	"description": "Part of the  @oaklean suite. It provides all basic functions to work with the `.oak` file format. It allows parsing the `.oak` file format as well as tools for analyzing the measurement values. It also provides all necessary capabilities required for precise source code measurement, including interpreting V8 CPU profiler reports, parsing JavaScript/TypeScript source files, and transforming source code of test frameworks like Jest.",
@@ -59,7 +59,7 @@
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
-		"@oaklean/profiler-jest-environment": "0.1.5",
+		"@oaklean/profiler-jest-environment": "0.1.6",
 		"@types/cli-color": "^2.0.6",
 		"@types/glob": "^8.1.0",
 		"@types/glob-to-regexp": "^0.4.4",

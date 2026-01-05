@@ -1,6 +1,10 @@
 
 # Change Log
 
+## 0.1.6
+### Security fixes
+- Updated systeminformation package to address a security vulnerability (Command Injection in fsSize() on Windows)
+
 ## 0.1.5
 ### Added
 - Support for webpack
