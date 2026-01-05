@@ -2,7 +2,7 @@
 
 ## Prerequisites
 - npm 10.2.4
-- node 20.11.1
+- node ^20.17.0
 
 ## Setup
 1. Install dependencies: `npm ci --ignore-scripts`

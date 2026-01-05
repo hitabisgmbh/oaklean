@@ -140,7 +140,7 @@ describe('NodeModule', () => {
 
 	describe('fromNodeModulePath', () => {
 		test('load existing node module', () => {
-			const nodeModulePath = CURRENT_DIR.join('..', '..', '..', '..', 'node_modules', 'find-up')
+			const nodeModulePath = CURRENT_DIR.join('..', '..', 'node_modules', 'find-up')
 			const existingNodeModule = NodeModule.fromNodeModulePath(nodeModulePath)
 
 			expect(existingNodeModule?.name).toBe('find-up')

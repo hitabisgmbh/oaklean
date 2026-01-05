@@ -178,7 +178,7 @@ export default class ReportCommands {
 				continue
 			}
 			const nodeModule = NodeModule.fromIdentifier(nodeModuleIdentifier)
-			if (nodeModule.name === '{wasm}') {
+			if (nodeModule.isWasmModule()) {
 				continue
 			}
 

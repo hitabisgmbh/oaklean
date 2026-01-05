@@ -70,7 +70,7 @@ setup_environment:
         Set-Content -Path "$env:NVM_HOME\settings.txt" -Value "root: $env:NVM_HOME`npath: $env:NVM_SYMLINK"
         Write-Host "NVM installed successfully!"
 
-        $nodeVersion = "20.11.1"
+        $nodeVersion = "20.17.0"
         # Ensure Node.js v20 is installed
         $installedVersions = nvm list | Select-String "$nodeVersion" | Out-String
         if ($installedVersions -match "$nodeVersion") {

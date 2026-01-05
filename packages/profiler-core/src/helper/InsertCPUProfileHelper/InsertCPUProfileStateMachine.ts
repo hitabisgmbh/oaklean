@@ -293,7 +293,8 @@ export class InsertCPUProfileStateMachine {
 					sourceNodeLocation: {
 						relativeFilePath: wasmPath,
 						functionIdentifier:
-							sourceLocation.rawFunctionName as SourceNodeIdentifier_string
+							// needs to be wrapped in {} to be a valid source node identifier 
+							`{${sourceLocation.rawFunctionName}}` as SourceNodeIdentifier_string
 					},
 					presentInOriginalSourceCode: false
 				}
