@@ -68,6 +68,7 @@ export default class ReportCommands {
 			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
 			return
 		}
+		LoggerHelper.log(`Hash: ${report.hash()}`)
 	}
 
 	async convertToJSON(input: string, output: string) {
