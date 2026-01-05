@@ -42,7 +42,8 @@
 		"@oaklean/profiler": "^0.1.6",
 		"@oaklean/profiler-core": "0.1.6",
 		"cli-color": "^2.0.4",
-		"commander": "^14.0.2"
+		"commander": "^14.0.2",
+		"glob": "^13.0.0"
 	},
 	"devDependencies": {
 		"cross-env": "^10.1.0",
