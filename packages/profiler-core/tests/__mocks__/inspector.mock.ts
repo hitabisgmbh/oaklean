@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-import inspector from 'inspector'
+import inspector from 'node:inspector'
 
 export const SCRIPT_SOURCES: Record<string, string> = {
 	'1': fs.readFileSync(__dirname + '/script01.js').toString(),
@@ -98,7 +98,7 @@ class Session {
 	}
 }
 
-jest.mock('inspector', () => {
+jest.mock('node:inspector', () => {
 	return {
 		Session
 	}

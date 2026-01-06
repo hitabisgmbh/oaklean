@@ -2,6 +2,9 @@
 # Change Log
 
 ## 0.1.6
+### Improvement
+- Oaklean now shares Node Inspector sessions among consumers, reducing overall overhead
+
 ### Fixes
 - Fixed a minor parsing error in functions executed via WASM
 

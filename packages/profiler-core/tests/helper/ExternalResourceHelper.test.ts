@@ -335,27 +335,8 @@ describe('ExternalResourceHelper', () => {
 		})
 	})
 
-	describe('debug connection', () => {
-		test('not enabled debugger', async () => {
-			const instance = new ExternalResourceHelper(ROOT_DIR)
-
-			await expect(async () => {
-				await instance.listen()
-			}).rejects.toThrow('Session is not connected')
-		})
-
-		test('disabled debugger', async () => {
-			const instance = new ExternalResourceHelper(ROOT_DIR)
-
-			await instance.connect()
-			await instance.disconnect()
-
-			await expect(async () => {
-				await instance.listen()
-			}).rejects.toThrow('Session is not connected')
-		})
-
-		test('enabled debugger', async () => {
+	describe('inspector session connection', () => {
+		test('connected inspector session', async () => {
 			const instance = new ExternalResourceHelper(ROOT_DIR)
 
 			const fileInfoFromScriptIDSpy = jest.spyOn(instance, 'fileInfoFromScriptID')
