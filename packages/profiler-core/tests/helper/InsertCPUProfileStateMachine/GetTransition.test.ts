@@ -17,9 +17,8 @@ import {
 import {
 	InsertCPUProfileStateMachine,
 } from '../../../src/helper/InsertCPUProfileHelper/InsertCPUProfileStateMachine'
-import { WASM_NODE_MODULE } from '../../../src/model/NodeModule'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'
-import { NodeModule } from '../../../src/model/NodeModule'
+import { NodeModule, WASM_NODE_MODULE } from '../../../src/model/NodeModule'
 // Types
 import {
 	SourceNodeIdentifier_string
@@ -146,7 +145,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('wasm/0x12345'),
 			functionIdentifier:
-				'wasm-function[42]:0x12345' as SourceNodeIdentifier_string
+				'{wasm-function[42]:0x12345}' as SourceNodeIdentifier_string
 		}
 
 		test('from STATE: project:lang_internal:false', async () => {

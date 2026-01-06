@@ -2,6 +2,9 @@
 # Change Log
 
 ## 0.1.6
+### Fixes
+- Fixed a minor parsing error in functions executed via WASM
+
 ### Security fixes
 - Updated systeminformation package to address a security vulnerability (Command Injection in fsSize() on Windows)
 

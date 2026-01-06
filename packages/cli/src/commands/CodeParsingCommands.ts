@@ -32,7 +32,7 @@ export default class CodeParsingCommands {
 			.alias('vi')
 			.description('Parses all source files (.js, .ts, .jsx, .tsx) within a given path and verifies that all identifiers are valid and unique')
 			.argument('<input>', 'input file path')
-			.option('-t262, --t262', 'Specifies whether files should be ignored that contain a "$DONOTEVALUATE();", this is useful for test262 source files')
+			.option('--t262', 'Specifies whether files should be ignored that contain a "$DONOTEVALUATE();", this is useful for test262 source files')
 			.action(this.verifySourceFilesIdentifiers.bind(this))
 
 		const externalResourceCommand = program

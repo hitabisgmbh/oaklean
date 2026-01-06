@@ -15,7 +15,14 @@ import {
 	STATIC_LOCAL_CONFIG_FILENAME
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
-import { confirm, select } from '@inquirer/prompts'
+
+let _inquirerPromptsModule: typeof import('@inquirer/prompts') | undefined = undefined
+async function inquirerPromptsModule() {
+	if (!_inquirerPromptsModule) {
+		_inquirerPromptsModule = await import('@inquirer/prompts')
+	}
+	return _inquirerPromptsModule
+}
 
 export default class InitCommands {
 	constructor() {
@@ -116,7 +123,7 @@ export default class InitCommands {
 				break
 		}
 
-		config.projectOptions.identifier = Crypto.uniqueID() as ProjectIdentifier_string
+		config.projectOptions.identifier = await Crypto.uniqueID() as ProjectIdentifier_string
 		config.registryOptions = undefined as unknown as RegistryOptions
 		// remove runtime options from main config
 		config.runtimeOptions.sensorInterface = undefined
@@ -127,14 +134,14 @@ export default class InitCommands {
 	}
 
 	async confirmConfigFileContent() {
-		return await confirm({
+		return await (await inquirerPromptsModule()).confirm({
 			message: 'Is this OK? (yes)',
 			default: true
 		})
 	}
 
 	async confirmOverwriteContent() {
-		return await confirm({
+		return await (await inquirerPromptsModule()).confirm({
 			message: 'Are you sure you want to override the existing files? (yes)',
 			default: true
 		})
@@ -151,7 +158,7 @@ export default class InitCommands {
 		const recommendedSensorInterfaceMessage = recommendedSensorInterface !== undefined ?
 			`recommended for your platform: ${recommendedSensorInterface}` :
 			'No recommended sensor interface for this platform.'
-		return await select<SensorInterfaceType | undefined>({
+		return await (await inquirerPromptsModule()).select<SensorInterfaceType | undefined>({
 			message: `Select a sensor interface (${recommendedSensorInterfaceMessage})`,
 			choices: [
 				{

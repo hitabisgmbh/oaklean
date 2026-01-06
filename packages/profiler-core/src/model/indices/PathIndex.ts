@@ -6,7 +6,7 @@ import { BaseModel } from '../BaseModel'
 import { ModelMap } from '../ModelMap'
 import { SourceNodeIdentifierHelper } from '../../helper/SourceNodeIdentifierHelper'
 import { UnifiedPath } from '../../system/UnifiedPath'
-import { LangInternalPathRegex } from '../../constants/SourceNodeRegex'
+import { GlobalIdentifier } from '../../system/GlobalIdentifier'
 // Types
 import {
 	PathID_number,
@@ -21,6 +21,7 @@ import {
 	LangInternalPath_string,
 	LangInternalSourceNodeIdentifier_string
 } from '../../types'
+
 export class PathIndex extends BaseModel {
 	moduleIndex: ModuleIndex
 	identifier: UnifiedPath_string | LangInternalPath_string
@@ -124,7 +125,7 @@ export class PathIndex extends BaseModel {
 			data = json
 		}
 		let identifier
-		if (pathParts[0] === '' || LangInternalPathRegex.test(pathParts[0])) {
+		if (GlobalIdentifier.isLangInternalPath(pathParts[0])) {
 			identifier = pathParts.join('/') as LangInternalPath_string
 		} else {
 			identifier = UnifiedPath.fromPathParts(pathParts).toString()

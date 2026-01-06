@@ -33,7 +33,7 @@ describe('RegistryHelper', () => {
 
 			const axiosPostMock = jest.fn().mockResolvedValue({ data: 'data' })
 			const axiosPostSpy = jest.spyOn(axios, 'post').mockImplementation(axiosPostMock)
-			jest.spyOn(AuthenticationHelper,'getAuthentication').mockReturnValue(exampleAuthKey)
+			jest.spyOn(AuthenticationHelper,'getAuthentication').mockResolvedValue(exampleAuthKey)
 
 			const expectedCompressedBuffer = await BufferHelper.compressBuffer(EXAMPLE_PROJECT_REPORT.toBuffer())
 

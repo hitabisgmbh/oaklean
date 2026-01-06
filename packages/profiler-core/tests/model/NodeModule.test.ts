@@ -140,11 +140,11 @@ describe('NodeModule', () => {
 
 	describe('fromNodeModulePath', () => {
 		test('load existing node module', () => {
-			const nodeModulePath = CURRENT_DIR.join('..', '..', '..', '..', 'node_modules', 'find-up')
+			const nodeModulePath = CURRENT_DIR.join('..', '..', 'node_modules', 'find-up')
 			const existingNodeModule = NodeModule.fromNodeModulePath(nodeModulePath)
 
 			expect(existingNodeModule?.name).toBe('find-up')
-			expect(existingNodeModule?.version).toBe('6.3.0')
+			expect(existingNodeModule?.version).toBe('8.0.0')
 		})
 
 		test('load non existing node module', () => {

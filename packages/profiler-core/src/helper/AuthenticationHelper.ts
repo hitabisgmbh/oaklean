@@ -18,7 +18,7 @@ import {
 } from '../types'
 
 export class AuthenticationHelper {
-	static getAuthentication(): UUID_string {
+	static async getAuthentication(): Promise<UUID_string> {
 		if (OAKLEAN_AUTH_KEY !== undefined) {
 			if (!Crypto.validateUniqueID(OAKLEAN_AUTH_KEY as UUID_string)) {
 				throw new Error('AuthenticationHelper.getAuthentication: Env Variable OAKLEAN_AUTH_KEY is no uuid4')
@@ -30,7 +30,7 @@ export class AuthenticationHelper {
 		const authFile = configDir.join('auth')
 
 		if (!fs.existsSync(authFile.toPlatformString())) {
-			const auth = Crypto.uniqueID()
+			const auth = await Crypto.uniqueID()
 			PermissionHelper.writeFileWithUserPermission(authFile, auth)
 			PermissionHelper.changeFilePermission(authFile.toPlatformString(), PermissionTypes.ReadWriteOnlyOwner)
 			return auth as unknown as UUID_string

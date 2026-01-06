@@ -1,7 +1,5 @@
 import crypto from 'crypto'
 
-import { v4 as uuidv4 } from 'uuid'
-
 // Types
 import {
 	UUID_string
@@ -18,8 +16,17 @@ export class Crypto {
 		return crypto.createHash('sha1').update(input).digest('hex').slice(0, 8)
 	}
 
-	static uniqueID(): UUID_string {
-		return uuidv4() as UUID_string
+	private static uuidModule: typeof import('uuid').v4 | null = null
+	static async getUUIDModule() {
+		if (Crypto.uuidModule === null) {
+			Crypto.uuidModule = (await import('uuid')).v4
+		}
+
+		return Crypto.uuidModule
+	}
+
+	static async uniqueID(): Promise<UUID_string> {
+		return (await Crypto.getUUIDModule())() as UUID_string
 	}
 
 	static validateUniqueID(id: UUID_string): boolean {

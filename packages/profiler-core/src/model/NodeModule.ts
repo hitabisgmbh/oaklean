@@ -10,6 +10,8 @@ import {
 	INodeModule
 } from '../types'
 
+const WASM_NODE_MODULE_NAME = '{wasm}'
+
 export const NodeModuleNameRegexString = '(?:@[a-z0-9-~][a-z0-9-._~]*\\/)?[a-z0-9-~][a-z0-9-._~]*'
 // semver regular expression
 // License: https://creativecommons.org/licenses/by/3.0/
@@ -19,10 +21,9 @@ export const NodeModuleVersionRegexString =
  
 '(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-(?:(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+(?:[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?'
 
-export const NodeModuleIdentifierRegexString = `${NodeModuleNameRegexString}@${NodeModuleVersionRegexString}`
+export const NodeModuleIdentifierRegexString =
+`(?:${NodeModuleNameRegexString}@${NodeModuleVersionRegexString}|${WASM_NODE_MODULE_NAME}\\@)`
 export const NodeModuleIdentifierRegex = new RegExp(NodeModuleIdentifierRegexString)
-
-export const WASM_NODE_MODULE_IDENTIFIER = '{wasm}'
 
 export class NodeModule extends BaseModel {
 	name: string
@@ -38,7 +39,11 @@ export class NodeModule extends BaseModel {
 	}
 
 	static currentEngineModule(): NodeModule {
-		return new NodeModule('node', process.versions.node)
+		return NODE_ENGINE_MODULE
+	}
+
+	isWasmModule(): boolean {
+		return this.name === WASM_NODE_MODULE_NAME
 	}
 
 	get identifier(): NodeModuleIdentifier_string {
@@ -56,7 +61,7 @@ export class NodeModule extends BaseModel {
 		}
 		if (
 			(!name || !version) &&
-			name !== WASM_NODE_MODULE_IDENTIFIER
+			name !== WASM_NODE_MODULE_NAME
 		) {
 			throw new Error('NodeModule.fromIdentifier: invalid format: ' + identifier)
 		}
@@ -125,4 +130,5 @@ export class NodeModule extends BaseModel {
 	}
 }
 
-export const WASM_NODE_MODULE = new NodeModule(WASM_NODE_MODULE_IDENTIFIER, '')
+const NODE_ENGINE_MODULE = new NodeModule('node', process.versions.node)
+export const WASM_NODE_MODULE = new NodeModule(WASM_NODE_MODULE_NAME, '')

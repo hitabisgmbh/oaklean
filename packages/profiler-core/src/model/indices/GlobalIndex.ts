@@ -6,7 +6,6 @@ import { BaseModel } from '../BaseModel'
 import { ModelMap } from '../ModelMap'
 import { NodeModule } from '../NodeModule'
 import { GlobalIdentifier } from '../../system/GlobalIdentifier'
-import { LangInternalPathRegex } from '../../constants/SourceNodeRegex'
 // Types
 import {
 	PathID_number,
@@ -194,7 +193,7 @@ export class GlobalIndex extends BaseModel {
 		identifier: GlobalIdentifier
 	): R {
 		let moduleIndex = undefined
-		if (identifier.path === '' || LangInternalPathRegex.test(identifier.path)) {
+		if (identifier.isLangInternal()) {
 			moduleIndex = this.getLangInternalIndex(indexRequestType)
 		} else {
 			moduleIndex = this.getModuleIndex(indexRequestType, identifier.nodeModule?.identifier)

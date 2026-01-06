@@ -1,6 +1,6 @@
 import path from 'path'
 
-import { MappedPosition } from 'source-map'
+import { NullableMappedPosition } from 'source-map'
 
 import { LoggerHelper } from './LoggerHelper'
 import { TypescriptParser } from './TypescriptParser'
@@ -134,7 +134,7 @@ export class ResolveFunctionIdentifierHelper {
 			sourceLocation.scriptID,
 			sourceLocation.absoluteUrl
 		)
-		const originalPosition = sourceMap !== null ? ResolveFunctionIdentifierHelper.
+		const originalPosition = sourceMap !== null ? await ResolveFunctionIdentifierHelper.
 			resolveMappedLocationFromSourceMap(
 				programStructureTreeNodeScript,
 				sourceMap,
@@ -142,7 +142,12 @@ export class ResolveFunctionIdentifierHelper {
 				columnNumber
 			) : undefined
 
-		if (originalPosition && originalPosition.source) {
+		if (
+			originalPosition && 
+			originalPosition.source !== null && 
+			originalPosition.line !== null && 
+			originalPosition.column !== null
+		) {
 			const {
 				url: originalPositionPath,
 				protocol: urlProtocol
@@ -318,13 +323,13 @@ export class ResolveFunctionIdentifierHelper {
 	 * the requested source code location is not part of the original source code.
 	 * 
 	 */
-	static resolveMappedLocationFromSourceMap(
+	static async resolveMappedLocationFromSourceMap(
 		programStructureTreeNodeScript: ProgramStructureTree,
 		sourceMap: SourceMap,
 		lineNumber: number,
 		columnNumber: number
-	): MappedPosition | undefined {
-		const originalPosition = sourceMap.getOriginalSourceLocation(lineNumber, columnNumber)
+	): Promise<NullableMappedPosition | undefined> {
+		const originalPosition = await sourceMap.getOriginalSourceLocation(lineNumber, columnNumber)
 
 		// check if position could be resolved
 		if (originalPosition && originalPosition.source) {
