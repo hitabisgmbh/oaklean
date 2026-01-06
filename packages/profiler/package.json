@@ -1,6 +1,9 @@
 {
 	"name": "@oaklean/profiler",
 	"version": "0.1.6",
+	"engines": {
+		"node": "^20.17.0"
+	},
 	"author": "Hitabis GmbH",
 	"license": "MIT",
 	"description": "A library to measure the energy consumption of your javascript/typescript code",

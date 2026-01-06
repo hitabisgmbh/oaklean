@@ -28,7 +28,7 @@
 		"packages/cli"
 	],
 	"engines": {
-		"node": "20.17.0"
+		"node": "^20.17.0"
 	},
 	"scripts": {
 		"after-install": "cd node_modules/v8-profiler-next && npm run install",

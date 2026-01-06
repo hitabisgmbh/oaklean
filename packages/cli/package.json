@@ -1,6 +1,9 @@
 {
 	"name": "@oaklean/cli",
 	"version": "0.1.6",
+	"engines": {
+		"node": "^20.17.0"
+	},
 	"author": "Hitabis GmbH",
 	"license": "MIT",
 	"description": "A command-line interface that provides utilities for parsing, inspecting, and converting the .oak file format, as well as interfaces used in the @oaklean suite.",
