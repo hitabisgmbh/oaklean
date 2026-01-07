@@ -1,5 +1,4 @@
 import * as fs from 'fs'
-import { Session } from 'inspector'
 
 import seedrandom from 'seedrandom'
 import {
@@ -9,7 +8,6 @@ import {
 	IProjectReportExecutionDetailsDuringMeasurement,
 	TimeHelper,
 	NanoSeconds_BigInt,
-	MicroSeconds_number,
 	ReportKind,
 	PermissionHelper,
 	LoggerHelper,
@@ -29,18 +27,6 @@ import { PowerMetricsSensorInterface } from './interfaces/powermetrics/PowerMetr
 import { PerfSensorInterface } from './interfaces/perf/PerfSensorInterface'
 import { WindowsSensorInterface } from './interfaces/windows/WindowsSensorInterface'
 
-interface TraceEventParams {
-	pid: number,
-	tid: number,
-	ts: number,
-	tts: number,
-	ph: string,
-	cat: string,
-	name: string,
-	dur: number
-	tdur: number
-}
-
 export class Profiler {
 	subOutputDir: string | undefined
 	config: ProfilerConfig
@@ -49,8 +35,6 @@ export class Profiler {
 
 	private _externalResourceHelper: ExternalResourceHelper
 	private _sensorInterface: BaseSensorInterface | undefined
-	private _traceEventSession: Session | undefined
-	private _profilerStartTime: MicroSeconds_number | undefined
 
 	constructor(
 		subOutputDir?: string
@@ -58,6 +42,7 @@ export class Profiler {
 		this.subOutputDir = subOutputDir
 		this.config = ProfilerConfig.autoResolve()
 		this.loadSensorInterface()
+
 		this._externalResourceHelper = new ExternalResourceHelper(
 			this.config.getRootDir()
 		)
@@ -144,48 +129,6 @@ export class Profiler {
 		return profiler
 	}
 
-	async startCapturingProfilerTracingEvents() {
-		if (this._traceEventSession !== undefined) {
-			throw new Error('startCapturingProfilerTracingEvents: Trace Event Session should not already be defined')
-		}
-		const session = new Session()
-		this._traceEventSession = session
-		session.connect()
-		session.on('NodeTracing.dataCollected', (chunk) => {
-			for (const event of (chunk.params.value as TraceEventParams[])) {
-				if (event.pid === process.pid && event.cat === 'v8') {
-					if (event.name === 'CpuProfiler::StartProfiling') { // captured start event of cpu profiler
-						this._profilerStartTime = event.ts as MicroSeconds_number // store high resolution begin time
-					}
-				}
-			}
-		})
-		const traceConfig = { includedCategories: ['v8'] } // config to capture v8's trace events
-		await TraceEventHelper.post(session, 'NodeTracing.start', { traceConfig }) // start trace event capturing
-	}
-
-	async stopCapturingProfilerTracingEvents() {
-		if (this._traceEventSession === undefined) {
-			throw new Error('stopCapturingProfilerTracingEvents: Trace Event Session should be defined')
-		}
-		await TraceEventHelper.post(this._traceEventSession, 'NodeTracing.stop', undefined)
-		this._traceEventSession.disconnect()
-		this._traceEventSession = undefined
-	}
-
-	async getCPUProfilerBeginTime(): Promise<MicroSeconds_number> {
-		let tries = 0
-		while (this._profilerStartTime === undefined && tries < 10) {
-			LoggerHelper.error(`Cannot capture profiler start time on try: ${tries + 1}, try again after 1 second`)
-			tries += 1
-			await TimeHelper.sleep(1000)
-		}
-		if (this._profilerStartTime === undefined) {
-			throw new Error(`Could not capture cpu profilers begin time after ${tries} tries, measurements failed`)
-		}
-		return this._profilerStartTime
-	}
-
 	async start(title: string, executionDetails?: IProjectReportExecutionDetailsDuringMeasurement) {
 		const performance = new PerformanceHelper()
 		performance.start('Profiler.start')
@@ -237,9 +180,9 @@ export class Profiler {
 		V8Profiler.setSamplingInterval(this.config.getV8CPUSamplingInterval()) // sets the sampling interval in microseconds
 		performance.stop('Profiler.start.getV8CPUSamplingInterval')
 
-		performance.start('Profiler.start.startCapturingProfilerTracingEvents')
-		await this.startCapturingProfilerTracingEvents()
-		performance.stop('Profiler.start.startCapturingProfilerTracingEvents')
+		performance.start('TraceEventHelper.startCapturingProfilerTracingEvents')
+		await TraceEventHelper.startCapturingProfilerTracingEvents()
+		performance.stop('TraceEventHelper.startCapturingProfilerTracingEvents')
 
 		performance.start('Profiler.start.externalResourceHelper.connect')
 		await this._externalResourceHelper.connect()
@@ -277,15 +220,17 @@ export class Profiler {
 		const profile = V8Profiler.stopProfiling(title)
 		performance.stop('Profiler.finish.stopProfiling')
 
-		performance.start('Profiler.finish.stopCapturingProfilerTracingEvents')
-		this.stopCapturingProfilerTracingEvents()
-		performance.stop('Profiler.finish.stopCapturingProfilerTracingEvents')
+		performance.start('TraceEventHelper.stopTraceEventSession')
+		await TraceEventHelper.stopTraceEventSession()
+		performance.stop('TraceEventHelper.stopTraceEventSession')
 
 		performance.start('Profiler.finish.sensorInterface.stopProfiling')
 		await this._sensorInterface?.stopProfiling()
 		performance.stop('Profiler.finish.sensorInterface.stopProfiling')
 
-		const CPUProfilerBeginTime = BigInt(await this.getCPUProfilerBeginTime()) * BigInt(1000) as NanoSeconds_BigInt
+		const CPUProfilerBeginTime = BigInt(
+			await TraceEventHelper.getCPUProfilerBeginTime()
+		) * BigInt(1000) as NanoSeconds_BigInt
 		const highResolutionBeginTimeToUse = CPUProfilerBeginTime.toString()
 
 		const cpuProfile = {

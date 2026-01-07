@@ -44,8 +44,6 @@
 		"generate-docs": "markdown-include md-configs/README.json"
 	},
 	"dependencies": {
-		"@jest/environment": "^29.4.3",
-		"@jest/transform": "^29.4.3",
 		"@vscode/debugprotocol": "^1.68.0",
 		"axios": "^1.13.2",
 		"cli-color": "^2.0.4",

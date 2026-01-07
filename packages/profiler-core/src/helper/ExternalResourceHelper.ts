@@ -1,10 +1,11 @@
 import * as fs from 'fs'
-import inspector from 'inspector'
+import { InspectorNotification } from 'node:inspector'
 
 import { LoggerHelper } from './LoggerHelper'
 import { PermissionHelper } from './PermissionHelper'
 import { TypescriptParser } from './TypescriptParser'
 import { GitHelper } from './GitHelper'
+import { InspectorSessionHelper } from './InspectorSessionHelper'
 
 import { GlobalIndex } from '../model/indices/GlobalIndex'
 import { SourceMap, SourceMapRedirect } from '../model/SourceMap'
@@ -33,7 +34,6 @@ export class ExternalResourceHelper {
 
 	private _rootDir: UnifiedPath
 
-	private _session: inspector.Session
 	// maps scriptId to source code
 	private fileInfoPerScriptID: Map<ScriptID_string, ExternalResourceFileInfo | null>
 
@@ -52,7 +52,6 @@ export class ExternalResourceHelper {
 	constructor(rootDir: UnifiedPath) {
 		this._rootDir = rootDir
 		this._frozen = false
-		this._session = new inspector.Session()
 		this.fileInfoPerScriptID = new Map()
 		this.fileInfoPerPath = new Map()
 		this.nodeModules = new Map()
@@ -125,10 +124,9 @@ export class ExternalResourceHelper {
 	}
 
 	async connect() {
-		this._session.connect()
 		// wait for debugger to be enabled
 		await new Promise((resolve) => {
-			this._session.post('Debugger.enable', resolve)
+			InspectorSessionHelper.session.post('Debugger.enable', resolve)
 		})
 	}
 
@@ -271,24 +269,27 @@ export class ExternalResourceHelper {
 		return result
 	}
 
-	async listen() {
-		await this._session.on('inspectorNotification', async (message) => {
-			if (message.method === 'Debugger.scriptParsed') {
-				const params = message.params as {
-					url: string,
-					scriptId: ScriptID_string
-				}
-				// store source code for later use
-				await this.fileInfoFromScriptID(params.scriptId)
+	async inspectorNotification (message: InspectorNotification<object>) {
+		if (message.method === 'Debugger.scriptParsed') {
+			const params = message.params as {
+				url: string,
+				scriptId: ScriptID_string
 			}
-		})
+			// store source code for later use
+			await this.fileInfoFromScriptID(params.scriptId)
+		}
+	}
+
+	private _boundInspectorNotification = this.inspectorNotification.bind(this)
+	async listen() {
+		await InspectorSessionHelper.session.on('inspectorNotification', this._boundInspectorNotification)
 	}
 
 	async disconnect() {
 		await new Promise((resolve) => {
-			this._session.post('Debugger.disable', resolve)
+			InspectorSessionHelper.session.post('Debugger.disable', resolve)
 		})
-		this._session.disconnect()
+		InspectorSessionHelper.session.removeListener('inspectorNotification', this._boundInspectorNotification)
 	}
 
 	async fillSourceMapsFromCPUProfile(profile: ICpuProfileRaw) {
@@ -413,7 +414,7 @@ export class ExternalResourceHelper {
 				err?: Error
 			}
 		>((resolve) => {
-			this._session.post('Debugger.getScriptSource', { scriptId: scriptID }, (err, args) => {
+			InspectorSessionHelper.session.post('Debugger.getScriptSource', { scriptId: scriptID }, (err, args) => {
 				if (err) {
 					resolve({ source: '', err })
 				} else {
