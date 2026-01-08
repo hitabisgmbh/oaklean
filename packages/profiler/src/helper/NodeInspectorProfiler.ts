@@ -6,7 +6,7 @@ import {
 
 import {
 	CPUProfilerCleanUpHelper
-} from '../helper/CPUProfileCleanUpHelper'
+} from './CPUProfileCleanUpHelper'
 
 export class NodeInspectorProfiler {
 	static async startProfiling(): Promise<void> {

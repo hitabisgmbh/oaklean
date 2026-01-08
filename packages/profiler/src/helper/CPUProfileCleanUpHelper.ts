@@ -53,5 +53,12 @@ export class CPUProfilerCleanUpHelper {
 		}
 
 		profile.timeDeltas = timeDeltas
+
+		for (const node of profile.nodes) {
+			// node:inspector returns 0-based line and column numbers
+			// the previously used v8-profiler-next used 1-based line and column numbers
+			node.callFrame.lineNumber += 1 // convert to 1-based line number
+			node.callFrame.columnNumber += 1 // convert to 1-based column number
+		}
 	}
 }

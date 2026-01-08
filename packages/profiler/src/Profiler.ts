@@ -20,7 +20,7 @@ import {
 	SensorInterfaceType
 } from '@oaklean/profiler-core'
 
-import { NodeInspectorProfiler } from './model/NodeInspectorProfiler'
+import { NodeInspectorProfiler } from './helper/NodeInspectorProfiler'
 import { TraceEventHelper } from './helper/TraceEventHelper'
 import { BaseSensorInterface } from './interfaces/BaseSensorInterface'
 import { PowerMetricsSensorInterface } from './interfaces/powermetrics/PowerMetricsSensorInterface'
