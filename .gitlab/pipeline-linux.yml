@@ -12,7 +12,6 @@ default:
   image: $BUILD_IMAGE
   before_script:
     - npm ci --ignore-scripts
-    - npm run after-install
 
 generate-docs:
   stage: generate-docs

@@ -14,7 +14,6 @@ cache:
     - $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
     - $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
     - npm ci --ignore-scripts
-    - npm run after-install
 
 setup_environment:
   stage: setup

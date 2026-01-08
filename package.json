@@ -31,7 +31,6 @@
 		"node": "^20.17.0"
 	},
 	"scripts": {
-		"after-install": "cd node_modules/v8-profiler-next && npm run install",
 		"setup": "npm run setup -w packages/cli",
 		"clear-build": "npm run clear-build -ws",
 		"build": "npm run build -ws",
