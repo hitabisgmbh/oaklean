@@ -19,9 +19,11 @@ stages:
       - node_modules/
       - .npm
   before_script:
-    - echo "Using Node version: $(node -v)"
-    - npm config set cache .npm
-    - npm ci --prefer-offline --ignore-scripts
+    - |
+      echo "Using Node version: $(node -v)"
+      npm config set cache .npm
+      npm ci --prefer-offline --ignore-scripts
+
 
 generate-docs:
   stage: generate-docs
