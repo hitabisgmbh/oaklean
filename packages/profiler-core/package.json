@@ -2,7 +2,7 @@
 	"name": "@oaklean/profiler-core",
 	"version": "0.1.6",
 	"engines": {
-		"node": "^20.17.0"
+		"node": "^20.17.0 || ^22.13.0 || ^24.0.0"
 	},
 	"author": "Hitabis GmbH",
 	"license": "MIT",

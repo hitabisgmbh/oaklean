@@ -46,7 +46,7 @@ export class LoggerHelper {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	static table(tabularData: any, properties?: readonly string[]) {
+	static table(tabularData: any, properties?: string[] | undefined) {
 		console.table(tabularData, properties)
 	}
 
