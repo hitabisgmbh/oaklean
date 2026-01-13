@@ -1,11 +1,12 @@
 stages:
+  - generate-docs
+  - lint
+  - build
   - test
 
-.image-matrix:
+.node-image-matrix:
   image: 
     name: $BUILD_IMAGE_URL:$NODE_VERSION
-  variables:
-    BUILD_IMAGE_URL: harbor.hitabis.de/oaklean/oaklean-build-image-node
   parallel:
     matrix:
       - NODE_VERSION: ["20.17.0", "22.13.0", "24.0.0"]
@@ -22,8 +23,43 @@ stages:
     - npm config set cache .npm
     - npm ci --prefer-offline --ignore-scripts
 
+generate-docs:
+  stage: generate-docs
+  extends: .node-image-matrix
+  script:
+    - npm run generate-docs && [[ -z "$(git status -s)" ]]
+
+lint:
+  stage: lint
+  extends: .node-image-matrix
+  script:
+    - npm run lint
+
+build:
+  stage: build
+  extends: .node-image-matrix
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - ./packages/profiler/dist
+      - ./packages/profiler-core/dist
+      - ./packages/profiler-jest-environment/*.js
+      - ./packages/profiler-jest-environment/*.d.ts
+      - ./packages/cli/dist
+      - ./packages/windows-sensorinterface/dist
+  script:
+    - npm run build
+
 test:
   stage: test
-  extends: .image-matrix
+  extends: .node-image-matrix
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - ./profiles/jest/accumulated.oak
+      - ./profiles/jest/performance.json
+  variables:
+    OAKLEAN_DISABLE_REGISTRY: true
   script:
-    - echo $(node -v)
+    - npm run test-measure
