@@ -18,7 +18,7 @@ stages:
     paths:
       - node_modules/
       - .npm
-  script:
+  before_script:
     - echo "Using Node version: $(node -v)"
     - npm config set cache .npm
     - npm ci --prefer-offline --ignore-scripts
