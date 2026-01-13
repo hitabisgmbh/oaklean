@@ -9,17 +9,21 @@ stages:
   parallel:
     matrix:
       - NODE_VERSION: ["20.17.0", "22.13.0", "24.0.0"]
+  cache:
+    key:
+      files:
+        - package-lock.json
+      prefix: "node_modules-${NODE_VERSION}"  # separate cache per Node version
+    paths:
+      - node_modules/
+      - .npm
   script:
-    - echo $(node -v)
+    - echo "Using Node version: $(node -v)"
+    - npm config set cache .npm
+    - npm ci --prefer-offline --ignore-scripts
 
 test:
   stage: test
   extends: .image-matrix
   script:
-    # Fail intentionally for version 20.17.0
-    - |
-      if [ "$NODE_VERSION" = "20.17.0" ]; then
-        echo "Failing intentionally for Node $NODE_VERSION"
-        exit 1
-      fi
     - echo $(node -v)
