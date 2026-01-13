@@ -32,16 +32,16 @@
 	},
 	"scripts": {
 		"setup": "npm run setup -w packages/cli",
-		"clear-build": "npm run clear-build -ws",
-		"build": "npm run build -ws",
-		"lint": "npm run lint -ws",
-		"test": "npm run test -ws",
-		"test-update": "npm run test-update -ws",
-		"test-measure": "npm run test-measure -ws",
+		"clear-build": "npm run clear-build --ws",
+		"build": "npm run build --ws",
+		"lint": "npm run lint --ws",
+		"test": "npm run test --ws",
+		"test-update": "npm run test-update --ws",
+		"test-measure": "npm run test-measure --ws",
 		"test-gen": "npx jest-test-gen",
 		"publish-registry-mandatory": "sh ./.deploy/publish-mandatory.sh",
 		"publish-registry-optional": "sh ./.deploy/publish-optional.sh",
-		"generate-docs": "markdown-include md-configs/README.json && markdown-include md-configs/docs/FirstSteps.json && markdown-include md-configs/docs/FastConfigSetup.json && npm run generate-docs -ws"
+		"generate-docs": "markdown-include md-configs/README.json && markdown-include md-configs/docs/FirstSteps.json && markdown-include md-configs/docs/FastConfigSetup.json && npm run generate-docs --ws"
 	},
 	"files": [],
 	"devDependencies": {
