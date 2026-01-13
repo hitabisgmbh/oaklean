@@ -56,8 +56,6 @@
 		"@jest/environment": "^29.4.3",
 		"@types/plist": "^3.0.5",
 		"@types/seedrandom": "^3.0.5",
-		"cross-env": "^10.1.0",
-		"devtools-protocol": "^0.0.1561482",
-		"rimraf": "^6.1.2"
+		"devtools-protocol": "^0.0.1561482"
 	}
 }

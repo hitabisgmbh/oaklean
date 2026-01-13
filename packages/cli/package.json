@@ -41,15 +41,11 @@
 		"generate-docs": "markdown-include md-configs/README.json"
 	},
 	"dependencies": {
-		"@inquirer/prompts": "^8.1.0",
+		"@inquirer/prompts": "^8.2.0",
 		"@oaklean/profiler": "^0.1.6",
 		"@oaklean/profiler-core": "0.1.6",
 		"cli-color": "^2.0.4",
 		"commander": "^14.0.2",
 		"glob": "^13.0.0"
-	},
-	"devDependencies": {
-		"cross-env": "^10.1.0",
-		"rimraf": "^6.1.2"
 	}
 }

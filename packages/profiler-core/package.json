@@ -54,7 +54,7 @@
 		"json-stream-stringify": "^3.1.6",
 		"oboe": "^2.1.7",
 		"source-map": "^0.7.6",
-		"systeminformation": "^5.29.1",
+		"systeminformation": "^5.30.3",
 		"typescript": "^5.9.3",
 		"uuid": "^13.0.0",
 		"zod": "^4.3.5"
@@ -63,8 +63,6 @@
 		"@oaklean/profiler-jest-environment": "0.1.6",
 		"@types/cli-color": "^2.0.6",
 		"@types/glob-to-regexp": "^0.4.4",
-		"@types/oboe": "^2.1.4",
-		"cross-env": "^10.1.0",
-		"rimraf": "^6.1.2"
+		"@types/oboe": "^2.1.4"
 	}
 }
