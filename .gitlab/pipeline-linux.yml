@@ -4,27 +4,42 @@ stages:
   - build
   - test
 
-cache:
-  paths:
-    - node_modules/
-
-default: 
-  image: $BUILD_IMAGE
+.node-image-matrix:
+  image: 
+    name: $BUILD_IMAGE_URL:$NODE_VERSION
+  parallel:
+    matrix:
+      - NODE_VERSION: ["20.17.0", "22.13.0", "24.0.0"]
+  cache:
+    key:
+      files:
+        - package-lock.json
+      prefix: "node_modules-${NODE_VERSION}"  # separate cache per Node version
+    paths:
+      - node_modules/
+      - .npm
   before_script:
-    - npm ci --ignore-scripts
+    - |
+      echo "Using Node version: $(node -v)"
+      npm config set cache .npm
+      npm ci --prefer-offline --ignore-scripts
+
 
 generate-docs:
   stage: generate-docs
+  extends: .node-image-matrix
   script:
     - npm run generate-docs && [[ -z "$(git status -s)" ]]
 
 lint:
   stage: lint
+  extends: .node-image-matrix
   script:
     - npm run lint
 
 build:
   stage: build
+  extends: .node-image-matrix
   artifacts:
     expire_in: 1 hrs
     paths:
@@ -39,6 +54,7 @@ build:
 
 test:
   stage: test
+  extends: .node-image-matrix
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   artifacts:
     expire_in: 1 hrs
