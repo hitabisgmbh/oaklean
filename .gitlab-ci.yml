@@ -16,4 +16,10 @@ test:
   stage: test
   extends: .image-matrix
   script:
+    # Fail intentionally for version 20.17.0
+    - |
+      if [ "$NODE_VERSION" = "20.17.0" ]; then
+        echo "Failing intentionally for Node $NODE_VERSION"
+        exit 1
+      fi
     - echo $(node -v)
