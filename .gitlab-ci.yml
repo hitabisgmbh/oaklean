@@ -2,6 +2,7 @@ stages:
   - generate-docs
   - lint
   - build
+  - test-repo
   - test
 
 .node-image-matrix:
@@ -53,7 +54,8 @@ build:
     - npm run build
 
 test-repo:
-  stage: test
+  stage: test-repo
+  extends: .node-image-matrix
   script:
     - cd ./packages/profiler && npm link
     - cd ./packages/profiler-core && npm link
