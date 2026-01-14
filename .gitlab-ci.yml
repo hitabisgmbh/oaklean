@@ -57,8 +57,8 @@ test-repo:
   stage: test-repo
   extends: .node-image-matrix
   script:
-    - cd ./packages/profiler && npm link
-    - cd ./packages/profiler-core && npm link
+    - cd $CI_PROJECT_DIR/packages/profiler && npm link
+    - cd $CI_PROJECT_DIR/packages/profiler-core && npm link
     - cd $CI_PROJECT_DIR
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${TEST_REPOSITROY}.git
     - cd oaklean-tests
