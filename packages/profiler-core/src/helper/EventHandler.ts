@@ -1,44 +1,59 @@
 import EventEmitter from 'events'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type EventMap<T> = Record<keyof T, any[]> | DefaultEventMap;
-type DefaultEventMap = [never];
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyRest = [...args: any[]];
-type Args<K, T> = T extends DefaultEventMap ? AnyRest : (
-	K extends keyof T ? T[K] : never
-);
-type Key<K, T> = T extends DefaultEventMap ? string | symbol : K | keyof T;
-type Listener<K, T, F> = T extends DefaultEventMap ? F : (
-	K extends keyof T ? (
-		T[K] extends unknown[] ? (...args: T[K]) => void : never
-	)
-		: never
-);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Listener1<K, T> = Listener<K, T, (...args: any[]) => void>;
+type EventMap<T> = Record<keyof T, any[]>;
+type IfEventMap<Events extends EventMap<Events>, True, False> = object extends Events ? False : True;
+type Args<Events extends EventMap<Events>, EventName extends string | symbol> = IfEventMap<
+	Events,
+	EventName extends keyof Events ? Events[EventName]
+			: EventName extends keyof EventEmitterEventMap ? EventEmitterEventMap[EventName]
+			: any[], // eslint-disable-line @typescript-eslint/no-explicit-any
+	any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+>;
+type EventNames<Events extends EventMap<Events>, EventName extends string | symbol> = IfEventMap<
+	Events,
+	EventName | (keyof Events & (string | symbol)) | keyof EventEmitterEventMap,
+	string | symbol
+>;
+type Listener<Events extends EventMap<Events>, EventName extends string | symbol> = IfEventMap<
+	Events,
+	(
+			...args: EventName extends keyof Events ? Events[EventName]
+					: EventName extends keyof EventEmitterEventMap ? EventEmitterEventMap[EventName]
+					: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+	) => void,
+	(...args: any[]) => void // eslint-disable-line @typescript-eslint/no-explicit-any
+>;
 
-export class EventHandler<T extends EventMap<T> = DefaultEventMap> {
+interface EventEmitterEventMap {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	newListener: [eventName: string | symbol, listener: (...args: any[]) => void];
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	removeListener: [eventName: string | symbol, listener: (...args: any[]) => void];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class EventHandler<T extends EventMap<T> = any> {
 	_eventEmitter: EventEmitter<T>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	private _eventCallCount: Map<Key<any, T>, number>
+	private _eventCallCount: Map<EventNames<T, any>, number>
 
 	constructor() {
 		this._eventEmitter = new EventEmitter()
 		this._eventCallCount = new Map()
 	}
 
-	eventCount<K>(eventName: Key<K, T>): number {
+	eventCount<E extends string | symbol>(eventName: EventNames<T, E>): number {
 		return this._eventCallCount.get(eventName) || 0
 	}
 
-	fire<K>(eventName: Key<K, T>, ...args: Args<K, T>) {
+	fire<E extends string | symbol>(eventName: EventNames<T, E>, ...args: Args<T, E>) {
 		const currentCount = this._eventCallCount.get(eventName) || 0
 		this._eventCallCount.set(eventName, currentCount + 1)
 		this._eventEmitter.emit(eventName, ...args)
 	}
 
-	async waitForFirstEventCall<K>(eventName: Key<K, T>): Promise<void> {
+	async waitForFirstEventCall<E extends string | symbol>(eventName: EventNames<T, E>): Promise<void> {
 		return new Promise((resolve) => {
 			const callCount = this._eventCallCount.get(eventName)
 			if (callCount !== undefined && callCount > 0) {
@@ -52,7 +67,7 @@ export class EventHandler<T extends EventMap<T> = DefaultEventMap> {
 		})
 	}
 
-	async awaitEventCall<K>(eventName: Key<K, T>) {
+	async awaitEventCall<E extends string | symbol>(eventName: EventNames<T, E>) {
 		return new Promise<void>((resolve) => {
 			this.once(eventName, (() => {
 				resolve()
@@ -60,19 +75,19 @@ export class EventHandler<T extends EventMap<T> = DefaultEventMap> {
 		})
 	}
 
-	removeListener<K>(eventName: Key<K, T>, listener: Listener1<K, T>) {
+	removeListener<E extends string | symbol>(eventName: EventNames<T, E>, listener: Listener<T, E>) {
 		return this._eventEmitter.removeListener(eventName, listener)
 	}
 
-	removeAllListeners(eventName?: Key<unknown, T>) {
+	removeAllListeners<E extends string | symbol>(eventName: EventNames<T, E>) {
 		return this._eventEmitter.removeAllListeners(eventName)
 	}
 
-	on<K>(eventName: Key<K, T>, listener: Listener1<K, T>) {
+	 on<E extends string | symbol>(eventName: EventNames<T, E>, listener: Listener<T, E>) {
 		return this._eventEmitter.on(eventName, listener)
 	}
 
-	once<K>(eventName: Key<K, T>, listener: Listener1<K, T>) {
+	once<E extends string | symbol>(eventName: EventNames<T, E>, listener: Listener<T, E>) {
 		return this._eventEmitter.once(eventName, listener)
 	}
 }

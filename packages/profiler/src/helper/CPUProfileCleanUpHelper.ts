@@ -1,34 +1,14 @@
 import type { Protocol as Cdp } from 'devtools-protocol'
-import { MicroSeconds_number } from '@oaklean/profiler-core'
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const v8Profiler = require('v8-profiler-next')
-
-export class V8Profiler {
-	static startProfiling(name: string, recsamples?: boolean, mode?: 0 | 1) : void {
-		v8Profiler.startProfiling(name, recsamples, mode)
-	}
-
-	static stopProfiling(name?: string): Cdp.Profiler.Profile {
-		const profile = v8Profiler.stopProfiling(name)
-		V8Profiler.cleanUpProfile(profile)
-		return profile
-	}
-
-	static setGenerateType(type: 0 | 1) {
-		v8Profiler.setGenerateType(type)
-	}
-
-	static setSamplingInterval(num: MicroSeconds_number) {
-		v8Profiler.setSamplingInterval(num)
-	}
-
+export class CPUProfilerCleanUpHelper {
 	// Method to fix accumulated errors in cpu profiles caused by negative timeDelta
 	// https://github.com/jlfwong/speedscope/blob/main/src/import/chrome.ts
 	// https://github.com/jlfwong/speedscope/pull/305
 	static cleanUpProfile(profile: Cdp.Profiler.Profile) {
 		if (profile.samples === undefined || profile.timeDeltas === undefined) {
-			throw new Error('V8Profiler.cleanUpProfile: profile format is not complete')
+			throw new Error(
+				'NodeInspectorProfiler.cleanUpProfile: profile format is not complete'
+			)
 		}
 		const sampleTimes: number[] = []
 
@@ -73,5 +53,12 @@ export class V8Profiler {
 		}
 
 		profile.timeDeltas = timeDeltas
+
+		for (const node of profile.nodes) {
+			// node:inspector returns 0-based line and column numbers
+			// the previously used v8-profiler-next used 1-based line and column numbers
+			node.callFrame.lineNumber += 1 // convert to 1-based line number
+			node.callFrame.columnNumber += 1 // convert to 1-based column number
+		}
 	}
 }

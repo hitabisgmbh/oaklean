@@ -5,16 +5,20 @@ stages:
   - test
 
 cache:
+  key:
+    files:
+      - package-lock.json
   paths:
     - node_modules/
+    - ../.npm
 
 .common_setup:
   before_script:
     - $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     - $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
     - $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
-    - npm ci --ignore-scripts
-    - npm run after-install
+    - npm config set cache ../.npm
+    - npm ci --prefer-offline --ignore-scripts
 
 setup_environment:
   stage: setup
@@ -115,12 +119,7 @@ test:
   tags:
     - windows
   extends: .common_setup
-  artifacts:
-    expire_in: 1 hrs
-    paths:
-      - ./profiles/jest/accumulated.oak
-      - ./profiles/jest/performance.json
   variables:
     OAKLEAN_DISABLE_REGISTRY: true
   script:
-    - npm run test-measure
+    - npm run test

@@ -6,11 +6,10 @@
 
 ## Setup
 1. Install dependencies: `npm ci --ignore-scripts`
-2. Execute post-install steps with: `npm run after-install`
-3. Build: `npm run build`
-4. Run tests: `npm run test`
-5. Lint: `npm run lint`
-6. Generate docs: `npm run generate-docs`
+2. Build: `npm run build`
+3. Run tests: `npm run test`
+4. Lint: `npm run lint`
+5. Generate docs: `npm run generate-docs`
 
 ## Tests
 The profiler measures itself while its tests are executed.

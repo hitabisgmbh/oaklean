@@ -1,5 +1,5 @@
 {
-	"name": "profiler-tools",
+	"name": "oaklean-tools",
 	"version": "0.1.6",
 	"author": "Hitabis GmbH",
 	"license": "MIT",
@@ -28,35 +28,36 @@
 		"packages/cli"
 	],
 	"engines": {
-		"node": "^20.17.0"
+		"node": "^20.17.0 || ^22.13.0 || ^24.0.0"
 	},
 	"scripts": {
-		"after-install": "cd node_modules/v8-profiler-next && npm run install",
 		"setup": "npm run setup -w packages/cli",
-		"clear-build": "npm run clear-build -ws",
-		"build": "npm run build -ws",
-		"lint": "npm run lint -ws",
-		"test": "npm run test -ws",
-		"test-update": "npm run test-update -ws",
-		"test-measure": "npm run test-measure -ws",
+		"clear-build": "npm run clear-build --ws",
+		"build": "npm run build --ws",
+		"lint": "npm run lint --ws",
+		"test": "npm run test --ws",
+		"test-update": "npm run test-update --ws",
+		"test-measure": "npm run test-measure --ws",
 		"test-gen": "npx jest-test-gen",
 		"publish-registry-mandatory": "sh ./.deploy/publish-mandatory.sh",
 		"publish-registry-optional": "sh ./.deploy/publish-optional.sh",
-		"generate-docs": "markdown-include md-configs/README.json && markdown-include md-configs/docs/FirstSteps.json && markdown-include md-configs/docs/FastConfigSetup.json && npm run generate-docs -ws"
+		"generate-docs": "markdown-include md-configs/README.json && markdown-include md-configs/docs/FirstSteps.json && markdown-include md-configs/docs/FastConfigSetup.json && npm run generate-docs --ws"
 	},
 	"files": [],
 	"devDependencies": {
-		"@eslint/js": "^9.35.0",
-		"@stylistic/eslint-plugin": "^5.3.1",
+		"@eslint/js": "^9.39.2",
+		"@stylistic/eslint-plugin": "^5.7.0",
 		"@types/jest": "^29.4.3",
-		"@types/node": "^24.3.0",
-		"eslint": "^9.35.0",
+		"@types/node": "^25.0.7",
+		"cross-env": "^10.1.0",
+		"eslint": "^9.39.2",
 		"eslint-plugin-import": "^2.32.0",
 		"jest": "^29.4.3",
 		"markdown-include": "^0.4.3",
-		"ts-jest": "^29.1.2",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.9.2",
-		"typescript-eslint": "^8.43.0"
+		"rimraf": "^6.1.2",
+		"ts-jest": "^29.4.6",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.53.0"
 	}
 }

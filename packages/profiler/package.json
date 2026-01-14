@@ -2,7 +2,7 @@
 	"name": "@oaklean/profiler",
 	"version": "0.1.6",
 	"engines": {
-		"node": "^20.17.0"
+		"node": "^20.17.0 || ^22.13.0 || ^24.0.0"
 	},
 	"author": "Hitabis GmbH",
 	"license": "MIT",
@@ -50,15 +50,12 @@
 		"@oaklean/profiler-core": "0.1.6",
 		"@oaklean/windows-sensorinterface": "0.1.1",
 		"plist": "^3.1.0",
-		"seedrandom": "^3.0.5",
-		"v8-profiler-next": "^1.10.0"
+		"seedrandom": "^3.0.5"
 	},
 	"devDependencies": {
 		"@jest/environment": "^29.4.3",
 		"@types/plist": "^3.0.5",
 		"@types/seedrandom": "^3.0.5",
-		"cross-env": "^10.1.0",
-		"devtools-protocol": "^0.0.1561482",
-		"rimraf": "^6.1.2"
+		"devtools-protocol": "^0.0.1561482"
 	}
 }
