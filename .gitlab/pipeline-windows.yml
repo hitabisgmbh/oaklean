@@ -114,12 +114,7 @@ test:
   tags:
     - windows
   extends: .common_setup
-  artifacts:
-    expire_in: 1 hrs
-    paths:
-      - ./profiles/jest/accumulated.oak
-      - ./profiles/jest/performance.json
   variables:
     OAKLEAN_DISABLE_REGISTRY: true
   script:
-    - npm run test-measure
+    - npm run test
