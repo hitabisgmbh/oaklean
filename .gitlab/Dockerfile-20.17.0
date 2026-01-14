@@ -1,7 +1,9 @@
 # build image that should be used in pipeline-linux.yml
 FROM node:20.17.0-alpine3.20
 
-RUN apk update && apk upgrade
+# Update and install git
+RUN apk update && apk upgrade && \
+    apk add --no-cache git
 
 ENV TZ=Europe/Berlin
 
