@@ -1,84 +1,136 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      when: never  # Prevent pipeline run for push event
+    - when: always # Run pipeline for all other cases
+
 stages:
-  - generate-docs
-  - lint
-  - build
-  - test-repo
-  - test
+  - platform-build-and-test
+  - test-artifacts
+  - deploy
 
-.node-image-matrix:
-  image: 
-    name: $BUILD_IMAGE_URL:$NODE_VERSION
-  parallel:
-    matrix:
-      - NODE_VERSION: ["20.17.0"]
-  cache:
-    key:
-      files:
-        - package-lock.json
-      prefix: "node_modules-${NODE_VERSION}"  # separate cache per Node version
-    paths:
-      - node_modules/
-      - ../.npm
-  before_script:
-    - |
-      echo "Using Node version: $(node -v)"
-      npm config set cache ../.npm
-      npm ci --prefer-offline --ignore-scripts
+pipeline-windows:
+  stage: platform-build-and-test
+  trigger:
+    include: 
+      - local: .gitlab/pipeline-windows.yml
+    strategy: depend
 
+pipeline-linux:
+  stage: platform-build-and-test
+  trigger:
+    include: 
+      - local: .gitlab/pipeline-linux.yml
+    strategy: depend
 
-generate-docs:
-  stage: generate-docs
-  extends: .node-image-matrix
-  script:
-    - git status -s
-    - npm run generate-docs && [[ -z "$(git status -s)" ]]
-
-lint:
-  stage: lint
-  extends: .node-image-matrix
-  script:
-    - npm run lint
-
-build:
-  stage: build
-  extends: .node-image-matrix
-  artifacts:
-    expire_in: 1 hrs
-    paths:
-      - ./packages/profiler/dist
-      - ./packages/profiler-core/dist
-      - ./packages/profiler-jest-environment/*.js
-      - ./packages/profiler-jest-environment/*.d.ts
-      - ./packages/cli/dist
-      - ./packages/windows-sensorinterface/dist
-  script:
-    - npm run build
-
-test-repo:
-  stage: test-repo
-  extends: .node-image-matrix
-  script:
-    - cd $CI_PROJECT_DIR/packages/profiler && npm link
-    - cd $CI_PROJECT_DIR/packages/profiler-core && npm link
-    - cd $CI_PROJECT_DIR
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${TEST_REPOSITROY}.git
-    - cd oaklean-tests
-    - git checkout main
-    - npm ci
-    - npm link @oaklean/profiler @oaklean/profiler-core
-    - npm run build
-    - npm run measure
-
-test:
-  stage: test
-  extends: .node-image-matrix
-  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
-  artifacts:
-    expire_in: 1 hrs
-    paths:
-      - ./profiles/jest/accumulated.oak
-      - ./profiles/jest/performance.json
+test-measure-artifacts-linux:
+  image: $BUILD_IMAGE
+  stage: test-artifacts
   variables:
-    OAKLEAN_DISABLE_REGISTRY: true
+    DOWN_STREAM_PIPELINE_NAME: pipeline-linux
+    ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE: test
+    HEADER: "PRIVATE-TOKEN: $GITLAB_API_TOKEN"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - test_measure_artifacts_linux_test_*.zip
   script:
-    - npm run test-measure
+    - echo "Fetching artifacts from downstream pipeline..."
+    - echo $DOWN_STREAM_PIPELINE_NAME $ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE $HEADER
+    # Get the downstream pipeline id
+    - DOWNSTREAM_PIPELINE_ID=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/bridges" --header "$HEADER" | jq ".[] | select(.name == \"$DOWN_STREAM_PIPELINE_NAME\") | .downstream_pipeline.id")
+    # Get the artifact job id in the downstream pipeline
+    - ARTIFACT_JOBS=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$DOWNSTREAM_PIPELINE_ID/jobs" --header "$HEADER" | jq -r ".[] | select(.name | startswith(\"$ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE:\")) | [.id, .name] | @tsv")
+    - echo "Jobs found:"
+    - echo "$ARTIFACT_JOBS"
+    - |
+      while IFS=$'\t' read -r JOB_ID JOB_NAME; do
+        SAFE_NAME=$(echo $JOB_NAME | tr ' /:' '_' | tr -d '[]');  # sanitize name
+        ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$JOB_ID/artifacts";
+        OUTPUT_FILE="test_measure_artifacts_linux_${SAFE_NAME}.zip";
+        echo "Downloading artifacts from job $JOB_NAME ($JOB_ID) to $OUTPUT_FILE";
+        curl --header "$HEADER" --location "$ARTIFACT_URL" -o $OUTPUT_FILE;
+      done <<< "$ARTIFACT_JOBS"
+
+# test-measure-artifacts-windows:
+#   image: $BUILD_IMAGE
+#   stage: test-artifacts
+#   variables:
+#     DOWN_STREAM_PIPELINE_NAME: pipeline-windows
+#     ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE: test
+#     HEADER: "PRIVATE-TOKEN: $GITLAB_API_TOKEN"
+#   artifacts:
+#     expire_in: 1 week
+#     paths:
+#       - test_measure_artifacts_windows.zip
+#   script:
+#     - echo $DOWN_STREAM_PIPELINE_NAME $ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE $HEADER
+#     # Get the downstream pipeline id
+#     - DOWNSTREAM_PIPELINE_ID=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/bridges" --header "$HEADER" | jq ".[] | select(.name == \"$DOWN_STREAM_PIPELINE_NAME\") | .downstream_pipeline.id")
+#     # Get the artifact job id in the downstream pipeline
+#     - ARTIFACT_JOB_ID=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$DOWNSTREAM_PIPELINE_ID/jobs" --header "$HEADER" | jq ".[] | select(.name == \"$ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE\") | .id")
+#     # Get the artifact url
+#     - ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$ARTIFACT_JOB_ID/artifacts"
+#     # Download the artifacts
+#     - curl --header "$HEADER" $ARTIFACT_URL -o test_measure_artifacts_windows.zip
+
+deploy-artifacts:
+  image: $BUILD_IMAGE
+  stage: deploy
+  only: 
+    - /^release.*$/
+  variables:
+    DOWN_STREAM_PIPELINE_NAME: pipeline-linux
+    ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE: build
+    HEADER: "PRIVATE-TOKEN: $GITLAB_API_TOKEN"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - deploy_artifacts.zip
+  script:
+    - echo $DOWN_STREAM_PIPELINE_NAME $ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE $HEADER
+    # Get the downstream pipeline id
+    - DOWNSTREAM_PIPELINE_ID=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/bridges" --header "$HEADER" | jq ".[] | select(.name == \"$DOWN_STREAM_PIPELINE_NAME\") | .downstream_pipeline.id")
+    # Get the artifact job id in the downstream pipeline
+    - ARTIFACT_JOB_ID=$(curl --location "$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/pipelines/$DOWNSTREAM_PIPELINE_ID/jobs" --header "$HEADER" | jq ".[] | select(.name == \"$ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE\") | .id")
+    # Get the artifact url
+    - ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$ARTIFACT_JOB_ID/artifacts"
+    # Download the artifacts
+    - curl --header "$HEADER" $ARTIFACT_URL -o deploy_artifacts.zip
+
+deploy-mandatory:
+  image: $BUILD_IMAGE
+  stage: deploy
+  needs:
+    - job: deploy-artifacts
+      artifacts: true
+  only:
+    - /^release.*$/
+  variables:
+    NODE_ENV: production
+  script:
+    # Unzip the artifacts
+    - unzip deploy_artifacts.zip
+    - rm deploy_artifacts.zip
+    # Deploy the package to the private registry
+    - echo -e "${PRIVATE_REGISTRY}${CI_JOB_TOKEN}">.npmrc
+    - npm run publish-registry-mandatory
+
+deploy-optional:
+  image: $BUILD_IMAGE
+  stage: deploy
+  when: manual
+  needs:
+    - job: deploy-artifacts
+      artifacts: true
+  only:
+    - /^release.*$/
+  variables:
+    NODE_ENV: production
+  script:
+    # Unzip the artifacts
+    - unzip deploy_artifacts.zip
+    - rm deploy_artifacts.zip
+    # Deploy the package to the private registry
+    - echo -e "${PRIVATE_REGISTRY}${CI_JOB_TOKEN}">.npmrc
+    - npm run publish-registry-optional
