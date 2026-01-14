@@ -65,6 +65,7 @@ test-repo:
     - git checkout main
     - npm ci
     - npm link @oaklean/profiler @oaklean/profiler-core
+    - npm run build
     - npm run measure
 
 test:
