@@ -3,6 +3,7 @@
 
 ## 0.1.6
 ### Improvement
+- Added Oaklean support for Node.js v22 & v24
 - Oaklean now shares Node Inspector sessions among consumers, reducing overall overhead
 
 ### Fixes
