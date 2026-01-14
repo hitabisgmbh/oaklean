@@ -30,6 +30,7 @@ generate-docs:
   stage: generate-docs
   extends: .node-image-matrix
   script:
+    - git status -s
     - npm run generate-docs && [[ -z "$(git status -s)" ]]
 
 lint:
