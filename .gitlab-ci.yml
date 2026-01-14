@@ -18,11 +18,11 @@ stages:
       prefix: "node_modules-${NODE_VERSION}"  # separate cache per Node version
     paths:
       - node_modules/
-      - .npm
+      - ../.npm
   before_script:
     - |
       echo "Using Node version: $(node -v)"
-      npm config set cache .npm
+      npm config set cache ../.npm
       npm ci --prefer-offline --ignore-scripts
 
 
