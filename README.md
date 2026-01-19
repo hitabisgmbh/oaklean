@@ -45,7 +45,7 @@ The `@oaklean` suite consists mainly of three components that help you to measur
 1. The `@oaklean/profiler` package helps you to measure your whole application or only some parts of it.
 You can find a detailed description of how to use it [here](./packages/profiler/README.md)
 
-2. The `@oaklean/profiler-jest-environment` package allows you to fully automate the energy measurements during your jest tests **(supported for Jest versions 28 & 29)**. This allows comparing changes in energy consumption across multiple development stages and between releases.
+2. The `@oaklean/profiler-jest-environment` package allows you to fully automate the energy measurements during your jest tests **(supported for Jest versions v28, v29 and v30)**. This allows comparing changes in energy consumption across multiple development stages and between releases.
 You can find a detailed description of how to use it [here](./packages/profiler-jest-environment/README.md)
 
 3. The `Oaklean` VSCode Extension lets you to interpret the measurements. It integrates the energy measurements directly into your IDE.

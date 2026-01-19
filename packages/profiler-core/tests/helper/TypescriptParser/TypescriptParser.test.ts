@@ -40,7 +40,7 @@ describe('TypescriptParser', () => {
 
 				expect(config).toBeUndefined()
 
-				expect(consoleErrorMock).toBeCalledWith('TypescriptParser.readConfigFile could not parse the config file: ' + configFilePath)
+				expect(consoleErrorMock).toHaveBeenCalledWith('TypescriptParser.readConfigFile could not parse the config file: ' + configFilePath)
 			})
 
 			it('prints error if the config file could not be parsed', () => {
@@ -64,7 +64,7 @@ describe('TypescriptParser', () => {
 
 				expect(config).toBeUndefined()
 
-				expect(consoleErrorMock).toBeCalledWith('TypescriptParser.readConfigFile errors while parsing the config file: ' + configFilePath, JSON.stringify(expectedErrors, null, 2))
+				expect(consoleErrorMock).toHaveBeenCalledWith('TypescriptParser.readConfigFile errors while parsing the config file: ' + configFilePath, JSON.stringify(expectedErrors, null, 2))
 			})
 		})
 

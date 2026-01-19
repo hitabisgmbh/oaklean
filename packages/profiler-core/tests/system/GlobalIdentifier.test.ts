@@ -75,7 +75,7 @@ describe('GlobalIdentifier', () => {
 				)
 			}
 
-			expect(a).toThrowError('GlobalIdentifier.fromIdentifier: invalid format: {root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}')
+			expect(a).toThrow('GlobalIdentifier.fromIdentifier: invalid format: {root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}')
 
 			const b = () => {
 				GlobalIdentifier.fromIdentifier(
@@ -83,7 +83,7 @@ describe('GlobalIdentifier', () => {
 				)
 			}
 
-			expect(b).toThrowError('GlobalIdentifier.fromIdentifier: invalid format: ./path/to/file.js')
+			expect(b).toThrow('GlobalIdentifier.fromIdentifier: invalid format: ./path/to/file.js')
 		})
 
 		describe('valid format', () => {

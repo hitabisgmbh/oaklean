@@ -191,7 +191,7 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, EXAMPLE_SYSTEM_INFORMATION)
 			).toBe(true)
 
-			expect(consoleError).toBeCalledTimes(0)
+			expect(consoleError).toHaveBeenCalledTimes(0)
 		})
 		test('different system', () => {
 			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
@@ -201,7 +201,7 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
 			).toBe(false)
 
-			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different systems')
+			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different systems')
 		})
 
 		test('different baseboard', () => {
@@ -212,7 +212,7 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
 			).toBe(false)
 
-			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different baseboards')
+			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different baseboards')
 		})
 
 		test('different chassis', () => {
@@ -223,7 +223,7 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
 			).toBe(false)
 
-			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different chassis')
+			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different chassis')
 		})
 
 		test('different cpu', () => {
@@ -234,7 +234,7 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
 			).toBe(false)
 
-			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different cpus')
+			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different cpus')
 		})
 
 		test('different memory', () => {
@@ -245,7 +245,7 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
 			).toBe(false)
 
-			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different memory')
+			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different memory')
 		})
 
 		test('different memoryLayout', () => {
@@ -256,7 +256,7 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
 			).toBe(false)
 
-			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different memoryLayout')
+			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different memoryLayout')
 		})
 
 		test('different battery', () => {
@@ -267,7 +267,7 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
 			).toBe(false)
 
-			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different battery')
+			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different battery')
 		})
 
 		test('different os', () => {
@@ -278,7 +278,7 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
 			).toBe(false)
 
-			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different os')
+			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different os')
 		})
 	})
 })

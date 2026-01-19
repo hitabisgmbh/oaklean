@@ -53,7 +53,7 @@
 		"seedrandom": "^3.0.5"
 	},
 	"devDependencies": {
-		"@jest/environment": "^29.4.3",
+		"@jest/environment": "^30.2.0",
 		"@types/plist": "^3.0.5",
 		"@types/seedrandom": "^3.0.5",
 		"devtools-protocol": "^0.0.1561482"

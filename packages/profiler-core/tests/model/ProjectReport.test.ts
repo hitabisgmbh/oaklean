@@ -1092,7 +1092,7 @@ describe('ProjectReport', () => {
 				ProjectReport.merge(moduleIndex, ...[])
 			}
 
-			expect(t).toThrowError('ProjectReport.merge: no ProjectReports were given')
+			expect(t).toThrow('ProjectReport.merge: no ProjectReports were given')
 		})
 
 		test('wrong versions', () => {
@@ -1104,7 +1104,7 @@ describe('ProjectReport', () => {
 				ProjectReport.merge(moduleIndex, ...instancesToMerge)
 			}
 
-			expect(t).toThrowError('ProjectReport.merge: Project reports versions are not compatible')
+			expect(t).toThrow('ProjectReport.merge: Project reports versions are not compatible')
 		})
 
 		test('wrong commit hashes', () => {
@@ -1116,7 +1116,7 @@ describe('ProjectReport', () => {
 				ProjectReport.merge(moduleIndex, ...instancesToMerge)
 			}
 
-			expect(t).toThrowError('ProjectReport.merge: Project reports commit hashs are not the same')
+			expect(t).toThrow('ProjectReport.merge: Project reports commit hashs are not the same')
 		})
 
 		test('merges correctly', () => {
@@ -1254,7 +1254,7 @@ describe('ProjectReport', () => {
 			}
 			expect(t).toThrow('ProjectReport.merge: cannot merge ProjectReports from different systems')
 
-			expect(consoleError).toBeCalledWith('SystemInformation.isSame: detected different cpus')
+			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different cpus')
 			consoleError.mockRestore()
 		})
 

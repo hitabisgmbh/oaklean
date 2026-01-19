@@ -4,7 +4,7 @@
 
 A jest environment to collect energy measurements on source code level during test execution.
 
-Supports Jest versions 28 & 29.
+Supports Jest versions v28, v29 and v30.
 
 ## Table of Contents
 

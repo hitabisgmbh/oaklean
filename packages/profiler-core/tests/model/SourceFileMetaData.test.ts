@@ -878,7 +878,7 @@ describe('SourceFileMetaData', () => {
 				SourceFileMetaData.merge(pathIndex, ...[])
 			}
 
-			expect(t).toThrowError('SourceFileMetaData.merge: no SourceFileMetaDatas were given')
+			expect(t).toThrow('SourceFileMetaData.merge: no SourceFileMetaDatas were given')
 		})
 
 		test('wrong paths', () => {
@@ -892,7 +892,7 @@ describe('SourceFileMetaData', () => {
 				SourceFileMetaData.merge(pathIndex, ...instancesToMerge)
 			}
 
-			expect(t).toThrowError('SourceFileMetaData.merge: all SourceFileMetaDatas should be from the same file.')
+			expect(t).toThrow('SourceFileMetaData.merge: all SourceFileMetaDatas should be from the same file.')
 		})
 
 		test('merges correctly', () => {
