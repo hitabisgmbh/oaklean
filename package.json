@@ -57,7 +57,7 @@
 		"markdown-include": "^0.4.3",
 		"rimraf": "^6.1.2",
 		"ts-jest": "^29.4.6",
-		"ts-node": "^10.9.2",
+		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.53.0"
 	}

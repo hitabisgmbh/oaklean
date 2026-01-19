@@ -63,7 +63,7 @@ To perform your first measurement with Oaklean, simply import the profiler and w
 ### Running the Code
 For basic CPU-time measurements, you can simply run:
 - `node script.js`
-- `npx ts-node script.ts`
+- `npx tsx script.ts`
 
 If you also want to measure energy consumption, you may need to run the script with administrator privileges, depending on your Sensor Interface. For details, see the [Sensor Interface Docs](/docs/SensorInterfaces.md)
 
