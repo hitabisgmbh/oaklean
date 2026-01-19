@@ -32,6 +32,7 @@
 	},
 	"scripts": {
 		"setup": "npm run setup -w packages/cli",
+		"format": "npx prettier --write \"**/*.{js,ts,tsx}\" --ignore-path .prettierignore",
 		"clear-build": "npm run clear-build --ws",
 		"build": "npm run build --ws",
 		"lint": "npm run lint --ws",
@@ -52,7 +53,9 @@
 		"@types/node": "^25.0.7",
 		"cross-env": "^10.1.0",
 		"eslint": "^9.39.2",
+		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-import": "^2.32.0",
+		"eslint-plugin-prettier": "^5.5.5",
 		"jest": "^30.2.0",
 		"markdown-include": "^0.4.3",
 		"rimraf": "^6.1.2",

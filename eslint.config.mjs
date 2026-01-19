@@ -5,6 +5,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
 import eslintPluginImport from 'eslint-plugin-import'
+import prettierPlugin from 'eslint-plugin-prettier'
 
 export default defineConfig(
 	eslint.configs.recommended,
@@ -30,6 +31,10 @@ export default defineConfig(
 			'@stylistic': stylistic,
 			import: eslintPluginImport
 		},
+		extends: [
+      // disables conflicting ESLint rules for Prettier
+      'prettier',
+    ],
 		rules: {
 			'@typescript-eslint/switch-exhaustiveness-check': 'error',
 			'@typescript-eslint/naming-convention': [
@@ -80,7 +85,10 @@ export default defineConfig(
 				}
 			],
 			'keyword-spacing': 'error',
-			'brace-style': 'error'
+			'brace-style': 'error',
+
+			// Prettier rule
+      'prettier/prettier': 'error'
 		}
 	},
 	globalIgnores([
