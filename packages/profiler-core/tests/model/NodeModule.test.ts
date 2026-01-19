@@ -71,25 +71,25 @@ describe('NodeModule', () => {
 				NodeModule.fromIdentifier('' as NodeModuleIdentifier_string)
 			}
 
-			expect(a).toThrowError('NodeModule.fromIdentifier: invalid format: ')
+			expect(a).toThrow('NodeModule.fromIdentifier: invalid format: ')
 
 			const b = () => {
 				NodeModule.fromIdentifier('package' as NodeModuleIdentifier_string)
 			}
 
-			expect(b).toThrowError('NodeModule.fromIdentifier: invalid format: package')
+			expect(b).toThrow('NodeModule.fromIdentifier: invalid format: package')
 
 			const c = () => {
 				NodeModule.fromIdentifier('@scope/package' as NodeModuleIdentifier_string)
 			}
 
-			expect(c).toThrowError('NodeModule.fromIdentifier: invalid format: @scope/package')
+			expect(c).toThrow('NodeModule.fromIdentifier: invalid format: @scope/package')
 
 			const d = () => {
 				NodeModule.fromIdentifier('@1.0.1' as NodeModuleIdentifier_string)
 			}
 
-			expect(d).toThrowError('NodeModule.fromIdentifier: invalid format: @1.0.1')
+			expect(d).toThrow('NodeModule.fromIdentifier: invalid format: @1.0.1')
 		})
 
 		test('package with version', () => {

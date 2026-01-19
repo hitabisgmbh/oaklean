@@ -983,7 +983,7 @@ describe('SourceNodeMetaData', () => {
 				)
 			}
 
-			expect(t).toThrowError('SourceNodeMetaData.merge: no SourceNodeMetaData were given')
+			expect(t).toThrow('SourceNodeMetaData.merge: no SourceNodeMetaData were given')
 		})
 
 		test('wrong types', () => {
@@ -1002,7 +1002,7 @@ describe('SourceNodeMetaData', () => {
 				SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex,...instancesToMerge)
 			}
 
-			expect(t).toThrowError('SourceNodeMetaData.merge: all SourceNodeMetaDatas should be from the same type.')
+			expect(t).toThrow('SourceNodeMetaData.merge: all SourceNodeMetaDatas should be from the same type.')
 		})
 
 		test('merges correctly', () => {

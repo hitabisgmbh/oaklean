@@ -185,7 +185,7 @@ describe('ModuleReport', () => {
 				ModuleReport.merge(moduleIndex, ...[])
 			}
 
-			expect(t).toThrowError('ModuleReport.merge: no ModuleReports were given')
+			expect(t).toThrow('ModuleReport.merge: no ModuleReports were given')
 		})
 
 		test('wrong modules', () => {
@@ -197,7 +197,7 @@ describe('ModuleReport', () => {
 				ModuleReport.merge(moduleIndex, ...instancesToMerge)
 			}
 
-			expect(t).toThrowError('ModuleReport.merge: all ModuleReports should be from the same module.')
+			expect(t).toThrow('ModuleReport.merge: all ModuleReports should be from the same module.')
 		})
 
 		test('merges correctly', () => {

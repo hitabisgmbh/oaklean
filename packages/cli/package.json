@@ -29,7 +29,7 @@
 		"dist/**/*"
 	],
 	"scripts": {
-		"exec": "cd $INIT_CWD && npx ts-node -r tsconfig-paths/register src/index.ts",
+		"exec": "cd $INIT_CWD && npx tsx src/index.ts",
 		"clear-build": "npx rimraf ./dist",
 		"build": "npm run clear-build && npx cross-env NODE_ENV=production npx tsc",
 		"lint": "npx eslint --fix .",

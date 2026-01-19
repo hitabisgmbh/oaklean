@@ -48,8 +48,8 @@
 		"@oaklean/profiler": "0.1.6"
 	},
 	"peerDependencies": {
-		"@jest/environment": "^28.0.0 || ^29.0.0",
-		"jest": "^28.0.0 || ^29.0.0",
-		"jest-environment-jsdom": "^28.0.0 || ^29.0.0"
+		"@jest/environment": "^28.0.0 || ^29.0.0 || ^30.0.0",
+		"jest": "^28.0.0 || ^29.0.0 || ^30.0.0",
+		"jest-environment-jsdom": "^28.0.0 || ^29.0.0 || ^30.0.0"
 	}
 }

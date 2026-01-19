@@ -318,7 +318,7 @@ describe('SourceFileMetaDataTree', () => {
 						sourceFileMetaData
 					)
 				}
-				expect(t).toThrowError('SourceFileMetaDataTree.insertPath: path was already inserted ./directory/file')
+				expect(t).toThrow('SourceFileMetaDataTree.insertPath: path was already inserted ./directory/file')
 			})
 		})
 	})

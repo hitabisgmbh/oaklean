@@ -32,7 +32,7 @@
 		"dist/**/*"
 	],
 	"scripts": {
-		"exec": "cd $INIT_CWD && npx ts-node -r tsconfig-paths/register src/install.ts",
+		"exec": "cd $INIT_CWD && npx tsx src/install.ts",
 		"clear-build": "npx rimraf ./dist",
 		"build": "npm run clear-build && npx cross-env NODE_ENV=production npx tsc",
 		"postinstall": "node -e \"if ((process.env.NODE_ENV || 'development').toLocaleLowerCase() === 'development' && !require('fs').existsSync('dist/install.js')) { require('child_process').execSync('npm run build', { stdio: 'inherit' }); }\" && node dist/install.js",

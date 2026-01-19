@@ -5,17 +5,20 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "node",
-			"name": "Debug Current TypeScript File",
-			"request": "launch",
-			"runtimeArgs": [
-				"-r",
-				"ts-node/register"
-			],
-			"args": [
-				"${file}"
-			],
-			"cwd": "${workspaceFolder}"
-		},
+      "name": "Run TS with tsx (type-checked)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--import",
+        "tsx"
+      ],
+      "args": [
+        "${file}"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
 	]
 }

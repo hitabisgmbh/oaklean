@@ -6,16 +6,16 @@ stages:
   - test
 
 .node-image-matrix:
-  image: 
+  image:
     name: $BUILD_IMAGE_URL:$NODE_VERSION
   parallel:
     matrix:
-      - NODE_VERSION: ["20.17.0", "22.13.0", "24.0.0"]
+      - NODE_VERSION: ['20.17.0', '22.13.0', '24.0.0']
   cache:
     key:
       files:
         - package-lock.json
-      prefix: "node_modules-${NODE_VERSION}"  # separate cache per Node version
+      prefix: 'node_modules-${NODE_VERSION}' # separate cache per Node version
     paths:
       - node_modules/
       - ../.npm
@@ -24,7 +24,6 @@ stages:
       echo "Using Node version: $(node -v)"
       npm config set cache ../.npm
       npm ci --prefer-offline --ignore-scripts
-
 
 generate-docs:
   stage: generate-docs
@@ -57,16 +56,14 @@ test-repo:
   stage: test-repo
   extends: .node-image-matrix
   script:
-    - cd $CI_PROJECT_DIR/packages/profiler && npm link
-    - cd $CI_PROJECT_DIR/packages/profiler-core && npm link
-    - cd $CI_PROJECT_DIR
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${TEST_REPOSITROY}.git
+    - npm run link # link the built packages locally
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${TEST_REPOSITORY}.git
     - cd oaklean-tests
     - git checkout main
     - npm ci
-    - npm link @oaklean/profiler @oaklean/profiler-core
+    - npm run link # link the built packages to the test repo
     - npm run build
-    - npm run measure
+    - npm run measure:verify
 
 test:
   stage: test
