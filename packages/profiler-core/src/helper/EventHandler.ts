@@ -9,8 +9,10 @@ type Args<Events extends EventMap<Events>, EventName extends string | symbol> = 
 		? Events[EventName]
 		: EventName extends keyof EventEmitterEventMap
 			? EventEmitterEventMap[EventName]
-			: any[], // eslint-disable-line @typescript-eslint/no-explicit-any
-	any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+			: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				any[],
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	any[]
 >
 type EventNames<Events extends EventMap<Events>, EventName extends string | symbol> = IfEventMap<
 	Events,
@@ -24,9 +26,11 @@ type Listener<Events extends EventMap<Events>, EventName extends string | symbol
 			? Events[EventName]
 			: EventName extends keyof EventEmitterEventMap
 				? EventEmitterEventMap[EventName]
-				: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+				: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+					any[]
 	) => void,
-	(...args: any[]) => void // eslint-disable-line @typescript-eslint/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	(...args: any[]) => void
 >
 
 interface EventEmitterEventMap {
@@ -67,7 +71,8 @@ export class EventHandler<T extends EventMap<T> = any> {
 
 			this.once(eventName, (() => {
 				resolve()
-			}) as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			}) as any)
 		})
 	}
 
@@ -75,7 +80,8 @@ export class EventHandler<T extends EventMap<T> = any> {
 		return new Promise<void>((resolve) => {
 			this.once(eventName, (() => {
 				resolve()
-			}) as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			}) as any)
 		})
 	}
 

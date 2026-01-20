@@ -464,7 +464,8 @@ export class SensorValues extends BaseModel {
 	toBuffer(tag?: string): Buffer {
 		return BufferHelper.numberMapToBuffer(
 			SENSOR_VALUES_BYTE_SIZE_MAP as Record<string, PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double>,
-			this as Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			this as Record<string, any>,
 			0,
 			tag + '.SensorValues.toBuffer'
 		)

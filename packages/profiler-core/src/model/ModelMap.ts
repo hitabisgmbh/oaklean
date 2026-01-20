@@ -48,7 +48,8 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKey
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		fromJSON: TVALUE extends BaseModel ? (json: string | any, ...args: any[]) => TVALUE : 'string' | 'number'
 	): ModelMap<TKEY, TVALUE> {
-		let data: any // eslint-disable-line @typescript-eslint/no-explicit-any
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		let data: any
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
 		} else {

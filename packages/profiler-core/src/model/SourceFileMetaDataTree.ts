@@ -706,7 +706,8 @@ export class SourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> extend
 		includedFilterPathString: string | undefined,
 		excludedFilterPathString: string | undefined
 	) {
-		const self = this // eslint-disable-line @typescript-eslint/no-this-alias
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
+		const self = this
 		const includeCache = new Map<number, boolean>()
 		const excludeCache = new Map<number, boolean>()
 		const pathIndexCache = new Map<number, PathIndex>()

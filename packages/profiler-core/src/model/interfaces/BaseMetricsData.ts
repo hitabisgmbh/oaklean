@@ -47,8 +47,10 @@ export class BaseMetricsData {
 	}
 
 	static fromJSON(
-		json: string | object, // eslint-disable-line @typescript-eslint/no-unused-vars
-		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		json: string | object,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+		...args: any[]
 	): object {
 		throw new Error('BaseMetricsData.fromJSON must be implemented')
 	}

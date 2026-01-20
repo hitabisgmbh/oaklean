@@ -283,7 +283,8 @@ export class ProjectReport extends Report {
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const {
-			instance: reportVersion, // eslint-disable-line @typescript-eslint/no-unused-vars
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			instance: reportVersion,
 			remainingBuffer: newRemainingBuffer0
 		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer0

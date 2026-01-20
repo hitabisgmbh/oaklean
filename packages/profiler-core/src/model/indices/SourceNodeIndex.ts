@@ -83,7 +83,8 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		) as SourceNodeID_number
 		self.pathIndex.addToSourceNodeMap(this)
 		return this._id as SourceNodeIndexID<T>
-	}) as any // eslint-disable-line @typescript-eslint/no-explicit-any
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	}) as any
 
 	public get id(): SourceNodeIndexID<T> {
 		return this._id as SourceNodeIndexID<T>
