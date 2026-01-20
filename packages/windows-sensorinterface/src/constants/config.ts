@@ -24,6 +24,5 @@ export function getPlatformSpecificPackageName(platform: SupportedPlatforms) {
 export function getPlatformSpecificDownloadLink(platform: SupportedPlatforms) {
 	const platformSpecificPackageName = getPlatformSpecificPackageName(platform)
 
-	// eslint-disable-next-line max-len
 	return `https://github.com/hitabisgmbh/oaklean-windows-sensorinterface/releases/download/v${BINARY_VERSION}/${platformSpecificPackageName}.zip`
 }

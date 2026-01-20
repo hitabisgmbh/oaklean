@@ -30,7 +30,6 @@ describe('AuthenticationHelper', () => {
 				return fs.readFileSync(path)
 			})
 			expect(await AuthenticationHelper.getAuthentication()).toBe(EXAMPLE_AUTH_KEY)
-
 			;(fs.existsSync as jest.Mock).mockRestore()
 			;(fs.readFileSync as jest.Mock).mockRestore()
 		})

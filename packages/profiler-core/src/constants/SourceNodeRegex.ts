@@ -16,9 +16,7 @@ export const ClassStaticBlockDeclarationRegexString = '{(static:[0-9]+)}'
 export const ExpressionHashRegexString = '[A-Za-z0-9]+'
 
 export const ObjectLiteralExpressionRegexString = `{scope:\\(obj(?:@static)?:(${SourceNodeNameExpressionRegexString})\\)}`
-export const ModuleDeclarationRegexString =
-	// eslint-disable-next-line max-len
-	`{scope:\\(namespace:(${SourceNodeNameExpressionRegexString}(?:.${SourceNodeNameExpressionRegexString})*):[0-9]+\\)}`
+export const ModuleDeclarationRegexString = `{scope:\\(namespace:(${SourceNodeNameExpressionRegexString}(?:.${SourceNodeNameExpressionRegexString})*):[0-9]+\\)}`
 export const IfStatementRegexString = '{scope:(\\(if:[0-9]+\\))}'
 export const IfThenStatementRegexString = '{scope:(\\(then\\))}'
 export const IfElseStatementRegexString = '{scope:(\\(else\\))}'
@@ -32,7 +30,6 @@ export const BlockStatementRegexString = '{scope:(\\(block:[0-9]+\\))}'
 export const SwitchStatementRegexString = '{scope:(\\(switch:[0-9]+\\))}'
 export const SwitchCaseClauseRegexString = `{scope:(\\(case:(?:${ExpressionHashRegexString}|default)(?::[0-9]+)?\\))}`
 
-// eslint-disable-next-line max-len
 export const ScopeRegexString = `(?:${ObjectLiteralExpressionRegexString}|${ModuleDeclarationRegexString}|${IfStatementRegexString}|${IfThenStatementRegexString}|${IfElseStatementRegexString}|${ForStatementRegexString}|${WhileStatementRegexString}|${SwitchStatementRegexString}|${SwitchCaseClauseRegexString}|${TryStatementRegexString}|${TryBlockStatementRegexString}|${CatchClauseStatementRegexString}|${FinallyBlockStatementRegexString}|${BlockStatementRegexString})`
 
 export const LangInternalSourceNodeRegExpRegexString = 'RegExp: .*'
@@ -45,7 +42,6 @@ export const LangInternalSourceNodeIdentifierRegexString =
 
 export const SourceNodeIdentifierPathRegexString = '[^{}]+'
 
-// eslint-disable-next-line max-len
 export const SourceNodeIdentifierPartRegexString = `(?:${ConstructorDeclarationRegexString}|${ClassDeclarationRegexString}|${MethodDefinitionRegexString}|${GetAccessorDeclarationRegexString}|${SetAccessorDeclarationRegexString}|${FunctionDeclarationRegexString}|${FunctionExpressionRegexString}|${ClassExpressionRegexString}|${ClassStaticBlockDeclarationRegexString}|${ScopeRegexString})`
 
 export const SourceNodeIdentifierRegexString =
