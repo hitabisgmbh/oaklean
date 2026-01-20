@@ -11,7 +11,6 @@ import prettierConfig from 'eslint-config-prettier'
 export default defineConfig(
 	eslint.configs.recommended,
 	tseslint.configs.recommended,
-	prettierConfig,
 	{
 		// rules not applied to test files
 		rules: {
@@ -64,6 +63,7 @@ export default defineConfig(
       'prettier/prettier': 'error'
 		}
 	},
+	prettierConfig, // Must come AFTER other configs to properly disable conflicting rules
 	globalIgnores([
 		'**/*.d.ts',
 		'**/node_modules/**',
