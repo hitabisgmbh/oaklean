@@ -1,10 +1,7 @@
 import { NodeModule } from '../../src/model/NodeModule'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
-import {
-	SourceNodeIdentifier_string,
-	GlobalSourceNodeIdentifier_string
-} from '../../src/types'
+import { SourceNodeIdentifier_string, GlobalSourceNodeIdentifier_string } from '../../src/types'
 
 describe('GlobalIdentifier', () => {
 	describe('instance related', () => {
@@ -12,14 +9,11 @@ describe('GlobalIdentifier', () => {
 		let externInstance: GlobalIdentifier
 
 		beforeEach(() => {
-			const nodeModule = new NodeModule(
-				'@scope/package',
-				'1.0.1'
-			)
+			const nodeModule = new NodeModule('@scope/package', '1.0.1')
 
 			internInstance = new GlobalIdentifier(
 				new UnifiedPath('./path/to/file.js').toString(),
-				'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}' as SourceNodeIdentifier_string,
+				'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}' as SourceNodeIdentifier_string
 			)
 
 			externInstance = new GlobalIdentifier(
@@ -75,12 +69,12 @@ describe('GlobalIdentifier', () => {
 				)
 			}
 
-			expect(a).toThrow('GlobalIdentifier.fromIdentifier: invalid format: {root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}')
+			expect(a).toThrow(
+				'GlobalIdentifier.fromIdentifier: invalid format: {root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
+			)
 
 			const b = () => {
-				GlobalIdentifier.fromIdentifier(
-					'./path/to/file.js' as GlobalSourceNodeIdentifier_string
-				)
+				GlobalIdentifier.fromIdentifier('./path/to/file.js' as GlobalSourceNodeIdentifier_string)
 			}
 
 			expect(b).toThrow('GlobalIdentifier.fromIdentifier: invalid format: ./path/to/file.js')
@@ -147,9 +141,7 @@ describe('GlobalIdentifier', () => {
 			})
 			test('with lang internal identifier case 1', () => {
 				expect(
-					GlobalIdentifier.fromIdentifier(
-						'{}{(anonymous)}' as GlobalSourceNodeIdentifier_string
-					).toJSON()
+					GlobalIdentifier.fromIdentifier('{}{(anonymous)}' as GlobalSourceNodeIdentifier_string).toJSON()
 				).toEqual({
 					path: '',
 					sourceNodeIdentifier: '{(anonymous)}'

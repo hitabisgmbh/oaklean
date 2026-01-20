@@ -7,20 +7,17 @@ const ProgramStructureTypes_DIR = CURRENT_DIR.join('ProgramStructureTypes')
 
 type TestCase = {
 	source: {
-		path: UnifiedPath,
+		path: UnifiedPath
 		content: string
 	}
 	expected: {
-		path: UnifiedPath,
-		content: string,
+		path: UnifiedPath
+		content: string
 		object: object
 	}
 }
 
-function loadTestCase(
-	sourcePath: UnifiedPath,
-	expectedPath: UnifiedPath
-): TestCase {
+function loadTestCase(sourcePath: UnifiedPath, expectedPath: UnifiedPath): TestCase {
 	const expectedContent = fs.readFileSync(expectedPath.toPlatformString()).toString()
 
 	return {
@@ -36,15 +33,9 @@ function loadTestCase(
 	}
 }
 
-export function updateTestCase(
-	expected: Omit<TestCase['expected'], 'content'>,
-	shouldUpdate: boolean
-) {
+export function updateTestCase(expected: Omit<TestCase['expected'], 'content'>, shouldUpdate: boolean) {
 	if (shouldUpdate) {
-		fs.writeFileSync(
-			expected.path.toPlatformString(),
-			JSON.stringify(expected.object, null, '\t')
-		)
+		fs.writeFileSync(expected.path.toPlatformString(), JSON.stringify(expected.object, null, '\t'))
 	}
 }
 

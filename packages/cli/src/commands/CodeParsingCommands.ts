@@ -16,13 +16,13 @@ import { program } from 'commander'
 
 export default class CodeParsingCommands {
 	constructor() {
-		const parseCommand = program
-			.command('parse')
-			.description('commands to parse javascript or typescript files')
+		const parseCommand = program.command('parse').description('commands to parse javascript or typescript files')
 
 		parseCommand
 			.command('toPST')
-			.description('Converts a given javascript/typescript file and extracts the ProgramStructureTree from it and stores it into a file')
+			.description(
+				'Converts a given javascript/typescript file and extracts the ProgramStructureTree from it and stores it into a file'
+			)
 			.argument('<input>', 'input file path')
 			.argument('<output>', 'output file path')
 			.action(this.convertToProgramStructureTree.bind(this))
@@ -30,23 +30,29 @@ export default class CodeParsingCommands {
 		parseCommand
 			.command('verify-identifiers')
 			.alias('vi')
-			.description('Parses all source files (.js, .ts, .jsx, .tsx) within a given path and verifies that all identifiers are valid and unique')
+			.description(
+				'Parses all source files (.js, .ts, .jsx, .tsx) within a given path and verifies that all identifiers are valid and unique'
+			)
 			.argument('<input>', 'input file path')
-			.option('--t262', 'Specifies whether files should be ignored that contain a "$DONOTEVALUATE();", this is useful for test262 source files')
+			.option(
+				'--t262',
+				'Specifies whether files should be ignored that contain a "$DONOTEVALUATE();", this is useful for test262 source files'
+			)
 			.action(this.verifySourceFilesIdentifiers.bind(this))
 
 		const externalResourceCommand = program
 			.command('external-resource')
 			.alias('er')
 			.description(
-				'commands to interact with external resource files ' +
-				`(${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION})`
+				'commands to interact with external resource files ' + `(${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION})`
 			)
 
 		externalResourceCommand
 			.command('verify-identifiers')
 			.alias('vi')
-			.description('Parses all source files in all resource files within a given path and verifies that all identifiers are valid and unique')
+			.description(
+				'Parses all source files in all resource files within a given path and verifies that all identifiers are valid and unique'
+			)
 			.argument('<input>', `File path to the directory containing the ${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION} files`)
 			.action(this.verifyIdentifiers.bind(this))
 
@@ -83,8 +89,8 @@ export default class CodeParsingCommands {
 	private verifyCode(
 		code: string | null,
 		addToDebug: {
-			resourceFile?: string,
-			scriptID?: ScriptID_string,
+			resourceFile?: string
+			scriptID?: ScriptID_string
 			filePath?: UnifiedPath_string
 		}
 	) {
@@ -92,26 +98,22 @@ export default class CodeParsingCommands {
 			return
 		}
 		const tmpName = (addToDebug.scriptID !== undefined ? addToDebug.scriptID : addToDebug.filePath) || 'tmp.ts'
-		TypescriptParser.parseSource(new UnifiedPath(tmpName), code, 'TSX', (
-			filePath,
-			node,
-			identifier: string,
-			loc,
-			duplicateLoc
-		) => {
-			LoggerHelper.warn('Duplicated identifier found:', {
-				...addToDebug,
-				identifier,
-				original: loc,
-				duplicate: duplicateLoc,
-			})
-		})
+		TypescriptParser.parseSource(
+			new UnifiedPath(tmpName),
+			code,
+			'TSX',
+			(filePath, node, identifier: string, loc, duplicateLoc) => {
+				LoggerHelper.warn('Duplicated identifier found:', {
+					...addToDebug,
+					identifier,
+					original: loc,
+					duplicate: duplicateLoc
+				})
+			}
+		)
 	}
 
-	async verifySourceFilesIdentifiers(
-		input: string,
-		options: { t262?: boolean }
-	) {
+	async verifySourceFilesIdentifiers(input: string, options: { t262?: boolean }) {
 		let inputPath = new UnifiedPath(input)
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
@@ -149,9 +151,7 @@ export default class CodeParsingCommands {
 		}
 	}
 
-	async verifyIdentifiers(
-		input: string
-	) {
+	async verifyIdentifiers(input: string) {
 		let inputPath = new UnifiedPath(input)
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
@@ -164,10 +164,7 @@ export default class CodeParsingCommands {
 		for (const externalResourcePath of externalResourcePaths) {
 			const relativePath = cwdPath.pathTo(externalResourcePath)
 
-			const resourceFile = ExternalResourceHelper.loadFromFile(
-				new UnifiedPath(process.cwd()),
-				externalResourcePath
-			)
+			const resourceFile = ExternalResourceHelper.loadFromFile(new UnifiedPath(process.cwd()), externalResourcePath)
 
 			if (resourceFile === undefined) {
 				LoggerHelper.error(`Could not load resource file: ${relativePath.toPlatformString()}`)

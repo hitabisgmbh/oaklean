@@ -7,10 +7,7 @@ export abstract class BaseModel {
 		return {}
 	}
 	static recordToJSON<T>(record: Record<string, BaseModel>): Record<string, T> {
-		const result = Object.keys(record).reduce(
-			(acc, key) => ({ ...acc, [key]: record[key].toJSON() }),
-			{}
-		)
+		const result = Object.keys(record).reduce((acc, key) => ({ ...acc, [key]: record[key].toJSON() }), {})
 		return result
 	}
 
@@ -22,7 +19,7 @@ export abstract class BaseModel {
 	static consumeFromBuffer(
 		buffer: Buffer, // eslint-disable-line @typescript-eslint/no-unused-vars
 		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-	): { instance: object, remainingBuffer: Buffer } {
+	): { instance: object; remainingBuffer: Buffer } {
 		throw new Error('BaseModel.consumeFromBuffer: not implemented yet')
 	}
 }

@@ -1,11 +1,6 @@
 import inspector from 'node:inspector'
 
-import {
-	InspectorSessionHelper,
-	LoggerHelper,
-	MicroSeconds_number,
-	TimeHelper
-} from '@oaklean/profiler-core'
+import { InspectorSessionHelper, LoggerHelper, MicroSeconds_number, TimeHelper } from '@oaklean/profiler-core'
 
 type TraceEventParams = {
 	pid: number
@@ -18,7 +13,6 @@ type TraceEventParams = {
 	dur: number
 	tdur: number
 }
-
 
 export class TraceEventHelper {
 	private static _started = false
@@ -53,7 +47,6 @@ export class TraceEventHelper {
 		})
 	}
 
-
 	/**
 	 * Handles the 'dataCollected' event from the NodeTracing domain.
 	 * @param chunk - The data chunk containing trace event information.
@@ -75,10 +68,7 @@ export class TraceEventHelper {
 	 * Starts capturing trace events related to CPU profiling.
 	 */
 	static async startCapturingProfilerTracingEvents() {
-		InspectorSessionHelper.session.on(
-			'NodeTracing.dataCollected',
-			TraceEventHelper.onDataCollected
-		)
+		InspectorSessionHelper.session.on('NodeTracing.dataCollected', TraceEventHelper.onDataCollected)
 		await TraceEventHelper.startTraceEventSession() // start trace event capturing
 	}
 
@@ -88,10 +78,7 @@ export class TraceEventHelper {
 	static async stopTraceEventSession() {
 		TraceEventHelper._started = false
 		await TraceEventHelper.post('NodeTracing.stop', undefined)
-		InspectorSessionHelper.session.removeListener(
-			'NodeTracing.dataCollected',
-			TraceEventHelper.onDataCollected
-		)
+		InspectorSessionHelper.session.removeListener('NodeTracing.dataCollected', TraceEventHelper.onDataCollected)
 	}
 
 	/**
@@ -102,18 +89,12 @@ export class TraceEventHelper {
 	static async getCPUProfilerBeginTime(): Promise<MicroSeconds_number> {
 		let tries = 0
 		while (TraceEventHelper._profilerStartTime === undefined && tries < 10) {
-			LoggerHelper.error(
-				`Cannot capture profiler start time on try: ${
-					tries + 1
-				}, try again after 1 second`
-			)
+			LoggerHelper.error(`Cannot capture profiler start time on try: ${tries + 1}, try again after 1 second`)
 			tries += 1
 			await TimeHelper.sleep(1000)
 		}
 		if (TraceEventHelper._profilerStartTime === undefined) {
-			throw new Error(
-				`Could not capture cpu profilers begin time after ${tries} tries, measurements failed`
-			)
+			throw new Error(`Could not capture cpu profilers begin time after ${tries} tries, measurements failed`)
 		}
 		return TraceEventHelper._profilerStartTime
 	}

@@ -1,4 +1,3 @@
-
 const UnifiedPathSymbol: unique symbol = Symbol('UnifiedPathSymbol')
 export type UnifiedPath_string = string & { [UnifiedPathSymbol]: never }
 

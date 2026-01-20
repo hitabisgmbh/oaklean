@@ -27,7 +27,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 	identifier: SourceNodeIdentifierPart_string
 	beginLoc: NodeLocation
 	endLoc: NodeLocation
-	
+
 	parent: T extends ProgramStructureTreeType.Root ? null : ProgramStructureTree
 
 	private _children: ModelMap<SourceNodeIdentifierPart_string, ProgramStructureTree>
@@ -37,9 +37,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 	private sourceLocationOfIdentifierCache: Map<SourceNodeIdentifier_string, NodeLocationRange | null>
 
 	constructor(
-		parent: T extends ProgramStructureTreeType.Root ?
-			null :
-			ProgramStructureTree,
+		parent: T extends ProgramStructureTreeType.Root ? null : ProgramStructureTree,
 		id: number,
 		type: T,
 		identifierType: IdentifierType,
@@ -90,16 +88,10 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 
 	addChildren(child: ProgramStructureTree) {
 		this._children.set(child.identifier, child)
-		this._childrenByBeginLoc.set(
-			`${child.beginLoc.line}:${child.beginLoc.column}`,
-			child
-		)
+		this._childrenByBeginLoc.set(`${child.beginLoc.line}:${child.beginLoc.column}`, child)
 	}
 
-	static compareNodeLocations(
-		a: NodeLocationString,
-		b: NodeLocationString
-	): number {
+	static compareNodeLocations(a: NodeLocationString, b: NodeLocationString): number {
 		const [aLine, aColumn] = a.split(':').map(Number)
 		const [bLine, bColumn] = b.split(':').map(Number)
 
@@ -128,7 +120,6 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		return this._sortedChildrenKeys
 	}
 
-
 	numberOfLeafs(): number {
 		const traverse = (currentNode: ProgramStructureTree): number => {
 			if (currentNode._children.size === 0) {
@@ -144,7 +135,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 			return count
 		}
 
-		return 	traverse(this)
+		return traverse(this)
 	}
 
 	/**
@@ -186,23 +177,15 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 	}
 
 	storeToFile(filePath: UnifiedPath) {
-		PermissionHelper.writeFileWithUserPermission(
-			filePath,
-			JSON.stringify(this, null, 2)
-		)
+		PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(this, null, 2))
 	}
 
-	static loadFromFile(
-		filePath: UnifiedPath
-	): ProgramStructureTree | undefined {
+	static loadFromFile(filePath: UnifiedPath): ProgramStructureTree | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
-		return ProgramStructureTree.fromJSON(
-			fs.readFileSync(filePath.toPlatformString()).toString()
-		)
+		return ProgramStructureTree.fromJSON(fs.readFileSync(filePath.toPlatformString()).toString())
 	}
-
 
 	static fromJSON(json: string | IProgramStructureTree): ProgramStructureTree {
 		return ProgramStructureTree.fromJSONWithParent(json, null)
@@ -258,17 +241,19 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		return false
 	}
 
-	identifierNodeBySourceLocation(targetLoc: NodeLocation): {
-		identifier: SourceNodeIdentifier_string,
-		node: ProgramStructureTree
-	} | undefined {
+	identifierNodeBySourceLocation(targetLoc: NodeLocation):
+		| {
+				identifier: SourceNodeIdentifier_string
+				node: ProgramStructureTree
+		  }
+		| undefined {
 		const lookupKey: NodeLocationString = `${targetLoc.line}:${targetLoc.column}`
 
 		const traverse = (
 			identifier: SourceNodeIdentifier_string,
 			currentNode: ProgramStructureTree
 		): {
-			identifier:	SourceNodeIdentifier_string,
+			identifier: SourceNodeIdentifier_string
 			node: ProgramStructureTree
 		} => {
 			if (currentNode._children.size === 0) {
@@ -300,10 +285,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 					endIndex = pivotIndex - 1
 				} else {
 					if (child.containsLocation(targetLoc)) {
-						return traverse(
-							(identifier + '.' + child.identifier) as SourceNodeIdentifier_string,
-							child
-						)
+						return traverse((identifier + '.' + child.identifier) as SourceNodeIdentifier_string, child)
 					}
 					beginIndex = pivotIndex + 1
 				}
@@ -347,9 +329,11 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 		if (cacheResult !== undefined) {
 			return cacheResult
 		}
-		
-		const traverse = (identifierStack: SourceNodeIdentifierPart_string[], currentNode: ProgramStructureTree):
-		NodeLocationRange | null => {
+
+		const traverse = (
+			identifierStack: SourceNodeIdentifierPart_string[],
+			currentNode: ProgramStructureTree
+		): NodeLocationRange | null => {
 			if (identifierStack[0] === currentNode.identifier) {
 				if (identifierStack.length === 1) {
 					return {
@@ -368,7 +352,7 @@ export class ProgramStructureTree<T extends ProgramStructureTreeType = ProgramSt
 			}
 			return null
 		}
-		
+
 		const identifierStack = SourceNodeIdentifierHelper.split(identifier)
 		const result = traverse(identifierStack, this)
 		this.sourceLocationOfIdentifierCache.set(identifier, result)

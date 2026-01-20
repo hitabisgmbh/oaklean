@@ -32,20 +32,11 @@ describe('ExternalResourceHelper', () => {
 			await instance.connect()
 			await instance.listen()
 
-			instance.parseFile(
-				ROOT_DIR.pathTo(SCRIPT_01_PATH),
-				SCRIPT_01_PATH
-			)
+			instance.parseFile(ROOT_DIR.pathTo(SCRIPT_01_PATH), SCRIPT_01_PATH)
 
-			instance.parseFile(
-				ROOT_DIR.pathTo(SCRIPT_02_PATH),
-				SCRIPT_02_PATH
-			)
+			instance.parseFile(ROOT_DIR.pathTo(SCRIPT_02_PATH), SCRIPT_02_PATH)
 
-			instance.parseFile(
-				ROOT_DIR.pathTo(SCRIPT_03_PATH),
-				SCRIPT_03_PATH
-			)
+			instance.parseFile(ROOT_DIR.pathTo(SCRIPT_03_PATH), SCRIPT_03_PATH)
 
 			const nodeModulePath = new UnifiedPath('./node_modules/module')
 			const absoluteNodeModulePath = ROOT_DIR.join(nodeModulePath)
@@ -54,14 +45,10 @@ describe('ExternalResourceHelper', () => {
 					return new NodeModule('module', '1.2.3')
 				}
 			})
-			instance.nodeModuleFromPath(
-				nodeModulePath
-			)
+			instance.nodeModuleFromPath(nodeModulePath)
 			nodeModuleSpy.mockRestore()
 
-			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
-				() => [SCRIPT_01_PATH]
-			)
+			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(() => [SCRIPT_01_PATH])
 			instance.trackUncommittedFiles(ROOT_DIR, globalIndex)
 			uncommittedFilesMock.mockRestore()
 		})
@@ -105,23 +92,14 @@ describe('ExternalResourceHelper', () => {
 		it('should have a method fileInfoFromPath()', () => {
 			expect(instance.fileInfoFromPath).toBeTruthy()
 
-			expect(instance.fileInfoFromPath(
-				ROOT_DIR.pathTo(SCRIPT_01_PATH),
-				SCRIPT_01_PATH
-			)).toEqual({
+			expect(instance.fileInfoFromPath(ROOT_DIR.pathTo(SCRIPT_01_PATH), SCRIPT_01_PATH)).toEqual({
 				sourceCode: inspector.SCRIPT_SOURCES['1'],
 				cucc: true
 			})
-			expect(instance.fileInfoFromPath(
-				ROOT_DIR.pathTo(SCRIPT_02_PATH),
-				SCRIPT_02_PATH
-			)).toEqual({
+			expect(instance.fileInfoFromPath(ROOT_DIR.pathTo(SCRIPT_02_PATH), SCRIPT_02_PATH)).toEqual({
 				sourceCode: inspector.SCRIPT_SOURCES['2']
 			})
-			expect(instance.fileInfoFromPath(
-				ROOT_DIR.pathTo(SCRIPT_03_PATH),
-				SCRIPT_03_PATH
-			)).toEqual({
+			expect(instance.fileInfoFromPath(ROOT_DIR.pathTo(SCRIPT_03_PATH), SCRIPT_03_PATH)).toEqual({
 				sourceCode: inspector.SCRIPT_SOURCES['3']
 			})
 		})
@@ -174,13 +152,13 @@ describe('ExternalResourceHelper', () => {
 			expect(instance.toJSON()).toEqual({
 				fileInfoPerScriptID: {
 					'1': {
-						sourceCode: inspector.SCRIPT_SOURCES['1'],
+						sourceCode: inspector.SCRIPT_SOURCES['1']
 					},
 					'2': {
-						sourceCode: inspector.SCRIPT_SOURCES['2'],
+						sourceCode: inspector.SCRIPT_SOURCES['2']
 					},
 					'3': {
-						sourceCode: inspector.SCRIPT_SOURCES['3'],
+						sourceCode: inspector.SCRIPT_SOURCES['3']
 					}
 				},
 				fileInfoPerPath: {
@@ -207,31 +185,27 @@ describe('ExternalResourceHelper', () => {
 		test('fromJSON()', () => {
 			const json = instance.toJSON()
 			const newInstance = ExternalResourceHelper.fromJSON(ROOT_DIR, json)
-			
+
 			expect(instance.uncommittedFiles).toEqual(newInstance.uncommittedFiles)
 
 			expect(newInstance.toJSON()).toEqual(json)
 		})
 
 		test('storeToFile()', async () => {
-			const writeFileWithUserPermissionSpy = jest.spyOn(PermissionHelper, 'writeFileWithUserPermission').mockImplementation(() => undefined)
+			const writeFileWithUserPermissionSpy = jest
+				.spyOn(PermissionHelper, 'writeFileWithUserPermission')
+				.mockImplementation(() => undefined)
 			const filePath = new UnifiedPath(__dirname + '/externalResourceHelper.json')
-			
+
 			await instance.storeToFile(filePath, 'json')
 
 			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledTimes(1)
-			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledWith(
-				filePath,
-				JSON.stringify(instance)
-			)
+			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledWith(filePath, JSON.stringify(instance))
 
 			await instance.storeToFile(filePath, 'pretty-json')
 
 			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledTimes(2)
-			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledWith(
-				filePath,
-				JSON.stringify(instance, null, 2)
-			)
+			expect(writeFileWithUserPermissionSpy).toHaveBeenCalledWith(filePath, JSON.stringify(instance, null, 2))
 
 			writeFileWithUserPermissionSpy.mockRestore()
 		})
@@ -244,10 +218,7 @@ describe('ExternalResourceHelper', () => {
 			const filePath = new UnifiedPath(__dirname).join('assets', 'ExternalResourceHelper', 'instance.json')
 
 			if (UPDATE_TEST_REPORTS) {
-				PermissionHelper.writeFileWithUserPermission(
-					filePath,
-					JSON.stringify(instance, null, 2)
-				)
+				PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(instance, null, 2))
 			}
 
 			const loadedInstance = ExternalResourceHelper.loadFromFile(ROOT_DIR, filePath)
@@ -258,26 +229,17 @@ describe('ExternalResourceHelper', () => {
 		})
 
 		test('sourceMapFromId()', async () => {
-			expect(await instance.sourceMapFromScriptID(
-				'0' as ScriptID_string,
-				SCRIPT_01_PATH
-			)).toBeNull()
+			expect(await instance.sourceMapFromScriptID('0' as ScriptID_string, SCRIPT_01_PATH)).toBeNull()
 
-			expect((await instance.sourceMapFromScriptID(
-				'1' as ScriptID_string,
-				SCRIPT_01_PATH
-			))?.toJSON()).toEqual((SourceMap.fromCompiledJSString(
-				SCRIPT_01_PATH,
-				inspector.SCRIPT_SOURCES['1']
-			) as SourceMap)?.toJSON())
+			expect((await instance.sourceMapFromScriptID('1' as ScriptID_string, SCRIPT_01_PATH))?.toJSON()).toEqual(
+				(SourceMap.fromCompiledJSString(SCRIPT_01_PATH, inspector.SCRIPT_SOURCES['1']) as SourceMap)?.toJSON()
+			)
 		})
 	})
 
 	describe('trackUncommittedFiles', () => {
 		test('returns null if git is not available', () => {
-			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
-				() => null
-			)
+			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(() => null)
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const instance = new ExternalResourceHelper(ROOT_DIR)
 			expect(instance.trackUncommittedFiles(ROOT_DIR, globalIndex)).toBe(null)
@@ -288,9 +250,7 @@ describe('ExternalResourceHelper', () => {
 		})
 
 		test('does not load files that were not included in the global index', () => {
-			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
-				() => [SCRIPT_01_PATH]
-			)
+			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(() => [SCRIPT_01_PATH])
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const instance = new ExternalResourceHelper(ROOT_DIR)
 			expect(instance.trackUncommittedFiles(ROOT_DIR, globalIndex)).toBe(false)
@@ -301,9 +261,7 @@ describe('ExternalResourceHelper', () => {
 		})
 
 		test('loads files that were uncommitted and included in the global index but not loaded yet', () => {
-			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(
-				() => [SCRIPT_01_PATH]
-			)
+			const uncommittedFilesMock = jest.spyOn(GitHelper, 'uncommittedFiles').mockImplementation(() => [SCRIPT_01_PATH])
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
 			moduleIndex.getFilePathIndex('upsert', ROOT_DIR.pathTo(SCRIPT_01_PATH).toString())
@@ -312,10 +270,7 @@ describe('ExternalResourceHelper', () => {
 			uncommittedFilesMock.mockRestore()
 
 			expect(instance.uncommittedFiles).toEqual([ROOT_DIR.pathTo(SCRIPT_01_PATH).toString()])
-			expect(instance.fileInfoFromPath(
-				ROOT_DIR.pathTo(SCRIPT_01_PATH),
-				SCRIPT_01_PATH
-			)).toEqual({
+			expect(instance.fileInfoFromPath(ROOT_DIR.pathTo(SCRIPT_01_PATH), SCRIPT_01_PATH)).toEqual({
 				sourceCode: inspector.SCRIPT_SOURCES['1'],
 				cucc: true
 			})
@@ -327,7 +282,7 @@ describe('ExternalResourceHelper', () => {
 			const instance = new ExternalResourceHelper(ROOT_DIR)
 			const json = instance.toJSON()
 			const newInstance = ExternalResourceHelper.fromJSON(ROOT_DIR, json)
-			
+
 			expect(instance.uncommittedFiles).toBe(undefined)
 			expect(newInstance.uncommittedFiles).toEqual([])
 
@@ -354,40 +309,44 @@ describe('ExternalResourceHelper', () => {
 
 	test('fillSourceMapsFromCPUProfile', async () => {
 		const profile: ICpuProfileRaw = {
-			nodes: [{
-				id: 1,
-				callFrame: {
-					functionName: 'foo',
-					url: SCRIPT_01_PATH.toString(),
-					scriptId: '1',
-					lineNumber: 1,
-					columnNumber: 1
+			nodes: [
+				{
+					id: 1,
+					callFrame: {
+						functionName: 'foo',
+						url: SCRIPT_01_PATH.toString(),
+						scriptId: '1',
+						lineNumber: 1,
+						columnNumber: 1
+					},
+					hitCount: 1,
+					children: [2]
 				},
-				hitCount: 1,
-				children: [2]
-			}, {
-				id: 2,
-				callFrame: {
-					functionName: 'bar',
-					url: SCRIPT_02_PATH.toString(),
-					scriptId: '2',
-					lineNumber: 2,
-					columnNumber: 2
+				{
+					id: 2,
+					callFrame: {
+						functionName: 'bar',
+						url: SCRIPT_02_PATH.toString(),
+						scriptId: '2',
+						lineNumber: 2,
+						columnNumber: 2
+					},
+					hitCount: 1,
+					children: [3]
 				},
-				hitCount: 1,
-				children: [3]
-			}, {
-				id: 3,
-				callFrame: {
-					functionName: 'baz',
-					url: SCRIPT_03_PATH.toString(),
-					scriptId: '3',
-					lineNumber: 3,
-					columnNumber: 3
-				},
-				hitCount: 1,
-				children: []
-			}],
+				{
+					id: 3,
+					callFrame: {
+						functionName: 'baz',
+						url: SCRIPT_03_PATH.toString(),
+						scriptId: '3',
+						lineNumber: 3,
+						columnNumber: 3
+					},
+					hitCount: 1,
+					children: []
+				}
+			],
 			samples: [1, 2, 3],
 			timeDeltas: [10, 20, 30],
 			startTime: 0,
@@ -405,33 +364,29 @@ describe('ExternalResourceHelper', () => {
 			file: 'script01.js',
 			mappings: ';AAAA,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA',
 			names: [],
-			sources: [
-				'../../examples/script01.ts',
-			],
+			sources: ['../../examples/script01.ts'],
 			sourceRoot: '',
-			version: 3,
+			version: 3
 		})
 
 		expect((await instance.sourceMapFromScriptID('2' as ScriptID_string, SCRIPT_02_PATH))?.toJSON()).toEqual({
 			file: 'script02.js',
-			mappings: ';AAAA,KAAK,IAAI,CAAC,GAAG,CAAC,EAAE,CAAC,GAAG,CAAC,EAAE,CAAC,EAAE,EAAE,CAAC;IAC5B,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA;AAC7B,CAAC',
+			mappings:
+				';AAAA,KAAK,IAAI,CAAC,GAAG,CAAC,EAAE,CAAC,GAAG,CAAC,EAAE,CAAC,EAAE,EAAE,CAAC;IAC5B,OAAO,CAAC,GAAG,CAAC,eAAe,CAAC,CAAA;AAC7B,CAAC',
 			names: [],
-			sources: [
-				'../../examples/script02.ts',
-			],
+			sources: ['../../examples/script02.ts'],
 			sourceRoot: '',
 			version: 3
 		})
 
 		expect((await instance.sourceMapFromScriptID('3' as ScriptID_string, SCRIPT_03_PATH))?.toJSON()).toEqual({
 			file: 'script03.js',
-			mappings: ';;AAAA,SAAwB,GAAG,CAAC,CAAS;IACpC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;QACZ,OAAO,CAAC,CAAA;IACT,CAAC;IACD,OAAO,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,GAAG,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,CAAA;AAC/B,CAAC;AALD,sBAKC',
+			mappings:
+				';;AAAA,SAAwB,GAAG,CAAC,CAAS;IACpC,IAAI,CAAC,IAAI,CAAC,EAAE,CAAC;QACZ,OAAO,CAAC,CAAA;IACT,CAAC;IACD,OAAO,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,GAAG,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,CAAA;AAC/B,CAAC;AALD,sBAKC',
 			names: [],
-			sources: [
-				'../../examples/script03.ts',
-			],
+			sources: ['../../examples/script03.ts'],
 			sourceRoot: '',
-			version: 3,
+			version: 3
 		})
 	})
 })

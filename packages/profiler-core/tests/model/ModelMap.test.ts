@@ -43,10 +43,7 @@ class SubClass extends BaseModel {
 	}
 
 	toBuffer(): Buffer {
-		const buffers = [
-			BufferHelper.String2LToBuffer(this.name),
-			BufferHelper.BooleanToBuffer(this.next !== undefined)
-		]
+		const buffers = [BufferHelper.String2LToBuffer(this.name), BufferHelper.BooleanToBuffer(this.next !== undefined)]
 		if (this.next !== undefined) {
 			buffers.push(this.next.toBuffer())
 		}
@@ -55,26 +52,18 @@ class SubClass extends BaseModel {
 	}
 
 	static fromBuffer(buffer: Buffer): {
-		instance: SubClass,
+		instance: SubClass
 		remainingBuffer: Buffer
 	} {
 		let remainingBuffer = buffer
-		const {
-			instance: name,
-			remainingBuffer: newRemainingBuffer1
-		} = BufferHelper.String2LFromBuffer(remainingBuffer)
+		const { instance: name, remainingBuffer: newRemainingBuffer1 } = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
 		const instance = new SubClass(name)
-		const {
-			instance: nextIsPresent,
-			remainingBuffer: newRemainingBuffer2
-		} = BufferHelper.BooleanFromBuffer(remainingBuffer)
+		const { instance: nextIsPresent, remainingBuffer: newRemainingBuffer2 } =
+			BufferHelper.BooleanFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer2
 		if (nextIsPresent) {
-			const {
-				instance: next,
-				remainingBuffer: newRemainingBuffer
-			} = SubClass.fromBuffer(remainingBuffer)
+			const { instance: next, remainingBuffer: newRemainingBuffer } = SubClass.fromBuffer(remainingBuffer)
 			remainingBuffer = newRemainingBuffer
 			instance.next = next
 		}
@@ -102,10 +91,11 @@ const EXAMPLE_MODEL_MAP: Record<string | number, object | string | number> = {
 	'./1234/abcd.txt': {
 		name: '1234-abcd'
 	},
-	'abc': 'xyz'
+	abc: 'xyz'
 }
 
-const EXAMPLE_MODEL_MAP_BUFFER = '0400000001003101020000000f002e2f616263642f313233342e74787402010061010100620101006301010064000f002e2f313233342f616263642e747874020900313233342d6162636400030061626300030078797a'
+const EXAMPLE_MODEL_MAP_BUFFER =
+	'0400000001003101020000000f002e2f616263642f313233342e74787402010061010100620101006301010064000f002e2f313233342f616263642e747874020900313233342d6162636400030061626300030078797a'
 
 function runInstanceTests(
 	title: string,
@@ -167,12 +157,14 @@ function runInstanceTests(
 		})
 
 		test('Symbol.iterator', () => {
-			expect([...instance].sort()).toEqual([
-				['./abcd/1234.txt', EXAMPLE_MODEL_MAP['./abcd/1234.txt']],
-				['./1234/abcd.txt', EXAMPLE_MODEL_MAP['./1234/abcd.txt']],
-				['abc', EXAMPLE_MODEL_MAP['abc']],
-				['1', EXAMPLE_MODEL_MAP[1]],
-			].sort())
+			expect([...instance].sort()).toEqual(
+				[
+					['./abcd/1234.txt', EXAMPLE_MODEL_MAP['./abcd/1234.txt']],
+					['./1234/abcd.txt', EXAMPLE_MODEL_MAP['./1234/abcd.txt']],
+					['abc', EXAMPLE_MODEL_MAP['abc']],
+					['1', EXAMPLE_MODEL_MAP[1]]
+				].sort()
+			)
 		})
 
 		it('should serialize correctly', () => {
@@ -190,7 +182,7 @@ function runInstanceTests(
 				'./1234/abcd.txt': {
 					name: '1234-abcd'
 				},
-				'abc': 'xyz',
+				abc: 'xyz',
 				'1': 2
 			})
 		})
@@ -235,12 +227,14 @@ function runInstanceTests(
 			for (const value of instance.values()) {
 				values.push(value)
 			}
-			expect(values.sort()).toEqual([
-				EXAMPLE_MODEL_MAP['./abcd/1234.txt'],
-				EXAMPLE_MODEL_MAP['./1234/abcd.txt'],
-				EXAMPLE_MODEL_MAP['abc'],
-				EXAMPLE_MODEL_MAP[1]
-			].sort())
+			expect(values.sort()).toEqual(
+				[
+					EXAMPLE_MODEL_MAP['./abcd/1234.txt'],
+					EXAMPLE_MODEL_MAP['./1234/abcd.txt'],
+					EXAMPLE_MODEL_MAP['abc'],
+					EXAMPLE_MODEL_MAP[1]
+				].sort()
+			)
 		})
 
 		test('foreach', () => {
@@ -263,7 +257,9 @@ function runInstanceTests(
 			}
 			instance.forEach(manipulateItem)
 			expect((instance.get(new UnifiedPath('./abcd/1234.txt').toString()) as SubClass)?.name).toBe('manipulated-a')
-			expect((instance.get(new UnifiedPath('./1234/abcd.txt').toString()) as SubClass)?.name).toBe('manipulated-1234-abcd')
+			expect((instance.get(new UnifiedPath('./1234/abcd.txt').toString()) as SubClass)?.name).toBe(
+				'manipulated-1234-abcd'
+			)
 			expect(instance.get('abc')).toBe('manipulated-xyz')
 			expect(instance.get('1')).toBe(3)
 		})
@@ -294,10 +290,7 @@ function runInstanceTests(
 				name: 'test'
 			}
 
-			instance.set(
-				new UnifiedPath('./test.txt').toString(),
-				new SubClass('test')
-			)
+			instance.set(new UnifiedPath('./test.txt').toString(), new SubClass('test'))
 			expect(instance.toJSON()).toEqual(EXAMPLE_MODEL_MAP)
 
 			delete EXAMPLE_MODEL_MAP['./test.txt']
@@ -322,14 +315,8 @@ describe('ModelMap', () => {
 
 		const instance = new ModelMap<UnifiedPath_string | string, SubClass | string | number>('string')
 		instance.set('1', 2)
-		instance.set(
-			new UnifiedPath('./abcd/1234.txt').toString(),
-			subClass
-		)
-		instance.set(
-			new UnifiedPath('./1234/abcd.txt').toString(),
-			new SubClass('1234-abcd')
-		)
+		instance.set(new UnifiedPath('./abcd/1234.txt').toString(), subClass)
+		instance.set(new UnifiedPath('./1234/abcd.txt').toString(), new SubClass('1234-abcd'))
 		instance.set('abc', 'xyz')
 
 		return instance
@@ -337,26 +324,29 @@ describe('ModelMap', () => {
 
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
-			const instanceFromString = ModelMap.fromJSON<
-			UnifiedPath_string | string,
-			SubClass | string | number>
-			(JSON.stringify(EXAMPLE_MODEL_MAP), 'string', SubClass.fromJSON)
+			const instanceFromString = ModelMap.fromJSON<UnifiedPath_string | string, SubClass | string | number>(
+				JSON.stringify(EXAMPLE_MODEL_MAP),
+				'string',
+				SubClass.fromJSON
+			)
 			expect(instanceFromString.toJSON()).toEqual(EXAMPLE_MODEL_MAP)
 		})
 
 		test('deserialization from object', () => {
-			const instanceFromObject = ModelMap.fromJSON<
-			UnifiedPath_string | string | number,
-			SubClass | string | number>(EXAMPLE_MODEL_MAP, 'string', SubClass.fromJSON) as ModelMap<
-			UnifiedPath_string | string | number, SubClass | string | number>
+			const instanceFromObject = ModelMap.fromJSON<UnifiedPath_string | string | number, SubClass | string | number>(
+				EXAMPLE_MODEL_MAP,
+				'string',
+				SubClass.fromJSON
+			) as ModelMap<UnifiedPath_string | string | number, SubClass | string | number>
 			expect(instanceFromObject.toJSON()).toEqual(EXAMPLE_MODEL_MAP)
 		})
 
 		runInstanceTests('deserialized instance related', () => {
-			const instanceFromObject = ModelMap.fromJSON<
-			UnifiedPath_string | string | number,
-			SubClass | string | number>(EXAMPLE_MODEL_MAP, 'string', SubClass.fromJSON) as ModelMap<
-			UnifiedPath_string | string | number, SubClass | string | number>
+			const instanceFromObject = ModelMap.fromJSON<UnifiedPath_string | string | number, SubClass | string | number>(
+				EXAMPLE_MODEL_MAP,
+				'string',
+				SubClass.fromJSON
+			) as ModelMap<UnifiedPath_string | string | number, SubClass | string | number>
 			return instanceFromObject
 		})
 	})
@@ -366,16 +356,19 @@ describe('ModelMap', () => {
 
 		test('consume from buffer', () => {
 			const { instance, remainingBuffer } = ModelMap.consumeFromBuffer<
-			UnifiedPath_string | string | number,
-			SubClass | string | number>(buffer, 'string', SubClass.fromBuffer)
+				UnifiedPath_string | string | number,
+				SubClass | string | number
+			>(buffer, 'string', SubClass.fromBuffer)
 			expect(instance.toJSON()).toEqual(EXAMPLE_MODEL_MAP)
 			expect(remainingBuffer.byteLength).toBe(0)
 		})
 
 		runInstanceTests('consume from buffer instance related', () => {
-			const { instance } = ModelMap.consumeFromBuffer<
-			UnifiedPath_string | string | number,
-			SubClass | string | number>(buffer, 'string', SubClass.fromBuffer)
+			const { instance } = ModelMap.consumeFromBuffer<UnifiedPath_string | string | number, SubClass | string | number>(
+				buffer,
+				'string',
+				SubClass.fromBuffer
+			)
 			return instance
 		})
 	})

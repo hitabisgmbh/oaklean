@@ -10,12 +10,7 @@ export interface ISourceMap {
 }
 
 // required for the source map to be valid
-export const SOURCE_MAP_REQUIRED_ATTRIBUTE_NAMES = [
-	'version',
-	'sources',
-	'mappings'
-] as const
-
+export const SOURCE_MAP_REQUIRED_ATTRIBUTE_NAMES = ['version', 'sources', 'mappings'] as const
 
 export const SOURCE_MAP_ALL_ATTRIBUTE_NAMES = [
 	'version',

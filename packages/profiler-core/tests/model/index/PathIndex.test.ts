@@ -46,9 +46,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => PathIndex) {
 		})
 
 		test('get on non existing sourceNodeIdentifier', () => {
-			expect(
-				instance.getSourceNodeIndex('get', '{root}.{class:ABC}' as SourceNodeIdentifier_string)
-			).toBeUndefined()
+			expect(instance.getSourceNodeIndex('get', '{root}.{class:ABC}' as SourceNodeIdentifier_string)).toBeUndefined()
 
 			// check non existing request type
 			expect(
@@ -59,29 +57,44 @@ function runInstanceTests(title: string, preDefinedInstance: () => PathIndex) {
 		describe('RegExp', () => {
 			test('get on non existing sourceNodeIdentifier', () => {
 				expect(
-					instance.getSourceNodeIndex('get', 'RegExp: ^node:(?:[^\\/{}]*)(?:\\/[^\\/{}]*)*$' as SourceNodeIdentifier_string)
+					instance.getSourceNodeIndex(
+						'get',
+						'RegExp: ^node:(?:[^\\/{}]*)(?:\\/[^\\/{}]*)*$' as SourceNodeIdentifier_string
+					)
 				).toBeUndefined()
 
 				// check non existing request type
 				expect(
-					instance.getSourceNodeIndex('xyz' as IndexRequestType, 'RegExp: ^node:(?:[^\\/{}]*)(?:\\/[^\\/{}]*)*$' as SourceNodeIdentifier_string)
+					instance.getSourceNodeIndex(
+						'xyz' as IndexRequestType,
+						'RegExp: ^node:(?:[^\\/{}]*)(?:\\/[^\\/{}]*)*$' as SourceNodeIdentifier_string
+					)
 				).toBeUndefined()
 			})
 		})
 
 		test('get on half existing sourceNodeIdentifier', () => {
 			expect(
-				instance.getSourceNodeIndex('get', '{root}.{class:GlobalIndex}.{method:getModuleIndex}.{function:abc}' as SourceNodeIdentifier_string)
+				instance.getSourceNodeIndex(
+					'get',
+					'{root}.{class:GlobalIndex}.{method:getModuleIndex}.{function:abc}' as SourceNodeIdentifier_string
+				)
 			).toBeUndefined()
 
 			// check non existing request type
 			expect(
-				instance.getSourceNodeIndex('xyz' as IndexRequestType, '{root}.{class:GlobalIndex}.{method:getModuleIndex}.{function:abc}' as SourceNodeIdentifier_string)
+				instance.getSourceNodeIndex(
+					'xyz' as IndexRequestType,
+					'{root}.{class:GlobalIndex}.{method:getModuleIndex}.{function:abc}' as SourceNodeIdentifier_string
+				)
 			).toBeUndefined()
 		})
 
 		test('get on longer existing sourceNodeIdentifier', () => {
-			instance.getSourceNodeIndex('upsert', '{root}.{class:UnifiedPath}.{method:pathUntilSubDir}' as SourceNodeIdentifier_string)
+			instance.getSourceNodeIndex(
+				'upsert',
+				'{root}.{class:UnifiedPath}.{method:pathUntilSubDir}' as SourceNodeIdentifier_string
+			)
 
 			expect(
 				instance.getSourceNodeIndex('get', '{root}.{class:GlobalIndex}' as SourceNodeIdentifier_string)
@@ -89,7 +102,10 @@ function runInstanceTests(title: string, preDefinedInstance: () => PathIndex) {
 
 			// check non existing request type
 			expect(
-				instance.getSourceNodeIndex('xyz' as IndexRequestType, '{root}.{class:GlobalIndex}' as SourceNodeIdentifier_string)
+				instance.getSourceNodeIndex(
+					'xyz' as IndexRequestType,
+					'{root}.{class:GlobalIndex}' as SourceNodeIdentifier_string
+				)
 			).toBeUndefined()
 		})
 
@@ -127,9 +143,15 @@ describe('PathIndex', () => {
 		const moduleIndex: ModuleIndex = globalIndex.getModuleIndex('upsert')
 		const instance: PathIndex = moduleIndex.getFilePathIndex('upsert', './abc/def' as UnifiedPath_string)
 
-		instance.getSourceNodeIndex('upsert', '{root}.{class:GlobalIndex}.{constructor:constructor}' as SourceNodeIdentifier_string)
+		instance.getSourceNodeIndex(
+			'upsert',
+			'{root}.{class:GlobalIndex}.{constructor:constructor}' as SourceNodeIdentifier_string
+		)
 		instance.getSourceNodeIndex('upsert', '{root}.{class:GlobalIndex}.{method:toJSON}' as SourceNodeIdentifier_string)
-		instance.getSourceNodeIndex('upsert', '{root}.{class:GlobalIndex}.{method:getModuleIndex}' as SourceNodeIdentifier_string)
+		instance.getSourceNodeIndex(
+			'upsert',
+			'{root}.{class:GlobalIndex}.{method:getModuleIndex}' as SourceNodeIdentifier_string
+		)
 
 		return instance
 	})

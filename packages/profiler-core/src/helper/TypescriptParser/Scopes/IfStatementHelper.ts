@@ -4,11 +4,7 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import {
-	IdentifierType,
-	ProgramStructureTreeType,
-	SourceNodeIdentifierPart_string
-} from '../../../types'
+import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
 
 export class IfStatementHelper {
 	static syntaxKind = ts.SyntaxKind.IfStatement
@@ -39,9 +35,13 @@ export class IfStatementHelper {
 		parent: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<
-		ProgramStructureTreeType.IfThenStatement | ProgramStructureTreeType.IfElseStatement
-		> } | undefined
+	):
+		| {
+				resolve(): ProgramStructureTree<
+					ProgramStructureTreeType.IfThenStatement | ProgramStructureTreeType.IfElseStatement
+				>
+		  }
+		| undefined
 		| undefined {
 		if (parent.thenStatement === node) {
 			return {

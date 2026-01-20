@@ -23,33 +23,25 @@ export class InstallHelper {
 					if (response.statusCode !== undefined && response.statusCode >= 200 && response.statusCode < 300) {
 						const totalLength = parseInt(response.headers['content-length'] || '0', 10)
 						if (totalLength) {
-							LoggerHelper.appPrefix.log(
-								`File size (${(totalLength / (1024 * 1024)).toFixed(2)} MB)`
-							)
+							LoggerHelper.appPrefix.log(`File size (${(totalLength / (1024 * 1024)).toFixed(2)} MB)`)
 						}
 						let downloaded = 0
 						const startTime = Date.now()
-						
-						const progressBar = new ProgressBar(
-							'-> downloading [:bar] :percent :rate/bps ETA: :remainingTime',
-							{
-								width: 40,
-								total: totalLength || 0,
-								complete: '=',
-								incomplete: ' ',
-								renderThrottle: 100
-							}
-						)
+
+						const progressBar = new ProgressBar('-> downloading [:bar] :percent :rate/bps ETA: :remainingTime', {
+							width: 40,
+							total: totalLength || 0,
+							complete: '=',
+							incomplete: ' ',
+							renderThrottle: 100
+						})
 
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						const chunks: any[] = []
 						response.on('data', (chunk) => {
 							downloaded += chunk.length
 							progressBar.tick(chunk.length, {
-								remainingTime: formatTime(
-									((totalLength - downloaded) / downloaded) *
-										((Date.now() - startTime) / 1000)
-								)
+								remainingTime: formatTime(((totalLength - downloaded) / downloaded) * ((Date.now() - startTime) / 1000))
 							})
 							chunks.push(chunk)
 						})
@@ -68,11 +60,7 @@ export class InstallHelper {
 						response.destroy()
 						InstallHelper.makeRequest(response.headers.location).then(resolve, reject)
 					} else {
-						reject(
-							new Error(
-								`Server responded with status code ${response.statusCode} when downloading the file!`
-							)
-						)
+						reject(new Error(`Server responded with status code ${response.statusCode} when downloading the file!`))
 					}
 				})
 				.on('error', (error) => {
@@ -85,7 +73,7 @@ export class InstallHelper {
 		// Download the tarball of the right binary distribution package
 		const tarballDownloadBuffer = await InstallHelper.makeRequest(getPlatformSpecificDownloadLink(platform))
 		LoggerHelper.appPrefix.success('Download complete. Extracting...')
-		
+
 		ZipHelper.extractSpecificDirectory(
 			tarballDownloadBuffer,
 			new UnifiedPath('./'),

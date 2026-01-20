@@ -259,12 +259,9 @@ describe('ts.SyntaxKind.Parameter', () => {
 })
 
 const forDeclarations = {
-	'ts.SyntaxKind.ForStatement':
-		'let i = 0; i < 10; i = (function ForStatement() { return i+1 })()',
-	'ts.SyntaxKind.ForOfStatement':
-		'const ForInStatement of function ForOfStatement() {}',
-	'ts.SyntaxKind.ForInStatement':
-		'const ForInStatement in function ForInStatement() {}'
+	'ts.SyntaxKind.ForStatement': 'let i = 0; i < 10; i = (function ForStatement() { return i+1 })()',
+	'ts.SyntaxKind.ForOfStatement': 'const ForInStatement of function ForOfStatement() {}',
+	'ts.SyntaxKind.ForInStatement': 'const ForInStatement in function ForInStatement() {}'
 }
 
 describe('ForStatement', () => {
@@ -274,10 +271,7 @@ describe('ForStatement', () => {
 				for(${declaration}) {}
 			`
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(
-					new UnifiedPath('test.ts'),
-					code
-				)
+				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
 
 				const hierarchy = pst.identifierHierarchy()
 
@@ -300,8 +294,8 @@ describe('ForStatement', () => {
 })
 
 const whileCodes = {
-	'ts.SyntaxKind.WhileStatement': 'while (typeof (function WhileStatement() {}) === \'function\') {}',
-	'ts.SyntaxKind.DoStatement': 'do {} while (typeof (function DoStatement() {}) === \'function\')'
+	'ts.SyntaxKind.WhileStatement': "while (typeof (function WhileStatement() {}) === 'function') {}",
+	'ts.SyntaxKind.DoStatement': "do {} while (typeof (function DoStatement() {}) === 'function')"
 }
 
 describe('WhileStatement', () => {
@@ -319,7 +313,7 @@ describe('WhileStatement', () => {
 							type: ProgramStructureTreeType.WhileStatement,
 							children: {
 								'{functionExpression:(anonymous:0)}': {
-									type: ProgramStructureTreeType.FunctionExpression,
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						}
@@ -409,11 +403,7 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 	`
 
 	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(
-			new UnifiedPath('test.ts'),
-			code,
-			'TSX'
-		)
+		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
 
 		const hierarchy = pst.identifierHierarchy()
 
@@ -813,22 +803,22 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression:(expression:34832631)}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression@static:(expression:34832631)}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression@static:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression@static:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression:#private:1}': {
 							type: ProgramStructureTreeType.FunctionExpression
@@ -840,23 +830,23 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression:(expression:34832631):1}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression@static:(expression:34832631):1}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression:(literal:7e2b9fea):1}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression@static:(literal:7e2b9fea):1}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression:(literal:92cfceb3):1}': {
-							type: ProgramStructureTreeType.FunctionExpression,
+							type: ProgramStructureTreeType.FunctionExpression
 						},
 						'{functionExpression@static:(literal:92cfceb3):1}': {
-							type: ProgramStructureTreeType.FunctionExpression,
-						},
+							type: ProgramStructureTreeType.FunctionExpression
+						}
 					}
 				}
 			}

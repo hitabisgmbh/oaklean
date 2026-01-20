@@ -1,35 +1,39 @@
 import EventEmitter from 'events'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type EventMap<T> = Record<keyof T, any[]>;
-type IfEventMap<Events extends EventMap<Events>, True, False> = object extends Events ? False : True;
+type EventMap<T> = Record<keyof T, any[]>
+type IfEventMap<Events extends EventMap<Events>, True, False> = object extends Events ? False : True
 type Args<Events extends EventMap<Events>, EventName extends string | symbol> = IfEventMap<
 	Events,
-	EventName extends keyof Events ? Events[EventName]
-			: EventName extends keyof EventEmitterEventMap ? EventEmitterEventMap[EventName]
+	EventName extends keyof Events
+		? Events[EventName]
+		: EventName extends keyof EventEmitterEventMap
+			? EventEmitterEventMap[EventName]
 			: any[], // eslint-disable-line @typescript-eslint/no-explicit-any
 	any[] // eslint-disable-line @typescript-eslint/no-explicit-any
->;
+>
 type EventNames<Events extends EventMap<Events>, EventName extends string | symbol> = IfEventMap<
 	Events,
 	EventName | (keyof Events & (string | symbol)) | keyof EventEmitterEventMap,
 	string | symbol
->;
+>
 type Listener<Events extends EventMap<Events>, EventName extends string | symbol> = IfEventMap<
 	Events,
 	(
-			...args: EventName extends keyof Events ? Events[EventName]
-					: EventName extends keyof EventEmitterEventMap ? EventEmitterEventMap[EventName]
-					: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
+		...args: EventName extends keyof Events
+			? Events[EventName]
+			: EventName extends keyof EventEmitterEventMap
+				? EventEmitterEventMap[EventName]
+				: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
 	) => void,
 	(...args: any[]) => void // eslint-disable-line @typescript-eslint/no-explicit-any
->;
+>
 
 interface EventEmitterEventMap {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	newListener: [eventName: string | symbol, listener: (...args: any[]) => void];
+	newListener: [eventName: string | symbol, listener: (...args: any[]) => void]
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	removeListener: [eventName: string | symbol, listener: (...args: any[]) => void];
+	removeListener: [eventName: string | symbol, listener: (...args: any[]) => void]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -83,7 +87,7 @@ export class EventHandler<T extends EventMap<T> = any> {
 		return this._eventEmitter.removeAllListeners(eventName)
 	}
 
-	 on<E extends string | symbol>(eventName: EventNames<T, E>, listener: Listener<T, E>) {
+	on<E extends string | symbol>(eventName: EventNames<T, E>, listener: Listener<T, E>) {
 		return this._eventEmitter.on(eventName, listener)
 	}
 

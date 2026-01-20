@@ -1,12 +1,7 @@
 import { BaseMetricsData } from './BaseMetricsData'
 
 // Types
-import {
-	MilliJoule_number,
-	NanoSeconds_BigInt,
-	IPerfMetricsDataOutputFormat,
-	IPerfMetricsData
-} from '../../types'
+import { MilliJoule_number, NanoSeconds_BigInt, IPerfMetricsDataOutputFormat, IPerfMetricsData } from '../../types'
 
 export class PerfMetricsData extends BaseMetricsData {
 	private _data: IPerfMetricsDataOutputFormat

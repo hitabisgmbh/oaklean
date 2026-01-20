@@ -10,9 +10,7 @@ import {
 	ExportAssetHelper
 } from '@oaklean/profiler-core'
 
-import {
-	ENABLE_MEASUREMENTS
-} from './constants'
+import { ENABLE_MEASUREMENTS } from './constants'
 
 export default async function () {
 	if (!ENABLE_MEASUREMENTS) {
@@ -25,9 +23,7 @@ export default async function () {
 	performance.start('jestEnv.teardown.resolveConfig')
 	const profilerConfig = ProfilerConfig.autoResolve()
 	performance.stop('jestEnv.teardown.resolveConfig')
-	const exportAssetHelper = new ExportAssetHelper(
-		profilerConfig.getOutDir().join('jest')
-	)
+	const exportAssetHelper = new ExportAssetHelper(profilerConfig.getOutDir().join('jest'))
 
 	const reportPaths = exportAssetHelper.allReportPathsInOutputDir()
 	performance.start('jestEnv.teardown.loadReports')
@@ -58,13 +54,12 @@ export default async function () {
 	performance.stop('jestEnv.teardown.exportReport')
 
 	const commitHash = accumulatedProjectReport.executionDetails.commitHash
-	const accumulatedProjectReportHistoryPath = profilerConfig.getOutHistoryDir().join(
-		`${accumulatedProjectReport.projectMetaData.projectID}`,
-		ExportAssetHelper.historyReportFileName(
-			accumulatedProjectReport.executionDetails.timestamp,
-			commitHash
+	const accumulatedProjectReportHistoryPath = profilerConfig
+		.getOutHistoryDir()
+		.join(
+			`${accumulatedProjectReport.projectMetaData.projectID}`,
+			ExportAssetHelper.historyReportFileName(accumulatedProjectReport.executionDetails.timestamp, commitHash)
 		)
-	)
 
 	performance.start('jestEnv.teardown.exportHistoryReport')
 	accumulatedProjectReport.storeToFile(accumulatedProjectReportHistoryPath, 'bin', profilerConfig)

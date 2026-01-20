@@ -43,16 +43,11 @@ export class SkipHelper {
 		if (depth === 3 && node.kind === ts.SyntaxKind.FunctionExpression) {
 			if ((node as ts.FunctionExpression).parameters.length === 5) {
 				if (
-					((node as ts.FunctionExpression).parameters[0].name as ts.Identifier)
-						.escapedText === 'exports' &&
-					((node as ts.FunctionExpression).parameters[1].name as ts.Identifier)
-						.escapedText === 'require' &&
-					((node as ts.FunctionExpression).parameters[2].name as ts.Identifier)
-						.escapedText === 'module' &&
-					((node as ts.FunctionExpression).parameters[3].name as ts.Identifier)
-						.escapedText === '___filename' &&
-					((node as ts.FunctionExpression).parameters[4].name as ts.Identifier)
-						.escapedText === '___dirname'
+					((node as ts.FunctionExpression).parameters[0].name as ts.Identifier).escapedText === 'exports' &&
+					((node as ts.FunctionExpression).parameters[1].name as ts.Identifier).escapedText === 'require' &&
+					((node as ts.FunctionExpression).parameters[2].name as ts.Identifier).escapedText === 'module' &&
+					((node as ts.FunctionExpression).parameters[3].name as ts.Identifier).escapedText === '___filename' &&
+					((node as ts.FunctionExpression).parameters[4].name as ts.Identifier).escapedText === '___dirname'
 				) {
 					/**
 					 * This is how CommonJS wraps modules.
@@ -68,18 +63,12 @@ export class SkipHelper {
 				const parent = node.parent as ts.FunctionExpression
 				if (parent.parameters.length === 6) {
 					if (
-						(parent.parameters[0].name as ts.Identifier)
-							.escapedText === 'module' &&
-						(parent.parameters[1].name as ts.Identifier)
-							.escapedText === 'exports' &&
-						(parent.parameters[2].name as ts.Identifier)
-							.escapedText === 'require' &&
-						(parent.parameters[3].name as ts.Identifier)
-							.escapedText === '___dirname' &&
-						(parent.parameters[4].name as ts.Identifier)
-							.escapedText === '___filename' &&
-						(parent.parameters[5].name as ts.Identifier)
-							.escapedText === 'jest'
+						(parent.parameters[0].name as ts.Identifier).escapedText === 'module' &&
+						(parent.parameters[1].name as ts.Identifier).escapedText === 'exports' &&
+						(parent.parameters[2].name as ts.Identifier).escapedText === 'require' &&
+						(parent.parameters[3].name as ts.Identifier).escapedText === '___dirname' &&
+						(parent.parameters[4].name as ts.Identifier).escapedText === '___filename' &&
+						(parent.parameters[5].name as ts.Identifier).escapedText === 'jest'
 					) {
 						/**
 						 * This is how jest wraps modules.

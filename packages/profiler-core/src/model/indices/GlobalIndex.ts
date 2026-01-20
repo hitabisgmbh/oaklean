@@ -34,10 +34,9 @@ export class GlobalIndex extends BaseModel {
 		this.moduleMap = new ModelMap<NodeModuleIdentifier_string, ModuleIndex>('string')
 		this.moduleReverseIndex = new ModelMap<ModuleID_number, ModuleIndex>('number')
 		this.pathReverseIndex = new ModelMap<PathID_number, PathIndex>('number')
-		this.sourceNodeReverseIndex = new ModelMap<
-		SourceNodeID_number,
-		SourceNodeIndex<SourceNodeIndexType.SourceNode>
-		>('number')
+		this.sourceNodeReverseIndex = new ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>(
+			'number'
+		)
 	}
 
 	toBuffer(): Buffer {
@@ -51,10 +50,7 @@ export class GlobalIndex extends BaseModel {
 		}
 	}
 
-	static fromJSON(
-		json: string | IGlobalIndex,
-		engineModule: NodeModule
-	): GlobalIndex {
+	static fromJSON(json: string | IGlobalIndex, engineModule: NodeModule): GlobalIndex {
 		let data: IGlobalIndex
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -77,18 +73,15 @@ export class GlobalIndex extends BaseModel {
 		return result
 	}
 
-	setReverseIndex<
-		T extends GlobalIndexType,
-	>
-	(
+	setReverseIndex<T extends GlobalIndexType>(
 		id: number,
-		index: T extends 'module' ?
-			ModuleIndex :
-			T extends 'path' ?
-				PathIndex :
-				T extends 'sourceNode' ?
-					SourceNodeIndex<SourceNodeIndexType.SourceNode> :
-					never,
+		index: T extends 'module'
+			? ModuleIndex
+			: T extends 'path'
+				? PathIndex
+				: T extends 'sourceNode'
+					? SourceNodeIndex<SourceNodeIndexType.SourceNode>
+					: never,
 		type: T
 	) {
 		switch (type) {
@@ -121,17 +114,14 @@ export class GlobalIndex extends BaseModel {
 
 	newId(
 		index: ModuleIndex | PathIndex | SourceNodeIndex<SourceNodeIndexType.SourceNode>,
-		type: GlobalIndexType,
+		type: GlobalIndexType
 	): number {
 		const id = this.currentId++
 		this.setReverseIndex(id, index, type)
 		return id
 	}
 
-	getLangInternalIndex<
-		T extends IndexRequestType,
-		R = T extends 'upsert' ? ModuleIndex : (ModuleIndex | undefined)
-	>(
+	getLangInternalIndex<T extends IndexRequestType, R = T extends 'upsert' ? ModuleIndex : ModuleIndex | undefined>(
 		indexRequestType: T
 	): R {
 		const moduleIdentifier = '{node}' as NodeModuleIdentifier_string
@@ -141,10 +131,7 @@ export class GlobalIndex extends BaseModel {
 				case 'get':
 					return undefined as R
 				case 'upsert':
-					moduleIndex = new ModuleIndex(
-						moduleIdentifier,
-						this
-					)
+					moduleIndex = new ModuleIndex(moduleIdentifier, this)
 					this.moduleMap.set(moduleIdentifier, moduleIndex)
 			}
 		}
@@ -152,16 +139,12 @@ export class GlobalIndex extends BaseModel {
 		return moduleIndex as R
 	}
 
-	getModuleIndex<
-		T extends IndexRequestType,
-		R = T extends 'upsert' ? ModuleIndex : (ModuleIndex | undefined)
-	>(
+	getModuleIndex<T extends IndexRequestType, R = T extends 'upsert' ? ModuleIndex : ModuleIndex | undefined>(
 		indexRequestType: T,
 		nodeModuleIdentifier?: NodeModuleIdentifier_string
 	): R {
-		const moduleIdentifier = nodeModuleIdentifier !== undefined ?
-			nodeModuleIdentifier :
-			'{self}' as NodeModuleIdentifier_string
+		const moduleIdentifier =
+			nodeModuleIdentifier !== undefined ? nodeModuleIdentifier : ('{self}' as NodeModuleIdentifier_string)
 
 		let moduleIndex: ModuleIndex | undefined = this.moduleMap.get(moduleIdentifier)
 		if (moduleIndex === undefined) {
@@ -169,10 +152,7 @@ export class GlobalIndex extends BaseModel {
 				case 'get':
 					return undefined as R
 				case 'upsert':
-					moduleIndex = new ModuleIndex(
-						moduleIdentifier,
-						this
-					)
+					moduleIndex = new ModuleIndex(moduleIdentifier, this)
 					this.moduleMap.set(moduleIdentifier, moduleIndex)
 					break
 				default:
@@ -185,13 +165,10 @@ export class GlobalIndex extends BaseModel {
 
 	getSourceNodeIndex<
 		T extends IndexRequestType,
-		R = T extends 'upsert' ?
-			SourceNodeIndex<SourceNodeIndexType.SourceNode> :
-			(SourceNodeIndex<SourceNodeIndexType.SourceNode> | undefined)
-	>(
-		indexRequestType: T,
-		identifier: GlobalIdentifier
-	): R {
+		R = T extends 'upsert'
+			? SourceNodeIndex<SourceNodeIndexType.SourceNode>
+			: SourceNodeIndex<SourceNodeIndexType.SourceNode> | undefined
+	>(indexRequestType: T, identifier: GlobalIdentifier): R {
 		let moduleIndex = undefined
 		if (identifier.isLangInternal()) {
 			moduleIndex = this.getLangInternalIndex(indexRequestType)
@@ -199,7 +176,8 @@ export class GlobalIndex extends BaseModel {
 			moduleIndex = this.getModuleIndex(indexRequestType, identifier.nodeModule?.identifier)
 		}
 
-		return moduleIndex?.getFilePathIndex(indexRequestType, identifier.path)?.
-			getSourceNodeIndex(indexRequestType, identifier.sourceNodeIdentifier) as R
+		return moduleIndex
+			?.getFilePathIndex(indexRequestType, identifier.path)
+			?.getSourceNodeIndex(indexRequestType, identifier.sourceNodeIdentifier) as R
 	}
 }

@@ -1,22 +1,10 @@
-import {
-	IReport
-} from './Report'
-import {
-	IGlobalIndex
-} from './indices/GlobalIndex'
-import {
-	ISystemInformation
-} from './SystemInformation'
-import {
-	RuntimeOptions
-} from './ProfilerConfig'
+import { IReport } from './Report'
+import { IGlobalIndex } from './indices/GlobalIndex'
+import { ISystemInformation } from './SystemInformation'
+import { RuntimeOptions } from './ProfilerConfig'
 
-import {
-	UUID_string
-} from '../system/Crypto'
-import {
-	GitHash_string
-} from '../helper/GitHelper'
+import { UUID_string } from '../system/Crypto'
+import { GitHash_string } from '../helper/GitHelper'
 
 const ProjectIdentifierSymbol: unique symbol = Symbol('ProjectIdentifierSymbol')
 export type ProjectIdentifier_string = UUID_string & { [ProjectIdentifierSymbol]: never }
@@ -26,7 +14,7 @@ export type IProjectMetaData = {
 }
 
 export type ILanguageInformation = {
-	name: string,
+	name: string
 	version: string
 }
 export enum ProjectReportOrigin {
@@ -34,30 +22,28 @@ export enum ProjectReportOrigin {
 	jestEnv = 'profiler-jest-environment' // if measurements were made via the profiler-jest-environment
 }
 export type IProjectReportExecutionDetails = {
-	origin: ProjectReportOrigin,
+	origin: ProjectReportOrigin
 	commitHash: GitHash_string | undefined
-	commitTimestamp: number | undefined,
+	commitTimestamp: number | undefined
 	uncommittedChanges: boolean | undefined
 	timestamp: number
 	highResolutionBeginTime: string // value is stored in nano seconds(NanoSeconds_BigInt), but for serialization purposes it is a string
 	highResolutionStopTime: string // value is stored in nano seconds(NanoSeconds_BigInt), but for serialization purposes it is a string
-	systemInformation: ISystemInformation,
+	systemInformation: ISystemInformation
 	languageInformation: ILanguageInformation
 	runTimeOptions: RuntimeOptions
 }
 
 export type IProjectReportExecutionDetailsDuringMeasurement = Omit<
-IProjectReportExecutionDetails,
-'highResolutionBeginTime' |
-'highResolutionStopTime'
+	IProjectReportExecutionDetails,
+	'highResolutionBeginTime' | 'highResolutionStopTime'
 > & {
-	highResolutionBeginTime?: string,
+	highResolutionBeginTime?: string
 	highResolutionStopTime?: string
 }
-	
 
 export interface IProjectReport extends IReport {
 	projectMetaData: IProjectMetaData
-	executionDetails: IProjectReportExecutionDetails,
+	executionDetails: IProjectReportExecutionDetails
 	globalIndex: IGlobalIndex
 }

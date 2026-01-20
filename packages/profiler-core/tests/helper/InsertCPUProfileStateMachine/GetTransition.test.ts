@@ -7,22 +7,14 @@ import {
 	SOURCE_LOCATIONS_WASM
 } from './assets/SourceLocations'
 import { STATES } from './assets/States'
-import {
-	MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
-} from './mock'
+import { MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER } from './mock'
 
-import {
-	Transition
-} from '../../../src/helper/InsertCPUProfileHelper/types/transition'
-import {
-	InsertCPUProfileStateMachine,
-} from '../../../src/helper/InsertCPUProfileHelper/InsertCPUProfileStateMachine'
+import { Transition } from '../../../src/helper/InsertCPUProfileHelper/types/transition'
+import { InsertCPUProfileStateMachine } from '../../../src/helper/InsertCPUProfileHelper/InsertCPUProfileStateMachine'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'
 import { NodeModule, WASM_NODE_MODULE } from '../../../src/model/NodeModule'
 // Types
-import {
-	SourceNodeIdentifier_string
-} from '../../../src/types'
+import { SourceNodeIdentifier_string } from '../../../src/types'
 
 describe('InsertCPUProfileStateMachine.getTransition', () => {
 	describe('getTransition to LANG_INTERNAL', () => {
@@ -144,8 +136,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 		const sourceLocation = SOURCE_LOCATIONS_WASM['default']
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('wasm/0x12345'),
-			functionIdentifier:
-				'{wasm-function[42]:0x12345}' as SourceNodeIdentifier_string
+			functionIdentifier: '{wasm-function[42]:0x12345}' as SourceNodeIdentifier_string
 		}
 
 		test('from STATE: project:lang_internal:false', async () => {
@@ -262,7 +253,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 				}
 			} satisfies Transition)
 		})
-		
+
 		test('from STATE: module:intern:true', async () => {
 			const fromState = STATES['module:intern:true']
 			const transition = await InsertCPUProfileStateMachine.getTransition(
@@ -421,8 +412,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 		const sourceLocation = SOURCE_LOCATIONS_WEBPACK['moduleA-index-0']
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('./index.js'),
-			functionIdentifier:
-				'{function:moduleFunction}' as SourceNodeIdentifier_string
+			functionIdentifier: '{function:moduleFunction}' as SourceNodeIdentifier_string
 		}
 		const nodeModule = new NodeModule('moduleA', '1.0.0')
 
@@ -699,8 +689,7 @@ describe('InsertCPUProfileStateMachine.getTransition', () => {
 		const sourceLocation = SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0']
 		const sourceNodeLocation = {
 			relativeFilePath: new UnifiedPath('fileA.js'),
-			functionIdentifier:
-				'{function:moduleFunction_fileA_0}' as SourceNodeIdentifier_string
+			functionIdentifier: '{function:moduleFunction_fileA_0}' as SourceNodeIdentifier_string
 		}
 		const nodeModule = new NodeModule('moduleA', '1.0.0')
 

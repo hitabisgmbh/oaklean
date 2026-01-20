@@ -4,11 +4,7 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import {
-	IdentifierType,
-	ProgramStructureTreeType,
-	SourceNodeIdentifierPart_string
-} from '../../../types'
+import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
 
 export class ForStatementHelper {
 	static syntaxKind = [ts.SyntaxKind.ForStatement, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement]
@@ -20,8 +16,7 @@ export class ForStatementHelper {
 	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.ForStatement> } {
 		return {
 			resolve() {
-				const statementName = `(for:${traverseNodeInfo.counters
-					.forStatementCounter++})`
+				const statementName = `(for:${traverseNodeInfo.counters.forStatementCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
 					traverseNodeInfo.nextId(),

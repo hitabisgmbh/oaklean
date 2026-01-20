@@ -116,7 +116,7 @@ describe('PathUtils', () => {
 				const from = 'C:\\path\\to\\workspace'
 				const expected = 'relative\\within\\the\\workspace'
 				const to = `${from}\\${expected}`
-	
+
 				expect(PathUtils.getPathRelativeTo(from, to)).toBe(expected)
 			} else {
 				const from = '/path/to/workspace'
@@ -125,8 +125,6 @@ describe('PathUtils', () => {
 
 				expect(PathUtils.getPathRelativeTo(from, to)).toBe(expected)
 			}
-
-			
 		})
 
 		it('should return the relative path (outer)', () => {
@@ -136,7 +134,7 @@ describe('PathUtils', () => {
 				const from = 'C:\\path\\to\\workspace'
 				const expected = '..\\out\\of\\workspace'
 				const to = 'C:\\path\\to\\out\\of\\workspace'
-	
+
 				expect(PathUtils.getPathRelativeTo(from, to)).toBe(expected)
 			} else {
 				const from = '/path/to/workspace'
@@ -145,7 +143,6 @@ describe('PathUtils', () => {
 
 				expect(PathUtils.getPathRelativeTo(from, to)).toBe(expected)
 			}
-			
 		})
 	})
 

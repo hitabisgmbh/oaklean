@@ -31,20 +31,17 @@ function areNumbersClose(a: number, b: number, epsilon = 1e-10) {
 
 export type SourceNodeMetaDataTypeNotAggregate = Exclude<SourceNodeMetaDataType, SourceNodeMetaDataType.Aggregate>
 
-type LangInternalMap<T> = T extends SourceNodeMetaDataType_Node ? ModelMap<
-SourceNodeID_number,
-SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
-> : never
+type LangInternalMap<T> = T extends SourceNodeMetaDataType_Node
+	? ModelMap<SourceNodeID_number, SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>
+	: never
 
-type InternMap<T> = T extends SourceNodeMetaDataType_Node ? ModelMap<
-SourceNodeID_number,
-SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
-> : never
+type InternMap<T> = T extends SourceNodeMetaDataType_Node
+	? ModelMap<SourceNodeID_number, SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>
+	: never
 
-type ExternMap<T> = T extends SourceNodeMetaDataType_Node ? ModelMap<
-SourceNodeID_number,
-SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
-> : never
+type ExternMap<T> = T extends SourceNodeMetaDataType_Node
+	? ModelMap<SourceNodeID_number, SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
+	: never
 
 export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseModel {
 	type: T
@@ -53,16 +50,18 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 	private _intern?: InternMap<T>
 	private _extern?: ExternMap<T>
 
-	sourceNodeIndex: T extends SourceNodeMetaDataType.Aggregate ?
-		undefined : SourceNodeIndex<SourceNodeIndexType.SourceNode>
+	sourceNodeIndex: T extends SourceNodeMetaDataType.Aggregate
+		? undefined
+		: SourceNodeIndex<SourceNodeIndexType.SourceNode>
 	id: T extends SourceNodeMetaDataType.Aggregate ? undefined : SourceNodeID_number
 
 	constructor(
 		type: T,
-		id: T extends SourceNodeMetaDataType.Aggregate ? undefined: SourceNodeID_number,
+		id: T extends SourceNodeMetaDataType.Aggregate ? undefined : SourceNodeID_number,
 		sensorValues: SensorValues,
-		sourceNodeIndex: T extends SourceNodeMetaDataType.Aggregate ?
-			undefined : SourceNodeIndex<SourceNodeIndexType.SourceNode>
+		sourceNodeIndex: T extends SourceNodeMetaDataType.Aggregate
+			? undefined
+			: SourceNodeIndex<SourceNodeIndexType.SourceNode>
 	) {
 		super()
 		this.type = type
@@ -94,14 +93,15 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 					id: value.id
 				})) // Pair identifier with id
 				.sort((a, b) => a.identifier.localeCompare(b.identifier)) // Sort by identifier
-				.map(pair => pair.id) // Extract sorted ids
+				.map((pair) => pair.id) // Extract sorted ids
 		}
 
 		if (this.isAggregate()) {
 			throw new Error('SourceNodeMetaData.normalize: can only be executed for non aggregate SourceNodeMetaData')
 		}
-		const self = this as
-			SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>
+		const self = this as SourceNodeMetaData<
+			SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
+		>
 		const sourceNodeIndex = self.getSourceNodeIndexByID(self.id)
 		if (sourceNodeIndex === undefined) {
 			throw new Error(
@@ -111,9 +111,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		const newSourceNodeIndex = sourceNodeIndex.insertToOtherIndex(newGlobalIndex)
 		if (SourceNodeMetaData.couldHaveChildren(self)) {
 			// remap all child nodes
-			const new_lang_internal = new ModelMap<SourceNodeID_number, SourceNodeMetaData<
-			SourceNodeMetaDataType.LangInternalSourceNodeReference
-			>>('number')
+			const new_lang_internal = new ModelMap<
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+			>('number')
 			// remap all lang_internal nodes
 			for (const sourceNodeID of sortIDsByIdentifier(self.lang_internal)) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -121,9 +122,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				sourceNodeMetaData.normalize(newGlobalIndex)
 				new_lang_internal.set(sourceNodeMetaData.id, sourceNodeMetaData)
 			}
-			const new_intern = new ModelMap<SourceNodeID_number, SourceNodeMetaData<
-			SourceNodeMetaDataType.InternSourceNodeReference
-			>>('number')
+			const new_intern = new ModelMap<
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+			>('number')
 			// remap all intern nodes
 			for (const sourceNodeID of sortIDsByIdentifier(self.intern)) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -131,9 +133,10 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				sourceNodeMetaData.normalize(newGlobalIndex)
 				new_intern.set(sourceNodeMetaData.id, sourceNodeMetaData)
 			}
-			const new_extern = new ModelMap<SourceNodeID_number, SourceNodeMetaData<
-			SourceNodeMetaDataType.ExternSourceNodeReference
-			>>('number')
+			const new_extern = new ModelMap<
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+			>('number')
 			// remap all extern nodes
 			for (const sourceNodeID of sortIDsByIdentifier(self.extern)) {
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -143,7 +146,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			}
 			self._lang_internal = new_lang_internal
 			self._intern = new_intern
-			self._extern = new_extern	
+			self._extern = new_extern
 		}
 		// remap the self ID and the self moduleIndex
 		self.id = newSourceNodeIndex.id
@@ -154,8 +157,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		if (this.isNotAggregate()) {
 			const index = this.getIndex()
 			if (index !== undefined) {
-				return index.globalIdentifier() as
-					T extends SourceNodeMetaDataTypeNotAggregate ? GlobalIdentifier : undefined
+				return index.globalIdentifier() as T extends SourceNodeMetaDataTypeNotAggregate ? GlobalIdentifier : undefined
 			}
 		}
 		throw new Error('SourceNodeMetaData.globalIdentifier: cannot resolve globalIdentifier')
@@ -183,10 +185,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		}
 	}
 
-	getPathIndex<
-		T extends IndexRequestType,
-		R = T extends 'upsert' ? PathIndex : PathIndex | undefined
-	>(
+	getPathIndex<T extends IndexRequestType, R = T extends 'upsert' ? PathIndex : PathIndex | undefined>(
 		indexRequestType: T,
 		filePath: UnifiedPath_string
 	): R {
@@ -207,9 +206,9 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			throw new Error('SourceNodeMetaData.merge: no SourceNodeMetaData were given')
 		}
 		const type = args[0].type
-		const presentInOriginalSourceCode = args.map((x) => x.presentInOriginalSourceCode).reduce(
-			(prevValue: boolean, currValue: boolean) => prevValue && currValue
-		)
+		const presentInOriginalSourceCode = args
+			.map((x) => x.presentInOriginalSourceCode)
+			.reduce((prevValue: boolean, currValue: boolean) => prevValue && currValue)
 
 		const valuesToSum = {
 			profilerHits: 0,
@@ -230,23 +229,26 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			aggregatedRAMEnergyConsumption: 0 as MilliJoule_number,
 			internRAMEnergyConsumption: 0 as MilliJoule_number,
 			externRAMEnergyConsumption: 0 as MilliJoule_number,
-			langInternalRAMEnergyConsumption: 0 as MilliJoule_number,
+			langInternalRAMEnergyConsumption: 0 as MilliJoule_number
 		}
 
 		const valuesToMerge: {
-			lang_internal: Record<GlobalSourceNodeIdentifier_string, SourceNodeMetaData<
-			SourceNodeMetaDataType.LangInternalSourceNodeReference
-			>[]>,
-			intern: Record<GlobalSourceNodeIdentifier_string, SourceNodeMetaData<
-			SourceNodeMetaDataType.InternSourceNodeReference
-			>[]>,
-			extern: Record<GlobalSourceNodeIdentifier_string, SourceNodeMetaData<
-			SourceNodeMetaDataType.ExternSourceNodeReference
-			>[]>,
+			lang_internal: Record<
+				GlobalSourceNodeIdentifier_string,
+				SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>[]
+			>
+			intern: Record<
+				GlobalSourceNodeIdentifier_string,
+				SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>[]
+			>
+			extern: Record<
+				GlobalSourceNodeIdentifier_string,
+				SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>[]
+			>
 		} = {
 			lang_internal: {},
 			intern: {},
-			extern: {},
+			extern: {}
 		}
 
 		for (const currentSourceNodeMetaData of args) {
@@ -254,57 +256,45 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				throw new Error('SourceNodeMetaData.merge: all SourceNodeMetaDatas should be from the same type.')
 			}
 			valuesToSum.profilerHits += currentSourceNodeMetaData.sensorValues.profilerHits
-			valuesToSum.selfCPUTime = valuesToSum.selfCPUTime +
-				currentSourceNodeMetaData.sensorValues.selfCPUTime as MicroSeconds_number
-			
-			valuesToSum.aggregatedCPUTime = valuesToSum.aggregatedCPUTime +
-				currentSourceNodeMetaData.sensorValues.aggregatedCPUTime as MicroSeconds_number
-			valuesToSum.langInternalCPUTime = valuesToSum.langInternalCPUTime +
-				currentSourceNodeMetaData.sensorValues.langInternalCPUTime as MicroSeconds_number
-			valuesToSum.internCPUTime = valuesToSum.internCPUTime +
-				currentSourceNodeMetaData.sensorValues.internCPUTime as MicroSeconds_number
-			valuesToSum.externCPUTime = valuesToSum.externCPUTime +
-				currentSourceNodeMetaData.sensorValues.externCPUTime as MicroSeconds_number
+			valuesToSum.selfCPUTime = (valuesToSum.selfCPUTime +
+				currentSourceNodeMetaData.sensorValues.selfCPUTime) as MicroSeconds_number
 
-			valuesToSum.selfCPUEnergyConsumption =
-				valuesToSum.selfCPUEnergyConsumption +
-			currentSourceNodeMetaData.sensorValues.selfCPUEnergyConsumption as MilliJoule_number
-			valuesToSum.aggregatedCPUEnergyConsumption =
-				valuesToSum.aggregatedCPUEnergyConsumption +
-			currentSourceNodeMetaData.sensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-			valuesToSum.internCPUEnergyConsumption =
-				valuesToSum.internCPUEnergyConsumption +
-			currentSourceNodeMetaData.sensorValues.internCPUEnergyConsumption as MilliJoule_number
-			valuesToSum.externCPUEnergyConsumption =
-				valuesToSum.externCPUEnergyConsumption +
-			currentSourceNodeMetaData.sensorValues.externCPUEnergyConsumption as MilliJoule_number
-			valuesToSum.langInternalCPUEnergyConsumption =
-				valuesToSum.langInternalCPUEnergyConsumption +
-			currentSourceNodeMetaData.sensorValues.langInternalCPUEnergyConsumption as MilliJoule_number
+			valuesToSum.aggregatedCPUTime = (valuesToSum.aggregatedCPUTime +
+				currentSourceNodeMetaData.sensorValues.aggregatedCPUTime) as MicroSeconds_number
+			valuesToSum.langInternalCPUTime = (valuesToSum.langInternalCPUTime +
+				currentSourceNodeMetaData.sensorValues.langInternalCPUTime) as MicroSeconds_number
+			valuesToSum.internCPUTime = (valuesToSum.internCPUTime +
+				currentSourceNodeMetaData.sensorValues.internCPUTime) as MicroSeconds_number
+			valuesToSum.externCPUTime = (valuesToSum.externCPUTime +
+				currentSourceNodeMetaData.sensorValues.externCPUTime) as MicroSeconds_number
 
-			valuesToSum.selfRAMEnergyConsumption =
-				valuesToSum.selfRAMEnergyConsumption +
-				currentSourceNodeMetaData.sensorValues.selfRAMEnergyConsumption as MilliJoule_number
-			valuesToSum.aggregatedRAMEnergyConsumption =
-				valuesToSum.aggregatedRAMEnergyConsumption +
-				currentSourceNodeMetaData.sensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
-			valuesToSum.internRAMEnergyConsumption =
-				valuesToSum.internRAMEnergyConsumption +
-				currentSourceNodeMetaData.sensorValues.internRAMEnergyConsumption as MilliJoule_number
-			valuesToSum.externRAMEnergyConsumption =
-				valuesToSum.externRAMEnergyConsumption +
-				currentSourceNodeMetaData.sensorValues.externRAMEnergyConsumption as MilliJoule_number
-			valuesToSum.langInternalRAMEnergyConsumption =
-				valuesToSum.langInternalRAMEnergyConsumption +
-				currentSourceNodeMetaData.sensorValues.langInternalRAMEnergyConsumption as MilliJoule_number
+			valuesToSum.selfCPUEnergyConsumption = (valuesToSum.selfCPUEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.selfCPUEnergyConsumption) as MilliJoule_number
+			valuesToSum.aggregatedCPUEnergyConsumption = (valuesToSum.aggregatedCPUEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.aggregatedCPUEnergyConsumption) as MilliJoule_number
+			valuesToSum.internCPUEnergyConsumption = (valuesToSum.internCPUEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.internCPUEnergyConsumption) as MilliJoule_number
+			valuesToSum.externCPUEnergyConsumption = (valuesToSum.externCPUEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.externCPUEnergyConsumption) as MilliJoule_number
+			valuesToSum.langInternalCPUEnergyConsumption = (valuesToSum.langInternalCPUEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.langInternalCPUEnergyConsumption) as MilliJoule_number
+
+			valuesToSum.selfRAMEnergyConsumption = (valuesToSum.selfRAMEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.selfRAMEnergyConsumption) as MilliJoule_number
+			valuesToSum.aggregatedRAMEnergyConsumption = (valuesToSum.aggregatedRAMEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.aggregatedRAMEnergyConsumption) as MilliJoule_number
+			valuesToSum.internRAMEnergyConsumption = (valuesToSum.internRAMEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.internRAMEnergyConsumption) as MilliJoule_number
+			valuesToSum.externRAMEnergyConsumption = (valuesToSum.externRAMEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.externRAMEnergyConsumption) as MilliJoule_number
+			valuesToSum.langInternalRAMEnergyConsumption = (valuesToSum.langInternalRAMEnergyConsumption +
+				currentSourceNodeMetaData.sensorValues.langInternalRAMEnergyConsumption) as MilliJoule_number
 
 			if (SourceNodeMetaData.couldHaveChildren(currentSourceNodeMetaData)) {
-				for (
-					const [
-						langInternalsSourceNodeID,
-						sourceNodeMetaData
-					] of currentSourceNodeMetaData.lang_internal.entries()
-				) {
+				for (const [
+					langInternalsSourceNodeID,
+					sourceNodeMetaData
+				] of currentSourceNodeMetaData.lang_internal.entries()) {
 					const sourceNodeIndex = currentSourceNodeMetaData.getSourceNodeIndexByID(langInternalsSourceNodeID)
 					if (sourceNodeIndex === undefined) {
 						throw new Error('SourceNodeMetaData.merge: could not resolve sourceNodeIndex from id')
@@ -348,8 +338,9 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			type,
 			sourceNodeID,
 			SensorValues.fromJSON(valuesToSum),
-			sourceNodeIndex as T extends SourceNodeMetaDataType.Aggregate ?
-				undefined : SourceNodeIndex<SourceNodeIndexType.SourceNode>
+			sourceNodeIndex as T extends SourceNodeMetaDataType.Aggregate
+				? undefined
+				: SourceNodeIndex<SourceNodeIndexType.SourceNode>
 		)
 		result.presentInOriginalSourceCode = presentInOriginalSourceCode
 
@@ -358,30 +349,21 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				'upsert',
 				GlobalIdentifier.fromIdentifier(identifier as GlobalSourceNodeIdentifier_string)
 			)
-			
+
 			result.lang_internal.set(
 				sourceNodeIndex_langInternal.id as SourceNodeID_number,
-				SourceNodeMetaData.merge(
-					sourceNodeIndex_langInternal.id,
-					sourceNodeIndex_langInternal,
-					...sourceNodeMetaDatas
-				)
+				SourceNodeMetaData.merge(sourceNodeIndex_langInternal.id, sourceNodeIndex_langInternal, ...sourceNodeMetaDatas)
 			)
 		}
 
 		for (const [identifier, sourceNodeMetaDatas] of Object.entries(valuesToMerge.intern)) {
 			const globalIdentifier = GlobalIdentifier.fromIdentifier(identifier as GlobalSourceNodeIdentifier_string)
-			const sourceNodeIndex_intern = sourceNodeIndex.pathIndex.moduleIndex.getFilePathIndex(
-				'upsert',
-				globalIdentifier.path
-			).getSourceNodeIndex('upsert', globalIdentifier.sourceNodeIdentifier)
+			const sourceNodeIndex_intern = sourceNodeIndex.pathIndex.moduleIndex
+				.getFilePathIndex('upsert', globalIdentifier.path)
+				.getSourceNodeIndex('upsert', globalIdentifier.sourceNodeIdentifier)
 			result.intern.set(
 				sourceNodeIndex_intern.id as SourceNodeID_number,
-				SourceNodeMetaData.merge(
-					sourceNodeIndex_intern.id,
-					sourceNodeIndex_intern,
-					...sourceNodeMetaDatas
-				)
+				SourceNodeMetaData.merge(sourceNodeIndex_intern.id, sourceNodeIndex_intern, ...sourceNodeMetaDatas)
 			)
 		}
 
@@ -393,11 +375,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 
 			result.extern.set(
 				sourceNodeIndex_extern.id as SourceNodeID_number,
-				SourceNodeMetaData.merge(
-					sourceNodeIndex_extern.id,
-					sourceNodeIndex_extern,
-					...sourceNodeMetaDatas
-				)
+				SourceNodeMetaData.merge(sourceNodeIndex_extern.id, sourceNodeIndex_extern, ...sourceNodeMetaDatas)
 			)
 		}
 
@@ -439,47 +417,47 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 
 		for (let i = 1; i < args.length; i++) {
 			const a = args[i]
-			if (
-				a.type !== compare.type
-			) {
+			if (a.type !== compare.type) {
 				return false
 			}
 		}
 		return true
 	}
 
-	static couldHaveChildren(object: SourceNodeMetaData<SourceNodeMetaDataType>):
-		object is SourceNodeMetaData<SourceNodeMetaDataType_Node> {
-		return object.type === SourceNodeMetaDataType.SourceNode ||
-		object.type === SourceNodeMetaDataType.LangInternalSourceNode
+	static couldHaveChildren(
+		object: SourceNodeMetaData<SourceNodeMetaDataType>
+	): object is SourceNodeMetaData<SourceNodeMetaDataType_Node> {
+		return (
+			object.type === SourceNodeMetaDataType.SourceNode || object.type === SourceNodeMetaDataType.LangInternalSourceNode
+		)
 	}
 
 	get lang_internal(): LangInternalMap<T> {
 		if (this._lang_internal === undefined && SourceNodeMetaData.couldHaveChildren(this)) {
-			(this as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>).
-				_lang_internal = new ModelMap<SourceNodeID_number, SourceNodeMetaData<
-				SourceNodeMetaDataType.LangInternalSourceNodeReference
-				>>('number')
+			;(this as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>)._lang_internal = new ModelMap<
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+			>('number')
 		}
 		return this._lang_internal as LangInternalMap<T>
 	}
 
 	get intern(): InternMap<T> {
 		if (this._intern === undefined && SourceNodeMetaData.couldHaveChildren(this)) {
-			(this as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>).
-				_intern = new ModelMap<SourceNodeID_number, SourceNodeMetaData<
-				SourceNodeMetaDataType.InternSourceNodeReference
-				>>('number')
+			;(this as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>)._intern = new ModelMap<
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+			>('number')
 		}
 		return this._intern as InternMap<T>
 	}
 
 	get extern(): ExternMap<T> {
 		if (this._extern === undefined && SourceNodeMetaData.couldHaveChildren(this)) {
-			(this as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>).
-				_extern = new ModelMap<SourceNodeID_number, SourceNodeMetaData<
-				SourceNodeMetaDataType.ExternSourceNodeReference
-				>>('number')
+			;(this as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>)._extern = new ModelMap<
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+			>('number')
 		}
 		return this._extern as ExternMap<T>
 	}
@@ -521,7 +499,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 
 	addSensorValuesToIntern(
 		identifier: GlobalIdentifier,
-		values: SensorValues | Partial<ISensorValues>,
+		values: SensorValues | Partial<ISensorValues>
 	): SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference> {
 		if (!SourceNodeMetaData.couldHaveChildren(this)) {
 			throw new Error('Cannot only add sensor values to intern for SourceNode and LangInternalSourceNode')
@@ -549,7 +527,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 
 	addSensorValuesToExtern(
 		identifier: GlobalIdentifier,
-		values: SensorValues | Partial<ISensorValues>,
+		values: SensorValues | Partial<ISensorValues>
 	): SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference> {
 		if (!SourceNodeMetaData.couldHaveChildren(this)) {
 			throw new Error('Cannot only add sensor values to extern for SourceNode and LangInternalSourceNode')
@@ -568,17 +546,14 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				new SensorValues({}),
 				sourceNodeIndex
 			)
-			this.extern.set(sourceNodeID, sourceNodeMetaData)	
+			this.extern.set(sourceNodeID, sourceNodeMetaData)
 		}
 		this.sensorValues.addToExtern(values)
 		sourceNodeMetaData.addToSensorValues(values)
 		return sourceNodeMetaData
 	}
 
-	validate(
-		path: UnifiedPath_string | LangInternalPath_string,
-		identifier: SourceNodeIdentifier_string
-	) {
+	validate(path: UnifiedPath_string | LangInternalPath_string, identifier: SourceNodeIdentifier_string) {
 		if (this.type !== SourceNodeMetaDataType.SourceNode) {
 			return
 		}
@@ -612,7 +587,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			totalExternSensorValues.push(aggregatedSensorValues)
 			nodeMetaData.sensorValues.validate(path, identifier)
 		}
-		
+
 		const totalAggregate = SensorValues.sum(...totalSensorValues)
 		const totalLangInternalAggregate = SensorValues.sum(...totalLangInternalSensorValues)
 		const totalInternAggregate = SensorValues.sum(...totalInternSensorValues)
@@ -624,14 +599,13 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			totalLangInternalAggregate.aggregatedCPUTime !== this.sensorValues.langInternalCPUTime ||
 			totalExternAggregate.aggregatedCPUTime !== this.sensorValues.externCPUTime ||
 			totalInternAggregate.aggregatedCPUTime !== this.sensorValues.internCPUTime ||
-			
 			// CPU Energy Consumption
 			(totalAggregate.aggregatedCPUEnergyConsumption <
 				this.sensorValues.aggregatedCPUEnergyConsumption - this.sensorValues.selfCPUEnergyConsumption &&
-				!areNumbersClose(totalAggregate.aggregatedCPUEnergyConsumption,
+				!areNumbersClose(
+					totalAggregate.aggregatedCPUEnergyConsumption,
 					this.sensorValues.aggregatedCPUEnergyConsumption - this.sensorValues.selfCPUEnergyConsumption
-				)
-			) ||
+				)) ||
 			!areNumbersClose(
 				totalLangInternalAggregate.aggregatedCPUEnergyConsumption,
 				this.sensorValues.langInternalCPUEnergyConsumption
@@ -644,14 +618,13 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				totalInternAggregate.aggregatedCPUEnergyConsumption,
 				this.sensorValues.internCPUEnergyConsumption
 			) ||
-
 			// RAM Energy Consumption
 			(totalAggregate.aggregatedRAMEnergyConsumption <
 				this.sensorValues.aggregatedRAMEnergyConsumption - this.sensorValues.selfRAMEnergyConsumption &&
-				!areNumbersClose(totalAggregate.aggregatedRAMEnergyConsumption,
+				!areNumbersClose(
+					totalAggregate.aggregatedRAMEnergyConsumption,
 					this.sensorValues.aggregatedRAMEnergyConsumption - this.sensorValues.selfRAMEnergyConsumption
-				)
-			) ||
+				)) ||
 			!areNumbersClose(
 				totalLangInternalAggregate.aggregatedRAMEnergyConsumption,
 				this.sensorValues.langInternalRAMEnergyConsumption
@@ -665,40 +638,70 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				this.sensorValues.internRAMEnergyConsumption
 			)
 		) {
-			 
 			throw new Error(
 				`SourceNodeMetaData.validate: Assertion error (SourceNode validation) ${path}:${identifier} \n` +
-				JSON.stringify(this, null, 2) + '\n' +
-				JSON.stringify({
-					totalAggregate,
-					totalLangInternalAggregate,
-					totalInternAggregate,
-					totalExternAggregate,
-					reason: {
-						'totalAggregatedTime < aggregatedCPUTime - selfCPUTime': totalAggregate.aggregatedCPUTime < this.sensorValues.aggregatedCPUTime - this.sensorValues.selfCPUTime,
-						'totalLangInternalCPUTime != langInternalCPUTime': totalLangInternalAggregate.aggregatedCPUTime !== this.sensorValues.langInternalCPUTime,
-						'totalExternCPUTime != externCPUTime': totalExternAggregate.aggregatedCPUTime !== this.sensorValues.externCPUTime,
-						'totalInternCPUTime != internCPUTime': totalInternAggregate.aggregatedCPUTime !== this.sensorValues.internCPUTime,
+					JSON.stringify(this, null, 2) +
+					'\n' +
+					JSON.stringify(
+						{
+							totalAggregate,
+							totalLangInternalAggregate,
+							totalInternAggregate,
+							totalExternAggregate,
+							reason: {
+								'totalAggregatedTime < aggregatedCPUTime - selfCPUTime':
+									totalAggregate.aggregatedCPUTime <
+									this.sensorValues.aggregatedCPUTime - this.sensorValues.selfCPUTime,
+								'totalLangInternalCPUTime != langInternalCPUTime':
+									totalLangInternalAggregate.aggregatedCPUTime !== this.sensorValues.langInternalCPUTime,
+								'totalExternCPUTime != externCPUTime':
+									totalExternAggregate.aggregatedCPUTime !== this.sensorValues.externCPUTime,
+								'totalInternCPUTime != internCPUTime':
+									totalInternAggregate.aggregatedCPUTime !== this.sensorValues.internCPUTime,
 
-						// CPU Energy Consumption
-						'totalAggregatedCPUEnergyConsumption < aggregatedCPUEnergyConsumption - selfCPUEnergyConsumption': !areNumbersClose(totalAggregate.aggregatedCPUEnergyConsumption,
-							this.sensorValues.aggregatedCPUEnergyConsumption
-							- this.sensorValues.selfCPUEnergyConsumption),
-						'totalLangInternalCPUEnergyConsumption != langInternalCPUEnergyConsumption': !areNumbersClose(totalLangInternalAggregate.aggregatedCPUEnergyConsumption, this.sensorValues.langInternalCPUEnergyConsumption),
-						'totalExternCPUEnergyConsumption != externCPUEnergyConsumption': !areNumbersClose(totalExternAggregate.aggregatedCPUEnergyConsumption, this.sensorValues.externCPUEnergyConsumption),
-						'totalInternCPUEnergyConsumption != internCPUEnergyConsumption': !areNumbersClose(totalInternAggregate.aggregatedCPUEnergyConsumption, this.sensorValues.internCPUEnergyConsumption),
+								// CPU Energy Consumption
+								'totalAggregatedCPUEnergyConsumption < aggregatedCPUEnergyConsumption - selfCPUEnergyConsumption':
+									!areNumbersClose(
+										totalAggregate.aggregatedCPUEnergyConsumption,
+										this.sensorValues.aggregatedCPUEnergyConsumption - this.sensorValues.selfCPUEnergyConsumption
+									),
+								'totalLangInternalCPUEnergyConsumption != langInternalCPUEnergyConsumption': !areNumbersClose(
+									totalLangInternalAggregate.aggregatedCPUEnergyConsumption,
+									this.sensorValues.langInternalCPUEnergyConsumption
+								),
+								'totalExternCPUEnergyConsumption != externCPUEnergyConsumption': !areNumbersClose(
+									totalExternAggregate.aggregatedCPUEnergyConsumption,
+									this.sensorValues.externCPUEnergyConsumption
+								),
+								'totalInternCPUEnergyConsumption != internCPUEnergyConsumption': !areNumbersClose(
+									totalInternAggregate.aggregatedCPUEnergyConsumption,
+									this.sensorValues.internCPUEnergyConsumption
+								),
 
-						// RAM Energy Consumption
-						'totalAggregatedRAMEnergyConsumption < aggregatedRAMEnergyConsumption - selfRAMEnergyConsumption': !areNumbersClose(totalAggregate.aggregatedRAMEnergyConsumption,
-							this.sensorValues.aggregatedRAMEnergyConsumption
-							- this.sensorValues.selfRAMEnergyConsumption),
-						'totalLangInternalRAMEnergyConsumption != langInternalRAMEnergyConsumption': !areNumbersClose(totalLangInternalAggregate.aggregatedRAMEnergyConsumption, this.sensorValues.langInternalRAMEnergyConsumption),
-						'totalExternRAMEnergyConsumption != externRAMEnergyConsumption': !areNumbersClose(totalExternAggregate.aggregatedRAMEnergyConsumption, this.sensorValues.externRAMEnergyConsumption),
-						'totalInternRAMEnergyConsumption != internRAMEnergyConsumption': !areNumbersClose(totalInternAggregate.aggregatedRAMEnergyConsumption, this.sensorValues.internRAMEnergyConsumption)
-					}
-				}, null, 2)
+								// RAM Energy Consumption
+								'totalAggregatedRAMEnergyConsumption < aggregatedRAMEnergyConsumption - selfRAMEnergyConsumption':
+									!areNumbersClose(
+										totalAggregate.aggregatedRAMEnergyConsumption,
+										this.sensorValues.aggregatedRAMEnergyConsumption - this.sensorValues.selfRAMEnergyConsumption
+									),
+								'totalLangInternalRAMEnergyConsumption != langInternalRAMEnergyConsumption': !areNumbersClose(
+									totalLangInternalAggregate.aggregatedRAMEnergyConsumption,
+									this.sensorValues.langInternalRAMEnergyConsumption
+								),
+								'totalExternRAMEnergyConsumption != externRAMEnergyConsumption': !areNumbersClose(
+									totalExternAggregate.aggregatedRAMEnergyConsumption,
+									this.sensorValues.externRAMEnergyConsumption
+								),
+								'totalInternRAMEnergyConsumption != internRAMEnergyConsumption': !areNumbersClose(
+									totalInternAggregate.aggregatedRAMEnergyConsumption,
+									this.sensorValues.internRAMEnergyConsumption
+								)
+							}
+						},
+						null,
+						2
+					)
 			)
-			 
 		}
 	}
 
@@ -713,12 +716,9 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		}
 	}
 
-	static fromJSON<
-		T extends SourceNodeMetaDataType,
-	>(
+	static fromJSON<T extends SourceNodeMetaDataType>(
 		json: string | ISourceNodeMetaData<T>,
-		globalIndex: T extends SourceNodeMetaDataType.Aggregate ?
-			undefined : GlobalIndex
+		globalIndex: T extends SourceNodeMetaDataType.Aggregate ? undefined : GlobalIndex
 	): SourceNodeMetaData<T> {
 		let data: ISourceNodeMetaData<T>
 		if (typeof json === 'string') {
@@ -734,28 +734,29 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				)
 			}
 			if (data.id === undefined) {
-				throw new Error(
-					'SourceNodeMetaData.fromJSON: expect an ID for all SourceNodeMetaDataTypes except Aggregate'
-				)
+				throw new Error('SourceNodeMetaData.fromJSON: expect an ID for all SourceNodeMetaDataTypes except Aggregate')
 			}
 		}
 
-		const sourceNodeIndex = data.type !== SourceNodeMetaDataType.Aggregate ?
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			globalIndex!.getSourceNodeIndexByID(data.id!) : undefined
+		const sourceNodeIndex =
+			data.type !== SourceNodeMetaDataType.Aggregate
+				? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					globalIndex!.getSourceNodeIndexByID(data.id!)
+				: undefined
 		const result = new SourceNodeMetaData(
 			data.type,
 			data.id,
 			SensorValues.fromJSON(data.sensorValues),
-			sourceNodeIndex as T extends SourceNodeMetaDataType.Aggregate ?
-				undefined : SourceNodeIndex<SourceNodeIndexType.SourceNode>
+			sourceNodeIndex as T extends SourceNodeMetaDataType.Aggregate
+				? undefined
+				: SourceNodeIndex<SourceNodeIndexType.SourceNode>
 		)
 
 		if (SourceNodeMetaData.couldHaveChildren(result)) {
 			if (data.lang_internal) {
 				for (const [sourceNodeID_string, nodeMetaData] of Object.entries(data.lang_internal)) {
 					const sourceNodeID = parseInt(sourceNodeID_string) as SourceNodeID_number
-					
+
 					result.lang_internal.set(
 						sourceNodeID,
 						SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.LangInternalSourceNodeReference>(
@@ -793,7 +794,7 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 				}
 			}
 		}
-		
+
 		return result as SourceNodeMetaData<T>
 	}
 
@@ -826,26 +827,19 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 		buffer: Buffer,
 		globalIndex: GlobalIndex
 	): {
-			instance: SourceNodeMetaData<T>,
-			remainingBuffer: Buffer
-		} {
+		instance: SourceNodeMetaData<T>
+		remainingBuffer: Buffer
+	} {
 		let remainingBuffer = buffer
-		const {
-			instance: sourceNodeID,
-			remainingBuffer: newRemainingBuffer1
-		} = BufferHelper.UIntFromBuffer(remainingBuffer)
+		const { instance: sourceNodeID, remainingBuffer: newRemainingBuffer1 } =
+			BufferHelper.UIntFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
 
-		const {
-			instance: type,
-			remainingBuffer: newRemainingBuffer2
-		} = BufferHelper.UIntFromBuffer(remainingBuffer)
+		const { instance: type, remainingBuffer: newRemainingBuffer2 } = BufferHelper.UIntFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer2
 
-		const {
-			instance: sensorValues,
-			remainingBuffer: newRemainingBuffer3
-		} = SensorValues.consumeFromBuffer(remainingBuffer)
+		const { instance: sensorValues, remainingBuffer: newRemainingBuffer3 } =
+			SensorValues.consumeFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer3
 
 		let instance: SourceNodeMetaData<SourceNodeMetaDataType> | undefined = undefined
@@ -853,66 +847,55 @@ export class SourceNodeMetaData<T extends SourceNodeMetaDataType> extends BaseMo
 			const sourceNodeIndex = globalIndex.getSourceNodeIndexByID(sourceNodeID as SourceNodeID_number)
 			if (sourceNodeIndex === undefined) {
 				throw new Error(
-					'SourceNodeMetaData.consumeFromBuffer(SourceNode|LangInternalSourceNode): ' + 
-					'expected sourceNodeIndex to be given'
+					'SourceNodeMetaData.consumeFromBuffer(SourceNode|LangInternalSourceNode): ' +
+						'expected sourceNodeIndex to be given'
 				)
 			}
-			
+
 			instance = new SourceNodeMetaData<
-			Exclude<SourceNodeMetaDataType, SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.Aggregate>>(
-				type,
-				sourceNodeID as SourceNodeID_number,
-				sensorValues,
-				sourceNodeIndex
-			)
+				Exclude<SourceNodeMetaDataType, SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.Aggregate>
+			>(type, sourceNodeID as SourceNodeID_number, sensorValues, sourceNodeIndex)
 		} else {
 			const sourceNodeIndex = globalIndex.getSourceNodeIndexByID(sourceNodeID as SourceNodeID_number)
 			if (sourceNodeIndex === undefined) {
 				throw new Error('SourceNodeMetaData.consumeFromBuffer: expected sourceNodeIndex to be given')
 			}
 			instance = new SourceNodeMetaData<
-			SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>(
-				type,
-				sourceNodeID as SourceNodeID_number,
-				sensorValues,
-				sourceNodeIndex
-			)
+				SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
+			>(type, sourceNodeID as SourceNodeID_number, sensorValues, sourceNodeIndex)
 			const { instance: lang_internal, remainingBuffer: newRemainingBuffer4 } = ModelMap.consumeFromBuffer<
-			SourceNodeID_number,
-			SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
-			>(remainingBuffer,
-				'number',
-				(buffer: Buffer) => {
-					return SourceNodeMetaData.consumeFromBuffer<
-					SourceNodeMetaDataType.LangInternalSourceNodeReference>(buffer, globalIndex)
-				}
-			)
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+			>(remainingBuffer, 'number', (buffer: Buffer) => {
+				return SourceNodeMetaData.consumeFromBuffer<SourceNodeMetaDataType.LangInternalSourceNodeReference>(
+					buffer,
+					globalIndex
+				)
+			})
 			remainingBuffer = newRemainingBuffer4
 			instance._lang_internal = lang_internal
 
 			const { instance: intern, remainingBuffer: newRemainingBuffer5 } = ModelMap.consumeFromBuffer<
-			SourceNodeID_number,
-			SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
-			>(remainingBuffer,
-				'number',
-				(buffer: Buffer) => {
-					return SourceNodeMetaData.consumeFromBuffer<
-					SourceNodeMetaDataType.InternSourceNodeReference>(buffer, globalIndex)
-				}
-			)
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+			>(remainingBuffer, 'number', (buffer: Buffer) => {
+				return SourceNodeMetaData.consumeFromBuffer<SourceNodeMetaDataType.InternSourceNodeReference>(
+					buffer,
+					globalIndex
+				)
+			})
 			remainingBuffer = newRemainingBuffer5
 			instance._intern = intern
 
 			const { instance: extern, remainingBuffer: newRemainingBuffer6 } = ModelMap.consumeFromBuffer<
-			SourceNodeID_number,
-			SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
-			>(remainingBuffer,
-				'number',
-				(buffer: Buffer) => {
-					return SourceNodeMetaData.consumeFromBuffer<
-					SourceNodeMetaDataType.ExternSourceNodeReference>(buffer, globalIndex)
-				}
-			)
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+			>(remainingBuffer, 'number', (buffer: Buffer) => {
+				return SourceNodeMetaData.consumeFromBuffer<SourceNodeMetaDataType.ExternSourceNodeReference>(
+					buffer,
+					globalIndex
+				)
+			})
 			remainingBuffer = newRemainingBuffer6
 			instance._extern = extern
 		}

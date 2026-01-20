@@ -36,17 +36,15 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		this.identifier = identifier
 		this.pathIndex = pathIndex
 		this.type = type
-		this._id = (
-			this.isSourceNode() ? ((id === undefined) ? this.selfAssignId() : id) : undefined
-		) as SourceNodeIndexID<T>
+		this._id = (this.isSourceNode() ? (id === undefined ? this.selfAssignId() : id) : undefined) as SourceNodeIndexID<T>
 	}
 
 	private _notPresentInOriginalSourceCode?: boolean
-	public get presentInOriginalSourceCode() : boolean {
+	public get presentInOriginalSourceCode(): boolean {
 		return this._notPresentInOriginalSourceCode === undefined ? true : false
 	}
 
-	public set presentInOriginalSourceCode(v : boolean) {
+	public set presentInOriginalSourceCode(v: boolean) {
 		this._notPresentInOriginalSourceCode = v === true ? undefined : true
 	}
 
@@ -74,21 +72,18 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 	}
 
 	// make selfAssignId only available for instances of type SourceNodeIndex<SourceNodeIndexType.SourceNode>
-	selfAssignId: T extends SourceNodeIndexType.SourceNode
-		? () => SourceNodeIndexID<T> : never = (() => {
-			if (!this.isSourceNode()) {
-				throw new Error(
-					'SourceNodeIndex.selfAssignId: can only be called on a SourceNodeIndex of type SourceNode'
-				)
-			}
-			const self = this as SourceNodeIndex<SourceNodeIndexType.SourceNode>
-			self._id = this.pathIndex.moduleIndex.globalIndex.newId(
-				this as SourceNodeIndex<SourceNodeIndexType.SourceNode>,
-				'sourceNode'
-			) as SourceNodeID_number
-			self.pathIndex.addToSourceNodeMap(this)
-			return this._id as SourceNodeIndexID<T>
-		}) as any // eslint-disable-line @typescript-eslint/no-explicit-any
+	selfAssignId: T extends SourceNodeIndexType.SourceNode ? () => SourceNodeIndexID<T> : never = (() => {
+		if (!this.isSourceNode()) {
+			throw new Error('SourceNodeIndex.selfAssignId: can only be called on a SourceNodeIndex of type SourceNode')
+		}
+		const self = this as SourceNodeIndex<SourceNodeIndexType.SourceNode>
+		self._id = this.pathIndex.moduleIndex.globalIndex.newId(
+			this as SourceNodeIndex<SourceNodeIndexType.SourceNode>,
+			'sourceNode'
+		) as SourceNodeID_number
+		self.pathIndex.addToSourceNodeMap(this)
+		return this._id as SourceNodeIndexID<T>
+	}) as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
 	public get id(): SourceNodeIndexID<T> {
 		return this._id as SourceNodeIndexID<T>
@@ -116,27 +111,15 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		} else {
 			data = json
 		}
-		const result = new SourceNodeIndex<T>(
-			SourceNodeIdentifierHelper.join(sourceNodeParts),
-			pathIndex,
-			type,
-			data.id
-		)
+		const result = new SourceNodeIndex<T>(SourceNodeIdentifierHelper.join(sourceNodeParts), pathIndex, type, data.id)
 		result.presentInOriginalSourceCode = data.npiosc === undefined ? true : false
 		if (result.isSourceNode()) {
 			result.pathIndex.addToSourceNodeMap(result)
-			result.pathIndex.moduleIndex.globalIndex.setReverseIndex(
-				result.id,
-				result,
-				'sourceNode'
-			)
+			result.pathIndex.moduleIndex.globalIndex.setReverseIndex(result.id, result, 'sourceNode')
 		}
 
 		if (data.children) {
-			result.children = new ModelMap<
-				SourceNodeIdentifierPart_string,
-				SourceNodeIndex<SourceNodeIndexType>
-			>('string')
+			result.children = new ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>('string')
 			for (const key of Object.keys(data.children) as SourceNodeIdentifierPart_string[]) {
 				result.children.set(
 					key,
@@ -144,8 +127,7 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 						data.children[key],
 						[...sourceNodeParts, key],
 						pathIndex,
-						data.children[key].id !== undefined
-							? SourceNodeIndexType.SourceNode : SourceNodeIndexType.Intermediate
+						data.children[key].id !== undefined ? SourceNodeIndexType.SourceNode : SourceNodeIndexType.Intermediate
 					)
 				)
 			}
@@ -161,9 +143,7 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		return new GlobalIdentifier(
 			this.pathIndex.identifier as UnifiedPath_string,
 			this.identifier as SourceNodeIdentifier_string,
-			isLangInternal ?
-				this.pathIndex.moduleIndex.globalIndex.engineModule :
-				this.pathIndex.moduleIndex.nodeModule()
+			isLangInternal ? this.pathIndex.moduleIndex.globalIndex.engineModule : this.pathIndex.moduleIndex.nodeModule()
 		)
 	}
 }

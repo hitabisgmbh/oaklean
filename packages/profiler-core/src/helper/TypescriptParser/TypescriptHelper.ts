@@ -53,15 +53,10 @@ export class TypescriptHelper {
 		return false
 	}
 
-	static getEmitHelperName(
-		node: ts.FunctionExpression
-	): EmitHelperNames | undefined {
+	static getEmitHelperName(node: ts.FunctionExpression): EmitHelperNames | undefined {
 		const varDeclaration = node?.parent?.parent
 
-		if (
-			varDeclaration !== undefined &&
-			varDeclaration.kind === ts.SyntaxKind.VariableDeclaration
-		) {
+		if (varDeclaration !== undefined && varDeclaration.kind === ts.SyntaxKind.VariableDeclaration) {
 			if ((varDeclaration as ts.VariableDeclaration).name.kind === ts.SyntaxKind.Identifier) {
 				if (
 					EmitHelperNameStrings.includes(
@@ -74,14 +69,10 @@ export class TypescriptHelper {
 		}
 
 		const varDeclarationExtends = node?.parent?.parent?.parent?.parent
-		if (
-			varDeclarationExtends !== undefined &&
-			varDeclarationExtends.kind === ts.SyntaxKind.VariableDeclaration
-		) {
+		if (varDeclarationExtends !== undefined && varDeclarationExtends.kind === ts.SyntaxKind.VariableDeclaration) {
 			if ((varDeclarationExtends as ts.VariableDeclaration).name.kind === ts.SyntaxKind.Identifier) {
 				if (
-					((varDeclarationExtends as ts.VariableDeclaration).name as ts.Identifier)
-						.text === EmitHelperNames.extends
+					((varDeclarationExtends as ts.VariableDeclaration).name as ts.Identifier).text === EmitHelperNames.extends
 				) {
 					return EmitHelperNames.extends
 				}
@@ -94,9 +85,7 @@ export class TypescriptHelper {
 		return '{root}.{functionExpression:__awaiter}' as SourceNodeIdentifier_string
 	}
 
-	static hasDefaultKeywordModifier(
-		node: ts.ClassDeclaration | ts.ClassExpression | ts.FunctionDeclaration
-	): boolean {
+	static hasDefaultKeywordModifier(node: ts.ClassDeclaration | ts.ClassExpression | ts.FunctionDeclaration): boolean {
 		if (node.modifiers === undefined || node.modifiers.length === 0) {
 			return false
 		}
@@ -110,11 +99,11 @@ export class TypescriptHelper {
 
 	static hasStaticKeywordModifier(
 		node:
-		| ts.MethodDeclaration
-		| ts.PropertyDeclaration
-		| ts.SetAccessorDeclaration
-		| ts.GetAccessorDeclaration
-		| ts.ConstructorDeclaration
+			| ts.MethodDeclaration
+			| ts.PropertyDeclaration
+			| ts.SetAccessorDeclaration
+			| ts.GetAccessorDeclaration
+			| ts.ConstructorDeclaration
 	): boolean {
 		if (node.modifiers === undefined || node.modifiers.length === 0) {
 			return false

@@ -7,11 +7,7 @@ import { GlobalIndex } from '../../src/model/indices/GlobalIndex'
 import { UPDATE_TEST_REPORTS } from '../constants/env'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { PermissionHelper } from '../../src/helper/PermissionHelper'
-import {
-	IModuleReport,
-	NodeModuleIdentifier_string,
-	ReportKind
-} from '../../src/types'
+import { IModuleReport, NodeModuleIdentifier_string, ReportKind } from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
@@ -25,7 +21,9 @@ const EXAMPLE_MODULE_REPORT: IModuleReport = {
 	relativeRootDir: undefined,
 	headlessSensorValues: {}
 }
-const EXAMPLE_MODULE_REPORT_BUFFER = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'module-report.instance.buffer').toString()).toString()
+const EXAMPLE_MODULE_REPORT_BUFFER = fs
+	.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'module-report.instance.buffer').toString())
+	.toString()
 
 function runInstanceTests(title: string, preDefinedInstance: () => ModuleReport) {
 	let instance: ModuleReport
@@ -63,7 +61,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ModuleReport)
 					bufferString
 				)
 			}
-			
+
 			expect(bufferString).toBe(EXAMPLE_MODULE_REPORT_BUFFER)
 		})
 	})
@@ -74,23 +72,16 @@ describe('ModuleReport', () => {
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 		const moduleIndex = globalIndex.getModuleIndex('upsert', 'package-name' as NodeModuleIdentifier_string)
 
-		return new ModuleReport(
-			moduleIndex,
-			new NodeModule(
-				'package-name',
-				'1.0.1'
-			),
-			ReportKind.measurement
-		)
+		return new ModuleReport(moduleIndex, new NodeModule('package-name', '1.0.1'), ReportKind.measurement)
 	})
-	
+
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex(
 				'upsert',
-				`${EXAMPLE_MODULE_REPORT.nodeModule.name}` +
-				`@${EXAMPLE_MODULE_REPORT.nodeModule.version}` as NodeModuleIdentifier_string
+				(`${EXAMPLE_MODULE_REPORT.nodeModule.name}` +
+					`@${EXAMPLE_MODULE_REPORT.nodeModule.version}`) as NodeModuleIdentifier_string
 			)
 
 			const reportFromString = ModuleReport.fromJSON(JSON.stringify(EXAMPLE_MODULE_REPORT), moduleIndex)
@@ -101,8 +92,8 @@ describe('ModuleReport', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex(
 				'upsert',
-				`${EXAMPLE_MODULE_REPORT.nodeModule.name}` +
-				`@${EXAMPLE_MODULE_REPORT.nodeModule.version}` as NodeModuleIdentifier_string
+				(`${EXAMPLE_MODULE_REPORT.nodeModule.name}` +
+					`@${EXAMPLE_MODULE_REPORT.nodeModule.version}`) as NodeModuleIdentifier_string
 			)
 
 			const reportFromObject = ModuleReport.fromJSON(EXAMPLE_MODULE_REPORT, moduleIndex)
@@ -113,8 +104,8 @@ describe('ModuleReport', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex(
 				'upsert',
-				`${EXAMPLE_MODULE_REPORT.nodeModule.name}` +
-				`@${EXAMPLE_MODULE_REPORT.nodeModule.version}` as NodeModuleIdentifier_string
+				(`${EXAMPLE_MODULE_REPORT.nodeModule.name}` +
+					`@${EXAMPLE_MODULE_REPORT.nodeModule.version}`) as NodeModuleIdentifier_string
 			)
 			return ModuleReport.fromJSON(JSON.stringify(EXAMPLE_MODULE_REPORT), moduleIndex)
 		})
@@ -127,8 +118,8 @@ describe('ModuleReport', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			globalIndex.getModuleIndex(
 				'upsert',
-				`${EXAMPLE_MODULE_REPORT.nodeModule.name}`+
-				`@${EXAMPLE_MODULE_REPORT.nodeModule.version}` as NodeModuleIdentifier_string
+				(`${EXAMPLE_MODULE_REPORT.nodeModule.name}` +
+					`@${EXAMPLE_MODULE_REPORT.nodeModule.version}`) as NodeModuleIdentifier_string
 			)
 			const { instance, remainingBuffer } = ModuleReport.consumeFromBuffer_ModuleReport(buffer, globalIndex)
 			expect(instance.toJSON()).toEqual(EXAMPLE_MODULE_REPORT)
@@ -139,8 +130,8 @@ describe('ModuleReport', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			globalIndex.getModuleIndex(
 				'upsert',
-				`${EXAMPLE_MODULE_REPORT.nodeModule.name}` +
-				`@${EXAMPLE_MODULE_REPORT.nodeModule.version}` as NodeModuleIdentifier_string
+				(`${EXAMPLE_MODULE_REPORT.nodeModule.name}` +
+					`@${EXAMPLE_MODULE_REPORT.nodeModule.version}`) as NodeModuleIdentifier_string
 			)
 			const { instance } = ModuleReport.consumeFromBuffer_ModuleReport(buffer, globalIndex)
 			return instance
@@ -154,24 +145,17 @@ describe('ModuleReport', () => {
 			const firstGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const firstModuleIndex = firstGlobalIndex.getModuleIndex('upsert', 'package-name' as NodeModuleIdentifier_string)
 
-			const first = new ModuleReport(
-				firstModuleIndex,
-				new NodeModule(
-					'package-name',
-					'1.0.1'
-				),
-				ReportKind.measurement
-			)
+			const first = new ModuleReport(firstModuleIndex, new NodeModule('package-name', '1.0.1'), ReportKind.measurement)
 
 			const secondsGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const secondModuleIndex = secondsGlobalIndex.getModuleIndex('upsert', 'package-name' as NodeModuleIdentifier_string)
+			const secondModuleIndex = secondsGlobalIndex.getModuleIndex(
+				'upsert',
+				'package-name' as NodeModuleIdentifier_string
+			)
 
 			const second = new ModuleReport(
 				secondModuleIndex,
-				new NodeModule(
-					'package-name',
-					'1.0.1'
-				),
+				new NodeModule('package-name', '1.0.1'),
 				ReportKind.measurement
 			)
 

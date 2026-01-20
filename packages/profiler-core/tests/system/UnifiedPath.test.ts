@@ -1,7 +1,5 @@
 import { UnifiedPath } from '../../src/system/UnifiedPath'
-import {
-	UnifiedPathPart_string
-} from '../../src/types'
+import { UnifiedPathPart_string } from '../../src/types'
 
 // Describe the module or function you want to test
 describe('UnifiedPath', () => {
@@ -36,9 +34,7 @@ describe('UnifiedPath', () => {
 
 		const pFile = new UnifiedPath(filePath)
 
-		expect(
-			pFile.dirName().toString()
-		).toBe('/path/to/a')
+		expect(pFile.dirName().toString()).toBe('/path/to/a')
 	})
 
 	it('basename()', () => {
@@ -46,9 +42,7 @@ describe('UnifiedPath', () => {
 
 		const pFile = new UnifiedPath(filePath)
 
-		expect(
-			pFile.basename()
-		).toBe('file')
+		expect(pFile.basename()).toBe('file')
 	})
 
 	it('fileName()', () => {
@@ -56,9 +50,7 @@ describe('UnifiedPath', () => {
 
 		const pFile = new UnifiedPath(filePath)
 
-		expect(
-			pFile.filename()
-		).toBe('file.test')
+		expect(pFile.filename()).toBe('file.test')
 	})
 
 	it('extname()', () => {
@@ -66,9 +58,7 @@ describe('UnifiedPath', () => {
 
 		const pFile = new UnifiedPath(filePath)
 
-		expect(
-			pFile.extname()
-		).toBe('.txt')
+		expect(pFile.extname()).toBe('.txt')
 	})
 
 	it('pathTo()', () => {
@@ -143,12 +133,7 @@ describe('UnifiedPath', () => {
 			new UnifiedPath('file')
 		)
 
-		const pMixed = new UnifiedPath('/').join(
-			new UnifiedPath('path'),
-			'to',
-			'some',
-			new UnifiedPath('file')
-		)
+		const pMixed = new UnifiedPath('/').join(new UnifiedPath('path'), 'to', 'some', new UnifiedPath('file'))
 
 		const emptyJoinString = new UnifiedPath('/').join()
 
@@ -179,30 +164,50 @@ describe('UnifiedPath', () => {
 	})
 
 	test('isRelative', () => {
-		const filePathWin = new UnifiedPath('C:\\Users\\user-name\\Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js')
-		const filePathRelativeWin = new UnifiedPath('Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js')
-		const filePathRelativeWinPrefix = new UnifiedPath('.\\Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js')
+		const filePathWin = new UnifiedPath(
+			'C:\\Users\\user-name\\Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js'
+		)
+		const filePathRelativeWin = new UnifiedPath(
+			'Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js'
+		)
+		const filePathRelativeWinPrefix = new UnifiedPath(
+			'.\\Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js'
+		)
 
 		expect(filePathRelativeWinPrefix.isRelative()).toBe(true)
 		expect(filePathRelativeWin.isRelative()).toBe(true)
 		expect(filePathWin.isRelative()).toBe(false)
 
-		const filePathLinux = new UnifiedPath('/Users/user-name/Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js')
+		const filePathLinux = new UnifiedPath(
+			'/Users/user-name/Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
+		)
 		const filePathRelativeLinux = new UnifiedPath('Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js')
-		const filePathRelativeLinuxPrefix = new UnifiedPath('./Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js')
-		
+		const filePathRelativeLinuxPrefix = new UnifiedPath(
+			'./Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
+		)
+
 		expect(filePathRelativeLinuxPrefix.isRelative()).toBe(true)
 		expect(filePathRelativeLinux.isRelative()).toBe(true)
 		expect(filePathLinux.isRelative()).toBe(false)
 	})
 
 	test('isAbsoluteWindowsPath', () => {
-		const filePathWin = new UnifiedPath('C:\\Users\\user-name\\Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js')
-		const filePathRelativeWin = new UnifiedPath('Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js')
-		const filePathRelativeWinPrefix = new UnifiedPath('.\\Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js')
-		const filePathLinux = new UnifiedPath('/Users/user-name/Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js')
+		const filePathWin = new UnifiedPath(
+			'C:\\Users\\user-name\\Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js'
+		)
+		const filePathRelativeWin = new UnifiedPath(
+			'Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js'
+		)
+		const filePathRelativeWinPrefix = new UnifiedPath(
+			'.\\Desktop\\GreenIT\\profiler\\packages\\profiler\\dist\\src\\Profiler.js'
+		)
+		const filePathLinux = new UnifiedPath(
+			'/Users/user-name/Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
+		)
 		const filePathRelativeLinux = new UnifiedPath('Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js')
-		const filePathRelativeLinuxPrefix = new UnifiedPath('./Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js')
+		const filePathRelativeLinuxPrefix = new UnifiedPath(
+			'./Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
+		)
 
 		expect(filePathRelativeWinPrefix.isAbsoluteWindowsPath()).toBe(false)
 		expect(filePathRelativeWin.isAbsoluteWindowsPath()).toBe(false)

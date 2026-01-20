@@ -9,10 +9,7 @@ import { UnifiedPath } from '../system/UnifiedPath'
 import { GitHelper } from '../helper/GitHelper'
 import { TimeHelper } from '../helper/TimeHelper'
 // Types
-import {
-	IProjectReportExecutionDetailsDuringMeasurement,
-	ProjectReportOrigin
-} from '../types'
+import { IProjectReportExecutionDetailsDuringMeasurement, ProjectReportOrigin } from '../types'
 
 export class ExecutionDetails {
 	static async resolveExecutionDetails(
@@ -25,10 +22,14 @@ export class ExecutionDetails {
 		if (timestamp === undefined) {
 			throw new Error(
 				'ProjectReport.resolveExecutionDetails: Could not resolve execution details.' +
-				JSON.stringify({
-					commitHash: commitHash,
-					timestamp: timestamp
-				}, undefined, 2)
+					JSON.stringify(
+						{
+							commitHash: commitHash,
+							timestamp: timestamp
+						},
+						undefined,
+						2
+					)
 			)
 		}
 		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
@@ -50,7 +51,7 @@ export class ExecutionDetails {
 		}
 	}
 
-	static loadFromFile(filePath: UnifiedPath): IProjectReportExecutionDetailsDuringMeasurement | undefined{
+	static loadFromFile(filePath: UnifiedPath): IProjectReportExecutionDetailsDuringMeasurement | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
@@ -58,13 +59,7 @@ export class ExecutionDetails {
 		return JSON.parse(json)
 	}
 
-	static storeToFile(
-		executionDetails: IProjectReportExecutionDetailsDuringMeasurement,
-		filePath: UnifiedPath
-	): void {
-		PermissionHelper.writeFileWithUserPermission(
-			filePath,
-			JSON.stringify(executionDetails)
-		)
+	static storeToFile(executionDetails: IProjectReportExecutionDetailsDuringMeasurement, filePath: UnifiedPath): void {
+		PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(executionDetails))
 	}
 }

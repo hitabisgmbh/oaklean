@@ -3,10 +3,7 @@ import * as fs from 'fs'
 import { CPUModel } from '../../../src/helper/CPUProfile/CPUModel'
 import { CPUNode } from '../../../src/helper/CPUProfile/CPUNode'
 import { UnifiedPath } from '../../../src/system/UnifiedPath'
-import {
-	NanoSeconds_BigInt,
-	MilliJoule_number
-} from '../../../src/types'
+import { NanoSeconds_BigInt, MilliJoule_number } from '../../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 const ROOT_DIR = CURRENT_DIR.join('..', '..', '..', '..', '..')
@@ -16,25 +13,24 @@ describe('CPUNode', () => {
 	let instance: CPUNode
 
 	beforeEach(() => {
-		const cpuProfileFilePath = CURRENT_DIR.join('..', '..', 'model', 'assets', 'CPUProfiles', 'example001.cpunode.cpuprofile').toString()
+		const cpuProfileFilePath = CURRENT_DIR.join(
+			'..',
+			'..',
+			'model',
+			'assets',
+			'CPUProfiles',
+			'example001.cpunode.cpuprofile'
+		).toString()
 		const cpuProfile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
 
-		cpuModel = new CPUModel(
-			ROOT_DIR,
-			cpuProfile,
-			BigInt('2345442642551333') as NanoSeconds_BigInt
-		)
+		cpuModel = new CPUModel(ROOT_DIR, cpuProfile, BigInt('2345442642551333') as NanoSeconds_BigInt)
 		const energyValues: [MilliJoule_number, MilliJoule_number][] = []
 		for (let i = 0; i < cpuModel.INodes.length; i++) {
-			energyValues.push([i as MilliJoule_number, i+1 as MilliJoule_number])
+			energyValues.push([i as MilliJoule_number, (i + 1) as MilliJoule_number])
 		}
 		cpuModel.energyValuesPerNode = energyValues
 
-		instance = new CPUNode(
-			7,
-			cpuModel,
-			cpuModel.INodes[7]
-		)
+		instance = new CPUNode(7, cpuModel, cpuModel.INodes[7])
 	})
 
 	it('instance should be an instanceof CPUNode', () => {
@@ -53,9 +49,7 @@ describe('CPUNode', () => {
 	})
 
 	test('sourceLocation', () => {
-		expect(instance.sourceLocation).toBe(
-			cpuModel.CPUProfileSourceLocations[4]
-		)
+		expect(instance.sourceLocation).toBe(cpuModel.CPUProfileSourceLocations[4])
 	})
 
 	test('selfCPUEnergyConsumption', () => {

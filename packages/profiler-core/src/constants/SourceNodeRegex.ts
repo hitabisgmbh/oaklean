@@ -1,30 +1,23 @@
 export const SourceNodeNameRegexString = '[^@:(){}]*'
-export const SourceNodeNameExpressionRegexString =
-	`(?:${SourceNodeNameRegexString}|\\((?:literal|expression):${SourceNodeNameRegexString}\\)|\\(anonymous:[0-9]+\\))`
+export const SourceNodeNameExpressionRegexString = `(?:${SourceNodeNameRegexString}|\\((?:literal|expression):${SourceNodeNameRegexString}\\)|\\(anonymous:[0-9]+\\))`
 
 export const RootRegexString = '{(root)}'
 export const ConstructorDeclarationRegexString = '{constructor:(constructor)}'
 export const ClassDeclarationRegexString = `{class:(${SourceNodeNameRegexString})}`
-export const MethodDefinitionRegexString =
-	`{method(?:@static)?(?:@get|@set)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
-export const GetAccessorDeclarationRegexString =
-	`{get(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
-export const SetAccessorDeclarationRegexString =
-	`{set(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const MethodDefinitionRegexString = `{method(?:@static)?(?:@get|@set)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const GetAccessorDeclarationRegexString = `{get(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const SetAccessorDeclarationRegexString = `{set(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const FunctionDeclarationRegexString = `{function:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
-export const FunctionExpressionRegexString =
-	`{functionExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
-export const ClassExpressionRegexString =
-	`{classExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const FunctionExpressionRegexString = `{functionExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
+export const ClassExpressionRegexString = `{classExpression(?:@static)?:(${SourceNodeNameExpressionRegexString}(?::[0-9]+)?)}`
 export const ClassStaticBlockDeclarationRegexString = '{(static:[0-9]+)}'
 
 // Scopes
 export const ExpressionHashRegexString = '[A-Za-z0-9]+'
 
-export const ObjectLiteralExpressionRegexString =
-	`{scope:\\(obj(?:@static)?:(${SourceNodeNameExpressionRegexString})\\)}`
+export const ObjectLiteralExpressionRegexString = `{scope:\\(obj(?:@static)?:(${SourceNodeNameExpressionRegexString})\\)}`
 export const ModuleDeclarationRegexString =
-// eslint-disable-next-line max-len
+	// eslint-disable-next-line max-len
 	`{scope:\\(namespace:(${SourceNodeNameExpressionRegexString}(?:.${SourceNodeNameExpressionRegexString})*):[0-9]+\\)}`
 export const IfStatementRegexString = '{scope:(\\(if:[0-9]+\\))}'
 export const IfThenStatementRegexString = '{scope:(\\(then\\))}'
@@ -47,8 +40,8 @@ export const LangInternalSourceNodeNameRegexString = '[^{}]+'
 export const LangInternalSourceNodeIdentifierRegexString =
 	'(?:' +
 	`{(?:${LangInternalSourceNodeNameRegexString})}` +
-	`(?:\\.{|${LangInternalSourceNodeNameRegexString}})*`
-	+ `|${LangInternalSourceNodeRegExpRegexString})`
+	`(?:\\.{|${LangInternalSourceNodeNameRegexString}})*` +
+	`|${LangInternalSourceNodeRegExpRegexString})`
 
 export const SourceNodeIdentifierPathRegexString = '[^{}]+'
 

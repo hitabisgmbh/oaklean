@@ -4,24 +4,19 @@ import { ProgramStructureTree } from '../../../src/model/ProgramStructureTree'
 import { DuplicateIdentifierHelper } from '../../../src/helper/TypescriptParser'
 import { HANDLE_DUPLICATE_IDENTIFIERS } from '../../../src/helper/TypescriptParser/TypescriptParser'
 // Types
-import {
-	IdentifierType,
-	ProgramStructureTreeType,
-	SourceNodeIdentifierPart_string
-} from '../../../src/types'
+import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../src/types'
 
 const identifiers: Record<
-keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
-{
-	input: SourceNodeIdentifierPart_string
-	duplicateFormat: SourceNodeIdentifierPart_string
-}[]
+	keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
+	{
+		input: SourceNodeIdentifierPart_string
+		duplicateFormat: SourceNodeIdentifierPart_string
+	}[]
 > = {
 	[ProgramStructureTreeType.FunctionDeclaration]: [
 		{
 			input: '{function:f}' as SourceNodeIdentifierPart_string,
-			duplicateFormat:
-				'{function:f:{counter}}' as SourceNodeIdentifierPart_string
+			duplicateFormat: '{function:f:{counter}}' as SourceNodeIdentifierPart_string
 		}
 	],
 	[ProgramStructureTreeType.MethodDefinition]: [
@@ -62,7 +57,7 @@ keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
 		{
 			input: '{functionExpression@static:fe}' as SourceNodeIdentifierPart_string,
 			duplicateFormat: '{functionExpression@static:fe:{counter}}' as SourceNodeIdentifierPart_string
-		},
+		}
 	],
 	[ProgramStructureTreeType.ClassExpression]: [
 		{
@@ -72,7 +67,7 @@ keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
 		{
 			input: '{classExpression@static:ce}' as SourceNodeIdentifierPart_string,
 			duplicateFormat: '{classExpression@static:ce:{counter}}' as SourceNodeIdentifierPart_string
-		},
+		}
 	],
 	[ProgramStructureTreeType.ObjectLiteralExpression]: [
 		{
@@ -82,7 +77,7 @@ keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
 		{
 			input: '{scope:(obj@static:(expression:34832631))}' as SourceNodeIdentifierPart_string,
 			duplicateFormat: '{scope:(obj@static:(expression:34832631):{counter})}' as SourceNodeIdentifierPart_string
-		},
+		}
 	],
 	[ProgramStructureTreeType.SwitchCaseClause]: [
 		{
@@ -92,14 +87,13 @@ keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
 		{
 			input: '{scope:(case:34832631)}' as SourceNodeIdentifierPart_string,
 			duplicateFormat: '{scope:(case:34832631:{counter})}' as SourceNodeIdentifierPart_string
-		},
+		}
 	]
 }
 
 describe('handle duplicate identifier', () => {
 	for (const pstType of Object.keys(HANDLE_DUPLICATE_IDENTIFIERS)) {
-		const testExamples =
-			identifiers[pstType as keyof typeof HANDLE_DUPLICATE_IDENTIFIERS]
+		const testExamples = identifiers[pstType as keyof typeof HANDLE_DUPLICATE_IDENTIFIERS]
 		expect(testExamples).toBeDefined()
 
 		describe(pstType, () => {
@@ -140,19 +134,13 @@ describe('handle duplicate identifier', () => {
 									column: 1
 								}
 							)
-							DuplicateIdentifierHelper.handleDuplicateIdentifier(
-								duplicateChild,
-								{
-									parent: {
-										kind: ts.SyntaxKind.SourceFile
-									}
-								} as unknown as ts.Node
-							)
+							DuplicateIdentifierHelper.handleDuplicateIdentifier(duplicateChild, {
+								parent: {
+									kind: ts.SyntaxKind.SourceFile
+								}
+							} as unknown as ts.Node)
 							expect(duplicateChild.identifier).toBe(
-								duplicateFormat.replace(
-									'{counter}',
-									`${i + 1}`
-								) as SourceNodeIdentifierPart_string
+								duplicateFormat.replace('{counter}', `${i + 1}`) as SourceNodeIdentifierPart_string
 							)
 							root.addChildren(duplicateChild)
 						}

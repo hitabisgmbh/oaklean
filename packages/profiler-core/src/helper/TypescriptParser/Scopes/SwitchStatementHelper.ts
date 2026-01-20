@@ -4,11 +4,7 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import {
-	IdentifierType,
-	ProgramStructureTreeType,
-	SourceNodeIdentifierPart_string
-} from '../../../types'
+import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
 import { ExpressionHelper } from '../ExpressionHelper'
 
 export class SwitchStatementHelper {
@@ -21,7 +17,7 @@ export class SwitchStatementHelper {
 	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.SwitchStatement> } {
 		return {
 			resolve() {
-				const statementName =`(switch:${traverseNodeInfo.counters.switchCounter++})`
+				const statementName = `(switch:${traverseNodeInfo.counters.switchCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
 					traverseNodeInfo.nextId(),
@@ -29,7 +25,7 @@ export class SwitchStatementHelper {
 					IdentifierType.Statement,
 					`{scope:${statementName}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-					TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
+					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 				)
 			}
 		}
@@ -62,10 +58,7 @@ export class SwitchStatementHelper {
 			return {
 				resolve() {
 					const tree = traverseNodeInfo.resolvedTree()
-					const expressionHash = ExpressionHelper.hashExpression(
-						(node as ts.CaseClause).expression,
-						sourceFile
-					)
+					const expressionHash = ExpressionHelper.hashExpression((node as ts.CaseClause).expression, sourceFile)
 					return new ProgramStructureTree(
 						tree,
 						traverseNodeInfo.nextId(),

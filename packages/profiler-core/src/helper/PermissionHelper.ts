@@ -3,23 +3,16 @@ import * as fs from 'fs'
 import path from 'path'
 import os from 'os'
 
-import {
-	UnifiedPath
-} from '../system/UnifiedPath'
-import {
-	SUDO_USER,
-	SYSTEM_DRIVE
-} from '../constants/env'
+import { UnifiedPath } from '../system/UnifiedPath'
+import { SUDO_USER, SYSTEM_DRIVE } from '../constants/env'
 // Types
-import {
-	PermissionTypes
-} from '../types'
+import { PermissionTypes } from '../types'
 
 /**
-	 * Get a flat list of all directories that were created recursively
-	 * @param {string} targetDir - Directory path to create recursively
-	 * @returns {string[]} - List of directories
-	 */
+ * Get a flat list of all directories that were created recursively
+ * @param {string} targetDir - Directory path to create recursively
+ * @returns {string[]} - List of directories
+ */
 function createDirectoriesRecursively(targetDir: string) {
 	const createdDirectories = []
 	const segments = targetDir.split(path.sep)
@@ -29,7 +22,7 @@ function createDirectoriesRecursively(targetDir: string) {
 	let windowsPrefix = ''
 	if (isAbsoluteWindowsPath) {
 		const matches = /^[A-Za-z]:/.exec(targetDir)
-		windowsPrefix = (matches && matches?.length > 0 ? matches[0] : '')
+		windowsPrefix = matches && matches?.length > 0 ? matches[0] : ''
 		if (windowsPrefix !== '' && segments.length > 0) {
 			segments.shift()
 		}
@@ -54,8 +47,7 @@ export class PermissionHelper {
 	static changeFileOwnershipBackToUser(path: string) {
 		if (SUDO_USER) {
 			// change ownership from file back to the user who executed the code with sudo
-			const options: ExecSyncOptions = {
-			}
+			const options: ExecSyncOptions = {}
 			if (process.platform === 'win32') {
 				options.shell = 'powershell.exe'
 			}
@@ -71,8 +63,7 @@ export class PermissionHelper {
 		if (process.platform === 'win32') {
 			return
 		}
-		const options: ExecSyncOptions = {
-		}
+		const options: ExecSyncOptions = {}
 		// if (process.platform === 'win32') {
 		// 	options.shell = 'powershell.exe'
 		// }
@@ -121,7 +112,7 @@ export class PermissionHelper {
 	}
 
 	static checkWindowsAdminRights(): Promise<boolean> {
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			const platform = os.platform()
 			if (platform !== 'win32') {
 				resolve(false)
@@ -136,5 +127,4 @@ export class PermissionHelper {
 			})
 		})
 	}
-
 }

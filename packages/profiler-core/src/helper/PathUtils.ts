@@ -23,8 +23,9 @@ export class PathUtils {
 	}
 
 	static isAbsolute(pathString: string) {
-		return path.isAbsolute(pathString) ||
-			/^(?:[a-zA-Z]:)?\\?\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*$/.test(pathString)
+		return (
+			path.isAbsolute(pathString) || /^(?:[a-zA-Z]:)?\\?\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*$/.test(pathString)
+		)
 	}
 
 	static unifyPath(pathString: string) {
@@ -48,10 +49,7 @@ export class PathUtils {
 		return pathString
 	}
 
-	static findUp(
-		filename: string,
-		startDir: string
-	): string | undefined {
+	static findUp(filename: string, startDir: string): string | undefined {
 		const { root } = path.parse(startDir)
 
 		let tmpDir = startDir
@@ -60,7 +58,8 @@ export class PathUtils {
 			let list: string[]
 			try {
 				list = fs.readdirSync(tmpDir)
-			} catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
+			} catch (e) {
+				// eslint-disable-line @typescript-eslint/no-unused-vars
 				break
 			}
 			if (list.includes(filename) && fs.statSync(path.join(tmpDir, filename)).isFile()) {
@@ -73,4 +72,3 @@ export class PathUtils {
 		return undefined
 	}
 }
-

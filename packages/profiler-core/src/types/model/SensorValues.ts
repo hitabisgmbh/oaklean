@@ -1,24 +1,19 @@
-
-import {
-	MilliJoule_number
-} from '../interfaces/BaseMetricsData'
-import {
-	PrimitiveBufferTypes
-} from '../helper/BufferHelper'
+import { MilliJoule_number } from '../interfaces/BaseMetricsData'
+import { PrimitiveBufferTypes } from '../helper/BufferHelper'
 import { MicroSeconds_number } from '../helper'
 
 export interface IPureCPUEnergyConsumption {
-	selfCPUEnergyConsumption?: MilliJoule_number,
+	selfCPUEnergyConsumption?: MilliJoule_number
 	aggregatedCPUEnergyConsumption?: MilliJoule_number
 }
 
 export interface IPureRAMEnergyConsumption {
-	selfRAMEnergyConsumption?: MilliJoule_number,
+	selfRAMEnergyConsumption?: MilliJoule_number
 	aggregatedRAMEnergyConsumption?: MilliJoule_number
 }
 
 export interface IPureCPUTime {
-	selfCPUTime?: MicroSeconds_number,
+	selfCPUTime?: MicroSeconds_number
 	aggregatedCPUTime?: MicroSeconds_number
 }
 
@@ -40,4 +35,4 @@ export interface ISensorValues extends IPureCPUTime, IPureCPUEnergyConsumption, 
 
 export type SensorValueToDataTypeMap = {
 	[key in keyof ISensorValues]: PrimitiveBufferTypes
-};
+}

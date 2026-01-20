@@ -1,8 +1,6 @@
 import { LoggerHelper } from '@oaklean/profiler-core'
 
-import {
-	InstallHelper
-} from './helper/InstallHelper'
+import { InstallHelper } from './helper/InstallHelper'
 
 if (process.platform === 'win32') {
 	InstallHelper.installPlatformSpecificPackage(process.platform)

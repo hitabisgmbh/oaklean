@@ -3,19 +3,12 @@ import fs from 'fs'
 
 import { PermissionHelper } from './PermissionHelper'
 
-import {
-	OAKLEAN_AUTH_KEY
-} from '../constants/env'
-import {
-	STATIC_GLOBAL_CONFIG_DIR
-} from '../constants/config'
+import { OAKLEAN_AUTH_KEY } from '../constants/env'
+import { STATIC_GLOBAL_CONFIG_DIR } from '../constants/config'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 // Types
-import {
-	UUID_string,
-	PermissionTypes
-} from '../types'
+import { UUID_string, PermissionTypes } from '../types'
 
 export class AuthenticationHelper {
 	static async getAuthentication(): Promise<UUID_string> {

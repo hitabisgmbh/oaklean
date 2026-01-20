@@ -11,7 +11,6 @@ import {
 	SourceNodeIdentifierPart_string
 } from '../../../src/types'
 
-
 const EXPECTED_INDEX: ISourceNodeIndex<SourceNodeIndexType.SourceNode> = {
 	children: undefined,
 	id: 2 as SourceNodeID_number
@@ -57,13 +56,18 @@ function runInstanceTests(title: string, preDefinedInstance: () => SourceNodeInd
 describe('SourceNodeIndex', () => {
 	runInstanceTests('instance related', () => {
 		const globalIndex = new GlobalIndex(new NodeModule('node', '20.11.1'))
-		return globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{node:path}{isAbsolute}' as GlobalSourceNodeIdentifier_string))
+		return globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier('{node:path}{isAbsolute}' as GlobalSourceNodeIdentifier_string)
+		)
 	})
 
 	describe('deserialization', () => {
 		runInstanceTests('deserialized instance related', () => {
 			const globalIndex = new GlobalIndex(new NodeModule('node', '20.11.1'))
-			const pathIndex = globalIndex.getLangInternalIndex('upsert').getFilePathIndex('upsert', 'node:path' as LangInternalPath_string)
+			const pathIndex = globalIndex
+				.getLangInternalIndex('upsert')
+				.getFilePathIndex('upsert', 'node:path' as LangInternalPath_string)
 			return SourceNodeIndex.fromJSON(
 				EXPECTED_INDEX,
 				['{isAbsolute}'] as SourceNodeIdentifierPart_string[],

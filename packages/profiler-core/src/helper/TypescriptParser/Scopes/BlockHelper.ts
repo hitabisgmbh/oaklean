@@ -4,11 +4,7 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import {
-	IdentifierType,
-	ProgramStructureTreeType,
-	SourceNodeIdentifierPart_string
-} from '../../../types'
+import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
 
 export class BlockHelper {
 	static syntaxKind = ts.SyntaxKind.Block

@@ -4,9 +4,7 @@ import si from 'systeminformation'
 
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { SystemInformation } from '../../src/model/SystemInformation'
-import {
-	ISystemInformation
-} from '../../src/types'
+import { ISystemInformation } from '../../src/types'
 import { LoggerHelper } from '../../src'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
@@ -129,7 +127,6 @@ describe('SystemInformation', () => {
 			serial: ''
 		})
 
-
 		jest.spyOn(si, 'osInfo').mockResolvedValue({
 			platform: 'darwin',
 			distro: 'macOS',
@@ -187,9 +184,7 @@ describe('SystemInformation', () => {
 		})
 
 		test('equal total', () => {
-			expect(
-				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, EXAMPLE_SYSTEM_INFORMATION)
-			).toBe(true)
+			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, EXAMPLE_SYSTEM_INFORMATION)).toBe(true)
 
 			expect(consoleError).toHaveBeenCalledTimes(0)
 		})
@@ -197,9 +192,7 @@ describe('SystemInformation', () => {
 			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
 			DIFF.system.manufacturer = 'abc'
 
-			expect(
-				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
-			).toBe(false)
+			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
 
 			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different systems')
 		})
@@ -208,9 +201,7 @@ describe('SystemInformation', () => {
 			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
 			DIFF.baseBoard.manufacturer = 'abc'
 
-			expect(
-				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
-			).toBe(false)
+			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
 
 			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different baseboards')
 		})
@@ -219,9 +210,7 @@ describe('SystemInformation', () => {
 			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
 			DIFF.chassis.manufacturer = 'abc'
 
-			expect(
-				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
-			).toBe(false)
+			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
 
 			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different chassis')
 		})
@@ -230,9 +219,7 @@ describe('SystemInformation', () => {
 			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
 			DIFF.cpu.manufacturer = 'abc'
 
-			expect(
-				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
-			).toBe(false)
+			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
 
 			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different cpus')
 		})
@@ -241,9 +228,7 @@ describe('SystemInformation', () => {
 			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
 			DIFF.memory.total -= 1
 
-			expect(
-				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
-			).toBe(false)
+			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
 
 			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different memory')
 		})
@@ -252,9 +237,7 @@ describe('SystemInformation', () => {
 			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
 			DIFF.memoryLayout.push(DIFF.memoryLayout[0])
 
-			expect(
-				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
-			).toBe(false)
+			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
 
 			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different memoryLayout')
 		})
@@ -263,9 +246,7 @@ describe('SystemInformation', () => {
 			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
 			DIFF.battery.manufacturer = 'abc'
 
-			expect(
-				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
-			).toBe(false)
+			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
 
 			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different battery')
 		})
@@ -274,9 +255,7 @@ describe('SystemInformation', () => {
 			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
 			DIFF.os.platform = 'abc'
 
-			expect(
-				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
-			).toBe(false)
+			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
 
 			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different os')
 		})

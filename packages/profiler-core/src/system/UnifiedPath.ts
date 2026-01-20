@@ -2,10 +2,7 @@ import * as path from 'path'
 
 import { PathUtils } from '../helper/PathUtils'
 // Types
-import {
-	UnifiedPath_string,
-	UnifiedPathPart_string
-} from '../types'
+import { UnifiedPath_string, UnifiedPathPart_string } from '../types'
 
 export class UnifiedPath {
 	private readonly _unifiedPath: string
@@ -25,8 +22,8 @@ export class UnifiedPath {
 
 	/**
 	 * String representation of a UnifiedPath
-	 * 
-	 * @returns 
+	 *
+	 * @returns
 	 */
 	toString(): UnifiedPath_string {
 		return this._unifiedPath as UnifiedPath_string
@@ -34,8 +31,8 @@ export class UnifiedPath {
 
 	/**
 	 * Returns UnifiedPath as a string for the current platform
-	 * 
-	 * @returns 
+	 *
+	 * @returns
 	 */
 	toPlatformString(): string {
 		return this._unifiedPath.split('/').join(path.sep)
@@ -43,8 +40,8 @@ export class UnifiedPath {
 
 	/**
 	 * JSON representation of a UnifiedPath
-	 * 
-	 * @returns 
+	 *
+	 * @returns
 	 */
 	toJSON(): UnifiedPath_string {
 		return this.toString()
@@ -52,8 +49,8 @@ export class UnifiedPath {
 
 	/**
 	 * Returns the directory name of a path
-	 * 
-	 * @returns 
+	 *
+	 * @returns
 	 */
 	dirName(): UnifiedPath {
 		return new UnifiedPath(path.dirname(this.toString()))
@@ -61,7 +58,7 @@ export class UnifiedPath {
 
 	/**
 	 * Returns the basename name of a path
-	 * 
+	 *
 	 * @returns The basename of the path (path/to/index.coffee.md -> index.coffee.md)
 	 */
 	basename(): string {
@@ -70,7 +67,7 @@ export class UnifiedPath {
 
 	/**
 	 * Returns the file name of a path (without extension)
-	 * 
+	 *
 	 * @returns The extension of the path (path/to/index.coffee.md -> index.coffee)
 	 */
 	filename(): string {
@@ -79,7 +76,7 @@ export class UnifiedPath {
 
 	/**
 	 * Returns the extension of a path
-	 * 
+	 *
 	 * @returns The extension of the path (path/to/index.coffee.md -> .md)
 	 */
 	extname(): string {
@@ -96,9 +93,9 @@ export class UnifiedPath {
 
 	/**
 	 * Gives the relative UnifiedPath that points from this to the other path
-	 * 
-	 * @param other 
-	 * @returns 
+	 *
+	 * @param other
+	 * @returns
 	 */
 	pathTo(other: UnifiedPath | string): UnifiedPath {
 		if (typeof other === 'string') {
@@ -106,11 +103,11 @@ export class UnifiedPath {
 		}
 		return new UnifiedPath(PathUtils.getPathRelativeTo(this.toString(), other.toString()))
 	}
-	
+
 	/**
 	 * Splits the path into an array of it's components
-	 * 
-	 * @returns 
+	 *
+	 * @returns
 	 */
 	split(): UnifiedPathPart_string[] {
 		if (!this._parts) {
@@ -144,20 +141,20 @@ export class UnifiedPath {
 	/**
 	 * Returns the unified path from the root of the path to the first occurrence of the given directory
 	 * and the remainder
-	 * 
+	 *
 	 * /path/to/node_modules/node_module_name/file -> /path/to/node_modules
-	 * 
+	 *
 	 * @param dirName
-	 * @returns 
+	 * @returns
 	 */
-	pathUntilSubDir(dirName: UnifiedPathPart_string): { match: UnifiedPath, remainder: UnifiedPath } | undefined {
+	pathUntilSubDir(dirName: UnifiedPathPart_string): { match: UnifiedPath; remainder: UnifiedPath } | undefined {
 		const pathParts = this.split()
 		const firstMatch = pathParts.indexOf(dirName)
 
 		if (firstMatch !== -1) {
 			return {
-				match: new UnifiedPath(path.posix.join(...pathParts.slice(0, firstMatch+1))),
-				remainder: new UnifiedPath(path.posix.join(...pathParts.slice(firstMatch+1))),
+				match: new UnifiedPath(path.posix.join(...pathParts.slice(0, firstMatch + 1))),
+				remainder: new UnifiedPath(path.posix.join(...pathParts.slice(firstMatch + 1)))
 			}
 		}
 		return undefined

@@ -1,8 +1,8 @@
 import * as fs from 'fs'
 
-import { UnifiedPath } from '../../../src/system/UnifiedPath' 
+import { UnifiedPath } from '../../../src/system/UnifiedPath'
 import { GlobalIndex } from '../../../src/model/indices/GlobalIndex'
-import { GlobalIdentifier} from '../../../src/system/GlobalIdentifier'
+import { GlobalIdentifier } from '../../../src/system/GlobalIdentifier'
 import { NodeModule } from '../../../src/model/NodeModule'
 import {
 	UnifiedPath_string,
@@ -16,41 +16,25 @@ import {
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
-const EXPECTED_INDEX = JSON.parse(
-	fs.readFileSync(
-		CURRENT_DIR.join(
-			'assets',
-			'index.json'
-		).toString()
-	).toString()
-)
+const EXPECTED_INDEX = JSON.parse(fs.readFileSync(CURRENT_DIR.join('assets', 'index.json').toString()).toString())
 
 const EXPECTED_INDEX_MAP = JSON.parse(
-	fs.readFileSync(
-		CURRENT_DIR.join(
-			'assets',
-			'indexMap.json'
-		).toString()
-	).toString()
+	fs.readFileSync(CURRENT_DIR.join('assets', 'indexMap.json').toString()).toString()
 )
 
-
 const TEST_IDENTIFIERS: GlobalIdentifier[] = JSON.parse(
-	fs.readFileSync(
-		CURRENT_DIR.join(
-			'assets',
-			'identifiers.json'
-		).toString()
-	).toString()
+	fs.readFileSync(CURRENT_DIR.join('assets', 'identifiers.json').toString()).toString()
 ).map((identifier: GlobalSourceNodeIdentifier_string) => GlobalIdentifier.fromIdentifier(identifier))
 
-const TEST_UNIQUE_MODULE_IDENTIFIERS = [...new Set(TEST_IDENTIFIERS.map(
-	(identifier: GlobalIdentifier) => {
-		if (identifier.nodeModule) {
-			return identifier.nodeModule.identifier
-		}
-	}
-))].filter((identifier) => identifier !== undefined)
+const TEST_UNIQUE_MODULE_IDENTIFIERS = [
+	...new Set(
+		TEST_IDENTIFIERS.map((identifier: GlobalIdentifier) => {
+			if (identifier.nodeModule) {
+				return identifier.nodeModule.identifier
+			}
+		})
+	)
+].filter((identifier) => identifier !== undefined)
 
 function runInstanceTests(title: string, preDefinedInstance: GlobalIndex) {
 	describe(title, () => {
@@ -104,9 +88,7 @@ function runInstanceTests(title: string, preDefinedInstance: GlobalIndex) {
 
 		it('should stay the same after multiple equal inserts', () => {
 			const backup = JSON.stringify(instance, null, 2)
-			TEST_IDENTIFIERS.map(
-				(identifier: GlobalIdentifier) => instance.getSourceNodeIndex('upsert', identifier)
-			)
+			TEST_IDENTIFIERS.map((identifier: GlobalIdentifier) => instance.getSourceNodeIndex('upsert', identifier))
 
 			expect(JSON.stringify(instance, null, 2)).toBe(backup)
 		})
@@ -145,9 +127,7 @@ function runInstanceTests(title: string, preDefinedInstance: GlobalIndex) {
 
 describe('GlobalIndex', () => {
 	const instance = new GlobalIndex(NodeModule.currentEngineModule())
-	TEST_IDENTIFIERS.map(
-		(identifier: GlobalIdentifier) => instance.getSourceNodeIndex('upsert', identifier)
-	)
+	TEST_IDENTIFIERS.map((identifier: GlobalIdentifier) => instance.getSourceNodeIndex('upsert', identifier))
 	runInstanceTests('instance related', instance)
 
 	describe('get and upsert', () => {
@@ -207,37 +187,28 @@ describe('GlobalIndex', () => {
 
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
-			const instanceFromString = GlobalIndex.fromJSON(
-				JSON.stringify(EXPECTED_INDEX),
-				NodeModule.currentEngineModule()
-			)
+			const instanceFromString = GlobalIndex.fromJSON(JSON.stringify(EXPECTED_INDEX), NodeModule.currentEngineModule())
 			expect(instanceFromString.toJSON()).toEqual(EXPECTED_INDEX)
 
 			// check wether it stays the same after inserting the same entries
-			TEST_IDENTIFIERS.map(
-				(identifier: GlobalIdentifier) => instanceFromString.getSourceNodeIndex('upsert', identifier)
+			TEST_IDENTIFIERS.map((identifier: GlobalIdentifier) =>
+				instanceFromString.getSourceNodeIndex('upsert', identifier)
 			)
 			expect(instanceFromString.toJSON()).toEqual(EXPECTED_INDEX)
 		})
 
 		test('deserialization from object', () => {
-			const instanceFromObject = GlobalIndex.fromJSON(
-				EXPECTED_INDEX,
-				NodeModule.currentEngineModule()
-			)
+			const instanceFromObject = GlobalIndex.fromJSON(EXPECTED_INDEX, NodeModule.currentEngineModule())
 			expect(instanceFromObject.toJSON()).toEqual(EXPECTED_INDEX)
 
 			// check wether it stays the same after inserting the same entries
-			TEST_IDENTIFIERS.map(
-				(identifier: GlobalIdentifier) => instanceFromObject.getSourceNodeIndex('upsert', identifier)
+			TEST_IDENTIFIERS.map((identifier: GlobalIdentifier) =>
+				instanceFromObject.getSourceNodeIndex('upsert', identifier)
 			)
 			expect(instanceFromObject.toJSON()).toEqual(EXPECTED_INDEX)
 		})
 
-		const instance = GlobalIndex.fromJSON(
-			JSON.stringify(EXPECTED_INDEX),
-			NodeModule.currentEngineModule()
-		)
+		const instance = GlobalIndex.fromJSON(JSON.stringify(EXPECTED_INDEX), NodeModule.currentEngineModule())
 		runInstanceTests('deserialized instance related', instance)
 	})
 })

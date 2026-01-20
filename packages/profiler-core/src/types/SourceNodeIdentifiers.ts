@@ -6,7 +6,8 @@ export type LangInternalPath_string = string & { [LangInternalPathSymbol]: never
 
 const SourceNodeIdentifierSymbol: unique symbol = Symbol('SourceNodeIdentifierSymbol')
 export type SourceNodeIdentifier_string =
-	string & { [SourceNodeIdentifierSymbol]: never } | LangInternalSourceNodeIdentifier_string
+	| (string & { [SourceNodeIdentifierSymbol]: never })
+	| LangInternalSourceNodeIdentifier_string
 
 export const SourceNodeIdentifierPartSymbol: unique symbol = Symbol('SourceNodeIdentifierPartSymbol')
 export type SourceNodeIdentifierPart_string = string & { [SourceNodeIdentifierPartSymbol]: never }

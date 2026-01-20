@@ -3,7 +3,6 @@ import { UnifiedPath } from '../../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../../src/types'
 
-
 describe('with no executable children', () => {
 	const code = `
 		const obj = {}
@@ -126,7 +125,7 @@ describe('ts.SyntaxKind.ArrayBindingPattern', () => {
 					children: {
 						'{functionExpression:ArrayBindingPattern}': {
 							type: ProgramStructureTreeType.FunctionExpression
-						},
+						}
 					}
 				},
 				'{scope:(obj:(anonymous:1))}': {
@@ -134,9 +133,9 @@ describe('ts.SyntaxKind.ArrayBindingPattern', () => {
 					children: {
 						'{functionExpression:ArrayBindingPattern}': {
 							type: ProgramStructureTreeType.FunctionExpression
-						},
+						}
 					}
-				},
+				}
 			}
 		})
 	})
@@ -162,7 +161,7 @@ describe('ts.SyntaxKind.ObjectBindingPattern', () => {
 					children: {
 						'{functionExpression:ObjectBindingPattern}': {
 							type: ProgramStructureTreeType.FunctionExpression
-						},
+						}
 					}
 				},
 				'{scope:(obj:(anonymous:1))}': {
@@ -170,7 +169,7 @@ describe('ts.SyntaxKind.ObjectBindingPattern', () => {
 					children: {
 						'{functionExpression:ObjectBindingPattern}': {
 							type: ProgramStructureTreeType.FunctionExpression
-						},
+						}
 					}
 				},
 				'{scope:(obj:(anonymous:2))}': {
@@ -178,7 +177,7 @@ describe('ts.SyntaxKind.ObjectBindingPattern', () => {
 					children: {
 						'{functionExpression:ObjectBindingPattern}': {
 							type: ProgramStructureTreeType.FunctionExpression
-						},
+						}
 					}
 				}
 			}
@@ -552,7 +551,7 @@ describe('duplicates in code', () => {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{functionExpression:prop}': {
-							type:ProgramStructureTreeType.FunctionExpression
+							type: ProgramStructureTreeType.FunctionExpression
 						}
 					}
 				},
@@ -560,7 +559,7 @@ describe('duplicates in code', () => {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{functionExpression:prop}': {
-							type:ProgramStructureTreeType.FunctionExpression
+							type: ProgramStructureTreeType.FunctionExpression
 						}
 					}
 				},
@@ -568,10 +567,10 @@ describe('duplicates in code', () => {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
 						'{functionExpression:prop}': {
-							type:ProgramStructureTreeType.FunctionExpression
+							type: ProgramStructureTreeType.FunctionExpression
 						}
 					}
-				},	
+				},
 				'{scope:(obj:obj)}': {
 					type: ProgramStructureTreeType.ObjectLiteralExpression,
 					children: {
@@ -579,7 +578,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -587,7 +586,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						}
@@ -600,7 +599,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -608,7 +607,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -616,7 +615,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -624,7 +623,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -632,7 +631,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -640,7 +639,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -648,7 +647,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -656,7 +655,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -664,7 +663,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -672,7 +671,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -680,7 +679,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -688,7 +687,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -696,7 +695,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -704,7 +703,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -712,7 +711,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -720,7 +719,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -728,7 +727,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
 						},
@@ -736,10 +735,10 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ObjectLiteralExpression,
 							children: {
 								'{functionExpression:prop}': {
-									type:ProgramStructureTreeType.FunctionExpression
+									type: ProgramStructureTreeType.FunctionExpression
 								}
 							}
-						},
+						}
 					}
 				}
 			}

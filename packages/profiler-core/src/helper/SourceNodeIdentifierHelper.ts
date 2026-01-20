@@ -27,13 +27,8 @@ import {
 	ClassStaticBlockDeclarationRegex
 } from '../constants/SourceNodeRegex'
 // Types
-import {
-	ProgramStructureTreeType
-} from '../types/model/ProgramStructureTree'
-import {
-	SourceNodeIdentifier_string,
-	SourceNodeIdentifierPart_string
-} from '../types/SourceNodeIdentifiers'
+import { ProgramStructureTreeType } from '../types/model/ProgramStructureTree'
+import { SourceNodeIdentifier_string, SourceNodeIdentifierPart_string } from '../types/SourceNodeIdentifiers'
 
 const SourceNodeIdentifierPathRegex_match = new RegExp(`{${SourceNodeIdentifierPathRegexString}}`, 'g')
 
@@ -61,7 +56,7 @@ const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
 	[ProgramStructureTreeType.Block]: BlockStatementRegex,
 	[ProgramStructureTreeType.ClassStaticBlockDeclaration]: ClassStaticBlockDeclarationRegex,
 	[ProgramStructureTreeType.SwitchCaseClause]: SwitchCaseClauseRegex,
-	[ProgramStructureTreeType.ModuleDeclaration]: ModuleDeclarationRegex,
+	[ProgramStructureTreeType.ModuleDeclaration]: ModuleDeclarationRegex
 }
 
 export class SourceNodeIdentifierHelper {
@@ -84,16 +79,16 @@ export class SourceNodeIdentifierHelper {
 	/**
 	 * Validates if the given identifier part is a valid source node identifier part.
 	 * Important! Does not validate node internal source node identifiers.
-	 * 
+	 *
 	 * @returns wether the identifier part is valid or not
 	 */
 	static validateSourceNodeIdentifierPart(identifierPart: SourceNodeIdentifierPart_string) {
-		return (RootRegex.test(identifierPart) || SourceNodeIdentifierPartRegex.test(identifierPart))
+		return RootRegex.test(identifierPart) || SourceNodeIdentifierPartRegex.test(identifierPart)
 	}
 
 	static parseSourceNodeIdentifierPart(
 		identifierPart: SourceNodeIdentifierPart_string
-	): { type: ProgramStructureTreeType, name: string } | null {
+	): { type: ProgramStructureTreeType; name: string } | null {
 		for (const [type, regex] of Object.entries(REGEX_PER_PST_TYPE)) {
 			const match = identifierPart.match(regex)
 			if (match && match[1]) {

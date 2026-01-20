@@ -9,7 +9,7 @@ export enum PrimitiveBufferTypes {
 
 export type PrimitiveBufferTypes_ByteSize_Map = {
 	[key in PrimitiveBufferTypes]: number
-};
+}
 
 export type BufferValueMapTypeMap<T> = {
 	[key in keyof T]: PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double

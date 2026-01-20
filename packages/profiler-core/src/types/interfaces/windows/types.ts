@@ -1,6 +1,4 @@
-import {
-	z as zod
-} from 'zod'
+import { z as zod } from 'zod'
 
 import { MicroSeconds_number } from '../../helper/TimeHelper'
 

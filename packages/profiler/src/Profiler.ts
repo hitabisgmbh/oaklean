@@ -36,19 +36,13 @@ export class Profiler {
 	private _externalResourceHelper: ExternalResourceHelper
 	private _sensorInterface: BaseSensorInterface | undefined
 
-	constructor(
-		subOutputDir?: string
-	) {
+	constructor(subOutputDir?: string) {
 		this.subOutputDir = subOutputDir
 		this.config = ProfilerConfig.autoResolve()
 		this.loadSensorInterface()
 
-		this._externalResourceHelper = new ExternalResourceHelper(
-			this.config.getRootDir()
-		)
-		this.exportAssetHelper = new ExportAssetHelper(
-			this.config.getOutDir().join(this.subOutputDir || '')
-		)
+		this._externalResourceHelper = new ExternalResourceHelper(this.config.getRootDir())
+		this.exportAssetHelper = new ExportAssetHelper(this.config.getOutDir().join(this.subOutputDir || ''))
 	}
 
 	static getSensorInterface(config: ProfilerConfig) {
@@ -96,7 +90,6 @@ export class Profiler {
 		const sigIntResolve = () => resolve('SIGINT')
 		const sigUsr1Resolve = () => resolve('SIGUSR1')
 		const sigUsr2Resolve = () => resolve('SIGUSR2')
-
 
 		let stopped = false
 		async function resolve(origin: string) {
@@ -158,12 +151,11 @@ export class Profiler {
 		}
 
 		performance.start('Profiler.start.sensorInterface.couldBeExecuted')
-		if (this._sensorInterface !== undefined && !await this._sensorInterface.couldBeExecuted()) {
+		if (this._sensorInterface !== undefined && !(await this._sensorInterface.couldBeExecuted())) {
 			// remove sensor interface from execution details since it cannot be executed
 			this.executionDetails.runTimeOptions.sensorInterface = undefined
 			LoggerHelper.appPrefix.warn(
-				'Warning: ' + 
-				'Sensor Interface can not be executed, no energy measurements will be collected'
+				'Warning: ' + 'Sensor Interface can not be executed, no energy measurements will be collected'
 			)
 		}
 		performance.stop('Profiler.start.sensorInterface.couldBeExecuted')
@@ -186,7 +178,7 @@ export class Profiler {
 		performance.stop('Profiler.start.externalResourceHelper.connect')
 
 		// wait for the first sensor interface measurement
-		if (this._sensorInterface !== undefined && await this._sensorInterface.couldBeExecuted()) {
+		if (this._sensorInterface !== undefined && (await this._sensorInterface.couldBeExecuted())) {
 			await this._sensorInterface?.measurementStarted()
 		}
 
@@ -201,12 +193,13 @@ export class Profiler {
 	}
 
 	async finish(title: string, highResolutionStopTime?: NanoSeconds_BigInt): Promise<ProjectReport> {
-		const highResolutionStopTimeToUse = highResolutionStopTime !== undefined
-			? highResolutionStopTime.toString()
-			: TimeHelper.getCurrentHighResolutionTime().toString()
-		
+		const highResolutionStopTimeToUse =
+			highResolutionStopTime !== undefined
+				? highResolutionStopTime.toString()
+				: TimeHelper.getCurrentHighResolutionTime().toString()
+
 		const performance = new PerformanceHelper()
-		
+
 		performance.start('Profiler.finish')
 		if (this.executionDetails === undefined) {
 			throw new Error('Profiler.finish: Profiler was not started yet')
@@ -224,9 +217,8 @@ export class Profiler {
 		await this._sensorInterface?.stopProfiling()
 		performance.stop('Profiler.finish.sensorInterface.stopProfiling')
 
-		const CPUProfilerBeginTime = BigInt(
-			await TraceEventHelper.getCPUProfilerBeginTime()
-		) * BigInt(1000) as NanoSeconds_BigInt
+		const CPUProfilerBeginTime = (BigInt(await TraceEventHelper.getCPUProfilerBeginTime()) *
+			BigInt(1000)) as NanoSeconds_BigInt
 		const highResolutionBeginTimeToUse = CPUProfilerBeginTime.toString()
 
 		const cpuProfile = {
@@ -242,10 +234,7 @@ export class Profiler {
 		const outFileMetricsDataCollection = this.exportAssetHelper.outputMetricsDataCollectionPath(title)
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportV8Profile')
-			await CPUProfileHelper.storeToFile(
-				cpuProfile,
-				outFileCPUProfile,
-			)
+			await CPUProfileHelper.storeToFile(cpuProfile, outFileCPUProfile)
 			performance.stop('Profiler.finish.exportV8Profile')
 		}
 		performance.start('Profiler.finish.sensorInterface.readSensorValues')
@@ -272,27 +261,19 @@ export class Profiler {
 		performance.start('Profiler.finish.externalResourceHelper.fillSourceMapsFromCPUProfile')
 		await this._externalResourceHelper.fillSourceMapsFromCPUProfile(profile)
 		performance.stop('Profiler.finish.externalResourceHelper.fillSourceMapsFromCPUProfile')
-		
+
 		performance.start('Profiler.finish.externalResourceHelper.disconnect')
 		await this._externalResourceHelper.disconnect()
 		performance.stop('Profiler.finish.externalResourceHelper.disconnect')
 
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportExternalResourceHelper')
-			this._externalResourceHelper.storeToFile(
-				outFileExternalResourceHelper,
-				'pretty-json'
-			)
+			this._externalResourceHelper.storeToFile(outFileExternalResourceHelper, 'pretty-json')
 			performance.stop('Profiler.finish.exportExternalResourceHelper')
 		}
 
 		performance.start('Profiler.finish.insertCPUProfile')
-		await report.insertCPUProfile(
-			rootDir,
-			cpuProfile,
-			this._externalResourceHelper,
-			metricsDataCollection
-		)
+		await report.insertCPUProfile(rootDir, cpuProfile, this._externalResourceHelper, metricsDataCollection)
 		performance.stop('Profiler.finish.insertCPUProfile')
 
 		performance.start('Profiler.finish.trackUncommittedFiles')
@@ -301,10 +282,7 @@ export class Profiler {
 
 		if (this.config.shouldExportV8Profile()) {
 			performance.start('Profiler.finish.exportExternalResourceHelper')
-			this._externalResourceHelper.storeToFile(
-				outFileExternalResourceHelper,
-				'pretty-json'
-			)
+			this._externalResourceHelper.storeToFile(outFileExternalResourceHelper, 'pretty-json')
 			performance.stop('Profiler.finish.exportExternalResourceHelper')
 		}
 

@@ -56,20 +56,14 @@ function runInstanceTests(title: string, preDefinedInstance: () => ModuleIndex) 
 		})
 
 		test('get on non existing path', () => {
-			expect(
-				instance.getFilePathIndex('get', './abc/def' as UnifiedPath_string)
-			).toBeUndefined()
+			expect(instance.getFilePathIndex('get', './abc/def' as UnifiedPath_string)).toBeUndefined()
 
 			// check non existing request type
-			expect(
-				instance.getFilePathIndex('xyz' as IndexRequestType, './abc/def' as UnifiedPath_string)
-			).toBeUndefined()
+			expect(instance.getFilePathIndex('xyz' as IndexRequestType, './abc/def' as UnifiedPath_string)).toBeUndefined()
 		})
 
 		test('get on half existing path', () => {
-			expect(
-				instance.getFilePathIndex('get', './packages/profiler-core/abc' as UnifiedPath_string)
-			).toBeUndefined()
+			expect(instance.getFilePathIndex('get', './packages/profiler-core/abc' as UnifiedPath_string)).toBeUndefined()
 
 			// check non existing request type
 			expect(
@@ -79,12 +73,18 @@ function runInstanceTests(title: string, preDefinedInstance: () => ModuleIndex) 
 
 		test('get on longer existing path', () => {
 			expect(
-				instance.getFilePathIndex('get', './packages/profiler-core/src/model/helper/CPUModel.ts/abc' as UnifiedPath_string)
+				instance.getFilePathIndex(
+					'get',
+					'./packages/profiler-core/src/model/helper/CPUModel.ts/abc' as UnifiedPath_string
+				)
 			).toBeUndefined()
 
 			// check non existing request type
 			expect(
-				instance.getFilePathIndex('xyz' as IndexRequestType, './packages/profiler-core/src/model/helper/CPUModel.ts/abc' as UnifiedPath_string)
+				instance.getFilePathIndex(
+					'xyz' as IndexRequestType,
+					'./packages/profiler-core/src/model/helper/CPUModel.ts/abc' as UnifiedPath_string
+				)
 			).toBeUndefined()
 		})
 
@@ -119,21 +119,33 @@ describe('ModuleIndex', () => {
 		test('deserialization from string', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 
-			const reportFromString = ModuleIndex.fromJSON(JSON.stringify(EXAMPLE_MODULE_INDEX), '{self}' as NodeModuleIdentifier_string, globalIndex)
+			const reportFromString = ModuleIndex.fromJSON(
+				JSON.stringify(EXAMPLE_MODULE_INDEX),
+				'{self}' as NodeModuleIdentifier_string,
+				globalIndex
+			)
 			expect(reportFromString.toJSON()).toEqual(EXAMPLE_MODULE_INDEX)
 		})
 
 		test('deserialization from object', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 
-			const reportFromObject = ModuleIndex.fromJSON(EXAMPLE_MODULE_INDEX, '{self}' as NodeModuleIdentifier_string, globalIndex)
+			const reportFromObject = ModuleIndex.fromJSON(
+				EXAMPLE_MODULE_INDEX,
+				'{self}' as NodeModuleIdentifier_string,
+				globalIndex
+			)
 			expect(reportFromObject.toJSON()).toEqual(EXAMPLE_MODULE_INDEX)
 		})
 
 		runInstanceTests('deserialized instance related', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 
-			const reportFromString = ModuleIndex.fromJSON(JSON.stringify(EXAMPLE_MODULE_INDEX), '{self}' as NodeModuleIdentifier_string, globalIndex)
+			const reportFromString = ModuleIndex.fromJSON(
+				JSON.stringify(EXAMPLE_MODULE_INDEX),
+				'{self}' as NodeModuleIdentifier_string,
+				globalIndex
+			)
 			return reportFromString
 		})
 	})

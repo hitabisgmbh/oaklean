@@ -44,14 +44,13 @@ export class ProjectReportTransformer {
 
 	static transform_GlobalSourceNodeIdentifier_string_ISourceNodeMetaData_Record(
 		oldRecord: Record<GlobalSourceNodeIdentifier_string, old_ISourceNodeMetaData> | undefined
-	): Record<GlobalSourceNodeIdentifier_string, new_ISourceNodeMetaData> | undefined{
+	): Record<GlobalSourceNodeIdentifier_string, new_ISourceNodeMetaData> | undefined {
 		if (!oldRecord) {
 			return undefined
 		}
 		return Object.entries(oldRecord).reduce(
 			(acc: Record<GlobalSourceNodeIdentifier_string, new_ISourceNodeMetaData>, [key, value]) => {
-				acc[key as GlobalSourceNodeIdentifier_string]
-					= ProjectReportTransformer.transform_ISourceNodeMetaData(value)
+				acc[key as GlobalSourceNodeIdentifier_string] = ProjectReportTransformer.transform_ISourceNodeMetaData(value)
 				return acc
 			},
 			{}
@@ -59,16 +58,16 @@ export class ProjectReportTransformer {
 	}
 
 	static transform_ISourceNodeMetaData(oldSourceNodeMetaData: old_ISourceNodeMetaData): new_ISourceNodeMetaData {
-		const lang_internal: Record<GlobalSourceNodeIdentifier_string, new_ISourceNodeMetaData> | undefined
-			= ProjectReportTransformer.transform_GlobalSourceNodeIdentifier_string_ISourceNodeMetaData_Record(
+		const lang_internal: Record<GlobalSourceNodeIdentifier_string, new_ISourceNodeMetaData> | undefined =
+			ProjectReportTransformer.transform_GlobalSourceNodeIdentifier_string_ISourceNodeMetaData_Record(
 				oldSourceNodeMetaData.node_internal
 			)
-		const intern: Record<GlobalSourceNodeIdentifier_string, new_ISourceNodeMetaData> | undefined
-			= ProjectReportTransformer.transform_GlobalSourceNodeIdentifier_string_ISourceNodeMetaData_Record(
+		const intern: Record<GlobalSourceNodeIdentifier_string, new_ISourceNodeMetaData> | undefined =
+			ProjectReportTransformer.transform_GlobalSourceNodeIdentifier_string_ISourceNodeMetaData_Record(
 				oldSourceNodeMetaData.intern
 			)
-		const extern: Record<GlobalSourceNodeIdentifier_string, new_ISourceNodeMetaData> | undefined
-			= ProjectReportTransformer.transform_GlobalSourceNodeIdentifier_string_ISourceNodeMetaData_Record(
+		const extern: Record<GlobalSourceNodeIdentifier_string, new_ISourceNodeMetaData> | undefined =
+			ProjectReportTransformer.transform_GlobalSourceNodeIdentifier_string_ISourceNodeMetaData_Record(
 				oldSourceNodeMetaData.extern
 			)
 
@@ -84,7 +83,7 @@ export class ProjectReportTransformer {
 			},
 			lang_internal: lang_internal,
 			intern: intern,
-			extern: extern,
+			extern: extern
 		}
 	}
 
@@ -96,8 +95,7 @@ export class ProjectReportTransformer {
 		} else {
 			functions = Object.entries(oldSourceFileMetaData.functions).reduce(
 				(acc: Record<SourceNodeIdentifier_string, new_ISourceNodeMetaData>, [key, value]) => {
-					acc[key as SourceNodeIdentifier_string]
-						= ProjectReportTransformer.transform_ISourceNodeMetaData(value)
+					acc[key as SourceNodeIdentifier_string] = ProjectReportTransformer.transform_ISourceNodeMetaData(value)
 					return acc
 				},
 				{}
@@ -105,21 +103,20 @@ export class ProjectReportTransformer {
 		}
 
 		return {
-			path: oldSourceFileMetaData.path as (UnifiedPath_string | LangInternalPath_string),
+			path: oldSourceFileMetaData.path as UnifiedPath_string | LangInternalPath_string,
 			functions: functions
 		}
 	}
 
 	static transform_langInternal(
-		old_langInternal: Record<NodeInternalPath_string, old_ISourceFileMetaData> | undefined 
+		old_langInternal: Record<NodeInternalPath_string, old_ISourceFileMetaData> | undefined
 	): Record<LangInternalPath_string, new_ISourceFileMetaData> | undefined {
 		if (!old_langInternal) {
 			return undefined
 		}
 		return Object.entries(old_langInternal).reduce(
 			(acc: Record<LangInternalPath_string, new_ISourceFileMetaData>, [key, value]) => {
-				acc[key as LangInternalPath_string]
-					= ProjectReportTransformer.transform_SourceFileMetaData(value)
+				acc[key as LangInternalPath_string] = ProjectReportTransformer.transform_SourceFileMetaData(value)
 				return acc
 			},
 			{}
@@ -134,24 +131,20 @@ export class ProjectReportTransformer {
 		}
 		return Object.entries(old_intern).reduce(
 			(acc: Record<UnifiedPath_string, new_ISourceFileMetaData>, [key, value]) => {
-				acc[key as UnifiedPath_string]
-					= ProjectReportTransformer.transform_SourceFileMetaData(value)
+				acc[key as UnifiedPath_string] = ProjectReportTransformer.transform_SourceFileMetaData(value)
 				return acc
 			},
 			{}
 		)
 	}
 
-	static transform_extern(
-		old_extern: Record<NodeModuleIdentifier_string, old_IModuleReport> | undefined
-	) {
+	static transform_extern(old_extern: Record<NodeModuleIdentifier_string, old_IModuleReport> | undefined) {
 		if (!old_extern) {
 			return undefined
 		}
 		return Object.entries(old_extern).reduce(
 			(acc: Record<NodeModuleIdentifier_string, new_IModuleReport>, [key, value]) => {
-				acc[key as NodeModuleIdentifier_string]
-					= ProjectReportTransformer.transform_moduleReport(value)
+				acc[key as NodeModuleIdentifier_string] = ProjectReportTransformer.transform_moduleReport(value)
 				return acc
 			},
 			{}
@@ -202,8 +195,7 @@ export class ProjectReportTransformer {
 		if (old_sourceFileMetaDataTree.internChildren) {
 			internChildren = Object.entries(old_sourceFileMetaDataTree.internChildren).reduce(
 				(acc: Record<UnifiedPathPart_string, new_ISourceFileMetaDataTree>, [key, value]) => {
-					acc[key as UnifiedPathPart_string]
-						= ProjectReportTransformer.transform_sourceFileMetaDataTree(value)
+					acc[key as UnifiedPathPart_string] = ProjectReportTransformer.transform_sourceFileMetaDataTree(value)
 					return acc
 				},
 				{}
@@ -214,8 +206,7 @@ export class ProjectReportTransformer {
 		if (old_sourceFileMetaDataTree.externChildren) {
 			externChildren = Object.entries(old_sourceFileMetaDataTree.externChildren).reduce(
 				(acc: Record<NodeModuleIdentifier_string, new_ISourceFileMetaDataTree>, [key, value]) => {
-					acc[key as NodeModuleIdentifier_string]
-						= ProjectReportTransformer.transform_sourceFileMetaDataTree(value)
+					acc[key as NodeModuleIdentifier_string] = ProjectReportTransformer.transform_sourceFileMetaDataTree(value)
 					return acc
 				},
 				{}
@@ -223,18 +214,15 @@ export class ProjectReportTransformer {
 		}
 
 		return {
-			aggregatedInternalSourceNodeMetaData:
-				ProjectReportTransformer.transform_IAggregatedSourceNodeMetaData(
-					old_sourceFileMetaDataTree.aggregatedInternalSourceNodeMetaData
-				),
-			aggregatedInternSourceMetaData:
-				ProjectReportTransformer.transform_IAggregatedSourceNodeMetaData(
-					old_sourceFileMetaDataTree.aggregatedInternSourceMetaData
-				),
-			aggregatedExternSourceMetaData:
-				ProjectReportTransformer.transform_IAggregatedSourceNodeMetaData(
-					old_sourceFileMetaDataTree.aggregatedExternSourceMetaData
-				),
+			aggregatedInternalSourceNodeMetaData: ProjectReportTransformer.transform_IAggregatedSourceNodeMetaData(
+				old_sourceFileMetaDataTree.aggregatedInternalSourceNodeMetaData
+			),
+			aggregatedInternSourceMetaData: ProjectReportTransformer.transform_IAggregatedSourceNodeMetaData(
+				old_sourceFileMetaDataTree.aggregatedInternSourceMetaData
+			),
+			aggregatedExternSourceMetaData: ProjectReportTransformer.transform_IAggregatedSourceNodeMetaData(
+				old_sourceFileMetaDataTree.aggregatedExternSourceMetaData
+			),
 			type: old_sourceFileMetaDataTree.type,
 			filePath: old_sourceFileMetaDataTree.filePath,
 			originalSourceFilePath: old_sourceFileMetaDataTree.originalSourceFilePath,

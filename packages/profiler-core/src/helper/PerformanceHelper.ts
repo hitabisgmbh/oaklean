@@ -7,13 +7,8 @@ import { LoggerHelper } from './LoggerHelper'
 import { NanoSeconds_BigInt } from '../types'
 import { UnifiedPath } from '../system/UnifiedPath'
 // Types
-import {
-	IPerformanceInterval,
-	IPerformanceHelper
-} from '../types/helper/PerformanceHelper'
-import {
-	OAKLEAN_ENABLE_PERFORMANCE_TRACKING
-} from '../constants/env'
+import { IPerformanceInterval, IPerformanceHelper } from '../types/helper/PerformanceHelper'
+import { OAKLEAN_ENABLE_PERFORMANCE_TRACKING } from '../constants/env'
 
 export class PerformanceHelper {
 	private _measures: Map<string, IPerformanceInterval>
@@ -35,10 +30,7 @@ export class PerformanceHelper {
 	}
 
 	static storeToFile(path: UnifiedPath, data: IPerformanceHelper) {
-		PermissionHelper.writeFileWithUserPermission(
-			path,
-			JSON.stringify(data, null, 2)
-		)
+		PermissionHelper.writeFileWithUserPermission(path, JSON.stringify(data, null, 2))
 	}
 
 	exportAndSum(path: UnifiedPath) {
@@ -88,7 +80,7 @@ export class PerformanceHelper {
 		const report: { [key: string]: Record<string, string> } = {}
 		for (const name of Object.keys(loadedReport.measures)) {
 			report[name] = {
-				'Duration': `${(loadedReport.measures[name] / 1e9).toFixed(3)} s`
+				Duration: `${(loadedReport.measures[name] / 1e9).toFixed(3)} s`
 			}
 		}
 
@@ -99,22 +91,24 @@ export class PerformanceHelper {
 		if (!OAKLEAN_ENABLE_PERFORMANCE_TRACKING) {
 			return
 		}
-		const report: { [key: string]: {
-			'Duration': string
-			'Percentage': string
-		} } = {}
+		const report: {
+			[key: string]: {
+				Duration: string
+				Percentage: string
+			}
+		} = {}
 		const total = Number(this._lastMeasure - this._firstMeasure)
 		for (const [name, measure] of this._measures) {
 			if (measure.end) {
 				const diff = Number(measure.end - measure.start)
 				report[name] = {
-					'Duration': `${ (diff / 1e9).toFixed(3) } s`,
-					'Percentage': `${ ((diff / total) * 100).toFixed(2) } %`
+					Duration: `${(diff / 1e9).toFixed(3)} s`,
+					Percentage: `${((diff / total) * 100).toFixed(2)} %`
 				}
 			} else {
 				report[name] = {
-					'Duration': 'N/A',
-					'Percentage': 'N/A'
+					Duration: 'N/A',
+					Percentage: 'N/A'
 				}
 			}
 		}

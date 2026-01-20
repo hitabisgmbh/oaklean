@@ -31,9 +31,7 @@ export class ExportAssetHelper {
 	}
 
 	outputMetricsDataCollectionPath(title: string): UnifiedPath {
-		return this.outputDir().join(
-			`${title}${METRICS_DATA_COLLECTION_FILE_EXTENSION}`
-		)
+		return this.outputDir().join(`${title}${METRICS_DATA_COLLECTION_FILE_EXTENSION}`)
 	}
 
 	outputCPUProfilePath(title: string): UnifiedPath {
@@ -41,9 +39,7 @@ export class ExportAssetHelper {
 	}
 
 	outputExternalResourceHelperPath(title: string): UnifiedPath {
-		return this.outputDir().join(
-			`${title}${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION}`
-		)
+		return this.outputDir().join(`${title}${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION}`)
 	}
 
 	outputPerformancePath(): UnifiedPath {
@@ -58,9 +54,7 @@ export class ExportAssetHelper {
 		return this.outputDir().join(ACCUMULATED_REPORT_FILE_NAME)
 	}
 
-	titleFromReportFilePath(
-		reportFilePath: UnifiedPath
-	): string {
+	titleFromReportFilePath(reportFilePath: UnifiedPath): string {
 		const titlePath = this.outputDir().pathTo(reportFilePath).toString()
 		if (titlePath.endsWith(REPORT_FILE_EXTENSION)) {
 			return titlePath.slice(0, -REPORT_FILE_EXTENSION.length)
@@ -71,15 +65,8 @@ export class ExportAssetHelper {
 		)
 	}
 
-	static historyReportFileName(
-		timestamp: number,
-		commitHash: GitHash_string | undefined
-	): string {
-		return (
-			timestamp.toString() +
-			(commitHash ? '-' + commitHash : '') +
-			REPORT_FILE_EXTENSION
-		)
+	static historyReportFileName(timestamp: number, commitHash: GitHash_string | undefined): string {
+		return timestamp.toString() + (commitHash ? '-' + commitHash : '') + REPORT_FILE_EXTENSION
 	}
 
 	allReportPathsInOutputDir(): UnifiedPath[] {
@@ -94,10 +81,7 @@ export class ExportAssetHelper {
 	}
 
 	allExternalResourcePathsInOutputDir(): UnifiedPath[] {
-		const globPattern = this.outputDir().join(
-			'**',
-			`*${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION}`
-		)
+		const globPattern = this.outputDir().join('**', `*${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION}`)
 
 		if (fs.existsSync(this.outputDir().toPlatformString())) {
 			const filePaths = sync(globPattern.toString())

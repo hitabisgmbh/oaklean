@@ -1,12 +1,7 @@
 import type { Protocol as Cdp } from 'devtools-protocol'
-import {
-	MicroSeconds_number,
-	InspectorSessionHelper
-} from '@oaklean/profiler-core'
+import { MicroSeconds_number, InspectorSessionHelper } from '@oaklean/profiler-core'
 
-import {
-	CPUProfilerCleanUpHelper
-} from './CPUProfileCleanUpHelper'
+import { CPUProfilerCleanUpHelper } from './CPUProfileCleanUpHelper'
 
 export class NodeInspectorProfiler {
 	static async startProfiling(): Promise<void> {

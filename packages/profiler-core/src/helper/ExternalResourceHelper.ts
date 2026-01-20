@@ -24,8 +24,8 @@ import {
 import { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
 
 export type ExternalResourceFileInfo = {
-	sourceCode: string,
-	sourceMap?: SourceMap | null,
+	sourceCode: string
+	sourceMap?: SourceMap | null
 	cucc?: boolean
 }
 
@@ -77,15 +77,8 @@ export class ExternalResourceHelper {
 		return this._uncommittedFiles
 	}
 
-	trackUncommittedFiles(
-		rootDir: UnifiedPath,
-		globalIndex: GlobalIndex
-	): boolean | null {
-		let uncommittedFiles:
-		UnifiedPath_string[]
-		| UnifiedPath[]
-		| null
-		| undefined = this._uncommittedFiles
+	trackUncommittedFiles(rootDir: UnifiedPath, globalIndex: GlobalIndex): boolean | null {
+		let uncommittedFiles: UnifiedPath_string[] | UnifiedPath[] | null | undefined = this._uncommittedFiles
 
 		if (uncommittedFiles === undefined) {
 			uncommittedFiles = GitHelper.uncommittedFiles()
@@ -109,10 +102,7 @@ export class ExternalResourceHelper {
 			// add the file to the uncommitted files list
 			trackedUncommittedFiles.push(uncommittedFile)
 			// also mark the file as uncommitted in the file info
-			const fileInfo = this.fileInfoFromPath(
-				uncommittedFile,
-				rootDir.join(uncommittedFile)
-			)
+			const fileInfo = this.fileInfoFromPath(uncommittedFile, rootDir.join(uncommittedFile))
 
 			if (fileInfo !== null) {
 				fileInfo.cucc = true
@@ -120,7 +110,6 @@ export class ExternalResourceHelper {
 		}
 		this._uncommittedFiles = trackedUncommittedFiles
 		return trackedUncommittedFiles.length > 0
-		
 	}
 
 	async connect() {
@@ -130,39 +119,24 @@ export class ExternalResourceHelper {
 		})
 	}
 
-	storeToFile(
-		filePath: UnifiedPath,
-		kind: 'pretty-json' | 'json'
-	) {
+	storeToFile(filePath: UnifiedPath, kind: 'pretty-json' | 'json') {
 		switch (kind) {
 			case 'pretty-json':
-				PermissionHelper.writeFileWithUserPermission(
-					filePath,
-					JSON.stringify(this, null, 2)
-				)
+				PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(this, null, 2))
 				break
 			case 'json':
-				PermissionHelper.writeFileWithUserPermission(
-					filePath,
-					JSON.stringify(this)
-				)
+				PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(this))
 				break
 			default:
 				break
 		}
 	}
 
-	static loadFromFile(
-		rootDir: UnifiedPath,
-		filePath: UnifiedPath
-	): ExternalResourceHelper | undefined {
+	static loadFromFile(rootDir: UnifiedPath, filePath: UnifiedPath): ExternalResourceHelper | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
-		return ExternalResourceHelper.fromJSON(
-			rootDir,
-			fs.readFileSync(filePath.toPlatformString()).toString()
-		)
+		return ExternalResourceHelper.fromJSON(rootDir, fs.readFileSync(filePath.toPlatformString()).toString())
 	}
 
 	toJSON(): IExternalResourceHelper {
@@ -212,10 +186,7 @@ export class ExternalResourceHelper {
 		}
 	}
 
-	static fromJSON(
-		rootDir: UnifiedPath,
-		json: string | IExternalResourceHelper
-	) {
+	static fromJSON(rootDir: UnifiedPath, json: string | IExternalResourceHelper) {
 		let data: IExternalResourceHelper
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -257,10 +228,7 @@ export class ExternalResourceHelper {
 		}
 
 		for (const [key, value] of Object.entries(data.nodeModules)) {
-			result.nodeModules.set(
-				key as UnifiedPath_string,
-				value !== null ? NodeModule.fromJSON(value) : null
-			)
+			result.nodeModules.set(key as UnifiedPath_string, value !== null ? NodeModule.fromJSON(value) : null)
 		}
 
 		// freeze the object to prevent further modifications
@@ -269,10 +237,10 @@ export class ExternalResourceHelper {
 		return result
 	}
 
-	async inspectorNotification (message: InspectorNotification<object>) {
+	async inspectorNotification(message: InspectorNotification<object>) {
 		if (message.method === 'Debugger.scriptParsed') {
 			const params = message.params as {
-				url: string,
+				url: string
 				scriptId: ScriptID_string
 			}
 			// store source code for later use
@@ -324,28 +292,26 @@ export class ExternalResourceHelper {
 		}
 		if (this.isFrozen) {
 			throw new Error(
-				'ExternalResourceHelper.fileInfoFromPath: Cannot load file while frozen' + 
-				'Tried to access: ' + relativePathString
+				'ExternalResourceHelper.fileInfoFromPath: Cannot load file while frozen' +
+					'Tried to access: ' +
+					relativePathString
 			)
 		}
-		if (
-			fs.existsSync(filePathPlatformString) &&
-			fs.statSync(filePathPlatformString).isFile()
-		) {
+		if (fs.existsSync(filePathPlatformString) && fs.statSync(filePathPlatformString).isFile()) {
 			fileInfo = {
 				sourceCode: fs.readFileSync(filePathPlatformString).toString()
 			}
 		} else {
 			fileInfo = null
 		}
-		
+
 		this.fileInfoPerPath.set(relativePathString, fileInfo)
 		return fileInfo
 	}
 
 	sourceCodeFromPath(
 		relativePath: UnifiedPath | UnifiedPath_string,
-		filePath: UnifiedPath | UnifiedPath_string,
+		filePath: UnifiedPath | UnifiedPath_string
 	): string | null {
 		const fileInfo = this.fileInfoFromPath(relativePath, filePath)
 		if (fileInfo === null) {
@@ -356,7 +322,7 @@ export class ExternalResourceHelper {
 
 	async sourceMapFromPath(
 		relativePath: UnifiedPath | UnifiedPath_string,
-		filePath: UnifiedPath,
+		filePath: UnifiedPath
 	): Promise<SourceMap | null> {
 		const fileInfo = this.fileInfoFromPath(relativePath, filePath)
 		if (fileInfo === null) {
@@ -373,14 +339,14 @@ export class ExternalResourceHelper {
 					sourceMap.sourceMapLocation
 				)
 			}
-		} 
+		}
 		fileInfo.sourceMap = sourceMap as SourceMap | null
 		return fileInfo.sourceMap
 	}
 
 	parseFile(
 		relativePath: UnifiedPath | UnifiedPath_string,
-		filePath: UnifiedPath | UnifiedPath_string,
+		filePath: UnifiedPath | UnifiedPath_string
 	): ProgramStructureTree<ProgramStructureTreeType.Root> | null {
 		const fileInfo = this.fileInfoFromPath(relativePath, filePath)
 		if (fileInfo === null) {
@@ -403,17 +369,16 @@ export class ExternalResourceHelper {
 
 		if (this.isFrozen) {
 			throw new Error(
-				'ExternalResourceHelper.fileInfoFromScriptID: Cannot script from inspector while frozen\n' + 
-				'Tried to access: ' + scriptID
+				'ExternalResourceHelper.fileInfoFromScriptID: Cannot script from inspector while frozen\n' +
+					'Tried to access: ' +
+					scriptID
 			)
 		}
 
-		const result = await (new Promise<
-			{
-				source: string,
-				err?: Error
-			}
-		>((resolve) => {
+		const result = await new Promise<{
+			source: string
+			err?: Error
+		}>((resolve) => {
 			InspectorSessionHelper.session.post('Debugger.getScriptSource', { scriptId: scriptID }, (err, args) => {
 				if (err) {
 					resolve({ source: '', err })
@@ -421,7 +386,7 @@ export class ExternalResourceHelper {
 					resolve({ source: args.scriptSource })
 				}
 			})
-		}))
+		})
 		if (result.err) {
 			LoggerHelper.error('Error getting script source', result.err, { scriptId: scriptID, filePath })
 			throw result.err
@@ -441,10 +406,7 @@ export class ExternalResourceHelper {
 		return fileInfo.sourceCode
 	}
 
-	async sourceMapFromScriptID(
-		scriptID: ScriptID_string,
-		filePath: UnifiedPath
-	): Promise<SourceMap | null> {
+	async sourceMapFromScriptID(scriptID: ScriptID_string, filePath: UnifiedPath): Promise<SourceMap | null> {
 		const fileInfo = await this.fileInfoFromScriptID(scriptID, filePath)
 		if (fileInfo === null || fileInfo.sourceMap === null) {
 			return null
@@ -466,9 +428,7 @@ export class ExternalResourceHelper {
 		return fileInfo.sourceMap
 	}
 
-	nodeModuleFromPath(
-		relativeNodeModulePath: UnifiedPath
-	): NodeModule | null {
+	nodeModuleFromPath(relativeNodeModulePath: UnifiedPath): NodeModule | null {
 		let nodeModule = this.nodeModules.get(relativeNodeModulePath.toString())
 		if (nodeModule !== undefined) {
 			return nodeModule
@@ -476,7 +436,8 @@ export class ExternalResourceHelper {
 		if (this.isFrozen) {
 			throw new Error(
 				'ExternalResourceHelper.nodeModuleFromPath: Cannot load node modules while frozen\n' +
-				'Tried to access: ' + relativeNodeModulePath.toString()
+					'Tried to access: ' +
+					relativeNodeModulePath.toString()
 			)
 		}
 		nodeModule = NodeModule.fromNodeModulePath(this.rootDir.join(relativeNodeModulePath)) || null
@@ -484,10 +445,7 @@ export class ExternalResourceHelper {
 		return nodeModule
 	}
 
-	async replaceSourceMapByScriptID(
-		scriptID: ScriptID_string,
-		newSourceMap: SourceMap
-	) {
+	async replaceSourceMapByScriptID(scriptID: ScriptID_string, newSourceMap: SourceMap) {
 		const fileInfo = await this.fileInfoFromScriptID(scriptID)
 		if (fileInfo === null) {
 			throw new Error(`No source code found for scriptID ${scriptID}`)
@@ -507,10 +465,7 @@ export class ExternalResourceHelper {
 		fileInfo.sourceMap = newSourceMap
 	}
 
-	async replaceSourceMapByLoadedFile(
-		relativePath: UnifiedPath,
-		newSourceMap: SourceMap
-	) {
+	async replaceSourceMapByLoadedFile(relativePath: UnifiedPath, newSourceMap: SourceMap) {
 		const fileInfo = this.fileInfoFromPath(relativePath, relativePath)
 		if (fileInfo === null) {
 			throw new Error(`No source code found for relativePath ${relativePath.toString()}`)

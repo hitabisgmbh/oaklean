@@ -62,7 +62,6 @@ export class SystemInformation extends BaseModel {
 		const firstOs = firstSystemInformation.os
 
 		for (const currentSystemInformation of args) {
-	
 			const currentSystem = currentSystemInformation.system
 
 			const systemIsTheSame =
@@ -132,8 +131,7 @@ export class SystemInformation extends BaseModel {
 
 			const currentMemory = currentSystemInformation.memory
 
-			const memoryIsTheSame =
-				firstMemory.total === currentMemory.total
+			const memoryIsTheSame = firstMemory.total === currentMemory.total
 			if (!memoryIsTheSame) {
 				LoggerHelper.error('SystemInformation.isSame: detected different memory')
 				return false
@@ -191,7 +189,7 @@ export class SystemInformation extends BaseModel {
 				return false
 			}
 		}
-		
+
 		return true
 	}
 
@@ -209,15 +207,7 @@ export class SystemInformation extends BaseModel {
 	}
 
 	static async systemInfo(): Promise<ISystemInformation_System> {
-		const {
-			manufacturer,
-			model,
-			version,
-			sku,
-			virtual,
-			virtualHost,
-			raspberry
-		} = await si.system()
+		const { manufacturer, model, version, sku, virtual, virtualHost, raspberry } = await si.system()
 
 		let raspberryInfo = undefined
 		if (raspberry) {
@@ -241,14 +231,7 @@ export class SystemInformation extends BaseModel {
 	}
 
 	static async baseBoardInfo(): Promise<ISystemInformation_Baseboard> {
-		const {
-			manufacturer,
-			model,
-			version,
-			assetTag,
-			memMax,
-			memSlots,
-		} = await si.baseboard()
+		const { manufacturer, model, version, assetTag, memMax, memSlots } = await si.baseboard()
 
 		return {
 			manufacturer,
@@ -256,19 +239,12 @@ export class SystemInformation extends BaseModel {
 			version,
 			assetTag,
 			memMax,
-			memSlots,
+			memSlots
 		}
 	}
 
 	static async chassisInfo(): Promise<ISystemInformation_Chassis> {
-		const {
-			manufacturer,
-			model,
-			type,
-			version,
-			assetTag,
-			sku
-		} = await si.chassis()
+		const { manufacturer, model, type, version, assetTag, sku } = await si.chassis()
 
 		return {
 			manufacturer,
@@ -302,12 +278,7 @@ export class SystemInformation extends BaseModel {
 			socket,
 			flags,
 			virtualization,
-			cache: {
-				l1d,
-				l1i,
-				l2,
-				l3,
-			}
+			cache: { l1d, l1i, l2, l3 }
 		} = await si.cpu()
 
 		return {
@@ -335,7 +306,7 @@ export class SystemInformation extends BaseModel {
 				l1d,
 				l1i,
 				l2,
-				l3,
+				l3
 			}
 		}
 	}
@@ -379,8 +350,8 @@ export class SystemInformation extends BaseModel {
 	}
 
 	static async memoryLayoutInfo(): Promise<ISystemInformation_MemoryLayout[]> {
-		return (await si.memLayout()).map((
-			{
+		return (await si.memLayout()).map(
+			({
 				size,
 				bank,
 				type,
@@ -392,22 +363,22 @@ export class SystemInformation extends BaseModel {
 				voltageConfigured,
 				voltageMin,
 				voltageMax
+			}) => {
+				return {
+					size,
+					bank,
+					type,
+					ecc,
+					clockSpeed,
+					formFactor,
+					manufacturer,
+					partNum,
+					voltageConfigured,
+					voltageMin,
+					voltageMax
+				}
 			}
-		) => {
-			return {
-				size,
-				bank,
-				type,
-				ecc,
-				clockSpeed,
-				formFactor,
-				manufacturer,
-				partNum,
-				voltageConfigured,
-				voltageMin,
-				voltageMax
-			}
-		})
+		)
 	}
 
 	static async batteryInfo(): Promise<ISystemInformation_Battery> {

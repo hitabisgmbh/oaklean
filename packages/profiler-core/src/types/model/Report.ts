@@ -1,22 +1,10 @@
-import {
-	ModuleID_number
-} from './indices/ModuleIndex'
-import {
-	PathID_number
-} from './indices/PathIndex'
-import {
-	ISourceFileMetaData
-} from './SourceFileMetaData'
-import {
-	IModuleReport
-} from './ModuleReport'
-import {
-	ISensorValues
-} from './SensorValues'
+import { ModuleID_number } from './indices/ModuleIndex'
+import { PathID_number } from './indices/PathIndex'
+import { ISourceFileMetaData } from './SourceFileMetaData'
+import { IModuleReport } from './ModuleReport'
+import { ISensorValues } from './SensorValues'
 
-import {
-	UnifiedPath_string
-} from '../system/UnifiedPath'
+import { UnifiedPath_string } from '../system/UnifiedPath'
 
 export enum ReportKind {
 	measurement = 0,
@@ -24,8 +12,8 @@ export enum ReportKind {
 }
 
 export interface IReport {
-	reportVersion: string,
-	kind: ReportKind,
+	reportVersion: string
+	kind: ReportKind
 	relativeRootDir?: UnifiedPath_string
 	headlessSensorValues?: ISensorValues
 	lang_internal?: Record<PathID_number, ISourceFileMetaData>

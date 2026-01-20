@@ -26,12 +26,7 @@ export class MetricsDataCollection extends BaseModel {
 
 	private _timeInfo: TimeInfo // represents the timestamps when the measurement was called to start and stop (not the actual measurement start/stop)
 
-	constructor(
-		pid: number,
-		type: MetricsDataCollectionType,
-		items: BaseMetricsData[],
-		timeInfo: TimeInfo
-	) {
+	constructor(pid: number, type: MetricsDataCollectionType, items: BaseMetricsData[], timeInfo: TimeInfo) {
 		super()
 		this._pid = pid
 		this._type = type
@@ -63,15 +58,12 @@ export class MetricsDataCollection extends BaseModel {
 			timeInfo: {
 				startTime: this._timeInfo.startTime.toString(),
 				stopTime: this._timeInfo.stopTime.toString()
-			},
+			}
 		}
 	}
 
 	storeToFile(filePath: UnifiedPath) {
-		PermissionHelper.writeFileWithUserPermission(
-			filePath,
-			JSON.stringify(this)
-		)
+		PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(this))
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
@@ -102,13 +94,11 @@ export class MetricsDataCollection extends BaseModel {
 			}
 		)
 	}
-	
+
 	static loadFromFile(filePath: UnifiedPath): MetricsDataCollection | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
-		return MetricsDataCollection.fromJSON(
-			fs.readFileSync(filePath.toPlatformString()).toString()
-		)
+		return MetricsDataCollection.fromJSON(fs.readFileSync(filePath.toPlatformString()).toString())
 	}
 }

@@ -1,9 +1,5 @@
 // Types
-import {
-	ProjectIdentifier_string,
-	MicroSeconds_number,
-	IProfilerConfig
-} from '../types'
+import { ProjectIdentifier_string, MicroSeconds_number, IProfilerConfig } from '../types'
 
 export const STATIC_CONFIG_FILENAME = '.oaklean'
 export const STATIC_LOCAL_CONFIG_FILENAME = '.oaklean.local'

@@ -26,33 +26,29 @@ export class PathIndex extends BaseModel {
 	moduleIndex: ModuleIndex
 	identifier: UnifiedPath_string | LangInternalPath_string
 	sourceNodeMap: ModelMap<
-	SourceNodeIdentifier_string | LangInternalSourceNodeIdentifier_string,
-	SourceNodeIndex<SourceNodeIndexType.SourceNode>>
+		SourceNodeIdentifier_string | LangInternalSourceNodeIdentifier_string,
+		SourceNodeIndex<SourceNodeIndexType.SourceNode>
+	>
 
-	reverseSourceNodeMap: ModelMap<
-	SourceNodeID_number,
-	SourceNodeIndex<SourceNodeIndexType.SourceNode>>
+	reverseSourceNodeMap: ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>
 
 	private _id?: PathID_number
 	children?: ModelMap<UnifiedPathPart_string, PathIndex>
 	file?: ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>
 
-	constructor(
-		identifier: UnifiedPath_string | LangInternalPath_string,
-		moduleIndex: ModuleIndex,
-		id?: PathID_number
-	) {
+	constructor(identifier: UnifiedPath_string | LangInternalPath_string, moduleIndex: ModuleIndex, id?: PathID_number) {
 		super()
 		this.identifier = identifier
 		this.moduleIndex = moduleIndex
 		this._id = id
 		this.sourceNodeMap = new ModelMap<
-		SourceNodeIdentifier_string | LangInternalSourceNodeIdentifier_string,
-		SourceNodeIndex<SourceNodeIndexType.SourceNode>>('string')
+			SourceNodeIdentifier_string | LangInternalSourceNodeIdentifier_string,
+			SourceNodeIndex<SourceNodeIndexType.SourceNode>
+		>('string')
 
-		this.reverseSourceNodeMap = new ModelMap<
-		SourceNodeID_number,
-		SourceNodeIndex<SourceNodeIndexType.SourceNode>>('number')
+		this.reverseSourceNodeMap = new ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>(
+			'number'
+		)
 	}
 
 	private _containsUncommittedChanges?: boolean
@@ -85,7 +81,7 @@ export class PathIndex extends BaseModel {
 	public set id(id: PathID_number | undefined) {
 		this._id = id
 	}
-	
+
 	public get id(): PathID_number | undefined {
 		return this._id
 	}
@@ -95,10 +91,7 @@ export class PathIndex extends BaseModel {
 	}
 
 	selfAssignId() {
-		this.id = this.moduleIndex.globalIndex.newId(
-			this,
-			'path'
-		) as PathID_number
+		this.id = this.moduleIndex.globalIndex.newId(this, 'path') as PathID_number
 		this.moduleIndex.addToPathMap(this)
 	}
 
@@ -113,11 +106,7 @@ export class PathIndex extends BaseModel {
 		}
 	}
 
-	static fromJSON(
-		json: string | IPathIndex,
-		pathParts: string[],
-		moduleIndex: ModuleIndex
-	): PathIndex {
+	static fromJSON(json: string | IPathIndex, pathParts: string[], moduleIndex: ModuleIndex): PathIndex {
 		let data: IPathIndex
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -138,10 +127,7 @@ export class PathIndex extends BaseModel {
 		if (data.children) {
 			result.children = new ModelMap<UnifiedPathPart_string, PathIndex>('string')
 			for (const key of Object.keys(data.children) as UnifiedPathPart_string[]) {
-				result.children.set(
-					key,
-					PathIndex.fromJSON(data.children[key], [...pathParts, key], moduleIndex)
-				)
+				result.children.set(key, PathIndex.fromJSON(data.children[key], [...pathParts, key], moduleIndex))
 			}
 		}
 
@@ -154,9 +140,7 @@ export class PathIndex extends BaseModel {
 						data.file[key],
 						[key],
 						result,
-						data.file[key].id === undefined ?
-							SourceNodeIndexType.Intermediate :
-							SourceNodeIndexType.SourceNode
+						data.file[key].id === undefined ? SourceNodeIndexType.Intermediate : SourceNodeIndexType.SourceNode
 					)
 				)
 			}
@@ -164,11 +148,7 @@ export class PathIndex extends BaseModel {
 		const id = result._id
 		if (id !== undefined) {
 			moduleIndex.addToPathMap(result)
-			moduleIndex.globalIndex.setReverseIndex(
-				id,
-				result,
-				'path'
-			)
+			moduleIndex.globalIndex.setReverseIndex(id, result, 'path')
 		}
 
 		return result
@@ -176,13 +156,10 @@ export class PathIndex extends BaseModel {
 
 	getSourceNodeIndex<
 		T extends IndexRequestType,
-		R = T extends 'upsert' ?
-			SourceNodeIndex<SourceNodeIndexType.SourceNode> :
-			(SourceNodeIndex<SourceNodeIndexType.SourceNode> | undefined)
-	>(
-		indexRequestType: T,
-		sourceNodeIdentifier: SourceNodeIdentifier_string
-	): R {
+		R = T extends 'upsert'
+			? SourceNodeIndex<SourceNodeIndexType.SourceNode>
+			: SourceNodeIndex<SourceNodeIndexType.SourceNode> | undefined
+	>(indexRequestType: T, sourceNodeIdentifier: SourceNodeIdentifier_string): R {
 		const indexFromSourceNodeMap = this.sourceNodeMap.get(sourceNodeIdentifier)
 		if (indexFromSourceNodeMap !== undefined) {
 			return indexFromSourceNodeMap as R
@@ -190,15 +167,16 @@ export class PathIndex extends BaseModel {
 
 		let currentSourceNodeIndex: SourceNodeIndex<SourceNodeIndexType> | undefined
 		let currentSourceNodeMap: ModelMap<
-		SourceNodeIdentifierPart_string,
-		SourceNodeIndex<SourceNodeIndexType>
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			SourceNodeIdentifierPart_string,
+			SourceNodeIndex<SourceNodeIndexType>
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		> = this.file!
 
 		const sourceNodeIdentifierParts = SourceNodeIdentifierHelper.split(sourceNodeIdentifier)
 		for (let i = 0; i < sourceNodeIdentifierParts.length; i++) {
-			let sourceNodeIndex: SourceNodeIndex<SourceNodeIndexType> | undefined =
-				currentSourceNodeMap.get(sourceNodeIdentifierParts[i])
+			let sourceNodeIndex: SourceNodeIndex<SourceNodeIndexType> | undefined = currentSourceNodeMap.get(
+				sourceNodeIdentifierParts[i]
+			)
 
 			if (sourceNodeIndex === undefined) {
 				switch (indexRequestType) {
@@ -206,7 +184,7 @@ export class PathIndex extends BaseModel {
 						return undefined as R
 					case 'upsert':
 						sourceNodeIndex = new SourceNodeIndex(
-							SourceNodeIdentifierHelper.join(sourceNodeIdentifierParts.slice(0, i+1)),
+							SourceNodeIdentifierHelper.join(sourceNodeIdentifierParts.slice(0, i + 1)),
 							this,
 							SourceNodeIndexType.Intermediate
 						)
@@ -238,8 +216,8 @@ export class PathIndex extends BaseModel {
 							return undefined as R
 						case 'upsert':
 							sourceNodeIndex.children = new ModelMap<
-							SourceNodeIdentifierPart_string,
-							SourceNodeIndex<SourceNodeIndexType>
+								SourceNodeIdentifierPart_string,
+								SourceNodeIndex<SourceNodeIndexType>
 							>('string')
 							break
 						default:

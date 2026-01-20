@@ -1,10 +1,6 @@
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { NodeModule } from '../../src/model/NodeModule'
-import {
-	INodeModule,
-	NodeModuleIdentifier_string
-} from '../../src/types'
-
+import { INodeModule, NodeModuleIdentifier_string } from '../../src/types'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
@@ -59,10 +55,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => NodeModule) {
 
 describe('NodeModule', () => {
 	runInstanceTests('instance related', () => {
-		return new NodeModule(
-			'package-name',
-			'1.0.1'
-		)
+		return new NodeModule('package-name', '1.0.1')
 	})
 
 	describe('fromIdentifier', () => {
@@ -153,5 +146,4 @@ describe('NodeModule', () => {
 			expect(nonExistingNodeModule).toBeUndefined()
 		})
 	})
-
 })

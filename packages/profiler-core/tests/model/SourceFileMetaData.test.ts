@@ -39,7 +39,7 @@ const EXAMPLE_SOURCE_FILE_META_DATA: ISourceFileMetaData = {
 				aggregatedCPUEnergyConsumption: 8,
 
 				selfRAMEnergyConsumption: 8,
-				aggregatedRAMEnergyConsumption: 8,
+				aggregatedRAMEnergyConsumption: 8
 			} as ISensorValues
 		},
 		[3 as SourceNodeID_number]: {
@@ -61,7 +61,8 @@ const EXAMPLE_SOURCE_FILE_META_DATA: ISourceFileMetaData = {
 	}
 }
 
-const EXAMPLE_SOURCE_FILE_META_DATA_BUFFER = '010000000200000002000000020200000000000000c718020000000400000004000000000000000000204000000000000020400000000000002040000000000000204000000000000000000000000003000000020300000000000000c7180100000003000000030000000000000000001840000000000000184000000000000018400000000000001840000000000000000000000000'
+const EXAMPLE_SOURCE_FILE_META_DATA_BUFFER =
+	'010000000200000002000000020200000000000000c718020000000400000004000000000000000000204000000000000020400000000000002040000000000000204000000000000000000000000003000000020300000000000000c7180100000003000000030000000000000000001840000000000000184000000000000018400000000000001840000000000000000000000000'
 
 describe('AggregatedSourceNodeMetaData', () => {
 	describe('instance related', () => {
@@ -111,32 +112,30 @@ describe('AggregatedSourceNodeMetaData', () => {
 		})
 
 		test('serialization', () => {
-			expect(instance.toJSON()).toEqual(
-				{
-					total: {
-						type: SourceNodeMetaDataType.Aggregate,
-						sensorValues: {
-							profilerHits: 1,
-							selfCPUTime: 2,
-							aggregatedCPUTime: 3,
-							internCPUTime: 4,
-							externCPUTime: 5,
-							langInternalCPUTime: 6
-						}
-					} as SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
-					max: {
-						type: SourceNodeMetaDataType.Aggregate,
-						sensorValues: {
-							profilerHits: 7,
-							selfCPUTime: 8,
-							aggregatedCPUTime: 9,
-							internCPUTime: 10,
-							externCPUTime: 11,
-							langInternalCPUTime: 12
-						}
-					} as SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
-				}
-			)
+			expect(instance.toJSON()).toEqual({
+				total: {
+					type: SourceNodeMetaDataType.Aggregate,
+					sensorValues: {
+						profilerHits: 1,
+						selfCPUTime: 2,
+						aggregatedCPUTime: 3,
+						internCPUTime: 4,
+						externCPUTime: 5,
+						langInternalCPUTime: 6
+					}
+				} as SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
+				max: {
+					type: SourceNodeMetaDataType.Aggregate,
+					sensorValues: {
+						profilerHits: 7,
+						selfCPUTime: 8,
+						aggregatedCPUTime: 9,
+						internCPUTime: 10,
+						externCPUTime: 11,
+						langInternalCPUTime: 12
+					}
+				} as SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
+			})
 		})
 	})
 
@@ -182,7 +181,7 @@ describe('AggregatedSourceNodeMetaData', () => {
 function runInstanceTests(
 	title: string,
 	preDefinedInstance: () => {
-		instance: SourceFileMetaData,
+		instance: SourceFileMetaData
 		sourceNodeGraph: SourceNodeGraph
 	}
 ) {
@@ -191,7 +190,7 @@ function runInstanceTests(
 		let sourceNodeGraph: SourceNodeGraph
 
 		beforeEach(() => {
-			({ instance, sourceNodeGraph } = preDefinedInstance())
+			;({ instance, sourceNodeGraph } = preDefinedInstance())
 		})
 
 		it('instance should be an instanceof SourceFileMetaData', () => {
@@ -253,9 +252,9 @@ function runInstanceTests(
 						aggregatedCPUEnergyConsumption: 6,
 
 						selfRAMEnergyConsumption: 6,
-						aggregatedRAMEnergyConsumption: 6,
+						aggregatedRAMEnergyConsumption: 6
 					} as ISensorValues
-				},
+				}
 			})
 		})
 
@@ -289,9 +288,9 @@ function runInstanceTests(
 				extern: undefined,
 				langInternal: undefined
 			} satisfies {
-				sum: ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
-				intern: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>,
-				extern: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>,
+				sum: ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
+				intern: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>
+				extern: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>
 				langInternal: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>
 			})
 		})
@@ -337,10 +336,7 @@ describe('SourceFileMetaData', () => {
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 		const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
 
-		const instance = new SourceFileMetaData(
-			filePath,
-			pathIndex
-		)
+		const instance = new SourceFileMetaData(filePath, pathIndex)
 
 		const node1 = instance.createOrGetSourceNodeMetaData(
 			'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string,
@@ -369,11 +365,11 @@ describe('SourceFileMetaData', () => {
 			// cpu time
 			selfCPUTime: 3 as MicroSeconds_number,
 			aggregatedCPUTime: 3 as MicroSeconds_number,
-		
+
 			// cpu energy
 			selfCPUEnergyConsumption: 6 as MilliJoule_number,
 			aggregatedCPUEnergyConsumption: 6 as MilliJoule_number,
-		
+
 			// ram energy
 			selfRAMEnergyConsumption: 6 as MilliJoule_number,
 			aggregatedRAMEnergyConsumption: 6 as MilliJoule_number
@@ -388,11 +384,11 @@ describe('SourceFileMetaData', () => {
 			// cpu time
 			selfCPUTime: 2 as MicroSeconds_number,
 			aggregatedCPUTime: 2 as MicroSeconds_number,
-		
+
 			// cpu energy
 			selfCPUEnergyConsumption: 4 as MilliJoule_number,
 			aggregatedCPUEnergyConsumption: 4 as MilliJoule_number,
-		
+
 			// ram energy
 			selfRAMEnergyConsumption: 4 as MilliJoule_number,
 			aggregatedRAMEnergyConsumption: 4 as MilliJoule_number
@@ -413,14 +409,18 @@ describe('SourceFileMetaData', () => {
 			const filePath = new UnifiedPath('./file.js').toString()
 			globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
-			pathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
-			pathIndex.getSourceNodeIndex('upsert', '{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
+			pathIndex.getSourceNodeIndex(
+				'upsert',
+				'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+			)
+			pathIndex.getSourceNodeIndex(
+				'upsert',
+				'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+			)
 		})
 
 		test('deserialization from string', () => {
-			const instanceFromString = SourceFileMetaData.fromJSON(
-				JSON.stringify(EXAMPLE_SOURCE_FILE_META_DATA), pathIndex
-			)
+			const instanceFromString = SourceFileMetaData.fromJSON(JSON.stringify(EXAMPLE_SOURCE_FILE_META_DATA), pathIndex)
 			expect(instanceFromString.toJSON()).toEqual(EXAMPLE_SOURCE_FILE_META_DATA)
 		})
 
@@ -430,9 +430,7 @@ describe('SourceFileMetaData', () => {
 		})
 
 		runInstanceTests('deserialized instance related', () => {
-			const instanceFromString = SourceFileMetaData.fromJSON(
-				JSON.stringify(EXAMPLE_SOURCE_FILE_META_DATA), pathIndex
-			)
+			const instanceFromString = SourceFileMetaData.fromJSON(JSON.stringify(EXAMPLE_SOURCE_FILE_META_DATA), pathIndex)
 			return {
 				instance: instanceFromString,
 				sourceNodeGraph: new SourceNodeGraph()
@@ -444,8 +442,14 @@ describe('SourceFileMetaData', () => {
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 		const filePath = new UnifiedPath('./file.js').toString()
 		const filePathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
-		filePathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
-		filePathIndex.getSourceNodeIndex('upsert', '{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)
+		filePathIndex.getSourceNodeIndex(
+			'upsert',
+			'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+		)
+		filePathIndex.getSourceNodeIndex(
+			'upsert',
+			'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+		)
 
 		const buffer = Buffer.from(EXAMPLE_SOURCE_FILE_META_DATA_BUFFER, 'hex')
 
@@ -468,403 +472,713 @@ describe('SourceFileMetaData', () => {
 		let instancesToMerge: SourceFileMetaData[] = []
 		beforeEach(() => {
 			const firstGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const firstPathIndex = firstGlobalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
-			
-			const first = SourceFileMetaData.fromJSON({
-				path: './file.js' as UnifiedPath_string,
-				functions: {
-					[firstPathIndex.getSourceNodeIndex(
-						'upsert',
-						'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: firstPathIndex.getSourceNodeIndex(
+			const firstPathIndex = firstGlobalIndex
+				.getModuleIndex('upsert')
+				.getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
+
+			const first = SourceFileMetaData.fromJSON(
+				{
+					path: './file.js' as UnifiedPath_string,
+					functions: {
+						[firstPathIndex.getSourceNodeIndex(
 							'upsert',
-							'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
-						type: SourceNodeMetaDataType.SourceNode,
-						sensorValues: {
-							profilerHits: 1,
-							selfCPUTime: 4,
-							aggregatedCPUTime: 9945,
-							langInternalCPUTime: 30,
-							internCPUTime: 77,
-							externCPUTime: 9834,
-						},
-						lang_internal: {
-							[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-									aggregatedCPUTime: 10
-								}
+							'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+						).id]: {
+							id: firstPathIndex.getSourceNodeIndex(
+								'upsert',
+								'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+							).id,
+							type: SourceNodeMetaDataType.SourceNode,
+							sensorValues: {
+								profilerHits: 1,
+								selfCPUTime: 4,
+								aggregatedCPUTime: 9945,
+								langInternalCPUTime: 30,
+								internCPUTime: 77,
+								externCPUTime: 9834
 							},
-							[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-									aggregatedCPUTime: 20
+							lang_internal: {
+								[firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: firstGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 1,
+										aggregatedCPUTime: 10
+									}
+								},
+								[firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: firstGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 1,
+										aggregatedCPUTime: 20
+									}
 								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>,
-						intern: {
-							[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 10,
-									aggregatedCPUTime: 33
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+							>,
+							intern: {
+								[firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: firstGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 1,
+										selfCPUTime: 10,
+										aggregatedCPUTime: 33
+									}
+								},
+								[firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: firstGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 1,
+										selfCPUTime: 10,
+										aggregatedCPUTime: 44
+									}
 								}
-							},
-							[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 10,
-									aggregatedCPUTime: 44
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+							>,
+							extern: {
+								[firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: firstGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.ExternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 1,
+										selfCPUTime: 125,
+										aggregatedCPUTime: 9834
+									}
 								}
-							}
-						} as Record<
-						GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>,
-						extern: {
-							[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.ExternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 125,
-									aggregatedCPUTime: 9834
-								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
-					[firstPathIndex.getSourceNodeIndex(
-						'upsert',
-						'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: firstPathIndex.getSourceNodeIndex(
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+							>
+						} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+						[firstPathIndex.getSourceNodeIndex(
 							'upsert',
-							'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
-						type: SourceNodeMetaDataType.SourceNode,
-						sensorValues: {
-							profilerHits: 1,
-							selfCPUTime: 3,
-							aggregatedCPUTime: 173,
-							langInternalCPUTime: 170,
-						},
-						lang_internal: {
-							[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 5,
-									aggregatedCPUTime: 50
-								}
-							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-							[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 6,
-									aggregatedCPUTime: 120
-								}
-							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>,
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
-				} as Record<SourceNodeIdentifier_string, ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>>
-			}, firstPathIndex)
+							'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+						).id]: {
+							id: firstPathIndex.getSourceNodeIndex(
+								'upsert',
+								'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+							).id,
+							type: SourceNodeMetaDataType.SourceNode,
+							sensorValues: {
+								profilerHits: 1,
+								selfCPUTime: 3,
+								aggregatedCPUTime: 173,
+								langInternalCPUTime: 170
+							},
+							lang_internal: {
+								[firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: firstGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 5,
+										aggregatedCPUTime: 50
+									}
+								} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
+								[firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: firstGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 6,
+										aggregatedCPUTime: 120
+									}
+								} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+							>
+						} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
+					} as Record<SourceNodeIdentifier_string, ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>>
+				},
+				firstPathIndex
+			)
 
 			const secondGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const secondPathIndex = secondGlobalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
+			const secondPathIndex = secondGlobalIndex
+				.getModuleIndex('upsert')
+				.getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
 
-			const second = SourceFileMetaData.fromJSON({
-				path: './file.js' as UnifiedPath_string,
-				functions: {
-					[secondPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: secondPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
-						type: SourceNodeMetaDataType.SourceNode,
-						sensorValues: {
-							profilerHits: 2,
-							selfCPUTime: 4,
-							aggregatedCPUTime: 10411,
-							langInternalCPUTime: 330,
-							internCPUTime: 77,
-							externCPUTime: 10000,
+			const second = SourceFileMetaData.fromJSON(
+				{
+					path: './file.js' as UnifiedPath_string,
+					functions: {
+						[secondPathIndex.getSourceNodeIndex(
+							'upsert',
+							'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+						).id]: {
+							id: secondPathIndex.getSourceNodeIndex(
+								'upsert',
+								'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+							).id,
+							type: SourceNodeMetaDataType.SourceNode,
+							sensorValues: {
+								profilerHits: 2,
+								selfCPUTime: 4,
+								aggregatedCPUTime: 10411,
+								langInternalCPUTime: 330,
+								internCPUTime: 77,
+								externCPUTime: 10000
+							},
+							lang_internal: {
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 2,
+										aggregatedCPUTime: 20
+									}
+								},
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 3,
+										aggregatedCPUTime: 60
+									}
+								},
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 2,
+										selfCPUTime: 250,
+										aggregatedCPUTime: 250
+									}
+								}
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+							>,
+							intern: {
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 1,
+										selfCPUTime: 10,
+										aggregatedCPUTime: 33
+									}
+								},
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/d.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/d.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 1,
+										selfCPUTime: 10,
+										aggregatedCPUTime: 44
+									}
+								}
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+							>,
+							extern: {
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.ExternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 2,
+										selfCPUTime: 250,
+										aggregatedCPUTime: 10000
+									}
+								}
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+							>
 						},
-						lang_internal: {
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 2,
-									aggregatedCPUTime: 20
-								}
+						[secondPathIndex.getSourceNodeIndex(
+							'upsert',
+							'{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+						).id]: {
+							id: secondPathIndex.getSourceNodeIndex(
+								'upsert',
+								'{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+							).id,
+							type: SourceNodeMetaDataType.SourceNode,
+							sensorValues: {
+								profilerHits: 2,
+								selfCPUTime: 6,
+								aggregatedCPUTime: 306,
+								langInternalCPUTime: 170,
+								internCPUTime: 130
 							},
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 3,
-									aggregatedCPUTime: 60
+							lang_internal: {
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 5,
+										aggregatedCPUTime: 50
+									}
+								},
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 6,
+										aggregatedCPUTime: 120
+									}
 								}
-							},
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 2,
-									selfCPUTime: 250,
-									aggregatedCPUTime: 250
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+							>,
+							intern: {
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 2,
+										selfCPUTime: 20,
+										aggregatedCPUTime: 50
+									}
+								},
+								[secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: secondGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 3,
+										selfCPUTime: 30,
+										aggregatedCPUTime: 80
+									}
 								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>,
-						intern: {
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 10,
-									aggregatedCPUTime: 33
-								}
-							},
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/d.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/d.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 10,
-									aggregatedCPUTime: 44
-								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>,
-						extern: {
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.ExternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 2,
-									selfCPUTime: 250,
-									aggregatedCPUTime: 10000
-								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
-					},
-					[secondPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: secondPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
-						type: SourceNodeMetaDataType.SourceNode,
-						sensorValues: {
-							profilerHits: 2,
-							selfCPUTime: 6,
-							aggregatedCPUTime: 306,
-							langInternalCPUTime: 170,
-							internCPUTime: 130
-						},
-						lang_internal: {
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 5,
-									aggregatedCPUTime: 50
-								}
-							},
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 6,
-									aggregatedCPUTime: 120
-								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>,
-						intern: {
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 2,
-									selfCPUTime: 20,
-									aggregatedCPUTime: 50
-								}
-							},
-							[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 3,
-									selfCPUTime: 30,
-									aggregatedCPUTime: 80
-								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>,
-					},
-				} as Record<SourceNodeIdentifier_string, ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>>
-			}, secondPathIndex)
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+							>
+						}
+					} as Record<SourceNodeIdentifier_string, ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>>
+				},
+				secondPathIndex
+			)
 
 			const thirdGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const thirdPathIndex = thirdGlobalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
+			const thirdPathIndex = thirdGlobalIndex
+				.getModuleIndex('upsert')
+				.getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
 
-			const third = SourceFileMetaData.fromJSON({
-				path: './file.js' as UnifiedPath_string,
-				functions: {
-					[thirdPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: thirdPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
-						type: SourceNodeMetaDataType.SourceNode,
-						sensorValues: {
-							profilerHits: 2,
-							selfCPUTime: 4,
-							aggregatedCPUTime: 17734,
-							langInternalCPUTime: 400,
-							internCPUTime: 579,
-							externCPUTime: 16751,
+			const third = SourceFileMetaData.fromJSON(
+				{
+					path: './file.js' as UnifiedPath_string,
+					functions: {
+						[thirdPathIndex.getSourceNodeIndex(
+							'upsert',
+							'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+						).id]: {
+							id: thirdPathIndex.getSourceNodeIndex(
+								'upsert',
+								'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+							).id,
+							type: SourceNodeMetaDataType.SourceNode,
+							sensorValues: {
+								profilerHits: 2,
+								selfCPUTime: 4,
+								aggregatedCPUTime: 17734,
+								langInternalCPUTime: 400,
+								internCPUTime: 579,
+								externCPUTime: 16751
+							},
+							lang_internal: {
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 5,
+										aggregatedCPUTime: 50
+									}
+								},
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 5,
+										aggregatedCPUTime: 100
+									}
+								},
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 2,
+										selfCPUTime: 250,
+										aggregatedCPUTime: 250
+									}
+								}
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+							>,
+							intern: {
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 3,
+										selfCPUTime: 10,
+										aggregatedCPUTime: 123
+									}
+								},
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 4,
+										selfCPUTime: 10,
+										aggregatedCPUTime: 456
+									}
+								}
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+							>,
+							extern: {
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.ExternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 2,
+										selfCPUTime: 250,
+										aggregatedCPUTime: 10000
+									}
+								},
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.ExternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 2,
+										selfCPUTime: 334,
+										aggregatedCPUTime: 6751
+									}
+								}
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+							>
 						},
-						lang_internal: {
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 5,
-									aggregatedCPUTime: 50
-								}
+						[thirdPathIndex.getSourceNodeIndex(
+							'upsert',
+							'{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+						).id]: {
+							id: thirdPathIndex.getSourceNodeIndex(
+								'upsert',
+								'{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+							).id,
+							type: SourceNodeMetaDataType.SourceNode,
+							sensorValues: {
+								profilerHits: 1,
+								selfCPUTime: 3,
+								aggregatedCPUTime: 10094,
+								langInternalCPUTime: 180,
+								internCPUTime: 77,
+								externCPUTime: 9834
 							},
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 5,
-									aggregatedCPUTime: 100
+							lang_internal: {
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 10,
+										aggregatedCPUTime: 100
+									}
+								},
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									).id,
+									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+									sensorValues: {
+										profilerHits: 4,
+										aggregatedCPUTime: 80
+									}
 								}
-							},
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 2,
-									selfCPUTime: 250,
-									aggregatedCPUTime: 250
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+							>,
+							intern: {
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 5,
+										selfCPUTime: 12,
+										aggregatedCPUTime: 33
+									}
+								},
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.InternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 7,
+										selfCPUTime: 11,
+										aggregatedCPUTime: 44
+									}
 								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>,
-						intern: {
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 3,
-									selfCPUTime: 10,
-									aggregatedCPUTime: 123
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+							>,
+							extern: {
+								[thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id]: {
+									id: thirdGlobalIndex.getSourceNodeIndex(
+										'upsert',
+										GlobalIdentifier.fromIdentifier(
+											'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+										)
+									).id,
+									type: SourceNodeMetaDataType.ExternSourceNodeReference,
+									sensorValues: {
+										profilerHits: 1,
+										selfCPUTime: 125,
+										aggregatedCPUTime: 9834
+									}
 								}
-							},
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 4,
-									selfCPUTime: 10,
-									aggregatedCPUTime: 456
-								}	
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>,
-						extern: {
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.ExternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 2,
-									selfCPUTime: 250,
-									aggregatedCPUTime: 10000
-								}
-							},
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.ExternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 2,
-									selfCPUTime: 334,
-									aggregatedCPUTime: 6751
-								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
-					},
-					[thirdPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id]: {
-						id: thirdPathIndex.getSourceNodeIndex('upsert', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string).id,
-						type: SourceNodeMetaDataType.SourceNode,
-						sensorValues: {
-							profilerHits: 1,
-							selfCPUTime: 3,
-							aggregatedCPUTime: 10094,
-							langInternalCPUTime: 180,
-							internCPUTime: 77,
-							externCPUTime: 9834
-						},
-						lang_internal: {
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 10,
-									aggregatedCPUTime: 100
-								}
-							},
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-								sensorValues: {
-									profilerHits: 4,
-									aggregatedCPUTime: 80
-								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>,
-						intern: {
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 5,
-									selfCPUTime: 12,
-									aggregatedCPUTime: 33
-								}
-							},
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.InternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 7,
-									selfCPUTime: 11,
-									aggregatedCPUTime: 44
-								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>,
-						extern: {
-							[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string)).id]: {
-								id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string)).id,
-								type: SourceNodeMetaDataType.ExternSourceNodeReference,
-								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 125,
-									aggregatedCPUTime: 9834
-								}
-							}
-						} as Record<GlobalSourceNodeIdentifier_string,
-						ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
-					},
-				} as Record<SourceNodeIdentifier_string, ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>>
-			}, thirdPathIndex)
+							} as Record<
+								GlobalSourceNodeIdentifier_string,
+								ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+							>
+						}
+					} as Record<SourceNodeIdentifier_string, ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>>
+				},
+				thirdPathIndex
+			)
 
 			instancesToMerge = [first, second, third]
 		})
@@ -905,8 +1219,15 @@ describe('SourceFileMetaData', () => {
 			expect(mergeResult.toJSON()).toEqual({
 				path: './file.js',
 				functions: {
-					[pathIndex.getSourceNodeIndex('get', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
-						id: pathIndex.getSourceNodeIndex('get', '{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1,
+					[pathIndex.getSourceNodeIndex(
+						'get',
+						'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+					)?.id || -1]: {
+						id:
+							pathIndex.getSourceNodeIndex(
+								'get',
+								'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+							)?.id || -1,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 5,
@@ -917,24 +1238,47 @@ describe('SourceFileMetaData', () => {
 							externCPUTime: 36585
 						},
 						lang_internal: {
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
 									profilerHits: 8,
 									aggregatedCPUTime: 80
 								}
 							},
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
 									profilerHits: 9,
 									aggregatedCPUTime: 180
 								}
 							},
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
 									profilerHits: 4,
@@ -944,8 +1288,19 @@ describe('SourceFileMetaData', () => {
 							}
 						},
 						intern: {
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+								)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.InternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 4,
@@ -953,8 +1308,19 @@ describe('SourceFileMetaData', () => {
 									aggregatedCPUTime: 156
 								}
 							},
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+								)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.InternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 1,
@@ -962,8 +1328,19 @@ describe('SourceFileMetaData', () => {
 									aggregatedCPUTime: 44
 								}
 							},
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+								)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/c.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.InternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 5,
@@ -971,8 +1348,19 @@ describe('SourceFileMetaData', () => {
 									aggregatedCPUTime: 489
 								}
 							},
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/d.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/d.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/helper/d.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+								)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/d.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.InternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 1,
@@ -982,8 +1370,19 @@ describe('SourceFileMetaData', () => {
 							}
 						},
 						extern: {
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier(
+									'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+								)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.ExternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 5,
@@ -991,8 +1390,19 @@ describe('SourceFileMetaData', () => {
 									aggregatedCPUTime: 29834
 								}
 							},
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier(
+									'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+								)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.ExternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 2,
@@ -1002,8 +1412,15 @@ describe('SourceFileMetaData', () => {
 							}
 						}
 					},
-					[pathIndex.getSourceNodeIndex('get', '{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
-						id: pathIndex.getSourceNodeIndex('get', '{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1,
+					[pathIndex.getSourceNodeIndex(
+						'get',
+						'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+					)?.id || -1]: {
+						id:
+							pathIndex.getSourceNodeIndex(
+								'get',
+								'{root}.{class:class2}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+							)?.id || -1,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 1,
@@ -1012,16 +1429,30 @@ describe('SourceFileMetaData', () => {
 							langInternalCPUTime: 170
 						},
 						lang_internal: {
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
 									profilerHits: 5,
 									aggregatedCPUTime: 50
-								}	
+								}
 							},
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
 									profilerHits: 6,
@@ -1030,8 +1461,15 @@ describe('SourceFileMetaData', () => {
 							}
 						}
 					},
-					[pathIndex.getSourceNodeIndex('get', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1]: {
-						id: pathIndex.getSourceNodeIndex('get', '{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string)?.id || -1,
+					[pathIndex.getSourceNodeIndex(
+						'get',
+						'{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+					)?.id || -1]: {
+						id:
+							pathIndex.getSourceNodeIndex(
+								'get',
+								'{root}.{class:class3}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
+							)?.id || -1,
 						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
 							profilerHits: 3,
@@ -1039,19 +1477,33 @@ describe('SourceFileMetaData', () => {
 							aggregatedCPUTime: 10400,
 							langInternalCPUTime: 350,
 							internCPUTime: 207,
-							externCPUTime: 9834,
+							externCPUTime: 9834
 						},
 						lang_internal: {
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
 									profilerHits: 15,
 									aggregatedCPUTime: 150
 								}
 							},
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
 									profilerHits: 10,
@@ -1060,17 +1512,39 @@ describe('SourceFileMetaData', () => {
 							}
 						},
 						intern: {
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+								)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/a.js}{root}.{class:HelperA}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.InternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 7,
 									selfCPUTime: 32,
 									aggregatedCPUTime: 83
-								}	
+								}
 							},
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+								)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'{./dist/helper/b.js}{root}.{class:HelperB}.{method:process}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.InternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 10,
@@ -1080,8 +1554,19 @@ describe('SourceFileMetaData', () => {
 							}
 						},
 						extern: {
-							[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string))?.id || -1]: {
-								id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string))?.id || -1,
+							[globalIndex.getSourceNodeIndex(
+								'get',
+								GlobalIdentifier.fromIdentifier(
+									'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+								)
+							)?.id || -1]: {
+								id:
+									globalIndex.getSourceNodeIndex(
+										'get',
+										GlobalIdentifier.fromIdentifier(
+											'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+										)
+									)?.id || -1,
 								type: SourceNodeMetaDataType.ExternSourceNodeReference,
 								sensorValues: {
 									profilerHits: 1,
@@ -1128,47 +1613,41 @@ describe('SourceFileMetaData', () => {
 
 	test('totalSourceNodeMetaData', () => {
 		/**
-			* // File: FileA
-			* ClassA:
-			* 		functionA:
-			* 				selfTime: 1
-			* 				aggregatedTime: 6
-			* 				intern:
-			* 					ClassA.functionB:
-			* 						aggregatedTime: 5
-			* 		functionB:
-			* 				selfTime: 2
-			* 				aggregatedTime: 5
-			* 				intern:
-			* 					ClassA.functionC:
-			* 						aggregatedTime: 3
-			* 		functionC:
-			* 				selfTime: 2
-			* 				aggregatedTime: 3
-			* 				intern:
-			* 					ClassB.functionA:
-			* 						aggregatedTime: 1
-			* 
-			* // File: FileB
-			* ClassB:
-			* 		functionD:
-			* 				selfTime: 1
-			* 				aggregatedTime: 1
+		 * // File: FileA
+		 * ClassA:
+		 * 		functionA:
+		 * 				selfTime: 1
+		 * 				aggregatedTime: 6
+		 * 				intern:
+		 * 					ClassA.functionB:
+		 * 						aggregatedTime: 5
+		 * 		functionB:
+		 * 				selfTime: 2
+		 * 				aggregatedTime: 5
+		 * 				intern:
+		 * 					ClassA.functionC:
+		 * 						aggregatedTime: 3
+		 * 		functionC:
+		 * 				selfTime: 2
+		 * 				aggregatedTime: 3
+		 * 				intern:
+		 * 					ClassB.functionA:
+		 * 						aggregatedTime: 1
+		 *
+		 * // File: FileB
+		 * ClassB:
+		 * 		functionD:
+		 * 				selfTime: 1
+		 * 				aggregatedTime: 1
 		 */
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 		const selfModuleIndex = globalIndex.getModuleIndex('upsert')
 		const filePathIndexA = selfModuleIndex.getFilePathIndex('upsert', './fileA.js' as UnifiedPath_string)
 		const filePathIndexB = selfModuleIndex.getFilePathIndex('upsert', './fileB.js' as UnifiedPath_string)
 
-		const sourceFileMetaDataA = new SourceFileMetaData(
-			'./fileA.js' as UnifiedPath_string,
-			filePathIndexA
-		)
+		const sourceFileMetaDataA = new SourceFileMetaData('./fileA.js' as UnifiedPath_string, filePathIndexA)
 
-		const sourceFileMetaDataB = new SourceFileMetaData(
-			'./fileB.js' as UnifiedPath_string,
-			filePathIndexB
-		)
+		const sourceFileMetaDataB = new SourceFileMetaData('./fileB.js' as UnifiedPath_string, filePathIndexB)
 
 		const methodA = sourceFileMetaDataA.createOrGetSourceNodeMetaData(
 			'{root}{class:ClassA}.{method:methodA}' as SourceNodeIdentifier_string,
@@ -1199,35 +1678,26 @@ describe('SourceFileMetaData', () => {
 			selfCPUTime: 1 as MicroSeconds_number,
 			aggregatedCPUTime: 6 as MicroSeconds_number
 		})
-		methodA.addSensorValuesToIntern(
-			methodB.globalIdentifier(),
-			{
-				aggregatedCPUTime: 5 as MicroSeconds_number
-			}
-		)
+		methodA.addSensorValuesToIntern(methodB.globalIdentifier(), {
+			aggregatedCPUTime: 5 as MicroSeconds_number
+		})
 
 		methodB.addToSensorValues({
 			selfCPUTime: 2 as MicroSeconds_number,
 			aggregatedCPUTime: 5 as MicroSeconds_number
 		})
-		methodB.addSensorValuesToIntern(
-			methodC.globalIdentifier(),
-			{
-				aggregatedCPUTime: 3 as MicroSeconds_number
-			}
-		)
+		methodB.addSensorValuesToIntern(methodC.globalIdentifier(), {
+			aggregatedCPUTime: 3 as MicroSeconds_number
+		})
 
 		methodC.addToSensorValues({
 			selfCPUTime: 2 as MicroSeconds_number,
 			aggregatedCPUTime: 3 as MicroSeconds_number
 		})
 
-		methodC.addSensorValuesToIntern(
-			methodD.globalIdentifier(),
-			{
-				aggregatedCPUTime: 1 as MicroSeconds_number
-			}
-		)
+		methodC.addSensorValuesToIntern(methodD.globalIdentifier(), {
+			aggregatedCPUTime: 1 as MicroSeconds_number
+		})
 
 		const sourceNodeGraph = new SourceNodeGraph()
 		const result = sourceFileMetaDataA.totalSourceNodeMetaData(sourceNodeGraph)

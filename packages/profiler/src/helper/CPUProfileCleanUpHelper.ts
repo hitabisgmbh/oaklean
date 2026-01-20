@@ -6,9 +6,7 @@ export class CPUProfilerCleanUpHelper {
 	// https://github.com/jlfwong/speedscope/pull/305
 	static cleanUpProfile(profile: Cdp.Profiler.Profile) {
 		if (profile.samples === undefined || profile.timeDeltas === undefined) {
-			throw new Error(
-				'NodeInspectorProfiler.cleanUpProfile: profile format is not complete'
-			)
+			throw new Error('NodeInspectorProfiler.cleanUpProfile: profile format is not complete')
 		}
 		const sampleTimes: number[] = []
 

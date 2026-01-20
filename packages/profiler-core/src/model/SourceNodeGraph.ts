@@ -16,32 +16,17 @@ type ReportID = number
 type SourceNodeID_string = `${ReportID}:${SourceNodeID_number}`
 type ReferenceMap = ModelMap<
 	SourceNodeID_string,
-	ModelMap<
-		SourceNodeID_string,
-		SourceNodeMetaData<SourceNodeMetaDataType_Reference>
-	>
+	ModelMap<SourceNodeID_string, SourceNodeMetaData<SourceNodeMetaDataType_Reference>>
 >
 
 export class SourceNodeGraph {
-	private _sourceNodes: ModelMap<
-		SourceNodeID_string,
-		SourceNodeMetaData<SourceNodeMetaDataType_Node>
-	>
-	private _outgoingSum: ModelMap<
-		SourceNodeID_string,
-		SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
-	>
-	private _incomingSum: ModelMap<
-		SourceNodeID_string,
-		SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
-	>
+	private _sourceNodes: ModelMap<SourceNodeID_string, SourceNodeMetaData<SourceNodeMetaDataType_Node>>
+	private _outgoingSum: ModelMap<SourceNodeID_string, SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>>
+	private _incomingSum: ModelMap<SourceNodeID_string, SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>>
 	private _outgoingEdges: ReferenceMap
 	private _incomingEdges: ReferenceMap
 
-	private _reachabilityCache: ModelMap<
-		SourceNodeID_string,
-		ModelSet<SourceNodeID_string>
-	>
+	private _reachabilityCache: ModelMap<SourceNodeID_string, ModelSet<SourceNodeID_string>>
 
 	constructor() {
 		this._sourceNodes = new ModelMap('string')
@@ -59,7 +44,7 @@ export class SourceNodeGraph {
 	get outgoingEdges() {
 		return this._outgoingEdges
 	}
-	
+
 	get incomingEdges() {
 		return this._incomingEdges
 	}
@@ -71,9 +56,7 @@ export class SourceNodeGraph {
 			if (incomingEdges === undefined) {
 				return undefined
 			}
-			result = SourceNodeMetaData.sum(
-				...incomingEdges.values()
-			)
+			result = SourceNodeMetaData.sum(...incomingEdges.values())
 			this._outgoingSum.set(nodeID, result)
 		}
 		return result
@@ -86,9 +69,7 @@ export class SourceNodeGraph {
 			if (incomingEdges === undefined) {
 				return undefined
 			}
-			result = SourceNodeMetaData.sum(
-				...incomingEdges.values()
-			)
+			result = SourceNodeMetaData.sum(...incomingEdges.values())
 			this._incomingSum.set(nodeID, result)
 		}
 		return result
@@ -130,20 +111,10 @@ export class SourceNodeGraph {
 		globalIndex: GlobalIndex,
 		sourceNodeMetaData: SourceNodeMetaData<SourceNodeMetaDataType_Node>
 	) {
-		this.sourceNodes.set(
-			`${report.internID}:${sourceNodeMetaData.id}`,
-			sourceNodeMetaData
-		)
-		for (const iterator of [
-			sourceNodeMetaData.lang_internal,
-			sourceNodeMetaData.intern,
-			sourceNodeMetaData.extern
-		]) {
+		this.sourceNodes.set(`${report.internID}:${sourceNodeMetaData.id}`, sourceNodeMetaData)
+		for (const iterator of [sourceNodeMetaData.lang_internal, sourceNodeMetaData.intern, sourceNodeMetaData.extern]) {
 			for (const sourceNodeReference of iterator.values()) {
-				const source = report.resolveSourceNodeID(
-					globalIndex,
-					sourceNodeReference.id
-				)
+				const source = report.resolveSourceNodeID(globalIndex, sourceNodeReference.id)
 				if (source.error === true) {
 					throw new Error(
 						'SourceNodeGraph.insertSourceNode: cannot resolve source source node for reference id: ' +
@@ -151,13 +122,7 @@ export class SourceNodeGraph {
 					)
 				}
 
-				this.addReferenceEdge(
-					source.report,
-					source.sourceNode,
-					report,
-					sourceNodeMetaData,
-					sourceNodeReference
-				)
+				this.addReferenceEdge(source.report, source.sourceNode, report, sourceNodeMetaData, sourceNodeReference)
 			}
 		}
 	}
@@ -175,29 +140,17 @@ export class SourceNodeGraph {
 
 		for (const sourceFileMetaData of report.lang_internal.values()) {
 			for (const sourceNodeMetaData of sourceFileMetaData.functions.values()) {
-				graphToInsert.insertSourceNode(
-					report,
-					globalIndex,
-					sourceNodeMetaData
-				)
+				graphToInsert.insertSourceNode(report, globalIndex, sourceNodeMetaData)
 			}
 		}
 		for (const sourceFileMetaData of report.intern.values()) {
 			for (const sourceNodeMetaData of sourceFileMetaData.functions.values()) {
-				graphToInsert.insertSourceNode(
-					report,
-					globalIndex,
-					sourceNodeMetaData
-				)
+				graphToInsert.insertSourceNode(report, globalIndex, sourceNodeMetaData)
 			}
 		}
 
 		for (const externModuleReport of report.extern.values()) {
-			SourceNodeGraph.fromReport(
-				externModuleReport,
-				globalIndex,
-				graphToInsert
-			)
+			SourceNodeGraph.fromReport(externModuleReport, globalIndex, graphToInsert)
 		}
 		return graphToInsert
 	}
@@ -210,9 +163,7 @@ export class SourceNodeGraph {
 		}
 	}
 
-	reachabilityForNode(
-		nodeID: SourceNodeID_string
-	): ModelSet<SourceNodeID_string> {
+	reachabilityForNode(nodeID: SourceNodeID_string): ModelSet<SourceNodeID_string> {
 		const cached = this._reachabilityCache.get(nodeID)
 		if (cached === undefined) {
 			const visited = new ModelSet<SourceNodeID_string>()

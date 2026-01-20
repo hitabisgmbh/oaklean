@@ -15,9 +15,7 @@ import { program } from 'commander'
 
 export default class ReportCommands {
 	constructor() {
-		const baseCommand = program
-			.command('report')
-			.description('commands to convert or inspect the profiler\'s format')
+		const baseCommand = program.command('report').description("commands to convert or inspect the profiler's format")
 
 		baseCommand
 			.command('toHash')
@@ -138,10 +136,7 @@ export default class ReportCommands {
 			return
 		}
 
-		const pstPerFile = new Map<
-		UnifiedPath_string | LangInternalPath_string,
-		ProgramStructureTree
-		>()
+		const pstPerFile = new Map<UnifiedPath_string | LangInternalPath_string, ProgramStructureTree>()
 
 		for (const pathIndex of reversePathMap.values()) {
 			if (!fs.existsSync(new UnifiedPath(pathIndex.identifier).toPlatformString())) {
@@ -214,51 +209,64 @@ export default class ReportCommands {
 
 		const total = report.totalAndMaxMetaData().total
 
-		LoggerHelper.table([
-			{
-				type: 'Node modules count',
-				value: node_modules.length
-			}
-		],['type', 'value', 'unit'])
+		LoggerHelper.table(
+			[
+				{
+					type: 'Node modules count',
+					value: node_modules.length
+				}
+			],
+			['type', 'value', 'unit']
+		)
 
-		LoggerHelper.table([
-			{
-				'category': 'headless',
-				'description': 'Headless measurements have no parent, so they originate from node internal operations like timers, events, etc.'
-			},
-			{
-				'category': 'non-headless',
-				'description': 'Non-headless measurements have a parent, so they originate from user code.'
-			},
-			{
-				'category': 'total',
-				'description': 'Total measurements are the sum of headless and non-headless measurements, so the total consumption of the process.'
-			}
-		], ['category', 'description'])
+		LoggerHelper.table(
+			[
+				{
+					category: 'headless',
+					description:
+						'Headless measurements have no parent, so they originate from node internal operations like timers, events, etc.'
+				},
+				{
+					category: 'non-headless',
+					description: 'Non-headless measurements have a parent, so they originate from user code.'
+				},
+				{
+					category: 'total',
+					description:
+						'Total measurements are the sum of headless and non-headless measurements, so the total consumption of the process.'
+				}
+			],
+			['category', 'description']
+		)
 
-		LoggerHelper.table([
-			{
-				type: 'cpu time',
-				headless: report.headlessSensorValues.selfCPUTime,
-				'non-headless': total.sensorValues.aggregatedCPUTime - report.headlessSensorValues.selfCPUTime,
-				total: total.sensorValues.aggregatedCPUTime,
-				unit: 'µs'
-			},
-			{
-				type: 'cpu energy',
-				headless: report.headlessSensorValues.selfCPUEnergyConsumption,
-				'non-headless': total.sensorValues.aggregatedCPUEnergyConsumption - report.headlessSensorValues.selfCPUEnergyConsumption,
-				total: total.sensorValues.aggregatedCPUEnergyConsumption,
-				unit: 'mJ'
-			},
-			{
-				type: 'ram energy',
-				headless: report.headlessSensorValues.selfRAMEnergyConsumption,
-				'non-headless': total.sensorValues.aggregatedRAMEnergyConsumption - report.headlessSensorValues.selfRAMEnergyConsumption,
-				total: total.sensorValues.aggregatedRAMEnergyConsumption,
-				unit: 'mJ'
-			},
-		], ['type', 'headless', 'non-headless', 'total', 'unit'])
+		LoggerHelper.table(
+			[
+				{
+					type: 'cpu time',
+					headless: report.headlessSensorValues.selfCPUTime,
+					'non-headless': total.sensorValues.aggregatedCPUTime - report.headlessSensorValues.selfCPUTime,
+					total: total.sensorValues.aggregatedCPUTime,
+					unit: 'µs'
+				},
+				{
+					type: 'cpu energy',
+					headless: report.headlessSensorValues.selfCPUEnergyConsumption,
+					'non-headless':
+						total.sensorValues.aggregatedCPUEnergyConsumption - report.headlessSensorValues.selfCPUEnergyConsumption,
+					total: total.sensorValues.aggregatedCPUEnergyConsumption,
+					unit: 'mJ'
+				},
+				{
+					type: 'ram energy',
+					headless: report.headlessSensorValues.selfRAMEnergyConsumption,
+					'non-headless':
+						total.sensorValues.aggregatedRAMEnergyConsumption - report.headlessSensorValues.selfRAMEnergyConsumption,
+					total: total.sensorValues.aggregatedRAMEnergyConsumption,
+					unit: 'mJ'
+				}
+			],
+			['type', 'headless', 'non-headless', 'total', 'unit']
+		)
 
 		if (options.listModules) {
 			LoggerHelper.log('Node modules:')

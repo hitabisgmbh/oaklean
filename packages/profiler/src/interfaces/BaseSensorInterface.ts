@@ -1,13 +1,9 @@
-import {
-	MetricsDataCollection,
-	NanoSeconds_BigInt,
-	SensorInterfaceType
-} from '@oaklean/profiler-core'
+import { MetricsDataCollection, NanoSeconds_BigInt, SensorInterfaceType } from '@oaklean/profiler-core'
 
 export class BaseSensorInterface {
 	protected _couldBeExecuted: boolean | undefined
 
-	type(): SensorInterfaceType{
+	type(): SensorInterfaceType {
 		throw new Error('BaseSensorInterface.type must be implemented')
 	}
 
@@ -51,7 +47,8 @@ export class BaseSensorInterface {
 		try {
 			process.kill(pid, 0)
 			return true
-		} catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
+		} catch (e) {
+			// eslint-disable-line @typescript-eslint/no-unused-vars
 			return false
 		}
 	}

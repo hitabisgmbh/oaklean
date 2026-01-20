@@ -19,37 +19,23 @@ export type SourceNodeMetaDataType_Reference =
 	| SourceNodeMetaDataType.InternSourceNodeReference
 	| SourceNodeMetaDataType.ExternSourceNodeReference
 
-export const SourceNodeMetaDataTypeName: Record<
-	SourceNodeMetaDataType,
-	string
-> = {
+export const SourceNodeMetaDataTypeName: Record<SourceNodeMetaDataType, string> = {
 	[SourceNodeMetaDataType.SourceNode]: 'SourceNode',
 	[SourceNodeMetaDataType.LangInternalSourceNode]: 'LangInternalSourceNode',
-	[SourceNodeMetaDataType.LangInternalSourceNodeReference]:
-		'LangInternalSourceNodeReference',
-	[SourceNodeMetaDataType.InternSourceNodeReference]:
-		'InternSourceNodeReference',
-	[SourceNodeMetaDataType.ExternSourceNodeReference]:
-		'ExternSourceNodeReference',
+	[SourceNodeMetaDataType.LangInternalSourceNodeReference]: 'LangInternalSourceNodeReference',
+	[SourceNodeMetaDataType.InternSourceNodeReference]: 'InternSourceNodeReference',
+	[SourceNodeMetaDataType.ExternSourceNodeReference]: 'ExternSourceNodeReference',
 	[SourceNodeMetaDataType.Aggregate]: 'Aggregate'
 }
 
 export interface ISourceNodeMetaData<T extends SourceNodeMetaDataType> {
-	id: T extends SourceNodeMetaDataType.Aggregate
-		? undefined
-		: SourceNodeID_number
+	id: T extends SourceNodeMetaDataType.Aggregate ? undefined : SourceNodeID_number
 	type: T
 	sensorValues: ISensorValues
 	lang_internal?: Record<
 		SourceNodeID_number,
 		ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
 	>
-	intern?: Record<
-		SourceNodeID_number,
-		ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
-	>
-	extern?: Record<
-		SourceNodeID_number,
-		ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
-	>
+	intern?: Record<SourceNodeID_number, ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>
+	extern?: Record<SourceNodeID_number, ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
 }

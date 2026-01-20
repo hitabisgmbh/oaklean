@@ -4,16 +4,10 @@ import { BufferHelper } from './BufferHelper'
 import { AuthenticationHelper } from './AuthenticationHelper'
 
 import { OAKLEAN_DISABLE_REGISTRY } from '../constants'
-import {
-	ProfilerConfig,
-	ProjectReport
-} from '../model'
+import { ProfilerConfig, ProjectReport } from '../model'
 
 export class RegistryHelper {
-	static async uploadToRegistry(
-		projectReport: ProjectReport,
-		config?: ProfilerConfig
-	) {
+	static async uploadToRegistry(projectReport: ProjectReport, config?: ProfilerConfig) {
 		if (OAKLEAN_DISABLE_REGISTRY) {
 			return
 		}

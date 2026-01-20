@@ -1,16 +1,11 @@
 import * as fs from 'fs'
 
 // Test assets
-import {
-	EXAMPLE_SYSTEM_INFORMATION,
-	EXAMPLE_EXECUTION_DETAILS
-} from './assets/ProjectReport/ExecutionDetails'
+import { EXAMPLE_SYSTEM_INFORMATION, EXAMPLE_EXECUTION_DETAILS } from './assets/ProjectReport/ExecutionDetails'
 
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { ProjectReport } from '../../src/model/ProjectReport'
-import {
-	NodeModule
-} from '../../src/model/NodeModule'
+import { NodeModule } from '../../src/model/NodeModule'
 import { VERSION } from '../../src/constants/app'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
 import { GitHelper } from '../../src/helper/GitHelper'
@@ -154,7 +149,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 
 						selfRAMEnergyConsumption: 40 as MilliJoule_number,
 						aggregatedRAMEnergyConsumption: 60 as MilliJoule_number,
-						langInternalRAMEnergyConsumption: 20 as MilliJoule_number,
+						langInternalRAMEnergyConsumption: 20 as MilliJoule_number
 					},
 					lang_internal: {
 						[5 as SourceNodeID_number]: {
@@ -164,7 +159,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 								aggregatedCPUTime: 10 as MicroSeconds_number,
 								aggregatedCPUEnergyConsumption: 20 as MilliJoule_number,
 
-								aggregatedRAMEnergyConsumption: 20 as MilliJoule_number,
+								aggregatedRAMEnergyConsumption: 20 as MilliJoule_number
 							}
 						}
 					}
@@ -208,7 +203,7 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 			kind: ReportKind.measurement,
 			nodeModule: {
 				name: '@oaklean/profiler-core',
-				version: '0.0.4',
+				version: '0.0.4'
 			},
 			headlessSensorValues: {},
 			intern: {
@@ -242,19 +237,31 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 								selfRAMEnergyConsumption: 160,
 								aggregatedRAMEnergyConsumption: 160
 							} as ISensorValues
-						} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+						} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
 					}
 				}
 			}
 		}
-	},
+	}
 }
 
-const EXAMPLE_PROJECT_REPORT_BUFFER = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer').toString()).toString()
-const EXAMPLE_PROJECT_REPORT_HASH = fs.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash').toString()).toString()
+const EXAMPLE_PROJECT_REPORT_BUFFER = fs
+	.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer').toString())
+	.toString()
+const EXAMPLE_PROJECT_REPORT_HASH = fs
+	.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash').toString())
+	.toString()
 
-const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001 = CURRENT_DIR.join('assets', 'ExternalResourceHelper', 'example001.resources.json')
-const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002 = CURRENT_DIR.join('assets', 'ExternalResourceHelper', 'example002.resources.json')
+const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001 = CURRENT_DIR.join(
+	'assets',
+	'ExternalResourceHelper',
+	'example001.resources.json'
+)
+const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002 = CURRENT_DIR.join(
+	'assets',
+	'ExternalResourceHelper',
+	'example002.resources.json'
+)
 
 /**
  * Preprocess the external resource files to ensure that source maps are relative and do not contain absolute paths.
@@ -273,10 +280,9 @@ async function preprocess() {
 		}
 
 		for (const scriptId of externalResourceHelper.scriptIDs) {
-			const sourceMap = (await externalResourceHelper.sourceMapFromScriptID(
-				scriptId,
-				externalResourceHelperPath,
-			))?.copy()
+			const sourceMap = (
+				await externalResourceHelper.sourceMapFromScriptID(scriptId, externalResourceHelperPath)
+			)?.copy()
 
 			if (sourceMap !== undefined && sourceMap !== null) {
 				const newSources = sourceMap.sources.map((source) => {
@@ -292,10 +298,7 @@ async function preprocess() {
 
 		for (const loadedFilePath of externalResourceHelper.loadedFilePaths) {
 			const filePath = new UnifiedPath(loadedFilePath)
-			const sourceMap = (await externalResourceHelper.sourceMapFromPath(
-				filePath,
-				filePath)
-			)?.copy()
+			const sourceMap = (await externalResourceHelper.sourceMapFromPath(filePath, filePath))?.copy()
 
 			if (sourceMap !== undefined && sourceMap !== null) {
 				const newSources = sourceMap.sources.map((source) => {
@@ -365,12 +368,10 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 		test('addCPUTimeToExtern', () => {
 			const nodeModule = new NodeModule('module', '1.2.3')
 
-			const {
-				sourceNodeMetaData
-			} = instance.addToExtern(
+			const { sourceNodeMetaData } = instance.addToExtern(
 				new UnifiedPath('./file'),
 				nodeModule,
-				'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
+				'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string
 			)
 			sourceNodeMetaData.addToSensorValues({
 				// cpu time
@@ -387,10 +388,12 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			})
 			const moduleID = instance.globalIndex.getModuleIndex('get', nodeModule.identifier)?.id as ModuleID_number
 
-			expect(instance.extern.get(moduleID)?.getMetaDataFromFile(
-				new UnifiedPath('./report.oak'),
-				new UnifiedPath('./file')
-			)?.functions.toJSON()).toEqual({
+			expect(
+				instance.extern
+					.get(moduleID)
+					?.getMetaDataFromFile(new UnifiedPath('./report.oak'), new UnifiedPath('./file'))
+					?.functions.toJSON()
+			).toEqual({
 				13: {
 					type: SourceNodeMetaDataType.SourceNode,
 					id: 13,
@@ -402,7 +405,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 						aggregatedCPUEnergyConsumption: 444,
 
 						selfRAMEnergyConsumption: 444,
-						aggregatedRAMEnergyConsumption: 444,
+						aggregatedRAMEnergyConsumption: 444
 					}
 				} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
 			})
@@ -410,10 +413,11 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 		describe('getCPUTimeFromFile', () => {
 			test('should return the getCPUTimeFromFile correctly', () => {
-				expect(instance.getMetaDataFromFile(
-					new UnifiedPath('./report.oak'),
-					new UnifiedPath('./dist/test.js')
-				)?.functions.toJSON()).toEqual({
+				expect(
+					instance
+						.getMetaDataFromFile(new UnifiedPath('./report.oak'), new UnifiedPath('./dist/test.js'))
+						?.functions.toJSON()
+				).toEqual({
 					2: {
 						id: 2 as SourceNodeID_number,
 						type: SourceNodeMetaDataType.SourceNode,
@@ -480,13 +484,13 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			test('absolute paths', () => {
 				const sourceNodeMetaData = instance.addToIntern(
 					new UnifiedPath('/abs/path/to/file').toString(),
-					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string,
+					'{root}{class:Class}.{method:method}' as SourceNodeIdentifier_string
 				)
 				sourceNodeMetaData.addToSensorValues({
 					// cpu time
 					selfCPUTime: 456 as MicroSeconds_number,
 					aggregatedCPUTime: 456 as MicroSeconds_number,
-					
+
 					// cpu energy
 					selfCPUEnergyConsumption: 912 as MilliJoule_number,
 					aggregatedCPUEnergyConsumption: 912 as MilliJoule_number,
@@ -496,10 +500,11 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 					aggregatedRAMEnergyConsumption: 912 as MilliJoule_number
 				})
 				instance.relativeRootDir = undefined
-				expect(instance.getMetaDataFromFile(
-					new UnifiedPath('./report.oak'),
-					new UnifiedPath('/abs/path/to/file')
-				)?.functions.toJSON()).toEqual({
+				expect(
+					instance
+						.getMetaDataFromFile(new UnifiedPath('./report.oak'), new UnifiedPath('/abs/path/to/file'))
+						?.functions.toJSON()
+				).toEqual({
 					12: {
 						id: 12 as SourceNodeID_number,
 						type: SourceNodeMetaDataType.SourceNode,
@@ -511,7 +516,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 							aggregatedCPUEnergyConsumption: 912,
 
 							selfRAMEnergyConsumption: 912,
-							aggregatedRAMEnergyConsumption: 912,
+							aggregatedRAMEnergyConsumption: 912
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
 				})
@@ -546,7 +551,15 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 		})
 
 		test('storeToFile', () => {
-			const projectReportFilePath = CURRENT_DIR.join('..', '..', '..', '..', 'profiles', 'test-profile', 'test-report.oak')
+			const projectReportFilePath = CURRENT_DIR.join(
+				'..',
+				'..',
+				'..',
+				'..',
+				'profiles',
+				'test-profile',
+				'test-report.oak'
+			)
 			if (fs.existsSync(projectReportFilePath.dirName().toPlatformString())) {
 				fs.rmSync(projectReportFilePath.dirName().toPlatformString(), {
 					recursive: true
@@ -558,9 +571,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 			const config = ProfilerConfig.autoResolve()
 
-			expect(
-				instance.relativeRootDir!.toString()
-			).toBe(
+			expect(instance.relativeRootDir!.toString()).toBe(
 				projectReportFilePath.dirName().pathTo(config.getRootDir()).toString()
 			)
 			expect(fs.existsSync(projectReportFilePath.toString())).toBeTruthy()
@@ -569,10 +580,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 		describe('trackUncommittedFiles', () => {
 			test('no git repository', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(null)
-				instance.trackUncommittedFiles(
-					new UnifiedPath('./'),
-					new ExternalResourceHelper(ROOT_DIR)
-				)
+				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper(ROOT_DIR))
 				expect(instance.executionDetails.uncommittedChanges).toBe(undefined)
 
 				uncommittedFiles_mock.mockRestore()
@@ -580,43 +588,32 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 			test('no uncommitted changes exist', () => {
 				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([])
-				instance.trackUncommittedFiles(
-					new UnifiedPath('./'),
-					new ExternalResourceHelper(ROOT_DIR)
-				)
+				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper(ROOT_DIR))
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
 				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('uncommitted changes exist', () => {
-				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([
-					new UnifiedPath('./dist/test.js')
-				])
-				instance.trackUncommittedFiles(
-					new UnifiedPath('./'),
-					new ExternalResourceHelper(ROOT_DIR)
-				)
+				const uncommittedFiles_mock = jest
+					.spyOn(GitHelper, 'uncommittedFiles')
+					.mockReturnValue([new UnifiedPath('./dist/test.js')])
+				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper(ROOT_DIR))
 				expect(instance.executionDetails.uncommittedChanges).toBe(true)
 				// check if the uncommitted changes are correctly tracked
 				expect(
-					instance.globalIndex.getModuleIndex('get')
-						?.getFilePathIndex('get',
-							'./dist/test.js' as UnifiedPath_string
-						)?.containsUncommittedChanges
+					instance.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', './dist/test.js' as UnifiedPath_string)
+						?.containsUncommittedChanges
 				).toBe(true)
 
 				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('uncommitted changes exist in node modules has no effect', () => {
-				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([
-					new UnifiedPath('./node_modules/@oaklean/profiler-core/test.js')
-				])
-				instance.trackUncommittedFiles(
-					new UnifiedPath('./'),
-					new ExternalResourceHelper(ROOT_DIR)
-				)
+				const uncommittedFiles_mock = jest
+					.spyOn(GitHelper, 'uncommittedFiles')
+					.mockReturnValue([new UnifiedPath('./node_modules/@oaklean/profiler-core/test.js')])
+				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper(ROOT_DIR))
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
 				uncommittedFiles_mock.mockRestore()
@@ -627,73 +624,67 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 describe('ProjectReport', () => {
 	runInstanceTests('instance related', () => {
-		const nodeModule = new NodeModule(
-			'@oaklean/profiler-core',
-			'0.0.4',
-		)
+		const nodeModule = new NodeModule('@oaklean/profiler-core', '0.0.4')
 
-		const instance = new ProjectReport({
-			origin: ProjectReportOrigin.pure,
-			commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
-			commitTimestamp: 1687845481077,
-			timestamp: 1687845481077,
-			highResolutionBeginTime: '887518894424000',
-			highResolutionStopTime: '887518904424000',
-			uncommittedChanges: false,
-			systemInformation: EXAMPLE_SYSTEM_INFORMATION,
-			languageInformation: {
-				name: 'node',
-				version: '20.11.1'
-			},
-			runTimeOptions: {
-				seeds: {
-					'Math.random': '0'
+		const instance = new ProjectReport(
+			{
+				origin: ProjectReportOrigin.pure,
+				commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+				commitTimestamp: 1687845481077,
+				timestamp: 1687845481077,
+				highResolutionBeginTime: '887518894424000',
+				highResolutionStopTime: '887518904424000',
+				uncommittedChanges: false,
+				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
+				languageInformation: {
+					name: 'node',
+					version: '20.11.1'
 				},
-				v8: {
-					cpu: {
-						sampleInterval: 1 as MicroSeconds_number
-					}
-				},
-				sensorInterface: {
-					type: SensorInterfaceType.powermetrics,
-					options: {
-						sampleInterval: 1000 as MicroSeconds_number,
-						outputFilePath: '<anonymized>'
+				runTimeOptions: {
+					seeds: {
+						'Math.random': '0'
+					},
+					v8: {
+						cpu: {
+							sampleInterval: 1 as MicroSeconds_number
+						}
+					},
+					sensorInterface: {
+						type: SensorInterfaceType.powermetrics,
+						options: {
+							sampleInterval: 1000 as MicroSeconds_number,
+							outputFilePath: '<anonymized>'
+						}
 					}
 				}
+			},
+			ReportKind.measurement,
+			{
+				projectID: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
 			}
-		},
-		ReportKind.measurement,
-		{
-			projectID: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
-		})
+		)
 		instance.relativeRootDir = new UnifiedPath('./')
 
 		const firstNode = instance.addToIntern(
-			new UnifiedPath('./dist/test.js').toString(), // path does not exist in reality 
+			new UnifiedPath('./dist/test.js').toString(), // path does not exist in reality
 			'{root}.{class:Class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
 		)
-		firstNode.addToSensorValues(
-			{
-				// cpu time
-				selfCPUTime: 20 as MicroSeconds_number,
-				aggregatedCPUTime: 30 as MicroSeconds_number,
-				
-				// cpu energy
-				selfCPUEnergyConsumption: 40 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
-				
-				// ram energy
-				selfRAMEnergyConsumption: 40 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 60 as MilliJoule_number
-			}
-		)
+		firstNode.addToSensorValues({
+			// cpu time
+			selfCPUTime: 20 as MicroSeconds_number,
+			aggregatedCPUTime: 30 as MicroSeconds_number,
+
+			// cpu energy
+			selfCPUEnergyConsumption: 40 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
+
+			// ram energy
+			selfRAMEnergyConsumption: 40 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 60 as MilliJoule_number
+		})
 
 		firstNode.addSensorValuesToLangInternal(
-			new GlobalIdentifier(
-				'' as UnifiedPath_string,
-				'{root}' as SourceNodeIdentifier_string
-			),
+			new GlobalIdentifier('' as UnifiedPath_string, '{root}' as SourceNodeIdentifier_string),
 			{
 				// cpu time
 				selfCPUTime: 0 as MicroSeconds_number,
@@ -709,10 +700,10 @@ describe('ProjectReport', () => {
 			}
 		)
 		const secondNode = instance.addToIntern(
-			new UnifiedPath('./dist/test.js').toString(), // path does not exist in reality 
+			new UnifiedPath('./dist/test.js').toString(), // path does not exist in reality
 			'{root}.{class:Class}.{method:method2}' as SourceNodeIdentifier_string
 		)
-		secondNode.addToSensorValues(	{
+		secondNode.addToSensorValues({
 			// cpu time
 			selfCPUTime: 30 as MicroSeconds_number,
 			aggregatedCPUTime: 60 as MicroSeconds_number,
@@ -727,69 +718,58 @@ describe('ProjectReport', () => {
 		})
 
 		secondNode.addSensorValuesToLangInternal(
-			new GlobalIdentifier(
-				'' as UnifiedPath_string,
-				'{root}' as SourceNodeIdentifier_string
-			),
+			new GlobalIdentifier('' as UnifiedPath_string, '{root}' as SourceNodeIdentifier_string),
 			{
 				// cpu time
 				selfCPUTime: 0 as MicroSeconds_number,
 				aggregatedCPUTime: 30 as MicroSeconds_number,
-				
+
 				// cpu energy
 				selfCPUEnergyConsumption: 0 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 60 as MilliJoule_number,
-				
+
 				// ram energy
 				selfRAMEnergyConsumption: 0 as MilliJoule_number,
 				aggregatedRAMEnergyConsumption: 60 as MilliJoule_number
 			}
 		)
 
-		const {
-			sourceNodeMetaData: externNode1
-		} = instance.addToExtern(
-			new UnifiedPath('./test.js'), // path does not exist in reality 
+		const { sourceNodeMetaData: externNode1 } = instance.addToExtern(
+			new UnifiedPath('./test.js'), // path does not exist in reality
 			nodeModule, // points to the profiler core package itself
 			'{root}.{class:Package}.{method:method}' as SourceNodeIdentifier_string
 		)
-		externNode1.addToSensorValues(
-			{
-				// cpu time
-				selfCPUTime: 10 as MicroSeconds_number,
-				aggregatedCPUTime: 10 as MicroSeconds_number,
-				// cpu energy
-				selfCPUEnergyConsumption: 20 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 20 as MilliJoule_number,
-				
-				// ram energy
-				selfRAMEnergyConsumption: 20 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 20 as MilliJoule_number
-			}
-		)
-		const {
-			sourceNodeMetaData: externNode2
-		} = instance.addToExtern(
-			new UnifiedPath('./test.js'), // path does not exist in reality 
+		externNode1.addToSensorValues({
+			// cpu time
+			selfCPUTime: 10 as MicroSeconds_number,
+			aggregatedCPUTime: 10 as MicroSeconds_number,
+			// cpu energy
+			selfCPUEnergyConsumption: 20 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 20 as MilliJoule_number,
+
+			// ram energy
+			selfRAMEnergyConsumption: 20 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 20 as MilliJoule_number
+		})
+		const { sourceNodeMetaData: externNode2 } = instance.addToExtern(
+			new UnifiedPath('./test.js'), // path does not exist in reality
 			nodeModule, // points to the profiler core package itself
 			'{root}.{class:Package}.{method:method2}' as SourceNodeIdentifier_string
 		)
 
-		externNode2.addToSensorValues(
-			{
-				// cpu time
-				selfCPUTime: 80 as MicroSeconds_number,
-				aggregatedCPUTime: 80 as MicroSeconds_number,
-			
-				// cpu energy
-				selfCPUEnergyConsumption: 160 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 160 as MilliJoule_number,
-			
-				// ram energy
-				selfRAMEnergyConsumption: 160 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 160 as MilliJoule_number
-			}
-		)
+		externNode2.addToSensorValues({
+			// cpu time
+			selfCPUTime: 80 as MicroSeconds_number,
+			aggregatedCPUTime: 80 as MicroSeconds_number,
+
+			// cpu energy
+			selfCPUEnergyConsumption: 160 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 160 as MilliJoule_number,
+
+			// ram energy
+			selfRAMEnergyConsumption: 160 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 160 as MilliJoule_number
+		})
 		return instance
 	})
 
@@ -886,37 +866,40 @@ describe('ProjectReport', () => {
 			)!
 
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
-			const projectReport = new ProjectReport({
-				origin: ProjectReportOrigin.pure,
-				commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
-				commitTimestamp: 1706554909143,
-				timestamp: 1706554909143,
-				uncommittedChanges: true,
-				highResolutionBeginTime: '887518894424000',
-				highResolutionStopTime: '887518904424000',
-				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
-				languageInformation: {
-					name: 'node',
-					version: '20.11.1'
-				},
-				runTimeOptions: {
-					seeds: {
-						'Math.random': '0'
+			const projectReport = new ProjectReport(
+				{
+					origin: ProjectReportOrigin.pure,
+					commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
+					commitTimestamp: 1706554909143,
+					timestamp: 1706554909143,
+					uncommittedChanges: true,
+					highResolutionBeginTime: '887518894424000',
+					highResolutionStopTime: '887518904424000',
+					systemInformation: EXAMPLE_SYSTEM_INFORMATION,
+					languageInformation: {
+						name: 'node',
+						version: '20.11.1'
 					},
-					v8: {
-						cpu: {
-							sampleInterval: 1 as MicroSeconds_number
-						}
-					},
-					sensorInterface: {
-						type: SensorInterfaceType.powermetrics,
-						options: {
-							sampleInterval: 1000 as MicroSeconds_number,
-							outputFilePath: '<anonymized>'
+					runTimeOptions: {
+						seeds: {
+							'Math.random': '0'
+						},
+						v8: {
+							cpu: {
+								sampleInterval: 1 as MicroSeconds_number
+							}
+						},
+						sensorInterface: {
+							type: SensorInterfaceType.powermetrics,
+							options: {
+								sampleInterval: 1000 as MicroSeconds_number,
+								outputFilePath: '<anonymized>'
+							}
 						}
 					}
-				}
-			}, ReportKind.measurement)
+				},
+				ReportKind.measurement
+			)
 			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
 			projectReport.normalize()
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
@@ -930,19 +913,11 @@ describe('ProjectReport', () => {
 
 			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
 
-			expect(
-				projectReport.toJSON()
-			).toEqual(
-				expectedJson?.toJSON()
-			)
+			expect(projectReport.toJSON()).toEqual(expectedJson?.toJSON())
 
 			const expectedBin = ProjectReport.loadFromFile(expectedProjectReportFilePathBin, 'bin')
 
-			expect(
-				projectReport.toJSON()
-			).toEqual(
-				expectedBin?.toJSON()
-			)
+			expect(projectReport.toJSON()).toEqual(expectedBin?.toJSON())
 		})
 
 		test('test case example002', async () => {
@@ -953,37 +928,40 @@ describe('ProjectReport', () => {
 			)!
 
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
-			const projectReport = new ProjectReport({
-				origin: ProjectReportOrigin.pure,
-				commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
-				commitTimestamp: 1706556938476,
-				timestamp: 1706556938476,
-				uncommittedChanges: true,
-				highResolutionBeginTime: '889548167236000',
-				highResolutionStopTime: '889548267236000',
-				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
-				languageInformation: {
-					name: 'node',
-					version: '20.11.1'
-				},
-				runTimeOptions: {
-					seeds: {
-						'Math.random': '0'
+			const projectReport = new ProjectReport(
+				{
+					origin: ProjectReportOrigin.pure,
+					commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
+					commitTimestamp: 1706556938476,
+					timestamp: 1706556938476,
+					uncommittedChanges: true,
+					highResolutionBeginTime: '889548167236000',
+					highResolutionStopTime: '889548267236000',
+					systemInformation: EXAMPLE_SYSTEM_INFORMATION,
+					languageInformation: {
+						name: 'node',
+						version: '20.11.1'
 					},
-					v8: {
-						cpu: {
-							sampleInterval: 1 as MicroSeconds_number
-						}
-					},
-					sensorInterface: {
-						type: SensorInterfaceType.powermetrics,
-						options: {
-							sampleInterval: 1000 as MicroSeconds_number,
-							outputFilePath: '<anonymized>'
+					runTimeOptions: {
+						seeds: {
+							'Math.random': '0'
+						},
+						v8: {
+							cpu: {
+								sampleInterval: 1 as MicroSeconds_number
+							}
+						},
+						sensorInterface: {
+							type: SensorInterfaceType.powermetrics,
+							options: {
+								sampleInterval: 1000 as MicroSeconds_number,
+								outputFilePath: '<anonymized>'
+							}
 						}
 					}
-				}
-			}, ReportKind.measurement)
+				},
+				ReportKind.measurement
+			)
 			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
 			projectReport.normalize()
@@ -996,19 +974,11 @@ describe('ProjectReport', () => {
 
 			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
 
-			expect(
-				projectReport.toJSON()
-			).toEqual(
-				expectedJson?.toJSON()
-			)
+			expect(projectReport.toJSON()).toEqual(expectedJson?.toJSON())
 
 			const expectedBin = ProjectReport.loadFromFile(expectedProjectReportFilePathBin, 'bin')
 
-			expect(
-				projectReport.toJSON()
-			).toEqual(
-				expectedBin?.toJSON()
-			)
+			expect(projectReport.toJSON()).toEqual(expectedBin?.toJSON())
 		})
 
 		test('not existing Sourcefile', async () => {
@@ -1019,37 +989,40 @@ describe('ProjectReport', () => {
 			)!
 
 			const profile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
-			const projectReport = new ProjectReport({
-				origin: ProjectReportOrigin.pure,
-				commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
-				commitTimestamp: 1687845481077,
-				timestamp: 1687845481077,
-				uncommittedChanges: false,
-				highResolutionBeginTime: '2345442642551333',
-				highResolutionStopTime: '2345443642551333',
-				systemInformation: EXAMPLE_SYSTEM_INFORMATION,
-				languageInformation: {
-					name: 'node',
-					version: '20.11.1'
-				},
-				runTimeOptions: {
-					seeds: {
-						'Math.random': '0'
+			const projectReport = new ProjectReport(
+				{
+					origin: ProjectReportOrigin.pure,
+					commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+					commitTimestamp: 1687845481077,
+					timestamp: 1687845481077,
+					uncommittedChanges: false,
+					highResolutionBeginTime: '2345442642551333',
+					highResolutionStopTime: '2345443642551333',
+					systemInformation: EXAMPLE_SYSTEM_INFORMATION,
+					languageInformation: {
+						name: 'node',
+						version: '20.11.1'
 					},
-					v8: {
-						cpu: {
-							sampleInterval: 1 as MicroSeconds_number
-						}
-					},
-					sensorInterface: {
-						type: SensorInterfaceType.powermetrics,
-						options: {
-							sampleInterval: 1000 as MicroSeconds_number,
-							outputFilePath: '<anonymized>'
+					runTimeOptions: {
+						seeds: {
+							'Math.random': '0'
+						},
+						v8: {
+							cpu: {
+								sampleInterval: 1 as MicroSeconds_number
+							}
+						},
+						sensorInterface: {
+							type: SensorInterfaceType.powermetrics,
+							options: {
+								sampleInterval: 1000 as MicroSeconds_number,
+								outputFilePath: '<anonymized>'
+							}
 						}
 					}
-				}
-			}, ReportKind.measurement)
+				},
+				ReportKind.measurement
+			)
 
 			// change the source file path to a not existing one
 			profile['nodes'][3]['callFrame']['url'] = 'not/found/sourcefile.ts'
@@ -1057,13 +1030,15 @@ describe('ProjectReport', () => {
 
 			// a not existing source file should still be added to the project report
 			const notFoundModuleIndex = projectReport.globalIndex.getModuleIndex('get')
-			const missingFilePathIndex = notFoundModuleIndex?.getFilePathIndex('get', './not/found/sourcefile.ts' as UnifiedPath_string)
+			const missingFilePathIndex = notFoundModuleIndex?.getFilePathIndex(
+				'get',
+				'./not/found/sourcefile.ts' as UnifiedPath_string
+			)
 
 			expect(notFoundModuleIndex).toBeDefined()
 			expect(missingFilePathIndex).toBeDefined()
 
-			const sourceFileMetaData = projectReport.intern.
-				get(missingFilePathIndex?.id as PathID_number)
+			const sourceFileMetaData = projectReport.intern.get(missingFilePathIndex?.id as PathID_number)
 
 			expect(sourceFileMetaData).toBeDefined()
 		})
@@ -1073,9 +1048,15 @@ describe('ProjectReport', () => {
 		let instancesToMerge: ProjectReport[] = []
 
 		beforeEach(() => {
-			const first = ProjectReport.loadFromFile(CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json'), 'json')
+			const first = ProjectReport.loadFromFile(
+				CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json'),
+				'json'
+			)
 
-			const second = ProjectReport.loadFromFile(CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json'), 'json')
+			const second = ProjectReport.loadFromFile(
+				CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json'),
+				'json'
+			)
 
 			if (first === undefined || second === undefined) {
 				throw new Error('ProjectReport.test.merging: not all instances are defined')
@@ -1135,13 +1116,9 @@ describe('ProjectReport', () => {
 			const expectedProjectReportJson = ProjectReport.loadFromFile(expectedPathJson, 'json')
 			const expectedProjectReportBin = ProjectReport.loadFromFile(expectedPathBin, 'bin')
 
-			expect(mergedProjectReport.toJSON()).toEqual(
-				expectedProjectReportJson?.toJSON()
-			)
+			expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReportJson?.toJSON())
 
-			expect(mergedProjectReport.toJSON()).toEqual(
-				expectedProjectReportBin?.toJSON()
-			)
+			expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReportBin?.toJSON())
 		})
 
 		test('merges correctly with cucc changes', () => {
@@ -1149,21 +1126,25 @@ describe('ProjectReport', () => {
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
 			const expectedPathJson = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
 			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.bin')
-			
+
 			// add cucc changes
-			const sourceFileIndex_001 = instancesToMerge[0].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
+			const sourceFileIndex_001 = instancesToMerge[0].globalIndex
+				.getModuleIndex('get')
+				?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
 			expect(sourceFileIndex_001).toBeDefined()
 			if (sourceFileIndex_001) {
 				sourceFileIndex_001.containsUncommittedChanges = true
 			}
 
 			// add cucc changes
-			const sourceFileIndex_002 = instancesToMerge[1].globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
+			const sourceFileIndex_002 = instancesToMerge[1].globalIndex
+				.getModuleIndex('get')
+				?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
 			expect(sourceFileIndex_002).toBeDefined()
 			if (sourceFileIndex_002) {
 				sourceFileIndex_002.containsUncommittedChanges = true
 			}
-			
+
 			const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
 
 			mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
@@ -1175,37 +1156,41 @@ describe('ProjectReport', () => {
 			expect(expectedProjectReportBin).toBeDefined()
 			if (expectedProjectReportJson && expectedProjectReportBin) {
 				// add cucc changes to expected json report
-				const sourceFileIndex_001_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
+				const sourceFileIndex_001_Json = expectedProjectReportJson.globalIndex
+					.getModuleIndex('get')
+					?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
 				expect(sourceFileIndex_001_Json).toBeDefined()
 				if (sourceFileIndex_001_Json) {
 					sourceFileIndex_001_Json.containsUncommittedChanges = true
 				}
-				const sourceFileIndex_002_Json = expectedProjectReportJson.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
+				const sourceFileIndex_002_Json = expectedProjectReportJson.globalIndex
+					.getModuleIndex('get')
+					?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
 				expect(sourceFileIndex_002_Json).toBeDefined()
 				if (sourceFileIndex_002_Json) {
 					sourceFileIndex_002_Json.containsUncommittedChanges = true
 				}
 
 				// add cucc changes to expected bin report
-				const sourceFileIndex_001_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
+				const sourceFileIndex_001_Bin = expectedProjectReportBin.globalIndex
+					.getModuleIndex('get')
+					?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
 				expect(sourceFileIndex_001_Bin).toBeDefined()
 				if (sourceFileIndex_001_Bin) {
 					sourceFileIndex_001_Bin.containsUncommittedChanges = true
 				}
-				const sourceFileIndex_002_Bin = expectedProjectReportBin.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
+				const sourceFileIndex_002_Bin = expectedProjectReportBin.globalIndex
+					.getModuleIndex('get')
+					?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
 				expect(sourceFileIndex_002_Bin).toBeDefined()
 				if (sourceFileIndex_002_Bin) {
 					sourceFileIndex_002_Bin.containsUncommittedChanges = true
 				}
 			}
 
-			expect(mergedProjectReport.toJSON()).toEqual(
-				expectedProjectReportJson?.toJSON()
-			)
+			expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReportJson?.toJSON())
 
-			expect(mergedProjectReport.toJSON()).toEqual(
-				expectedProjectReportBin?.toJSON()
-			)
+			expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReportBin?.toJSON())
 		})
 
 		describe('merges correctly with noisy systemInformation', () => {
@@ -1223,9 +1208,7 @@ describe('ProjectReport', () => {
 				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
 				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
-				expect(mergedProjectReport.toJSON()).toEqual(
-					expectedProjectReport?.toJSON()
-				)
+				expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReport?.toJSON())
 			})
 			test('seconds report is different', () => {
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
@@ -1237,9 +1220,7 @@ describe('ProjectReport', () => {
 				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
 				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
-				expect(mergedProjectReport.toJSON()).toEqual(
-					expectedProjectReport?.toJSON()
-				)
+				expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReport?.toJSON())
 			})
 		})
 
@@ -1297,34 +1278,46 @@ describe('ProjectReport', () => {
 
 	describe('shouldBeStoredInRegistry', () => {
 		test('test with pure measurement', async () => {
-			const projectReport = new ProjectReport({
-				...EXAMPLE_EXECUTION_DETAILS,
-				origin: ProjectReportOrigin.pure
-			}, ReportKind.measurement)
+			const projectReport = new ProjectReport(
+				{
+					...EXAMPLE_EXECUTION_DETAILS,
+					origin: ProjectReportOrigin.pure
+				},
+				ReportKind.measurement
+			)
 			expect(await projectReport.shouldBeStoredInRegistry()).toBe(true)
 		})
 
 		test('test jest accumulated measurement', async () => {
-			const projectReport = new ProjectReport({
-				...EXAMPLE_EXECUTION_DETAILS,
-				origin: ProjectReportOrigin.pure
-			}, ReportKind.accumulated)
+			const projectReport = new ProjectReport(
+				{
+					...EXAMPLE_EXECUTION_DETAILS,
+					origin: ProjectReportOrigin.pure
+				},
+				ReportKind.accumulated
+			)
 			expect(await projectReport.shouldBeStoredInRegistry()).toBe(true)
 		})
 
 		test('test non accumulated jest measurement', async () => {
-			const projectReport = new ProjectReport({
-				...EXAMPLE_EXECUTION_DETAILS,
-				origin: ProjectReportOrigin.jestEnv
-			}, ReportKind.measurement)
+			const projectReport = new ProjectReport(
+				{
+					...EXAMPLE_EXECUTION_DETAILS,
+					origin: ProjectReportOrigin.jestEnv
+				},
+				ReportKind.measurement
+			)
 			expect(await projectReport.shouldBeStoredInRegistry()).toBe(false)
 		})
 
 		test('test accumulated jest measurement', async () => {
-			const projectReport = new ProjectReport({
-				...EXAMPLE_EXECUTION_DETAILS,
-				origin: ProjectReportOrigin.jestEnv
-			}, ReportKind.accumulated)
+			const projectReport = new ProjectReport(
+				{
+					...EXAMPLE_EXECUTION_DETAILS,
+					origin: ProjectReportOrigin.jestEnv
+				},
+				ReportKind.accumulated
+			)
 			expect(await projectReport.shouldBeStoredInRegistry()).toBe(true)
 		})
 	})

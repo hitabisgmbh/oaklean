@@ -1,14 +1,9 @@
-
 import { State } from './state'
 import { AccountingInfo, Compensation } from './accounting'
 
-import {
-	NodeModule
-} from '../../../model/NodeModule'
+import { NodeModule } from '../../../model/NodeModule'
 // Types
-import {
-	ResolvedSourceNodeLocation
-} from '../../../types'
+import { ResolvedSourceNodeLocation } from '../../../types'
 
 type TransitionOptions = {
 	createLink: boolean
@@ -22,9 +17,10 @@ type SourceLocationTransitionOptions = {
 
 type ProjectTransitionOptions = TransitionOptions & SourceLocationTransitionOptions
 
-type ModuleTransitionOptions = TransitionOptions & SourceLocationTransitionOptions & {
-	nodeModule: NodeModule
-}
+type ModuleTransitionOptions = TransitionOptions &
+	SourceLocationTransitionOptions & {
+		nodeModule: NodeModule
+	}
 
 export type ToProjectTransition = {
 	transition: 'toProject'
@@ -36,15 +32,12 @@ export type ToLangInternalTransition = {
 	options: TransitionOptions
 }
 
-export type ToModuleTransition = { 
+export type ToModuleTransition = {
 	transition: 'toModule'
 	options: ModuleTransitionOptions
 }
 
-export type Transition = 
-	ToProjectTransition |
-	ToLangInternalTransition |
-	ToModuleTransition
+export type Transition = ToProjectTransition | ToLangInternalTransition | ToModuleTransition
 
 export type TransitionResult = {
 	nextState: State

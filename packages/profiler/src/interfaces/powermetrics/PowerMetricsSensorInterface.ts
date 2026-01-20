@@ -17,14 +17,14 @@ import {
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
 
-type EventMap = { 
-	measurementCaptured: [];
+type EventMap = {
+	measurementCaptured: []
 }
 
 /**
  * This SensorInterface uses the data provided by the powermetrics command line tool.
  * This SensorInterface can only be used on Mac OS
- * 
+ *
  * Man Page to powermetrics:
  * https://www.unix.com/man-page/osx/1/powermetrics/
  */
@@ -46,19 +46,23 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 
 	private _fileWatcher: fs.StatWatcher | undefined
 
-
-	constructor(options: IPowerMetricsSensorInterfaceOptions, debugOptions?: {
-		startTime: NanoSeconds_BigInt,
-		stopTime: NanoSeconds_BigInt,
-		platform?: 'darwin'
-	}) {
+	constructor(
+		options: IPowerMetricsSensorInterfaceOptions,
+		debugOptions?: {
+			startTime: NanoSeconds_BigInt
+			stopTime: NanoSeconds_BigInt
+			platform?: 'darwin'
+		}
+	) {
 		super()
 		this._platform = debugOptions?.platform ?? process.platform
 		this._executable = 'powermetrics'
 		this._options = options
 		this._commandLineArgs = [
-			'--sample-rate', this._options.sampleInterval.toString(),
-			'--buffer-size', '0',
+			'--sample-rate',
+			this._options.sampleInterval.toString(),
+			'--buffer-size',
+			'0',
 			'--show-process-energy',
 			'-f',
 			'plist',
@@ -80,7 +84,10 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 	canBeExecuted(): Promise<boolean> {
 		return new Promise((resolve) => {
 			if (this._platform !== 'darwin') {
-			LoggerHelper.appPrefix.error('PowerMetricsSensorInterface: This sensor interface can only be used on MacOS. Your platform:', this._platform)
+				LoggerHelper.appPrefix.error(
+					'PowerMetricsSensorInterface: This sensor interface can only be used on MacOS. Your platform:',
+					this._platform
+				)
 				resolve(false)
 				return
 			}
@@ -122,19 +129,19 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		try {
 			const result = execSync('pgrep -ix powermetrics', { encoding: 'utf-8' })
 			return result.trim().split('\n')
-		} catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
+		} catch (error) {
+			// eslint-disable-line @typescript-eslint/no-unused-vars
 			return []
 		}
 	}
 
 	async readSensorValues(pid: number): Promise<MetricsDataCollection | undefined> {
-		if (!await this.couldBeExecuted()) {
+		if (!(await this.couldBeExecuted())) {
 			return undefined
 		}
 		let tries = 0
 		while (this.isRunning() && tries < 10) {
-			LoggerHelper.error(
-				`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
+			LoggerHelper.error(`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
 			tries += 1
 			await TimeHelper.sleep(1000)
 		}
@@ -143,16 +150,11 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 			throw new Error('PowerMetricsSensorInterface.readSensorValues: start or stop time could not be determined')
 		}
 
-		if (!fs.existsSync(this._options.outputFilePath) || !(await this.canBeExecuted())){
-			return new MetricsDataCollection(
-				pid,
-				MetricsDataCollectionType.PowerMetricsPerProcess,
-				[],
-				{
-					startTime: this.startTime,
-					stopTime: this.stopTime
-				}
-			)
+		if (!fs.existsSync(this._options.outputFilePath) || !(await this.canBeExecuted())) {
+			return new MetricsDataCollection(pid, MetricsDataCollectionType.PowerMetricsPerProcess, [], {
+				startTime: this.startTime,
+				stopTime: this.stopTime
+			})
 		}
 
 		const content = fs.readFileSync(this._options.outputFilePath).toString()
@@ -162,15 +164,10 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 			(content: string) => new PowerMetricsData(plist.parse(content) as unknown as IPowerMetricsOutputFormat)
 		)
 
-		return new MetricsDataCollection(
-			pid,
-			MetricsDataCollectionType.PowerMetricsPerProcess,
-			data,
-			{
-				startTime: this.startTime,
-				stopTime: this.stopTime
-			}
-		)
+		return new MetricsDataCollection(pid, MetricsDataCollectionType.PowerMetricsPerProcess, data, {
+			startTime: this.startTime,
+			stopTime: this.stopTime
+		})
 	}
 
 	get startTime(): NanoSeconds_BigInt | undefined {
@@ -182,7 +179,7 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 	}
 
 	async startProfiling() {
-		if (!await this.couldBeExecuted()) {
+		if (!(await this.couldBeExecuted())) {
 			return
 		}
 		if (fs.existsSync(this._options.outputFilePath)) {
@@ -191,7 +188,7 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		if (PowerMetricsSensorInterface.runningInstances().length > 0) {
 			throw new Error(
 				'PowerMetricsSensorInterface.startProfiling: ' +
-				'PowerMetrics instance already running, close it before taking any measurements'
+					'PowerMetrics instance already running, close it before taking any measurements'
 			)
 		}
 
@@ -205,7 +202,7 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 				this._childProcess.kill('SIGTERM')
 			}
 		}
-		
+
 		this._fileWatcher = fs.watchFile(this._options.outputFilePath, (curr, prev) => {
 			if (curr.size > prev.size) {
 				this._eventHandler.fire('measurementCaptured')
@@ -226,7 +223,7 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 	}
 
 	async stopProfiling() {
-		if (!await this.couldBeExecuted()) {
+		if (!(await this.couldBeExecuted())) {
 			return
 		}
 		if (this._childProcess === undefined) {
@@ -238,7 +235,6 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		if (this._fileWatcher !== undefined) {
 			fs.unwatchFile(this._options.outputFilePath)
 		}
-
 
 		this._childProcess.kill('SIGIO') // flush all buffered output
 		this._stopTime = TimeHelper.getCurrentHighResolutionTime()

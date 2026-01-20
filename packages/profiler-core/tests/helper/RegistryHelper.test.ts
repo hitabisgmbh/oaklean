@@ -5,7 +5,7 @@ import axios from 'axios'
 import * as env from '../../src/constants/env'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { ProjectReport } from '../../src/model/ProjectReport'
-import { ProfilerConfig} from '../../src/model/ProfilerConfig'
+import { ProfilerConfig } from '../../src/model/ProfilerConfig'
 import { RegistryHelper } from '../../src/helper/RegistryHelper'
 import { AuthenticationHelper } from '../../src/helper/AuthenticationHelper'
 import { BufferHelper } from '../../src/helper/BufferHelper'
@@ -33,15 +33,12 @@ describe('RegistryHelper', () => {
 
 			const axiosPostMock = jest.fn().mockResolvedValue({ data: 'data' })
 			const axiosPostSpy = jest.spyOn(axios, 'post').mockImplementation(axiosPostMock)
-			jest.spyOn(AuthenticationHelper,'getAuthentication').mockResolvedValue(exampleAuthKey)
+			jest.spyOn(AuthenticationHelper, 'getAuthentication').mockResolvedValue(exampleAuthKey)
 
 			const expectedCompressedBuffer = await BufferHelper.compressBuffer(EXAMPLE_PROJECT_REPORT.toBuffer())
 
 			const config = ProfilerConfig.getDefaultConfig()
-			const result = await RegistryHelper.uploadToRegistry(
-				EXAMPLE_PROJECT_REPORT,
-				config
-			)
+			const result = await RegistryHelper.uploadToRegistry(EXAMPLE_PROJECT_REPORT, config)
 			expect(result).toEqual({ data: 'data' })
 
 			expect(axiosPostSpy).toHaveBeenCalledTimes(1)
@@ -51,12 +48,8 @@ describe('RegistryHelper', () => {
 			const file = (axiosPostMock.mock.calls[0][1] as FormData).get('file')
 			expect(file).toBeInstanceOf(File)
 
-			expect(Buffer.from(await (file as Blob).arrayBuffer())).toEqual(
-				expectedCompressedBuffer
-			)
-			expect((axiosPostMock.mock.calls[0][1] as FormData).get('auth')).toEqual(
-				exampleAuthKey
-			)
+			expect(Buffer.from(await (file as Blob).arrayBuffer())).toEqual(expectedCompressedBuffer)
+			expect((axiosPostMock.mock.calls[0][1] as FormData).get('auth')).toEqual(exampleAuthKey)
 		})
 
 		test('disabled registry', async () => {
@@ -65,7 +58,7 @@ describe('RegistryHelper', () => {
 
 			const result = await RegistryHelper.uploadToRegistry(EXAMPLE_PROJECT_REPORT)
 			expect(result).toBeUndefined()
-			expect(axiosPostSpy).not.toHaveBeenCalled()			
+			expect(axiosPostSpy).not.toHaveBeenCalled()
 		})
 	})
 })

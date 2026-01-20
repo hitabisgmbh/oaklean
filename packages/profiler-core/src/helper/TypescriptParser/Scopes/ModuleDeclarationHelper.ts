@@ -5,10 +5,7 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import {
-	ProgramStructureTreeType,
-	SourceNodeIdentifierPart_string
-} from '../../../types'
+import { ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
 
 export class ModuleDeclarationHelper {
 	static syntaxKind = ts.SyntaxKind.ModuleDeclaration
@@ -53,11 +50,7 @@ export class ModuleDeclarationHelper {
 						// so there cant be any executable code within it
 						break
 					}
-					const { identifier } = NamingHelper.getIdentifierName(
-						newNode.name,
-						sourceFile,
-						traverseNodeInfo
-					)
+					const { identifier } = NamingHelper.getIdentifierName(newNode.name, sourceFile, traverseNodeInfo)
 					identifierChain = `${identifier}.${identifierChain}`
 					currentNode = newNode
 				}
@@ -77,4 +70,3 @@ export class ModuleDeclarationHelper {
 		}
 	}
 }
-

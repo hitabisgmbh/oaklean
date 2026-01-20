@@ -3,7 +3,7 @@ import { UnifiedPath } from '@oaklean/profiler-core'
 import { BINARY_VERSION } from './app'
 
 const BINARY_DISTRIBUTION_PACKAGES = {
-	'win32': 'OakleanWindowsSensorInterface_x64'
+	win32: 'OakleanWindowsSensorInterface_x64'
 }
 
 export type SupportedPlatforms = keyof typeof BINARY_DISTRIBUTION_PACKAGES

@@ -12,9 +12,7 @@ import { SensorValues } from '../../model/SensorValues'
 let COMPENSATION_ID_COUNTER = 1
 
 export class CompensationHelper {
-	static createCompForParent(
-		compensation: Compensation
-	): Compensation {
+	static createCompForParent(compensation: Compensation): Compensation {
 		// compensation to be carried upwards
 		// id stays the same
 		// but createdComp is set to null
@@ -26,14 +24,8 @@ export class CompensationHelper {
 		}
 	}
 
-	static addToCompensation(
-		target: Compensation,
-		add: Compensation
-	) {
-		target.carriedComp = SensorValues.sum(
-			target.carriedComp,
-			add.createdComp || add.carriedComp
-		)
+	static addToCompensation(target: Compensation, add: Compensation) {
+		target.carriedComp = SensorValues.sum(target.carriedComp, add.createdComp || add.carriedComp)
 	}
 
 	static createCompensationIfNecessary(
@@ -41,7 +33,7 @@ export class CompensationHelper {
 		currentState: State,
 		transitionResult: TransitionResult,
 		debug?: {
-			depth: number,
+			depth: number
 			node: CPUNode
 		}
 	): Compensation | undefined {
@@ -62,9 +54,7 @@ export class CompensationHelper {
 
 			const compensation: Compensation = {
 				id: COMPENSATION_ID_COUNTER++,
-				createdComp: new SensorValues(
-					node.sensorValues
-				),
+				createdComp: new SensorValues(node.sensorValues),
 				carriedComp: new SensorValues({})
 			}
 			if (debug !== undefined) {
@@ -82,13 +72,13 @@ export class CompensationHelper {
 
 	/*
 	 * A -> B (a: parent, b: current)
-	 * 
+	 *
 	 * Compensates:
 	 *  - B
 	 *  - A.(intern|extern|lang_internal)
 	 *  - A.accountedSourceNodeReference
-	 * 
-	*/
+	 *
+	 */
 	static applyCompensation(
 		node: CPUNode,
 		currentState: State,
@@ -99,22 +89,15 @@ export class CompensationHelper {
 			depth: number
 		}
 	) {
-
 		if (accountingInfo.accountedSourceNode.firstTimeVisited) {
 			// only compensate the accounted source node if its the first occurrence in the call tree (from the root)
-			accountingInfo.accountedSourceNode.node.sensorValues.addToAggregated(
-				compensation.carriedComp,
-				-1
-			)
+			accountingInfo.accountedSourceNode.node.sensorValues.addToAggregated(compensation.carriedComp, -1)
 		} else if (accountingInfo.accountedSourceNode.firstTimeInCurrentCompensationLayer) {
 			// if its not the first time visited, but the first time in the current compensation layer
 			// we need to add the currents cpu node's aggregated sensor values
 			// to prevent double compensation
 			accountingInfo.accountedSourceNode.node.sensorValues.addToAggregated(
-				compensation.carriedComp.clone().addToAggregated(
-					node.sensorValues,
-					-1
-				),
+				compensation.carriedComp.clone().addToAggregated(node.sensorValues, -1),
 				-1
 			)
 		}
@@ -125,24 +108,15 @@ export class CompensationHelper {
 		}
 
 		if (debug !== undefined) {
-			StateMachineLogger.logCompensation(
-				debug.depth,
-				node,
-				currentState,
-				compensation,
-				'APPLY COMPENSATION'
-			)
+			StateMachineLogger.logCompensation(debug.depth, node, currentState, compensation, 'APPLY COMPENSATION')
 		}
 
 		// if the current reference was already visited before
 		// we need to add the currents cpu node's aggregated sensor values
 		// to prevent double compensation
-		const referenceCompensation = accountingInfo.accountedSourceNodeReference.firstTimeVisited ?
-			compensation.carriedComp :
-			compensation.carriedComp.clone().addToAggregated(
-				node.sensorValues,
-				-1
-			)
+		const referenceCompensation = accountingInfo.accountedSourceNodeReference.firstTimeVisited
+			? compensation.carriedComp
+			: compensation.carriedComp.clone().addToAggregated(node.sensorValues, -1)
 
 		if (accountingInfo.accountedSourceNodeReference.reference === undefined) {
 			return
@@ -154,10 +128,7 @@ export class CompensationHelper {
 
 		// only compensate (lang_internal|intern|extern) when there was a link created
 		// compensate the accounted source node reference
-		accountingInfo.accountedSourceNodeReference.reference.sensorValues.addToAggregated(
-			referenceCompensation,
-			-1
-		)
+		accountingInfo.accountedSourceNodeReference.reference.sensorValues.addToAggregated(referenceCompensation, -1)
 
 		if (parentState.callIdentifier.sourceNode === null) {
 			// parent source node does not exist (e.g. root)
@@ -166,22 +137,13 @@ export class CompensationHelper {
 
 		switch (accountingInfo.type) {
 			case 'accountToIntern':
-				parentState.callIdentifier.sourceNode.sensorValues.addToIntern(
-					referenceCompensation,
-					-1
-				)
+				parentState.callIdentifier.sourceNode.sensorValues.addToIntern(referenceCompensation, -1)
 				break
 			case 'accountToExtern':
-				parentState.callIdentifier.sourceNode.sensorValues.addToExtern(
-					referenceCompensation,
-					-1
-				)
+				parentState.callIdentifier.sourceNode.sensorValues.addToExtern(referenceCompensation, -1)
 				break
 			case 'accountToLangInternal':
-				parentState.callIdentifier.sourceNode.sensorValues.addToLangInternal(
-					referenceCompensation,
-					-1
-				)
+				parentState.callIdentifier.sourceNode.sensorValues.addToLangInternal(referenceCompensation, -1)
 				break
 			case 'accountOwnCodeGetsExecutedByExternal':
 				throw new Error(
@@ -198,57 +160,45 @@ export class CompensationHelper {
 	 * Propagates the given compensation to the parent stack frame if it exists.
 	 * If the parent stack frame already has a compensation, the given compensation
 	 * is added to it.
-	*/
+	 */
 	static propagateCompensation(
 		parentStackFrame: StackFrame | undefined,
 		compensation: Compensation,
 		debugInfo?: {
 			depth: number
-			node: CPUNode,
+			node: CPUNode
 			currentState: State
 		}
 	) {
-		if (
-			parentStackFrame !== undefined &&
-			parentStackFrame.result !== undefined
-		) {
+		if (parentStackFrame !== undefined && parentStackFrame.result !== undefined) {
 			if (parentStackFrame.result.compensation === undefined) {
 				// carry upwards
-				parentStackFrame.result.compensation = CompensationHelper.createCompForParent(
-					compensation
-				)
+				parentStackFrame.result.compensation = CompensationHelper.createCompForParent(compensation)
 			} else {
 				// add to existing compensation (also carried upwards)
-				CompensationHelper.addToCompensation(
-					parentStackFrame.result.compensation,
-					compensation
-				)
+				CompensationHelper.addToCompensation(parentStackFrame.result.compensation, compensation)
 			}
 			if (debugInfo !== undefined) {
 				LoggerHelper.log(
 					LoggerHelper.warnString('[CARRY-COMPENSATION]') +
-					` ${compensation.id} -> ${parentStackFrame.result.compensation.id}\n` +
-						`├─ CPU Node                      : ${debugInfo.node.index}\n` + 
-						`├─ Compensation ID               : ${compensation.id}\n` + 
+						` ${compensation.id} -> ${parentStackFrame.result.compensation.id}\n` +
+						`├─ CPU Node                      : ${debugInfo.node.index}\n` +
+						`├─ Compensation ID               : ${compensation.id}\n` +
 						// eslint-disable-next-line max-len
-						`├─ Carried CPU Time              : created=${compensation.createdComp?.aggregatedCPUTime} | µs carried=${compensation.carriedComp.aggregatedCPUTime} µs \n` + 
+						`├─ Carried CPU Time              : created=${compensation.createdComp?.aggregatedCPUTime} | µs carried=${compensation.carriedComp.aggregatedCPUTime} µs \n` +
 						// eslint-disable-next-line max-len
 						`├─ Carried CPU Energy            : created=${compensation.createdComp?.aggregatedCPUEnergyConsumption} | carried=${compensation.carriedComp.aggregatedCPUEnergyConsumption} µs \n` +
 						// eslint-disable-next-line max-len
 						`├─ Carried RAM Energy            : created=${compensation.createdComp?.aggregatedRAMEnergyConsumption} | carried=${compensation.carriedComp.aggregatedRAMEnergyConsumption} µs \n` +
 						`├─ Parent Compensation ID        : ${compensation.id}\n` +
 						// eslint-disable-next-line max-len
-						`├─ Parent Compensated CPU Time   : created=${parentStackFrame.result.compensation.createdComp?.aggregatedCPUTime} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedCPUTime} µs \n` + 
+						`├─ Parent Compensated CPU Time   : created=${parentStackFrame.result.compensation.createdComp?.aggregatedCPUTime} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedCPUTime} µs \n` +
 						// eslint-disable-next-line max-len
 						`├─ Parent Compensated CPU Energy : created=${parentStackFrame.result.compensation.createdComp?.aggregatedCPUEnergyConsumption} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedCPUEnergyConsumption} µs \n` +
 						// eslint-disable-next-line max-len
 						`├─ Parent Compensated RAM Energy : created=${parentStackFrame.result.compensation.createdComp?.aggregatedRAMEnergyConsumption} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedRAMEnergyConsumption} µs \n`
 				)
-				StateMachineLogger.logState(
-					debugInfo.depth + 1,
-					debugInfo.node,
-					debugInfo.currentState
-				)
+				StateMachineLogger.logState(debugInfo.depth + 1, debugInfo.node, debugInfo.currentState)
 			}
 		}
 	}

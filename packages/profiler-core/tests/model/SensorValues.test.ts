@@ -1,12 +1,6 @@
 import { MilliJoule_number } from '../../src'
-import {
-	SENSOR_VALUES_BYTE_SIZE_MAP,
-	SensorValues
-} from '../../src/model/SensorValues'
-import {
-	ISensorValues,
-	MicroSeconds_number
-} from '../../src/types'
+import { SENSOR_VALUES_BYTE_SIZE_MAP, SensorValues } from '../../src/model/SensorValues'
+import { ISensorValues, MicroSeconds_number } from '../../src/types'
 
 const EXAMPLE_SENSOR_VALUES: ISensorValues = {
 	profilerHits: 1,
@@ -33,14 +27,13 @@ const EXAMPLE_SENSOR_VALUES: ISensorValues = {
 	aggregatedRAMEnergyConsumption: 0.26 as MilliJoule_number
 }
 
-const EXAMPLE_SENSOR_VALUES_BUFFER = 'ffff01000000010000000a0000000200000003000000040000007b14ae47e17a843f9a9999999999b93f7b14ae47e17a943fb81e85eb51b89e3f7b14ae47e17aa43f9a9999999999a93fa4703d0ad7a3d03fb81e85eb51b8ae3fec51b81e85ebb13f01007b14ae47e17ab43f'
+const EXAMPLE_SENSOR_VALUES_BUFFER =
+	'ffff01000000010000000a0000000200000003000000040000007b14ae47e17a843f9a9999999999b93f7b14ae47e17a943fb81e85eb51b89e3f7b14ae47e17aa43f9a9999999999a93fa4703d0ad7a3d03fb81e85eb51b8ae3fec51b81e85ebb13f01007b14ae47e17ab43f'
 
 // Round to n decimal places
 function roundSensorValues(sensorValues: ISensorValues | SensorValues, precision: number) {
 	for (const sensorValueName of Object.keys(SENSOR_VALUES_BYTE_SIZE_MAP)) {
-		const value = sensorValues[
-			sensorValueName as keyof ISensorValues
-		]
+		const value = sensorValues[sensorValueName as keyof ISensorValues]
 		if (value !== undefined) {
 			sensorValues[sensorValueName as keyof ISensorValues] = parseFloat(value.toFixed(precision)) as any // eslint-disable-line @typescript-eslint/no-explicit-any
 		}
@@ -49,9 +42,7 @@ function roundSensorValues(sensorValues: ISensorValues | SensorValues, precision
 
 function testAllSensorValuesArePresent(sensorValues: ISensorValues | SensorValues) {
 	for (const sensorValueName of Object.keys(SENSOR_VALUES_BYTE_SIZE_MAP)) {
-		const value = sensorValues[
-			sensorValueName as keyof ISensorValues
-		]
+		const value = sensorValues[sensorValueName as keyof ISensorValues]
 		expect(value !== undefined && value > 0).toBe(true)
 	}
 }
@@ -97,7 +88,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => SensorValues)
 				selfCPUEnergyConsumption: instance.selfCPUEnergyConsumption,
 				aggregatedCPUEnergyConsumption: instance.selfCPUEnergyConsumption,
 				selfRAMEnergyConsumption: instance.selfRAMEnergyConsumption,
-				aggregatedRAMEnergyConsumption: instance.selfRAMEnergyConsumption,
+				aggregatedRAMEnergyConsumption: instance.selfRAMEnergyConsumption
 			} satisfies ISensorValues)
 		})
 
@@ -106,7 +97,7 @@ function runInstanceTests(title: string, preDefinedInstance: () => SensorValues)
 			expect(clone.toJSON()).toEqual({
 				aggregatedCPUTime: instance.aggregatedCPUTime,
 				aggregatedCPUEnergyConsumption: instance.aggregatedCPUEnergyConsumption,
-				aggregatedRAMEnergyConsumption: instance.aggregatedRAMEnergyConsumption,
+				aggregatedRAMEnergyConsumption: instance.aggregatedRAMEnergyConsumption
 			} satisfies ISensorValues)
 		})
 	})
@@ -114,32 +105,30 @@ function runInstanceTests(title: string, preDefinedInstance: () => SensorValues)
 
 describe('SensorValues', () => {
 	runInstanceTests('instance related', () => {
-		return new SensorValues(
-			{
-				profilerHits: 1,
+		return new SensorValues({
+			profilerHits: 1,
 
-				// CPU Time
-				selfCPUTime: 1 as MicroSeconds_number,
-				internCPUTime: 2 as MicroSeconds_number,
-				externCPUTime: 3 as MicroSeconds_number,
-				langInternalCPUTime: 4 as MicroSeconds_number,
-				aggregatedCPUTime: 10 as MicroSeconds_number,
+			// CPU Time
+			selfCPUTime: 1 as MicroSeconds_number,
+			internCPUTime: 2 as MicroSeconds_number,
+			externCPUTime: 3 as MicroSeconds_number,
+			langInternalCPUTime: 4 as MicroSeconds_number,
+			aggregatedCPUTime: 10 as MicroSeconds_number,
 
-				// CPU Energy Consumption
-				selfCPUEnergyConsumption: 0.01 as MilliJoule_number,
-				internCPUEnergyConsumption: 0.02 as MilliJoule_number,
-				externCPUEnergyConsumption: 0.03 as MilliJoule_number,
-				langInternalCPUEnergyConsumption: 0.04 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: 0.1 as MilliJoule_number,
+			// CPU Energy Consumption
+			selfCPUEnergyConsumption: 0.01 as MilliJoule_number,
+			internCPUEnergyConsumption: 0.02 as MilliJoule_number,
+			externCPUEnergyConsumption: 0.03 as MilliJoule_number,
+			langInternalCPUEnergyConsumption: 0.04 as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: 0.1 as MilliJoule_number,
 
-				// RAM Energy Consumption
-				selfRAMEnergyConsumption: 0.05 as MilliJoule_number,
-				internRAMEnergyConsumption: 0.06 as MilliJoule_number,
-				externRAMEnergyConsumption: 0.07 as MilliJoule_number,
-				langInternalRAMEnergyConsumption: 0.08 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: 0.26 as MilliJoule_number
-			}
-		)
+			// RAM Energy Consumption
+			selfRAMEnergyConsumption: 0.05 as MilliJoule_number,
+			internRAMEnergyConsumption: 0.06 as MilliJoule_number,
+			externRAMEnergyConsumption: 0.07 as MilliJoule_number,
+			langInternalRAMEnergyConsumption: 0.08 as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: 0.26 as MilliJoule_number
+		})
 	})
 
 	test('all default values are present', () => {
@@ -174,21 +163,19 @@ describe('SensorValues', () => {
 		})
 
 		test('example 02', () => {
-			const example = new SensorValues(
-				{
-					profilerHits: 1 as MicroSeconds_number,
-					selfCPUTime: 0 as MicroSeconds_number,
-					aggregatedCPUTime: 3 as MicroSeconds_number,
-					internCPUTime: 0 as MicroSeconds_number,
-					externCPUTime: 4 as MicroSeconds_number,
-					langInternalCPUTime: 0 as MicroSeconds_number,
-					selfCPUEnergyConsumption: 0 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 0.2 as MilliJoule_number,
-					internCPUEnergyConsumption: 0 as MilliJoule_number,
-					externCPUEnergyConsumption: 0.2 as MilliJoule_number,
-					langInternalCPUEnergyConsumption: 0 as MilliJoule_number
-				}
-			)
+			const example = new SensorValues({
+				profilerHits: 1 as MicroSeconds_number,
+				selfCPUTime: 0 as MicroSeconds_number,
+				aggregatedCPUTime: 3 as MicroSeconds_number,
+				internCPUTime: 0 as MicroSeconds_number,
+				externCPUTime: 4 as MicroSeconds_number,
+				langInternalCPUTime: 0 as MicroSeconds_number,
+				selfCPUEnergyConsumption: 0 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 0.2 as MilliJoule_number,
+				internCPUEnergyConsumption: 0 as MilliJoule_number,
+				externCPUEnergyConsumption: 0.2 as MilliJoule_number,
+				langInternalCPUEnergyConsumption: 0 as MilliJoule_number
+			})
 			const buffer = example.toBuffer()
 			expect(buffer.toString('hex')).toBe('95020100000003000000040000009a9999999999c93f9a9999999999c93f')
 			const { instance, remainingBuffer } = SensorValues.consumeFromBuffer(buffer)
@@ -196,17 +183,17 @@ describe('SensorValues', () => {
 			expect(instance.toJSON()).toEqual(example.toJSON())
 		})
 		test('example 02', () => {
-			const example = new SensorValues(
-				{
-					selfCPUEnergyConsumption: 0.01 as MilliJoule_number,
-					aggregatedCPUEnergyConsumption: 0.1 as MilliJoule_number,
-					internCPUEnergyConsumption: 0.02 as MilliJoule_number,
-					externCPUEnergyConsumption: 0.03 as MilliJoule_number,
-					langInternalCPUEnergyConsumption: 0.04 as MilliJoule_number
-				}
-			)
+			const example = new SensorValues({
+				selfCPUEnergyConsumption: 0.01 as MilliJoule_number,
+				aggregatedCPUEnergyConsumption: 0.1 as MilliJoule_number,
+				internCPUEnergyConsumption: 0.02 as MilliJoule_number,
+				externCPUEnergyConsumption: 0.03 as MilliJoule_number,
+				langInternalCPUEnergyConsumption: 0.04 as MilliJoule_number
+			})
 			const buffer = example.toBuffer()
-			expect(buffer.toString('hex')).toBe('c0077b14ae47e17a843f9a9999999999b93f7b14ae47e17a943fb81e85eb51b89e3f7b14ae47e17aa43f')
+			expect(buffer.toString('hex')).toBe(
+				'c0077b14ae47e17a843f9a9999999999b93f7b14ae47e17a943fb81e85eb51b89e3f7b14ae47e17aa43f'
+			)
 			const { instance, remainingBuffer } = SensorValues.consumeFromBuffer(buffer)
 			expect(remainingBuffer.byteLength).toBe(0)
 			expect(instance.toJSON()).toEqual(example.toJSON())
@@ -236,7 +223,7 @@ describe('SensorValues', () => {
 		beforeEach(() => {
 			instanceA = new SensorValues({
 				profilerHits: 1,
-				
+
 				// CPU Time
 				selfCPUTime: 2 as MicroSeconds_number,
 				internCPUTime: 3 as MicroSeconds_number,
@@ -284,7 +271,7 @@ describe('SensorValues', () => {
 			})
 			instanceC = new SensorValues({
 				profilerHits: 13 as MicroSeconds_number,
-				
+
 				// CPU Time
 				selfCPUTime: 14 as MicroSeconds_number,
 				internCPUTime: 15 as MicroSeconds_number,
@@ -295,7 +282,7 @@ describe('SensorValues', () => {
 				// CPU Energy Consumption
 				selfCPUEnergyConsumption: 0.18 as MilliJoule_number,
 				internCPUEnergyConsumption: 0.19 as MilliJoule_number,
-				externCPUEnergyConsumption: 0.20 as MilliJoule_number,
+				externCPUEnergyConsumption: 0.2 as MilliJoule_number,
 				langInternalCPUEnergyConsumption: 0.21 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 0.78 as MilliJoule_number,
 
@@ -330,7 +317,7 @@ describe('SensorValues', () => {
 				// CPU Energy Consumption
 				selfCPUEnergyConsumption: 0.18 as MilliJoule_number,
 				internCPUEnergyConsumption: 0.19 as MilliJoule_number,
-				externCPUEnergyConsumption: 0.20 as MilliJoule_number,
+				externCPUEnergyConsumption: 0.2 as MilliJoule_number,
 				langInternalCPUEnergyConsumption: 0.21 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 0.78 as MilliJoule_number,
 
@@ -343,11 +330,9 @@ describe('SensorValues', () => {
 			})
 
 			// test with empty instance
-			expect(SensorValues.max(
-				new SensorValues({}),
-				new SensorValues({}),
-				new SensorValues({})
-			).toJSON()).toEqual(new SensorValues({}).toJSON())
+			expect(SensorValues.max(new SensorValues({}), new SensorValues({}), new SensorValues({})).toJSON()).toEqual(
+				new SensorValues({}).toJSON()
+			)
 		})
 
 		test('sum', () => {
@@ -382,11 +367,9 @@ describe('SensorValues', () => {
 			})
 
 			// test with empty instance
-			expect(SensorValues.sum(
-				new SensorValues({}),
-				new SensorValues({}),
-				new SensorValues({})
-			).toJSON()).toEqual(new SensorValues({}).toJSON())
+			expect(SensorValues.sum(new SensorValues({}), new SensorValues({}), new SensorValues({})).toJSON()).toEqual(
+				new SensorValues({}).toJSON()
+			)
 		})
 
 		test('equal', () => {
@@ -408,11 +391,11 @@ describe('SensorValues', () => {
 				result.addToSelf(instanceB)
 
 				const expected = instanceA.clone()
-				expected.selfCPUTime = expected.selfCPUTime + instanceB.selfCPUTime as MicroSeconds_number
-				expected.selfCPUEnergyConsumption = expected.selfCPUEnergyConsumption +
-					instanceB.selfCPUEnergyConsumption as MilliJoule_number
-				expected.selfRAMEnergyConsumption = expected.selfRAMEnergyConsumption +
-					instanceB.selfRAMEnergyConsumption as MilliJoule_number
+				expected.selfCPUTime = (expected.selfCPUTime + instanceB.selfCPUTime) as MicroSeconds_number
+				expected.selfCPUEnergyConsumption = (expected.selfCPUEnergyConsumption +
+					instanceB.selfCPUEnergyConsumption) as MilliJoule_number
+				expected.selfRAMEnergyConsumption = (expected.selfRAMEnergyConsumption +
+					instanceB.selfRAMEnergyConsumption) as MilliJoule_number
 
 				expect(result.toJSON()).toEqual(expected.toJSON())
 			})
@@ -423,7 +406,7 @@ describe('SensorValues', () => {
 
 				expect(instanceA.toJSON()).toEqual(result.toJSON())
 			})
-			
+
 			test('test with empty Partial<ISensorValues>', () => {
 				const result = instanceA.clone()
 				result.addToSelf({})
@@ -434,11 +417,9 @@ describe('SensorValues', () => {
 				const result = instanceA.clone()
 				result.addToSelf(EXAMPLE_SENSOR_VALUES)
 				const expected = instanceA.clone()
-				expected.selfCPUTime = expected.selfCPUTime + 1 as MicroSeconds_number
-				expected.selfCPUEnergyConsumption = expected.selfCPUEnergyConsumption +
-					0.01 as MilliJoule_number
-				expected.selfRAMEnergyConsumption = expected.selfRAMEnergyConsumption +
-					0.05 as MilliJoule_number
+				expected.selfCPUTime = (expected.selfCPUTime + 1) as MicroSeconds_number
+				expected.selfCPUEnergyConsumption = (expected.selfCPUEnergyConsumption + 0.01) as MilliJoule_number
+				expected.selfRAMEnergyConsumption = (expected.selfRAMEnergyConsumption + 0.05) as MilliJoule_number
 
 				expect(expected.toJSON()).toEqual(result.toJSON())
 			})
@@ -450,12 +431,11 @@ describe('SensorValues', () => {
 				result.addToAggregated(instanceB)
 
 				const expected = instanceA.clone()
-				expected.aggregatedCPUTime = expected.aggregatedCPUTime +
-					instanceB.aggregatedCPUTime as MicroSeconds_number
-				expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
-					instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-				expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
-					instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+				expected.aggregatedCPUTime = (expected.aggregatedCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+				expected.aggregatedCPUEnergyConsumption = (expected.aggregatedCPUEnergyConsumption +
+					instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+				expected.aggregatedRAMEnergyConsumption = (expected.aggregatedRAMEnergyConsumption +
+					instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 				expect(result.toJSON()).toEqual(expected.toJSON())
 			})
@@ -466,7 +446,7 @@ describe('SensorValues', () => {
 
 				expect(instanceA.toJSON()).toEqual(result2.toJSON())
 			})
-			
+
 			test('test with empty Partial<ISensorValues>', () => {
 				const result = instanceA.clone()
 				result.addToAggregated({})
@@ -477,11 +457,9 @@ describe('SensorValues', () => {
 				const result = instanceA.clone()
 				result.addToAggregated(EXAMPLE_SENSOR_VALUES)
 				const expected = instanceA.clone()
-				expected.aggregatedCPUTime = expected.aggregatedCPUTime + 10 as MicroSeconds_number
-				expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
-					0.1 as MilliJoule_number
-				expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
-					0.26 as MilliJoule_number
+				expected.aggregatedCPUTime = (expected.aggregatedCPUTime + 10) as MicroSeconds_number
+				expected.aggregatedCPUEnergyConsumption = (expected.aggregatedCPUEnergyConsumption + 0.1) as MilliJoule_number
+				expected.aggregatedRAMEnergyConsumption = (expected.aggregatedRAMEnergyConsumption + 0.26) as MilliJoule_number
 
 				expect(expected.toJSON()).toEqual(result.toJSON())
 			})
@@ -493,15 +471,14 @@ describe('SensorValues', () => {
 				result.addToIntern(instanceB)
 
 				const expected = instanceA.clone()
-				expected.internCPUTime = expected.internCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
-				expected.internCPUEnergyConsumption = expected.internCPUEnergyConsumption +
-					instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-				expected.internRAMEnergyConsumption = expected.internRAMEnergyConsumption +
-					instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+				expected.internCPUTime = (expected.internCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+				expected.internCPUEnergyConsumption = (expected.internCPUEnergyConsumption +
+					instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+				expected.internRAMEnergyConsumption = (expected.internRAMEnergyConsumption +
+					instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 				expect(result.toJSON()).toEqual(expected.toJSON())
 			})
-
 
 			test('test with empty SensorValues', () => {
 				const result2 = instanceA.clone()
@@ -520,11 +497,9 @@ describe('SensorValues', () => {
 				const result = instanceA.clone()
 				result.addToIntern(EXAMPLE_SENSOR_VALUES)
 				const expected = instanceA.clone()
-				expected.internCPUTime = expected.internCPUTime + 10 as MicroSeconds_number
-				expected.internCPUEnergyConsumption = expected.internCPUEnergyConsumption +
-					0.1 as MilliJoule_number
-				expected.internRAMEnergyConsumption = expected.internRAMEnergyConsumption +
-					0.26 as MilliJoule_number
+				expected.internCPUTime = (expected.internCPUTime + 10) as MicroSeconds_number
+				expected.internCPUEnergyConsumption = (expected.internCPUEnergyConsumption + 0.1) as MilliJoule_number
+				expected.internRAMEnergyConsumption = (expected.internRAMEnergyConsumption + 0.26) as MilliJoule_number
 
 				expect(expected.toJSON()).toEqual(result.toJSON())
 			})
@@ -536,11 +511,11 @@ describe('SensorValues', () => {
 				result.addToExtern(instanceB)
 
 				const expected = instanceA.clone()
-				expected.externCPUTime = expected.externCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
-				expected.externCPUEnergyConsumption = expected.externCPUEnergyConsumption +
-					instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-				expected.externRAMEnergyConsumption = expected.externRAMEnergyConsumption +
-					instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+				expected.externCPUTime = (expected.externCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+				expected.externCPUEnergyConsumption = (expected.externCPUEnergyConsumption +
+					instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+				expected.externRAMEnergyConsumption = (expected.externRAMEnergyConsumption +
+					instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 				expect(result.toJSON()).toEqual(expected.toJSON())
 			})
@@ -551,7 +526,7 @@ describe('SensorValues', () => {
 
 				expect(instanceA.toJSON()).toEqual(result2.toJSON())
 			})
-			
+
 			test('test with empty Partial<ISensorValues>', () => {
 				const result = instanceA.clone()
 				result.addToExtern({})
@@ -562,11 +537,9 @@ describe('SensorValues', () => {
 				const result = instanceA.clone()
 				result.addToExtern(EXAMPLE_SENSOR_VALUES)
 				const expected = instanceA.clone()
-				expected.externCPUTime = expected.externCPUTime + 10 as MicroSeconds_number
-				expected.externCPUEnergyConsumption = expected.externCPUEnergyConsumption +
-					0.1 as MilliJoule_number
-				expected.externRAMEnergyConsumption = expected.externRAMEnergyConsumption +
-					0.26 as MilliJoule_number
+				expected.externCPUTime = (expected.externCPUTime + 10) as MicroSeconds_number
+				expected.externCPUEnergyConsumption = (expected.externCPUEnergyConsumption + 0.1) as MilliJoule_number
+				expected.externRAMEnergyConsumption = (expected.externRAMEnergyConsumption + 0.26) as MilliJoule_number
 
 				expect(expected.toJSON()).toEqual(result.toJSON())
 			})
@@ -578,12 +551,12 @@ describe('SensorValues', () => {
 				result.addToLangInternal(instanceB)
 
 				const expected = instanceA.clone()
-				expected.langInternalCPUTime = expected.langInternalCPUTime +
-					instanceB.aggregatedCPUTime as MicroSeconds_number
-				expected.langInternalCPUEnergyConsumption = expected.langInternalCPUEnergyConsumption +
-					instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-				expected.langInternalRAMEnergyConsumption = expected.langInternalRAMEnergyConsumption +
-					instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+				expected.langInternalCPUTime = (expected.langInternalCPUTime +
+					instanceB.aggregatedCPUTime) as MicroSeconds_number
+				expected.langInternalCPUEnergyConsumption = (expected.langInternalCPUEnergyConsumption +
+					instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+				expected.langInternalRAMEnergyConsumption = (expected.langInternalRAMEnergyConsumption +
+					instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 				expect(result.toJSON()).toEqual(expected.toJSON())
 			})
@@ -605,11 +578,11 @@ describe('SensorValues', () => {
 				const result = instanceA.clone()
 				result.addToLangInternal(EXAMPLE_SENSOR_VALUES)
 				const expected = instanceA.clone()
-				expected.langInternalCPUTime = expected.langInternalCPUTime + 10 as MicroSeconds_number
-				expected.langInternalCPUEnergyConsumption = expected.langInternalCPUEnergyConsumption +
-					0.1 as MilliJoule_number
-				expected.langInternalRAMEnergyConsumption = expected.langInternalRAMEnergyConsumption +
-					0.26 as MilliJoule_number
+				expected.langInternalCPUTime = (expected.langInternalCPUTime + 10) as MicroSeconds_number
+				expected.langInternalCPUEnergyConsumption = (expected.langInternalCPUEnergyConsumption +
+					0.1) as MilliJoule_number
+				expected.langInternalRAMEnergyConsumption = (expected.langInternalRAMEnergyConsumption +
+					0.26) as MilliJoule_number
 
 				expect(expected.toJSON()).toEqual(result.toJSON())
 			})
@@ -626,18 +599,17 @@ describe('SensorValues', () => {
 					const result = instanceA.add({
 						internSensorValues: instanceB
 					})
-					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
-						instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.aggregatedCPUTime = (expected.aggregatedCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = (expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = (expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
-					expected.internCPUTime = expected.internCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.internCPUEnergyConsumption = expected.internCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.internRAMEnergyConsumption = expected.internRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.internCPUTime = (expected.internCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.internCPUEnergyConsumption = (expected.internCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.internRAMEnergyConsumption = (expected.internRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 					// Round to 2 decimal places since the values are floats and the sum might not be exact
 					roundSensorValues(result, 2)
@@ -668,18 +640,17 @@ describe('SensorValues', () => {
 					const result = instanceA.add({
 						internSensorValues: instanceB.toJSON()
 					})
-					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
-						instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.aggregatedCPUTime = (expected.aggregatedCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = (expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = (expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
-					expected.internCPUTime = expected.internCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.internCPUEnergyConsumption = expected.internCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.internRAMEnergyConsumption = expected.internRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.internCPUTime = (expected.internCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.internCPUEnergyConsumption = (expected.internCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.internRAMEnergyConsumption = (expected.internRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 					// Round to 2 decimal places since the values are floats and the sum might not be exact
 					roundSensorValues(result, 2)
@@ -699,18 +670,17 @@ describe('SensorValues', () => {
 					const result = instanceA.add({
 						externSensorValues: instanceB
 					})
-					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
-						instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.aggregatedCPUTime = (expected.aggregatedCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = (expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = (expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
-					expected.externCPUTime = expected.externCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.externCPUEnergyConsumption = expected.externCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.externRAMEnergyConsumption = expected.externRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.externCPUTime = (expected.externCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.externCPUEnergyConsumption = (expected.externCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.externRAMEnergyConsumption = (expected.externRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 					// Round to 2 decimal places since the values are floats and the sum might not be exact
 					roundSensorValues(result, 2)
@@ -741,18 +711,17 @@ describe('SensorValues', () => {
 					const result = instanceA.add({
 						externSensorValues: instanceB.toJSON()
 					})
-					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
-						instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.aggregatedCPUTime = (expected.aggregatedCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = (expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = (expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
-					expected.externCPUTime = expected.externCPUTime + instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.externCPUEnergyConsumption = expected.externCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.externRAMEnergyConsumption = expected.externRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.externCPUTime = (expected.externCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.externCPUEnergyConsumption = (expected.externCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.externRAMEnergyConsumption = (expected.externRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 					// Round to 2 decimal places since the values are floats and the sum might not be exact
 					roundSensorValues(result, 2)
@@ -773,19 +742,18 @@ describe('SensorValues', () => {
 					const result = instanceA.add({
 						langInternalSensorValues: instanceB
 					})
-					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
-						instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.aggregatedCPUTime = (expected.aggregatedCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = (expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = (expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
-					expected.langInternalCPUTime = expected.langInternalCPUTime +
-						instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.langInternalCPUEnergyConsumption = expected.langInternalCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.langInternalRAMEnergyConsumption = expected.langInternalRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.langInternalCPUTime = (expected.langInternalCPUTime +
+						instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.langInternalCPUEnergyConsumption = (expected.langInternalCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.langInternalRAMEnergyConsumption = (expected.langInternalRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 					// Round to 2 decimal places since the values are floats and the sum might not be exact
 					roundSensorValues(result, 2)
@@ -816,19 +784,18 @@ describe('SensorValues', () => {
 					const result = instanceA.add({
 						langInternalSensorValues: instanceB.toJSON()
 					})
-					expected.aggregatedCPUTime = expected.aggregatedCPUTime +
-						instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.aggregatedCPUEnergyConsumption = expected.aggregatedCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.aggregatedRAMEnergyConsumption = expected.aggregatedRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.aggregatedCPUTime = (expected.aggregatedCPUTime + instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.aggregatedCPUEnergyConsumption = (expected.aggregatedCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.aggregatedRAMEnergyConsumption = (expected.aggregatedRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
-					expected.langInternalCPUTime = expected.langInternalCPUTime +
-						instanceB.aggregatedCPUTime as MicroSeconds_number
-					expected.langInternalCPUEnergyConsumption = expected.langInternalCPUEnergyConsumption +
-						instanceB.aggregatedCPUEnergyConsumption as MilliJoule_number
-					expected.langInternalRAMEnergyConsumption = expected.langInternalRAMEnergyConsumption +
-						instanceB.aggregatedRAMEnergyConsumption as MilliJoule_number
+					expected.langInternalCPUTime = (expected.langInternalCPUTime +
+						instanceB.aggregatedCPUTime) as MicroSeconds_number
+					expected.langInternalCPUEnergyConsumption = (expected.langInternalCPUEnergyConsumption +
+						instanceB.aggregatedCPUEnergyConsumption) as MilliJoule_number
+					expected.langInternalRAMEnergyConsumption = (expected.langInternalRAMEnergyConsumption +
+						instanceB.aggregatedRAMEnergyConsumption) as MilliJoule_number
 
 					// Round to 2 decimal places since the values are floats and the sum might not be exact
 					roundSensorValues(result, 2)

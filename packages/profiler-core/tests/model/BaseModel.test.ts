@@ -43,23 +43,27 @@ describe('BaseModel', () => {
 
 		it('should have a static method fromJSON()', () => {
 			expect(SubClass.fromJSON).toBeTruthy()
-			expect(SubClass.fromJSON({
-				records: {
-					child1: {
-						records: {}
-					},
-					child2: {
-						records: {}
+			expect(
+				SubClass.fromJSON({
+					records: {
+						child1: {
+							records: {}
+						},
+						child2: {
+							records: {}
+						}
 					}
-				}
-			})).toEqual({})
+				})
+			).toEqual({})
 		})
 
 		it('should have a static method recordToJSON()', () => {
 			expect(SubClass.recordToJSON).toBeTruthy()
-			expect(SubClass.recordToJSON({
-				child1: new SubClass()
-			})).toEqual({
+			expect(
+				SubClass.recordToJSON({
+					child1: new SubClass()
+				})
+			).toEqual({
 				child1: {
 					records: {}
 				}

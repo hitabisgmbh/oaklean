@@ -5,11 +5,7 @@ import { TraverseNodeInfo } from './TraverseNodeInfo'
 
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
-import {
-	IdentifierType,
-	ProgramStructureTreeType,
-	SourceNodeIdentifierPart_string
-} from '../../types'
+import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../types'
 
 export class ClassStaticBlockDeclarationHelper {
 	static syntaxKind = ts.SyntaxKind.ClassStaticBlockDeclaration
@@ -19,9 +15,9 @@ export class ClassStaticBlockDeclarationHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassStaticBlockDeclaration>
-			resolveWithNoChildren: true
-		} | null {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassStaticBlockDeclaration>
+		resolveWithNoChildren: true
+	} | null {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {

@@ -7,16 +7,13 @@ import {
 } from '@oaklean/profiler-core/src'
 
 export type MockedCPUModel = {
-	location: CPUProfileSourceLocation,
-	profilerHits: number,
-	sensorValues: ISensorValues,
+	location: CPUProfileSourceLocation
+	profilerHits: number
+	sensorValues: ISensorValues
 	children?: MockedCPUModel[]
 }
 
-export function mockedCPUModel(
-	mocked: MockedCPUModel,
-	idx: number = 0
-): CPUNode {
+export function mockedCPUModel(mocked: MockedCPUModel, idx: number = 0): CPUNode {
 	return {
 		index: idx++,
 		sourceLocation: mocked.location,
@@ -41,25 +38,23 @@ export function mockedCPUModel(
  * The first location in the array will be the root, the last location will be the deepest child.
  * Each node will have profilerHits by 1 and selfCPUTime increasing by 10 for each depth level below it.
  * The aggregatedCPUTime will be the sum of selfCPUTime of itself and all its children.
- * 
+ *
  * E.g. for locations = [A, B, C]:
  * - A: profilerHits = 3, selfCPUTime = 30, aggregatedCPUTime = 60
  *  - B: profilerHits = 2, selfCPUTime = 20, aggregatedCPUTime = 30
  * 	  - C: profilerHits = 1, selfCPUTime = 10, aggregatedCPUTime = 10
  */
-export function createLocationChainCPUModel(
-	locations: CPUProfileSourceLocation[]
-) {
+export function createLocationChainCPUModel(locations: CPUProfileSourceLocation[]) {
 	let aggregatedCPUTime: MicroSeconds_number = 0 as MicroSeconds_number
 	let currentRoot: MockedCPUModel | undefined = undefined
 	for (let i = 0; i < locations.length; i++) {
-		aggregatedCPUTime = aggregatedCPUTime + (i+1)*10 as MicroSeconds_number
+		aggregatedCPUTime = (aggregatedCPUTime + (i + 1) * 10) as MicroSeconds_number
 
 		currentRoot = {
 			location: locations[locations.length - 1 - i],
-			profilerHits: i+1,
+			profilerHits: i + 1,
 			sensorValues: {
-				selfCPUTime: (i+1)*10 as MicroSeconds_number,
+				selfCPUTime: ((i + 1) * 10) as MicroSeconds_number,
 				aggregatedCPUTime
 			},
 			children: currentRoot === undefined ? undefined : [currentRoot]
@@ -77,41 +72,32 @@ type LocationTreeNode = [CPUProfileSourceLocation, LocationTreeNode[]]
  * Creates a mocked CPUModel with a tree of locations.
  * Each node will have profilerHits by 1 and selfCPUTime increasing by 10 for each depth level above it.
  * The aggregatedCPUTime will be the sum of selfCPUTime of itself and all its children.
- * 
+ *
  * E.g. for locations = [A, B, C]:
  * - A: profilerHits = 1, selfCPUTime = 10, aggregatedCPUTime = 80
  * 	- B: profilerHits = 2, selfCPUTime = 20, aggregatedCPUTime = 50
  * 		- C: profilerHits = 3, selfCPUTime = 30, aggregatedCPUTime = 30
  *  - B: profilerHits = 2, selfCPUTime = 20, aggregatedCPUTime = 20
  */
-export function createLocationTreeCPUModel(
-	node: LocationTreeNode,
-	currentLevel: number = 1
-) {
+export function createLocationTreeCPUModel(node: LocationTreeNode, currentLevel: number = 1) {
 	const result: MockedCPUModel = {
 		location: node[0],
 		profilerHits: currentLevel,
 		sensorValues: {
-			selfCPUTime: currentLevel*10 as MicroSeconds_number,
-			aggregatedCPUTime: currentLevel*10 as MicroSeconds_number
+			selfCPUTime: (currentLevel * 10) as MicroSeconds_number,
+			aggregatedCPUTime: (currentLevel * 10) as MicroSeconds_number
 		}
 	}
 	const children = []
 	for (let i = 0; i < node[1].length; i++) {
-		const childCPUNode = createLocationTreeCPUModel(
-			node[1][i],
-			currentLevel + 1
-		)
+		const childCPUNode = createLocationTreeCPUModel(node[1][i], currentLevel + 1)
 
 		children.push(childCPUNode)
-		result.sensorValues.aggregatedCPUTime =
-			(
-				(result.sensorValues.aggregatedCPUTime || 0) +
-				(childCPUNode.sensorValues.aggregatedCPUTime || 0)
-			) as MicroSeconds_number
+		result.sensorValues.aggregatedCPUTime = ((result.sensorValues.aggregatedCPUTime || 0) +
+			(childCPUNode.sensorValues.aggregatedCPUTime || 0)) as MicroSeconds_number
 	}
 	result.children = children
-	
+
 	return result
 }
 

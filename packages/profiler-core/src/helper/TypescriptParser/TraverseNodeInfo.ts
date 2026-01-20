@@ -3,10 +3,7 @@ import * as ts from 'typescript'
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 import { UnifiedPath } from '../../system/UnifiedPath'
 // Types
-import {
-	UnifiedPath_string,
-} from '../../types'
-
+import { UnifiedPath_string } from '../../types'
 
 export type TraverseNodeInfoCounters = {
 	childrenCounter: number
@@ -27,10 +24,12 @@ export class TraverseNodeInfo {
 	public node: ts.Node
 	public filePath: UnifiedPath | UnifiedPath_string
 	private _idCounter: number
-	public tree: ProgramStructureTree | {
-		resolve(): ProgramStructureTree
-		resolveWithNoChildren?: boolean
-	}
+	public tree:
+		| ProgramStructureTree
+		| {
+				resolve(): ProgramStructureTree
+				resolveWithNoChildren?: boolean
+		  }
 	public counters: TraverseNodeInfoCounters
 
 	private _moduleIdentificationCounter?: Map<string, number>

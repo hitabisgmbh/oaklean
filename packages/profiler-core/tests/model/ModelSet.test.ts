@@ -41,10 +41,7 @@ class SubClass extends BaseModel {
 	}
 
 	toBuffer(): Buffer {
-		const buffers = [
-			BufferHelper.String2LToBuffer(this.name),
-			BufferHelper.BooleanToBuffer(this.next !== undefined)
-		]
+		const buffers = [BufferHelper.String2LToBuffer(this.name), BufferHelper.BooleanToBuffer(this.next !== undefined)]
 		if (this.next !== undefined) {
 			buffers.push(this.next.toBuffer())
 		}
@@ -53,26 +50,18 @@ class SubClass extends BaseModel {
 	}
 
 	static fromBuffer(buffer: Buffer): {
-		instance: SubClass,
+		instance: SubClass
 		remainingBuffer: Buffer
 	} {
 		let remainingBuffer = buffer
-		const {
-			instance: name,
-			remainingBuffer: newRemainingBuffer1
-		} = BufferHelper.String2LFromBuffer(remainingBuffer)
+		const { instance: name, remainingBuffer: newRemainingBuffer1 } = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
 		const instance = new SubClass(name)
-		const {
-			instance: nextIsPresent,
-			remainingBuffer: newRemainingBuffer2
-		} = BufferHelper.BooleanFromBuffer(remainingBuffer)
+		const { instance: nextIsPresent, remainingBuffer: newRemainingBuffer2 } =
+			BufferHelper.BooleanFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer2
 		if (nextIsPresent) {
-			const {
-				instance: next,
-				remainingBuffer: newRemainingBuffer
-			} = SubClass.fromBuffer(remainingBuffer)
+			const { instance: next, remainingBuffer: newRemainingBuffer } = SubClass.fromBuffer(remainingBuffer)
 			remainingBuffer = newRemainingBuffer
 			instance.next = next
 		}
@@ -103,12 +92,13 @@ const EXAMPLE_MODEL_SET: (number | string | object)[] = [
 	'xyz'
 ]
 
-const EXAMPLE_MODEL_SET_BUFFER = '0400000001020000000201006101010062010100630101006400020900313233342d616263640000030078797a'
+const EXAMPLE_MODEL_SET_BUFFER =
+	'0400000001020000000201006101010062010100630101006400020900313233342d616263640000030078797a'
 
 function runInstanceTests(
 	title: string,
 	preDefinedInstance: () => {
-		instance: ModelSet<SubClass | string | number>,
+		instance: ModelSet<SubClass | string | number>
 		values: (SubClass | string | number)[]
 	}
 ) {
@@ -117,7 +107,7 @@ function runInstanceTests(
 		let values: (SubClass | string | number)[]
 
 		beforeEach(() => {
-			({ instance, values } = preDefinedInstance())
+			;({ instance, values } = preDefinedInstance())
 		})
 
 		it('instance should be an instanceof ModelSet', () => {
@@ -157,12 +147,14 @@ function runInstanceTests(
 		})
 
 		test('Symbol.iterator', () => {
-			expect([...instance].sort()).toEqual([
-				[EXAMPLE_MODEL_SET[0], EXAMPLE_MODEL_SET[0]],
-				[EXAMPLE_MODEL_SET[1], EXAMPLE_MODEL_SET[1]],
-				[EXAMPLE_MODEL_SET[2], EXAMPLE_MODEL_SET[2]],
-				[EXAMPLE_MODEL_SET[3], EXAMPLE_MODEL_SET[3]],
-			].sort())
+			expect([...instance].sort()).toEqual(
+				[
+					[EXAMPLE_MODEL_SET[0], EXAMPLE_MODEL_SET[0]],
+					[EXAMPLE_MODEL_SET[1], EXAMPLE_MODEL_SET[1]],
+					[EXAMPLE_MODEL_SET[2], EXAMPLE_MODEL_SET[2]],
+					[EXAMPLE_MODEL_SET[3], EXAMPLE_MODEL_SET[3]]
+				].sort()
+			)
 		})
 
 		it('should serialize correctly', () => {
@@ -218,9 +210,7 @@ function runInstanceTests(
 
 		test('foreach', () => {
 			const forEachValues: ModelSetValueType[] = []
-			function manipulateItem(
-				value: SubClass | string | number
-			) {
+			function manipulateItem(value: SubClass | string | number) {
 				forEachValues.push(value)
 			}
 			instance.forEach(manipulateItem)
@@ -255,26 +245,32 @@ describe('ModelSet', () => {
 		values.push(subClass2)
 		instance.add('xyz')
 		values.push('xyz')
-		
+
 		return { instance, values }
 	})
 
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
-			const instanceFromString = ModelSet.fromJSON<SubClass | string | number>
-			(JSON.stringify(EXAMPLE_MODEL_SET), SubClass.fromJSON)
+			const instanceFromString = ModelSet.fromJSON<SubClass | string | number>(
+				JSON.stringify(EXAMPLE_MODEL_SET),
+				SubClass.fromJSON
+			)
 			expect(instanceFromString.toJSON()).toEqual(EXAMPLE_MODEL_SET)
 		})
 
 		test('deserialization from object', () => {
-			const instanceFromObject = ModelSet.fromJSON<
-			SubClass | string | number>(EXAMPLE_MODEL_SET, SubClass.fromJSON) as ModelSet<SubClass | string | number>
+			const instanceFromObject = ModelSet.fromJSON<SubClass | string | number>(
+				EXAMPLE_MODEL_SET,
+				SubClass.fromJSON
+			) as ModelSet<SubClass | string | number>
 			expect(instanceFromObject.toJSON()).toEqual(EXAMPLE_MODEL_SET)
 		})
 
 		runInstanceTests('deserialized instance related', () => {
-			const instanceFromObject = ModelSet.fromJSON<
-			SubClass | string | number>(EXAMPLE_MODEL_SET, SubClass.fromJSON) as ModelSet<SubClass | string | number>
+			const instanceFromObject = ModelSet.fromJSON<SubClass | string | number>(
+				EXAMPLE_MODEL_SET,
+				SubClass.fromJSON
+			) as ModelSet<SubClass | string | number>
 			return {
 				instance: instanceFromObject,
 				values: Array.from(instanceFromObject.entries())

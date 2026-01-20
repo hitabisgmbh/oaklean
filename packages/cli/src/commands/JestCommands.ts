@@ -21,9 +21,7 @@ export default class JestCommands {
 	constructor() {
 		const baseCommand = program
 			.command('jest')
-			.description(
-				'Commands to inspect the jest profiler format. This is mostly used for debugging purposes'
-			)
+			.description('Commands to inspect the jest profiler format. This is mostly used for debugging purposes')
 
 		baseCommand
 			.command('verify')
@@ -34,10 +32,7 @@ export default class JestCommands {
 				'-o, --output <output>',
 				'output file path of the reproduced report (if not set no file will be generated)'
 			)
-			.option(
-				'-d, --deep',
-				'also check wether each report would be generated the same way'
-			)
+			.option('-d, --deep', 'also check wether each report would be generated the same way')
 			.option(
 				'-m, --measure',
 				'also measure the reproduction of the reports and outputs a report (this will take longer, but is useful for performance comparisons)'
@@ -46,16 +41,12 @@ export default class JestCommands {
 
 		baseCommand
 			.command('inspect-profiles')
-			.description(
-				'Inspects all reports and cpu profiles in the jests output directory and verifies their consistency'
-			)
+			.description('Inspects all reports and cpu profiles in the jests output directory and verifies their consistency')
 			.action(this.inspectCPUProfiles.bind(this))
-		
+
 		baseCommand
 			.command('verify-trees')
-			.description(
-				'Checks all sub reports in the output directory for SourceFileMetaDataTree consistency'
-			)
+			.description('Checks all sub reports in the output directory for SourceFileMetaDataTree consistency')
 			.action(this.verifyTrees.bind(this))
 	}
 
@@ -67,22 +58,14 @@ export default class JestCommands {
 		const profilerConfig = ProfilerConfig.autoResolve()
 		const rootDir = profilerConfig.getRootDir()
 
-		const exportAssetHelper = new ExportAssetHelper(
-			profilerConfig.getOutDir().join('jest')
-		)
+		const exportAssetHelper = new ExportAssetHelper(profilerConfig.getOutDir().join('jest'))
 
-		const verifyExportAssetHelper = new ExportAssetHelper(
-			profilerConfig.getOutDir().join('jest-verify')
-		)
+		const verifyExportAssetHelper = new ExportAssetHelper(profilerConfig.getOutDir().join('jest-verify'))
 
 		const reportPaths = exportAssetHelper.allReportPathsInOutputDir()
-		const accumulatedProjectReportPath =
-			exportAssetHelper.outputAccumulatedReportPath()
+		const accumulatedProjectReportPath = exportAssetHelper.outputAccumulatedReportPath()
 
-		const expectedAccumulatedReport = ProjectReport.loadFromFile(
-			accumulatedProjectReportPath,
-			'bin'
-		)
+		const expectedAccumulatedReport = ProjectReport.loadFromFile(accumulatedProjectReportPath, 'bin')
 		if (!expectedAccumulatedReport) {
 			LoggerHelper.warn(
 				`Could not find a profiler report at ${accumulatedProjectReportPath.toPlatformString()}\n` +
@@ -118,17 +101,11 @@ export default class JestCommands {
 
 				const title = exportAssetHelper.titleFromReportFilePath(reportPath)
 
-				const report = new ProjectReport(
-					expectedReport.executionDetails,
-					ReportKind.measurement
-				)
+				const report = new ProjectReport(expectedReport.executionDetails, ReportKind.measurement)
 
-				const metricsDataCollectionPath =
-					exportAssetHelper.outputMetricsDataCollectionPath(title)
-				const externalResourceHelperPath =
-					exportAssetHelper.outputExternalResourceHelperPath(title)
-				const v8CPUProfilePath =
-					exportAssetHelper.outputCPUProfilePath(title)
+				const metricsDataCollectionPath = exportAssetHelper.outputMetricsDataCollectionPath(title)
+				const externalResourceHelperPath = exportAssetHelper.outputExternalResourceHelperPath(title)
+				const v8CPUProfilePath = exportAssetHelper.outputCPUProfilePath(title)
 
 				const cpuProfile = await CPUProfileHelper.loadFromFile(v8CPUProfilePath)
 
@@ -140,14 +117,9 @@ export default class JestCommands {
 					continue
 				}
 
-				const metricsDataCollection = MetricsDataCollection.loadFromFile(
-					metricsDataCollectionPath
-				)
+				const metricsDataCollection = MetricsDataCollection.loadFromFile(metricsDataCollectionPath)
 
-				const externalResourceHelper = ExternalResourceHelper.loadFromFile(
-					rootDir,
-					externalResourceHelperPath
-				)
+				const externalResourceHelper = ExternalResourceHelper.loadFromFile(rootDir, externalResourceHelperPath)
 
 				if (externalResourceHelper === undefined) {
 					LoggerHelper.error(
@@ -158,36 +130,21 @@ export default class JestCommands {
 					continue
 				}
 				LoggerHelper.log(`[REPRODUCE] ${reportPath.toPlatformString()}`)
-				await report.insertCPUProfile(
-					rootDir,
-					cpuProfile,
-					externalResourceHelper,
-					metricsDataCollection
-				)
+				await report.insertCPUProfile(rootDir, cpuProfile, externalResourceHelper, metricsDataCollection)
 
 				report.trackUncommittedFiles(rootDir, externalResourceHelper)
 				report.relativeRootDir = expectedReport.relativeRootDir
 
 				if (report.hash() !== expectedReport.hash()) {
-					LoggerHelper.warn(
-						`[NOT_REPRODUCIBLE] ${reportPath.toPlatformString()}`,
-						report.hash(),
-						expectedReport.hash()
-					)
-					report.storeToFile(
-						verifyExportAssetHelper.outputReportPath(title),
-						'pretty-json',
-						profilerConfig
-					)
+					LoggerHelper.warn(`[NOT_REPRODUCIBLE] ${reportPath.toPlatformString()}`, report.hash(), expectedReport.hash())
+					report.storeToFile(verifyExportAssetHelper.outputReportPath(title), 'pretty-json', profilerConfig)
 					expectedReport.storeToFile(
 						verifyExportAssetHelper.outputReportPath(title + '-expected'),
 						'pretty-json',
 						profilerConfig
 					)
 				} else {
-					LoggerHelper.success(
-						`[REPRODUCIBLE] ${reportPath.toPlatformString()}`
-					)
+					LoggerHelper.success(`[REPRODUCIBLE] ${reportPath.toPlatformString()}`)
 				}
 				reports.push(report)
 			}
@@ -204,16 +161,10 @@ export default class JestCommands {
 			}
 		}
 
-		const engineModule =
-			reports.length > 0
-				? reports[0].globalIndex.engineModule
-				: NodeModule.currentEngineModule()
+		const engineModule = reports.length > 0 ? reports[0].globalIndex.engineModule : NodeModule.currentEngineModule()
 		const globalIndex = new GlobalIndex(engineModule)
 		const moduleIndex = globalIndex.getModuleIndex('upsert')
-		const accumulatedProjectReport = ProjectReport.merge(
-			moduleIndex,
-			...reports
-		)
+		const accumulatedProjectReport = ProjectReport.merge(moduleIndex, ...reports)
 		if (profiler !== undefined) {
 			await profiler.finish('latest')
 			LoggerHelper.success(
@@ -223,22 +174,14 @@ export default class JestCommands {
 		}
 
 		if (options.output) {
-			accumulatedProjectReport.storeToFile(
-				new UnifiedPath(options.output),
-				'bin',
-				profilerConfig
-			)
+			accumulatedProjectReport.storeToFile(new UnifiedPath(options.output), 'bin', profilerConfig)
 			LoggerHelper.log(`The report was stored at ${options.output}`)
 		} else {
-			LoggerHelper.log(
-				'The report was not stored, because no output path was provided'
-			)
+			LoggerHelper.log('The report was not stored, because no output path was provided')
 		}
 
-		accumulatedProjectReport.relativeRootDir =
-			expectedAccumulatedReport.relativeRootDir
-		const reportsAreEqual =
-			expectedAccumulatedReport.hash() === accumulatedProjectReport.hash()
+		accumulatedProjectReport.relativeRootDir = expectedAccumulatedReport.relativeRootDir
+		const reportsAreEqual = expectedAccumulatedReport.hash() === accumulatedProjectReport.hash()
 		if (reportsAreEqual) {
 			LoggerHelper.success('The reports are equal')
 		} else {
@@ -249,12 +192,9 @@ export default class JestCommands {
 	async inspectCPUProfiles() {
 		const profilerConfig = ProfilerConfig.autoResolve()
 
-		const exportAssetHelper = new ExportAssetHelper(
-			profilerConfig.getOutDir().join('jest')
-		)
+		const exportAssetHelper = new ExportAssetHelper(profilerConfig.getOutDir().join('jest'))
 
-		const accumulatedProjectReportPath =
-			exportAssetHelper.outputAccumulatedReportPath()
+		const accumulatedProjectReportPath = exportAssetHelper.outputAccumulatedReportPath()
 
 		const reportPaths = exportAssetHelper.allReportPathsInOutputDir()
 
@@ -266,8 +206,8 @@ export default class JestCommands {
 
 		for (const reportPath of reportPaths) {
 			if (reportPath.toString() === accumulatedProjectReportPath.toString()) {
-					continue // Skip the accumulated report itself
-				}
+				continue // Skip the accumulated report itself
+			}
 
 			const title = exportAssetHelper.titleFromReportFilePath(reportPath)
 			const cpuProfilePath = exportAssetHelper.outputCPUProfilePath(title)
@@ -282,7 +222,7 @@ export default class JestCommands {
 			if (cpuProfile === undefined) {
 				LoggerHelper.error(
 					`CPU profile could not be loaded from ${cpuProfilePath.toPlatformString()}. ` +
-					'Please make sure the file exists and is a valid CPU profile.'
+						'Please make sure the file exists and is a valid CPU profile.'
 				)
 				return
 			}
@@ -299,50 +239,49 @@ export default class JestCommands {
 			if (reportsTotal !== inspectResult.totalCPUTime) {
 				LoggerHelper.warn(
 					`Inconsistent CPU time in report: ${title}.\n` +
-					`Profile CPU Time: ${inspectResult.totalCPUTime}\n` +
-					`Report CPU Time: ${reportsTotal}`
+						`Profile CPU Time: ${inspectResult.totalCPUTime}\n` +
+						`Report CPU Time: ${reportsTotal}`
 				)
 			} else {
-				LoggerHelper.success(
-					`Consistent CPU time in report: ${title}. CPU Time: ${reportsTotal}`
-				)
+				LoggerHelper.success(`Consistent CPU time in report: ${title}. CPU Time: ${reportsTotal}`)
 			}
 		}
-		LoggerHelper.table([
-			{
-				type: 'Files Inspected',
-				value: reportPaths.length
-			},
-			{
-				type: 'Total Node Count',
-				value: totalNodeCount
-			},
-			{
-				type: 'Source Node Location Count',
-				value: totalSourceNodeLocationCount
-			},
-			{
-				type: 'Sample Count',
-				value: totalSampleCount
-			},
-			{
-				type: 'Total Hits',
-				value: totalHits
-			},
-			{
-				type: 'Total CPU Time',
-				value: totalCPUTime,
-				unit: 'µs'
-			}
-		], ['type', 'value', 'unit'])
+		LoggerHelper.table(
+			[
+				{
+					type: 'Files Inspected',
+					value: reportPaths.length
+				},
+				{
+					type: 'Total Node Count',
+					value: totalNodeCount
+				},
+				{
+					type: 'Source Node Location Count',
+					value: totalSourceNodeLocationCount
+				},
+				{
+					type: 'Sample Count',
+					value: totalSampleCount
+				},
+				{
+					type: 'Total Hits',
+					value: totalHits
+				},
+				{
+					type: 'Total CPU Time',
+					value: totalCPUTime,
+					unit: 'µs'
+				}
+			],
+			['type', 'value', 'unit']
+		)
 	}
 
 	async verifyTrees() {
 		const profilerConfig = ProfilerConfig.autoResolve()
 
-		const exportAssetHelper = new ExportAssetHelper(
-			profilerConfig.getOutDir().join('jest')
-		)
+		const exportAssetHelper = new ExportAssetHelper(profilerConfig.getOutDir().join('jest'))
 
 		const reportPaths = exportAssetHelper.allReportPathsInOutputDir()
 
@@ -356,9 +295,11 @@ export default class JestCommands {
 				continue
 			}
 
-			const sourceFileMetaDataTree = SourceFileMetaDataTree.fromProjectReport(
-        projectReport
-      ).filter(projectReport.asSourceNodeGraph(), undefined, undefined).node
+			const sourceFileMetaDataTree = SourceFileMetaDataTree.fromProjectReport(projectReport).filter(
+				projectReport.asSourceNodeGraph(),
+				undefined,
+				undefined
+			).node
 
 			if (!sourceFileMetaDataTree) {
 				LoggerHelper.error(`SourceFileMetaDataTree could not be constructed from ProjectReport: ${reportPath}`)
@@ -367,10 +308,11 @@ export default class JestCommands {
 
 			const total = projectReport.totalAndMaxMetaData().total
 
-			const treeSum = sourceFileMetaDataTree.aggregatedInternSourceMetaData.total.sensorValues.aggregatedCPUTime +
+			const treeSum =
+				sourceFileMetaDataTree.aggregatedInternSourceMetaData.total.sensorValues.aggregatedCPUTime +
 				sourceFileMetaDataTree.headlessSensorValues.langInternalCPUTime +
 				sourceFileMetaDataTree.headlessSensorValues.externCPUTime
-			
+
 			// const treeSum = sourceFileMetaDataTree.aggregatedInternSourceMetaData.total.sensorValues.selfCPUTime +
 			// 	sourceFileMetaDataTree.aggregatedLangInternalSourceNodeMetaData.total.sensorValues.selfCPUTime +
 			// 	sourceFileMetaDataTree.aggregatedExternSourceMetaData.total.sensorValues.selfCPUTime
@@ -381,7 +323,7 @@ export default class JestCommands {
 			if (diff !== 0) {
 				LoggerHelper.error(
 					`Inconsistent SourceFileMetaDataTree in report: ${reportPath.toPlatformString()}.\n` +
-					'Tree sum does not match total CPU time.\n',
+						'Tree sum does not match total CPU time.\n',
 					`Tree Sum: ${treeSum}`,
 					`Total CPU Time: ${total.sensorValues.aggregatedCPUTime}`,
 					`Difference: ${diff}`
@@ -392,9 +334,7 @@ export default class JestCommands {
 		if (totalDiff === 0) {
 			LoggerHelper.success('All SourceFileMetaDataTrees are consistent.')
 		} else {
-			LoggerHelper.error(
-				`Total CPU time difference across all reports: ${totalDiff}`
-			)
+			LoggerHelper.error(`Total CPU time difference across all reports: ${totalDiff}`)
 		}
 	}
 }

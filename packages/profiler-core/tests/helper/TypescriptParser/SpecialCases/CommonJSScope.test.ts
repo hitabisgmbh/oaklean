@@ -21,7 +21,7 @@ describe('CommonJS', () => {
 			})
 		})
 	})
-	
+
 	describe('non empty module', () => {
 		const code = `(function (exports, require, module, __filename, __dirname) {
 			function a() {}

@@ -1,19 +1,14 @@
 import { ProjectReport } from '../../model/ProjectReport'
 import { ModuleReport } from '../../model/ModuleReport'
-import {
-	SourceNodeMetaData
-} from '../../model/SourceNodeMetaData'
-import {
-	SourceNodeMetaDataType
-} from '../../types'
+import { SourceNodeMetaData } from '../../model/SourceNodeMetaData'
+import { SourceNodeMetaDataType } from '../../types'
 
 export class CallIdentifier {
 	isAwaiterSourceNode: boolean
 
 	readonly report: ProjectReport | ModuleReport
 	readonly sourceNode: SourceNodeMetaData<
-	SourceNodeMetaDataType.SourceNode |
-	SourceNodeMetaDataType.LangInternalSourceNode
+		SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
 	> | null
 	readonly sourceNodeIDString: string
 	readonly compensationLayerDepth: number
@@ -21,8 +16,7 @@ export class CallIdentifier {
 	constructor(
 		report: ProjectReport | ModuleReport,
 		sourceNode: SourceNodeMetaData<
-		SourceNodeMetaDataType.SourceNode |
-		SourceNodeMetaDataType.LangInternalSourceNode
+			SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
 		> | null,
 		compensationLayerDepth: number
 	) {

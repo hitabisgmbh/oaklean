@@ -10,15 +10,13 @@ import { program } from 'commander'
 
 export default class BackendCommands {
 	constructor() {
-		const parseCommand = program
-			.command('backend')
-			.description('commands to interact with the backend')
+		const parseCommand = program.command('backend').description('commands to interact with the backend')
 
 		parseCommand
 			.command('send')
 			.description(
 				`Sends a given ${REPORT_FILE_EXTENSION} ` +
-				`report to a backend specified in the ${STATIC_CONFIG_FILENAME} config`
+					`report to a backend specified in the ${STATIC_CONFIG_FILENAME} config`
 			)
 			.argument('<input>', 'input file path')
 			.action(this.sendReportToBackend.bind(this))

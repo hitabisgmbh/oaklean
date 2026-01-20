@@ -15,7 +15,8 @@ export type NodeInternalSourceNodeIdentifier_string = string & { [NodeInternalSo
 
 const SourceNodeIdentifierSymbol: unique symbol = Symbol('SourceNodeIdentifierSymbol')
 export type SourceNodeIdentifier_string =
-	string & { [SourceNodeIdentifierSymbol]: never } | NodeInternalSourceNodeIdentifier_string
+	| (string & { [SourceNodeIdentifierSymbol]: never })
+	| NodeInternalSourceNodeIdentifier_string
 
 const GlobalSourceNodeIdentifierSymbol: unique symbol = Symbol('GlobalSourceNodeIdentifierSymbol')
 export type GlobalSourceNodeIdentifier_string = string & { [GlobalSourceNodeIdentifierSymbol]: never }
@@ -30,7 +31,7 @@ const GitHashSymbol: unique symbol = Symbol('GitHashSymbol')
 export type GitHash_string = string & { [GitHashSymbol]: never }
 
 export interface IReport {
-	reportVersion: string,
+	reportVersion: string
 	relativeRootDir?: UnifiedPath_string
 	internMapping?: Record<UnifiedPath_string, UnifiedPath_string>
 	node_internal?: Record<NodeInternalPath_string, ISourceFileMetaData>
@@ -48,7 +49,7 @@ export interface IModuleReport extends IReport {
 }
 
 export type CPUUsageOfSourceNode = {
-	selfTime: number,
+	selfTime: number
 	aggregatedTime: number
 }
 
@@ -58,22 +59,22 @@ export enum SourceNodeMetaDataType {
 	NodeInternalSourceNodeReference = 'NodeInternalSourceNodeReference',
 	InternSourceNodeReference = 'InternSourceNodeReference',
 	ExternSourceNodeReference = 'ExternSourceNodeReference',
-	Aggregate = 'Aggregate',
+	Aggregate = 'Aggregate'
 }
 
 export interface ISourceNodeMetaData extends CPUUsageOfSourceNode {
 	type: SourceNodeMetaDataType
 	hits: number
-	nodeInternalTime?: number,
-	internTime?: number,
-	externTime?: number,
+	nodeInternalTime?: number
+	internTime?: number
+	externTime?: number
 	node_internal?: Record<GlobalSourceNodeIdentifier_string, ISourceNodeMetaData>
 	intern?: Record<GlobalSourceNodeIdentifier_string, ISourceNodeMetaData>
 	extern?: Record<GlobalSourceNodeIdentifier_string, ISourceNodeMetaData>
 }
 
 export interface ISourceFileMetaData {
-	path: UnifiedPath_string | NodeInternalPath_string,
+	path: UnifiedPath_string | NodeInternalPath_string
 	functions?: Record<SourceNodeIdentifier_string, ISourceNodeMetaData>
 }
 export type IProjectMetaData = {
@@ -87,7 +88,7 @@ export type IProjectReportExecutionDetails = {
 }
 
 export interface IReport {
-	reportVersion: string,
+	reportVersion: string
 	relativeRootDir?: UnifiedPath_string
 	internMapping?: Record<UnifiedPath_string, UnifiedPath_string>
 	node_internal?: Record<NodeInternalPath_string, ISourceFileMetaData>
@@ -103,7 +104,7 @@ export interface IProjectReport extends IReport {
 export enum SourceFileMetaDataTreeType {
 	File = 'File',
 	Directory = 'Directory',
-	Module = 'Module',
+	Module = 'Module'
 }
 
 export interface IAggregatedSourceNodeMetaData {
@@ -117,7 +118,7 @@ export interface ISourceFileMetaDataTree {
 	aggregatedExternSourceMetaData?: IAggregatedSourceNodeMetaData
 	type: SourceFileMetaDataTreeType
 	filePath: UnifiedPath_string
-	originalSourceFilePath?: UnifiedPath_string,
+	originalSourceFilePath?: UnifiedPath_string
 	internChildren?: Record<UnifiedPathPart_string, ISourceFileMetaDataTree>
 	externChildren?: Record<NodeModuleIdentifier_string, ISourceFileMetaDataTree>
 	sourceFileMetaData?: ISourceFileMetaData

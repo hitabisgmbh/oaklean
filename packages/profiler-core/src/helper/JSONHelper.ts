@@ -22,18 +22,18 @@ export class JSONHelper {
 
 		await PermissionHelper.writeFileWithStorageFunctionWithUserPermissionAsync(
 			outputPath,
-			() => new Promise((resolve) => {
-				jsonStream.pipe(outputStream)
-				outputStream.on('finish', () => {
-					resolve(undefined)
+			() =>
+				new Promise((resolve) => {
+					jsonStream.pipe(outputStream)
+					outputStream.on('finish', () => {
+						resolve(undefined)
+					})
 				})
-			})
 		)
 	}
 
-	static async loadBigJSON(
-		inputPath: UnifiedPath
-	): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
+	static async loadBigJSON(inputPath: UnifiedPath): Promise<any> {
+		// eslint-disable-line @typescript-eslint/no-explicit-any
 		return new Promise((resolve, reject) => {
 			const fileStream = fs.createReadStream(inputPath.toPlatformString())
 

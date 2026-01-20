@@ -1,9 +1,6 @@
 import * as fs from 'fs'
 
-import {
-	Profiler,
-	PerfSensorInterface
-} from '@oaklean/profiler'
+import { Profiler, PerfSensorInterface } from '@oaklean/profiler'
 import {
 	ProfilerConfig,
 	SensorInterfaceType,
@@ -13,9 +10,7 @@ import {
 } from '@oaklean/profiler-core'
 import { PerfEvent } from '@oaklean/profiler/dist/src/interfaces/perf/PerfSensorInterface'
 
-import {
-	ENABLE_MEASUREMENTS
-} from './constants'
+import { ENABLE_MEASUREMENTS } from './constants'
 
 export default async function () {
 	if (!ENABLE_MEASUREMENTS) {
@@ -27,9 +22,7 @@ export default async function () {
 	performance.start('jestEnv.setup.resolveConfig')
 	const profilerConfig = ProfilerConfig.autoResolve()
 	performance.stop('jestEnv.setup.resolveConfig')
-	const exportAssetHelper = new ExportAssetHelper(
-		profilerConfig.getOutDir().join('jest')
-	)
+	const exportAssetHelper = new ExportAssetHelper(profilerConfig.getOutDir().join('jest'))
 
 	LoggerHelper.appPrefix.log(`V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
 	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
@@ -47,31 +40,20 @@ export default async function () {
 			const canBeExecuted = await sensorInterface.canBeExecuted()
 			performance.stop('jestEnv.setup.sensorInterface.canBeExecuted')
 			if (canBeExecuted === false) {
-				LoggerHelper.appPrefix.error(
-					'Sensor Interface cannot be executed with these permissions'
-				)
+				LoggerHelper.appPrefix.error('Sensor Interface cannot be executed with these permissions')
 			} else {
 				if (sensorInterface.type() === SensorInterfaceType.perf) {
-					const availableMeasurementTypes = await (
-						sensorInterface as PerfSensorInterface).availableMeasurementTypes()
-					LoggerHelper.appPrefix.log(
-						'Measure CPU Energy: ' +
-						`${availableMeasurementTypes[PerfEvent.ENERGY_CORES]}`
-					)
-					LoggerHelper.appPrefix.log(
-						'Measure RAM Energy: ' +
-						`${availableMeasurementTypes[PerfEvent.ENERGY_RAM]}`
-					)
+					const availableMeasurementTypes = await (sensorInterface as PerfSensorInterface).availableMeasurementTypes()
+					LoggerHelper.appPrefix.log('Measure CPU Energy: ' + `${availableMeasurementTypes[PerfEvent.ENERGY_CORES]}`)
+					LoggerHelper.appPrefix.log('Measure RAM Energy: ' + `${availableMeasurementTypes[PerfEvent.ENERGY_RAM]}`)
 				}
 			}
 		} else {
 			LoggerHelper.appPrefix.log('Something went wrong loading the SensorInterface')
 		}
-
 	} else {
 		LoggerHelper.appPrefix.log(
-			'no SensorInterface configured ' +
-			'(no energy measurements will be collected, only cpu time)'
+			'no SensorInterface configured ' + '(no energy measurements will be collected, only cpu time)'
 		)
 	}
 

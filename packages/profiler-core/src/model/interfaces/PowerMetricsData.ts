@@ -10,7 +10,6 @@ import {
 	IPowerMetricsData
 } from '../../types'
 
-
 export class PowerMetricsData extends BaseMetricsData {
 	private _data: IPowerMetricsOutputFormat
 	private _totalEnergyImpact: number | undefined
@@ -51,11 +50,11 @@ export class PowerMetricsData extends BaseMetricsData {
 		result.timeDelta = BigInt(data.timeDelta) as NanoSeconds_BigInt
 		return result
 	}
-	
-	public get duration() : NanoSeconds_BigInt {
+
+	public get duration(): NanoSeconds_BigInt {
 		return BigInt(this._data.elapsed_ns) as NanoSeconds_BigInt
 	}
-	
+
 	public get startTime(): NanoSeconds_BigInt {
 		return TimeHelper.timestampToHighResolutionTime(
 			this._data.timestamp.getTime() as MilliSeconds_number,
@@ -107,7 +106,7 @@ export class PowerMetricsData extends BaseMetricsData {
 		const power = this._data.processor.cpu_power // in mW = 1e-3 W
 		const time = this._data.elapsed_ns // in ns = 1e-9 s
 
-		return power * time / 1e9 as MilliJoule_number // (1e-3 W)*(1e-9 s) = 1e-12 J = 1e-9 mJ
+		return ((power * time) / 1e9) as MilliJoule_number // (1e-3 W)*(1e-9 s) = 1e-12 J = 1e-9 mJ
 	}
 
 	public ramEnergy(): MilliJoule_number {

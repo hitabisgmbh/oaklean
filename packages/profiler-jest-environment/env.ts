@@ -1,9 +1,6 @@
 // my-custom-environment
 import type { JestEnvironment } from '@jest/environment'
-import {
-	JestEnvironmentConfig,
-	EnvironmentContext
-} from '@jest/environment'
+import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 import { Profiler } from '@oaklean/profiler'
 import {
 	UnifiedPath,
@@ -19,9 +16,7 @@ import {
 import NodeEnvironment from 'jest-environment-node'
 import JSDOMEnvironment from 'jest-environment-jsdom'
 
-import {
-	ENABLE_MEASUREMENTS
-} from './constants'
+import { ENABLE_MEASUREMENTS } from './constants'
 
 declare global {
 	interface globalThis {
@@ -116,10 +111,7 @@ class CustomEnvironment implements JestEnvironment {
 				performance.printReport('jestEnv.env.setup')
 				performance.exportAndSum(this.profiler.exportAssetHelper.outputPerformancePath())
 
-				await this.profiler.start(
-					this.testPath.toString(),
-					executionDetails
-				)
+				await this.profiler.start(this.testPath.toString(), executionDetails)
 			} catch (e) {
 				LoggerHelper.error('CustomEnvironment.setup():', e)
 				this.ranSuccessfully = false

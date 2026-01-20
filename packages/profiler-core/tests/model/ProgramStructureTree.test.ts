@@ -1,17 +1,11 @@
-import {
-	EMIT_HELPER_PATH,
-	NESTED_DECLARATIONS_CASE,
-	updateTestCase
-} from './assets/ProgramStructureTree/index'
+import { EMIT_HELPER_PATH, NESTED_DECLARATIONS_CASE, updateTestCase } from './assets/ProgramStructureTree/index'
 
 import { ProgramStructureTree } from '../../src/model/ProgramStructureTree'
 import { TypescriptParser } from '../../src/helper/TypescriptParser'
-import {
-	SourceNodeIdentifier_string
-} from '../../src/types'
+import { SourceNodeIdentifier_string } from '../../src/types'
 
 const testCases = {
-	NESTED_DECLARATIONS_CASE,
+	NESTED_DECLARATIONS_CASE
 }
 
 const UPDATE_TEST_ASSETS = false
@@ -53,30 +47,40 @@ describe('ProgramStructureTree', () => {
 		})
 
 		test('containsLocation', () => {
-			expect(instance.containsLocation({
-				line: 1,
-				column: -1
-			})).toBe(false)
+			expect(
+				instance.containsLocation({
+					line: 1,
+					column: -1
+				})
+			).toBe(false)
 
-			expect(instance.containsLocation({
-				line: 58,
-				column: 2
-			})).toBe(false)
+			expect(
+				instance.containsLocation({
+					line: 58,
+					column: 2
+				})
+			).toBe(false)
 		})
 
 		describe('identifierBySourceLocation', () => {
 			test('existing identifier', () => {
-				expect(instance.identifierBySourceLocation({
-					line: 8,
-					column: 21
-				})).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}')
+				expect(
+					instance.identifierBySourceLocation({
+						line: 8,
+						column: 21
+					})
+				).toBe(
+					'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}'
+				)
 			})
 
 			test('non existing identifier', () => {
-				expect(instance.identifierBySourceLocation({
-					line: 10000000000,
-					column: 10000000000
-				})).toBe('')
+				expect(
+					instance.identifierBySourceLocation({
+						line: 10000000000,
+						column: 10000000000
+					})
+				).toBe('')
 			})
 		})
 
@@ -86,7 +90,9 @@ describe('ProgramStructureTree', () => {
 				column: 21
 			})
 
-			expect(result?.node.identifierPath()).toEqual('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}')
+			expect(result?.node.identifierPath()).toEqual(
+				'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}'
+			)
 		})
 	})
 })
@@ -94,24 +100,22 @@ describe('ProgramStructureTree', () => {
 for (const [testCaseName, testCase] of Object.entries(testCases)) {
 	describe(`testing with ${testCaseName}`, () => {
 		test('testing with typescript file parser', () => {
-			const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(
-				testCase.source.path
-			)))
-			const expected = JSON.parse(
-				testCase.expected.content
+			const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(testCase.source.path)))
+			const expected = JSON.parse(testCase.expected.content)
+			updateTestCase(
+				{
+					path: testCase.expected.path,
+					object: tree
+				},
+				UPDATE_TEST_ASSETS
 			)
-			updateTestCase({
-				path: testCase.expected.path,
-				object: tree
-			}, UPDATE_TEST_ASSETS)
 			expect(tree).toEqual(expected)
 		})
 
 		test('testing with typescript string parser', () => {
-			const tree = JSON.parse(JSON.stringify(TypescriptParser.parseSource(
-				testCase.source.path,
-				testCase.source.content
-			)))
+			const tree = JSON.parse(
+				JSON.stringify(TypescriptParser.parseSource(testCase.source.path, testCase.source.content))
+			)
 			const expected = JSON.parse(testCase.expected.content)
 			expect(tree).toEqual(expected)
 		})
@@ -122,11 +126,17 @@ describe('ProgramStructureTreeType.identifierBySourceLocation', () => {
 	test('test case 1', () => {
 		const tree = TypescriptParser.parseFile(NESTED_DECLARATIONS_CASE.source.path)
 
-		expect(tree.identifierBySourceLocation({ line: 3, column: 1 })).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}')
+		expect(tree.identifierBySourceLocation({ line: 3, column: 1 })).toBe(
+			'{root}.{class:ExampleClass}.{method:memberFunction1}'
+		)
 
-		expect(tree.identifierBySourceLocation({ line: 5, column: 3 })).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}')
-		
-		expect(tree.identifierBySourceLocation({ line: 7, column: 21 })).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}')
+		expect(tree.identifierBySourceLocation({ line: 5, column: 3 })).toBe(
+			'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}'
+		)
+
+		expect(tree.identifierBySourceLocation({ line: 7, column: 21 })).toBe(
+			'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}'
+		)
 	})
 })
 
@@ -134,19 +144,31 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 	test('test case 1', () => {
 		const tree = TypescriptParser.parseFile(NESTED_DECLARATIONS_CASE.source.path)
 
-		expect(tree.sourceLocationOfIdentifier('{root}.{class:ExampleClass}.{method:memberFunction1}' as SourceNodeIdentifier_string)).toEqual({
+		expect(
+			tree.sourceLocationOfIdentifier(
+				'{root}.{class:ExampleClass}.{method:memberFunction1}' as SourceNodeIdentifier_string
+			)
+		).toEqual({
 			beginLoc: { line: 2, column: 1 },
-			endLoc: { line: 11, column: 2 },
+			endLoc: { line: 11, column: 2 }
 		})
 
-		expect(tree.sourceLocationOfIdentifier('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}' as SourceNodeIdentifier_string)).toEqual({
+		expect(
+			tree.sourceLocationOfIdentifier(
+				'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}' as SourceNodeIdentifier_string
+			)
+		).toEqual({
 			beginLoc: { line: 4, column: 25 },
-			endLoc: { line: 9, column: 4 },
+			endLoc: { line: 9, column: 4 }
 		})
 
-		expect(tree.sourceLocationOfIdentifier('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}' as SourceNodeIdentifier_string)).toEqual({
+		expect(
+			tree.sourceLocationOfIdentifier(
+				'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}' as SourceNodeIdentifier_string
+			)
+		).toEqual({
 			beginLoc: { line: 7, column: 14 },
-			endLoc: { line: 7, column: 22 },
+			endLoc: { line: 7, column: 22 }
 		})
 	})
 
@@ -154,9 +176,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 		const tree = TypescriptParser.parseFile(EMIT_HELPER_PATH)
 
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__decorate}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__decorate}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 46,
@@ -168,9 +188,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__metadata}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__metadata}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 46,
@@ -182,9 +200,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__param}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__param}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 40,
@@ -196,9 +212,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__esDecorate}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__esDecorate}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 50,
@@ -210,9 +224,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__runInitializers}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__runInitializers}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 60,
@@ -224,9 +236,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__assign}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__assign}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 42,
@@ -238,9 +248,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__await}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__await}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 40,
@@ -252,9 +260,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__asyncGenerator}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__asyncGenerator}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 58,
@@ -266,9 +272,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__asyncDelegator}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__asyncDelegator}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 58,
@@ -280,9 +284,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__asyncValues}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__asyncValues}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 52,
@@ -294,9 +296,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__rest}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__rest}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 38,
@@ -308,9 +308,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__awaiter}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__awaiter}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 44,
@@ -322,9 +320,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__extends}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__extends}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 45,
@@ -336,9 +332,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__makeTemplateObject}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__makeTemplateObject}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 66,
@@ -350,9 +344,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__read}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__read}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 38,
@@ -364,9 +356,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__spreadArray}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__spreadArray}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 52,
@@ -378,9 +368,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__propKey}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__propKey}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 44,
@@ -392,9 +380,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__setFunctionName}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__setFunctionName}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 60,
@@ -406,9 +392,7 @@ describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 			}
 		})
 		expect(
-			tree.sourceLocationOfIdentifier(
-				'{root}.{functionExpression:__values}' as SourceNodeIdentifier_string
-			)
+			tree.sourceLocationOfIdentifier('{root}.{functionExpression:__values}' as SourceNodeIdentifier_string)
 		).toEqual({
 			beginLoc: {
 				column: 42,

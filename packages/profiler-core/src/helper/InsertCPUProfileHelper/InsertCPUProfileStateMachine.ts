@@ -1,10 +1,7 @@
 import { CallIdentifier } from './CallIdentifier'
 import { CallRelationTracker } from './CallRelationTracker'
 import { State } from './types/state'
-import {
-	Transition,
-	TransitionResult
-} from './types/transition'
+import { Transition, TransitionResult } from './types/transition'
 import { StackFrame, AwaiterStack } from './types/stack'
 import { StateMachineLogger } from './StateMachineLogger'
 import { CompensationHelper } from './CompensationHelper'
@@ -21,10 +18,7 @@ import { WASM_NODE_MODULE } from '../../model/NodeModule'
 import { MetricsDataCollection } from '../../model/interfaces/MetricsDataCollection'
 import { ICpuProfileRaw } from '../../../lib/vscode-js-profile-core/src/cpu/types'
 // Types
-import {
-	NanoSeconds_BigInt,
-	SourceNodeIdentifier_string
-} from '../../types'
+import { NanoSeconds_BigInt, SourceNodeIdentifier_string } from '../../types'
 import { CPUProfileSourceLocation } from '../CPUProfile'
 
 /**
@@ -35,14 +29,14 @@ import { CPUProfileSourceLocation } from '../CPUProfile'
  * - Module: when the current function belongs to an external module.
  * - LangInternal: when the current function is a language internal function (e.g., V8 internals).
  * - Wasm: when the current function is a WebAssembly function.
- * 
+ *
  * The state machine uses the ResolveFunctionIdentifierHelper to determine the appropriate state
  * based on the source location of the CPU nodes.
  * It also tracks call relations to avoid double counting of sensor values for already recorded calls.
- * 
+ *
  * The state machine maintains an awaiter stack to correctly account for async function calls and their awaiters.
  * This ensures that sensor values are accurately attributed to the correct source nodes in async scenarios.
- * 
+ *
  */
 export class InsertCPUProfileStateMachine {
 	projectReport: ProjectReport
@@ -50,11 +44,13 @@ export class InsertCPUProfileStateMachine {
 	callRelationTracker: CallRelationTracker
 	awaiterStack: AwaiterStack
 
-	debug: {
-		transitions: boolean,
-		states: boolean
-		compensations: boolean
-	} | undefined
+	debug:
+		| {
+				transitions: boolean
+				states: boolean
+				compensations: boolean
+		  }
+		| undefined
 
 	constructor(reportToApply: ProjectReport) {
 		this.projectReport = reportToApply
@@ -64,7 +60,7 @@ export class InsertCPUProfileStateMachine {
 
 	/**
 	 * Inserts a CPU profile into the state machine, updating the project report accordingly.
-	 * 
+	 *
 	 * @param resolveFunctionIdentifierHelper the helper to resolve function identifiers
 	 * @param profile the raw cpu profile to insert
 	 * @param metricsDataCollection optional metrics data collection to enrich the cpu profile with energy values
@@ -73,7 +69,7 @@ export class InsertCPUProfileStateMachine {
 		rootDir: UnifiedPath,
 		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper,
 		profile: ICpuProfileRaw,
-		metricsDataCollection?: MetricsDataCollection,
+		metricsDataCollection?: MetricsDataCollection
 	) {
 		if (this.projectReport.executionDetails.highResolutionBeginTime === undefined) {
 			throw new Error('InsertCPUProfileHelper.insertCPUProfile: executionDetails.highResolutionBeginTime is undefined')
@@ -89,40 +85,31 @@ export class InsertCPUProfileStateMachine {
 			cpuModel.energyValuesPerNode = cpuModel.energyValuesPerNodeByMetricsData(metricsDataCollection)
 		}
 
-		await this.insertCPUNodes(
-			cpuModel.getNode(0),
-			resolveFunctionIdentifierHelper
-		)
+		await this.insertCPUNodes(cpuModel.getNode(0), resolveFunctionIdentifierHelper)
 	}
 
 	/**
 	 * Inserts CPU nodes into the state machine, updating the project report accordingly.
-	 * 
+	 *
 	 * @param rootNode the root node of the cpu model
 	 * @param resolveFunctionIdentifierHelper the helper to resolve function identifiers
 	 */
-	async insertCPUNodes(
-		rootNode: CPUNode,
-		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper
-	) {
+	async insertCPUNodes(rootNode: CPUNode, resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper) {
 		const stack: StackFrame[] = [
 			{
 				// begin state
 				parent: null,
-				state:  {
+				state: {
 					scope: 'project',
 					type: 'lang_internal',
 					headless: true,
 					compensationLayerDepth: 0,
-					callIdentifier: new CallIdentifier(
-						this.projectReport,
-						null,
-						0
-					)
+					callIdentifier: new CallIdentifier(this.projectReport, null, 0)
 				},
 				node: rootNode,
 				depth: 0
-			}]
+			}
+		]
 
 		// traverse the cpu nodes depth first
 		while (stack.length > 0) {
@@ -157,13 +144,9 @@ export class InsertCPUProfileStateMachine {
 					this.callRelationTracker.removeCompensationLayerRecord(currentState.callIdentifier)
 				}
 				if (this.debug?.states) {
-					StateMachineLogger.logState(
-						currentStackFrame.depth + 1,
-						currentStackFrame.node,
-						currentState
-					)
+					StateMachineLogger.logState(currentStackFrame.depth + 1, currentStackFrame.node, currentState)
 				}
-				
+
 				const compensation = currentStackFrame.result.compensation
 				// Compensation handling:
 				if (compensation !== undefined) {
@@ -173,9 +156,11 @@ export class InsertCPUProfileStateMachine {
 						parentState,
 						compensation,
 						accountingInfo,
-						this.debug?.compensations ? {
-							depth: currentStackFrame.depth
-						} : undefined
+						this.debug?.compensations
+							? {
+									depth: currentStackFrame.depth
+								}
+							: undefined
 					)
 
 					if (currentStackFrame.parent !== null) {
@@ -183,20 +168,19 @@ export class InsertCPUProfileStateMachine {
 						CompensationHelper.propagateCompensation(
 							currentStackFrame.parent,
 							compensation,
-							this.debug?.compensations ? {
-								depth: currentStackFrame.depth,
-								node: currentStackFrame.node,
-								currentState
-							} : undefined
+							this.debug?.compensations
+								? {
+										depth: currentStackFrame.depth,
+										node: currentStackFrame.node,
+										currentState
+									}
+								: undefined
 						)
 					}
 				}
 
 				if (this.debug?.transitions) {
-					StateMachineLogger.logLeaveTransition(
-						currentStackFrame.result.nextState,
-						currentStackFrame.state
-					)
+					StateMachineLogger.logLeaveTransition(currentStackFrame.result.nextState, currentStackFrame.state)
 				}
 				if (currentState.callIdentifier.isAwaiterSourceNode) {
 					this.awaiterStack.pop()
@@ -206,11 +190,7 @@ export class InsertCPUProfileStateMachine {
 
 			// PROCESSING OF THE NODE (first visit)
 			if (this.debug?.states) {
-				StateMachineLogger.logState(
-					currentStackFrame.depth,
-					currentStackFrame.node,
-					currentStackFrame.state
-				)
+				StateMachineLogger.logState(currentStackFrame.depth, currentStackFrame.node, currentStackFrame.state)
 			}
 
 			// determine the transition
@@ -221,10 +201,7 @@ export class InsertCPUProfileStateMachine {
 			)
 
 			// apply the transition
-			currentStackFrame.result = await this.applyTransition(
-				currentStackFrame,
-				transition
-			)
+			currentStackFrame.result = await this.applyTransition(currentStackFrame, transition)
 
 			if (this.debug?.transitions) {
 				StateMachineLogger.logTransition(
@@ -241,10 +218,12 @@ export class InsertCPUProfileStateMachine {
 				currentStackFrame.node,
 				currentStackFrame.state,
 				currentStackFrame.result,
-				this.debug?.compensations ? {
-					depth: currentStackFrame.depth,
-					node: currentStackFrame.node
-				} : undefined
+				this.debug?.compensations
+					? {
+							depth: currentStackFrame.depth,
+							node: currentStackFrame.node
+						}
+					: undefined
 			)
 
 			// add children to stack
@@ -261,9 +240,9 @@ export class InsertCPUProfileStateMachine {
 
 	/**
 	 * determine the transition based on the current state and the cpu node's source location
-	 * 
+	 *
 	 * @param currentState the current state of the state machine
-	 * 
+	 *
 	 * @param sourceLocation the source location of the incoming cpu node
 	 * @returns the transition to the next state
 	 */
@@ -293,21 +272,15 @@ export class InsertCPUProfileStateMachine {
 					sourceNodeLocation: {
 						relativeFilePath: wasmPath,
 						functionIdentifier:
-							// needs to be wrapped in {} to be a valid source node identifier 
+							// needs to be wrapped in {} to be a valid source node identifier
 							`{${sourceLocation.rawFunctionName}}` as SourceNodeIdentifier_string
 					},
 					presentInOriginalSourceCode: false
 				}
 			}
 		}
-		const {
-			sourceNodeLocation,
-			functionIdentifierPresentInOriginalFile,
-			nodeModule,
-			relativeNodeModulePath
-		} = await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
-			sourceLocation
-		)
+		const { sourceNodeLocation, functionIdentifierPresentInOriginalFile, nodeModule, relativeNodeModulePath } =
+			await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(sourceLocation)
 
 		if (!(relativeNodeModulePath && nodeModule)) {
 			// is project
@@ -337,15 +310,12 @@ export class InsertCPUProfileStateMachine {
 
 	/**
 	 * performs the state transition and accounting based on the current stack frame and the transition
-	 * 
-	 * @param currentStackFrame 
-	 * @param transition 
+	 *
+	 * @param currentStackFrame
+	 * @param transition
 	 * @returns the result of the transition including the next state and accounting info
 	 */
-	async applyTransition(
-		currentStackFrame: StackFrame,
-		transition: Transition
-	): Promise<TransitionResult> {
+	async applyTransition(currentStackFrame: StackFrame, transition: Transition): Promise<TransitionResult> {
 		this.applyHeadless(currentStackFrame, transition)
 		switch (transition.transition) {
 			case 'toLangInternal':
@@ -355,48 +325,12 @@ export class InsertCPUProfileStateMachine {
 					transition,
 					this.callRelationTracker
 				)
-			case 'toProject': {
-				const scope = currentStackFrame.state.scope
-				switch (scope) {
-					case 'project':
-						// transition stays in project
-						return await AccountingHelper.accountToIntern(
-							currentStackFrame.state,
-							currentStackFrame.node,
-							transition,
-							this.callRelationTracker,
-							this.awaiterStack
-						)
-					case 'module':
-						// transition from module to project
-						return await AccountingHelper.accountOwnCodeGetsExecutedByExternal(
-							currentStackFrame.state,
-							currentStackFrame.node,
-							transition,
-							this.callRelationTracker,
-							this.projectReport
-						)
-				}
-			}
-			break
-			case 'toModule': {
-				const scope = currentStackFrame.state.scope
-				switch (scope) {
-					case 'project':
-						// transition from project to module
-						return await AccountingHelper.accountToExtern(
-							currentStackFrame.state,
-							currentStackFrame.node,
-							transition,
-							this.callRelationTracker
-						)
-					case 'module':
-						if (
-							currentStackFrame.state.callIdentifier.report instanceof ModuleReport &&
-							currentStackFrame.state.callIdentifier.report.nodeModule.identifier ===
-								transition.options.nodeModule.identifier
-						) {
-							// transition stays in the same module
+			case 'toProject':
+				{
+					const scope = currentStackFrame.state.scope
+					switch (scope) {
+						case 'project':
+							// transition stays in project
 							return await AccountingHelper.accountToIntern(
 								currentStackFrame.state,
 								currentStackFrame.node,
@@ -404,18 +338,56 @@ export class InsertCPUProfileStateMachine {
 								this.callRelationTracker,
 								this.awaiterStack
 							)
-						} else {
-							// transition from module to different module
+						case 'module':
+							// transition from module to project
+							return await AccountingHelper.accountOwnCodeGetsExecutedByExternal(
+								currentStackFrame.state,
+								currentStackFrame.node,
+								transition,
+								this.callRelationTracker,
+								this.projectReport
+							)
+					}
+				}
+				break
+			case 'toModule':
+				{
+					const scope = currentStackFrame.state.scope
+					switch (scope) {
+						case 'project':
+							// transition from project to module
 							return await AccountingHelper.accountToExtern(
 								currentStackFrame.state,
 								currentStackFrame.node,
 								transition,
 								this.callRelationTracker
 							)
-						}
+						case 'module':
+							if (
+								currentStackFrame.state.callIdentifier.report instanceof ModuleReport &&
+								currentStackFrame.state.callIdentifier.report.nodeModule.identifier ===
+									transition.options.nodeModule.identifier
+							) {
+								// transition stays in the same module
+								return await AccountingHelper.accountToIntern(
+									currentStackFrame.state,
+									currentStackFrame.node,
+									transition,
+									this.callRelationTracker,
+									this.awaiterStack
+								)
+							} else {
+								// transition from module to different module
+								return await AccountingHelper.accountToExtern(
+									currentStackFrame.state,
+									currentStackFrame.node,
+									transition,
+									this.callRelationTracker
+								)
+							}
+					}
 				}
-			}
-			break
+				break
 			default:
 				assertUnreachable(transition)
 		}
@@ -423,14 +395,11 @@ export class InsertCPUProfileStateMachine {
 
 	/**
 	 * applies headless accounting if necessary
-	 * 
-	 * @param currentStackFrame 
-	 * @param transition 
+	 *
+	 * @param currentStackFrame
+	 * @param transition
 	 */
-	applyHeadless(
-		currentStackFrame: StackFrame,
-		transition: Transition
-	) {
+	applyHeadless(currentStackFrame: StackFrame, transition: Transition) {
 		// if no intern calls were tracked yet, add the time to the headless cpu time
 		if (currentStackFrame.state.headless && transition.transition !== 'toProject') {
 			switch (transition.transition) {

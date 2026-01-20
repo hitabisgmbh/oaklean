@@ -14,8 +14,14 @@ describe('UrlProtocolHelper', () => {
 		test('known protocols', () => {
 			const loggerWarnSpy = jest.spyOn(LoggerHelper, 'warn')
 			expect(UrlProtocolHelper.extractProtocol('file://')).toBe('file')
-			expect(UrlProtocolHelper.extractProtocol('webpack://next/dist/compiled/react-dom/cjs/react-dom-server.edge.development.js')).toBe('webpack')
-			expect(UrlProtocolHelper.extractProtocol('webpack-internal:///(rsc)/./src/app/layout.tsx')).toBe('webpack-internal')
+			expect(
+				UrlProtocolHelper.extractProtocol(
+					'webpack://next/dist/compiled/react-dom/cjs/react-dom-server.edge.development.js'
+				)
+			).toBe('webpack')
+			expect(UrlProtocolHelper.extractProtocol('webpack-internal:///(rsc)/./src/app/layout.tsx')).toBe(
+				'webpack-internal'
+			)
 			expect(loggerWarnSpy).not.toHaveBeenCalled()
 			loggerWarnSpy.mockRestore()
 		})
@@ -107,11 +113,10 @@ describe('UrlProtocolHelper', () => {
 
 			expect(result).toBeNull()
 		})
-		
 	})
 
 	describe('webpackSourceMapUrlToOriginalUrl', () => {
-		test('with node module path', () =>{
+		test('with node module path', () => {
 			const rootDir = new UnifiedPath('/Users/user/project')
 			const originalSource = 'webpack://_N_E/node_modules/next/dist/esm/server/web/adapter.js?4fab'
 
@@ -137,12 +142,15 @@ describe('UrlProtocolHelper', () => {
 
 		test('with external', () => {
 			const rootDir = new UnifiedPath('/Users/user/project')
-			const originalSource = 'webpack://next/external commonjs "next/dist/client/components/action-async-storage.external.js"'
+			const originalSource =
+				'webpack://next/external commonjs "next/dist/client/components/action-async-storage.external.js"'
 
 			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
 
 			expect(result).toEqual({
-				url: new UnifiedPath('/Users/user/project/external commonjs "next/dist/client/components/action-async-storage.external.js"'),
+				url: new UnifiedPath(
+					'/Users/user/project/external commonjs "next/dist/client/components/action-async-storage.external.js"'
+				),
 				protocol: 'webpack'
 			})
 		})

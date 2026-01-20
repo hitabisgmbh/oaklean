@@ -88,10 +88,7 @@ describe('InitCommands', () => {
 			test('with none', async () => {
 				selectSensorInterface_spy.mockResolvedValue(undefined)
 
-				const {
-					mainConfig,
-					localConfig
-				} = await initCommands.configureConfig()
+				const { mainConfig, localConfig } = await initCommands.configureConfig()
 
 				expect(mainConfig.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
 
@@ -113,10 +110,7 @@ describe('InitCommands', () => {
 			test('with perf', async () => {
 				selectSensorInterface_spy.mockResolvedValue(SensorInterfaceType.perf)
 
-				const {
-					mainConfig,
-					localConfig
-				} = await initCommands.configureConfig()
+				const { mainConfig, localConfig } = await initCommands.configureConfig()
 
 				expect(mainConfig.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
 
@@ -138,10 +132,7 @@ describe('InitCommands', () => {
 			test('with powermetrics', async () => {
 				selectSensorInterface_spy.mockResolvedValue(SensorInterfaceType.powermetrics)
 
-				const {
-					mainConfig,
-					localConfig
-				} = await initCommands.configureConfig()
+				const { mainConfig, localConfig } = await initCommands.configureConfig()
 
 				expect(mainConfig.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
 
@@ -218,7 +209,9 @@ describe('InitCommands', () => {
 				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(mainConfig, null, 2))
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
 				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
-				expect(consoleLog_spy).toHaveBeenCalledWith('[Oaklean] perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
+				expect(consoleLog_spy).toHaveBeenCalledWith(
+					'[Oaklean] perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md'
+				)
 				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
 				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
 					new UnifiedPath(process.cwd()).join('.oaklean.local'),
@@ -329,6 +322,5 @@ describe('InitCommands', () => {
 				expect(intermediateConfigStoreToFile_spy).not.toHaveBeenCalled()
 			})
 		})
-
 	})
 })

@@ -4,11 +4,7 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import {
-	IdentifierType,
-	ProgramStructureTreeType,
-	SourceNodeIdentifierPart_string
-} from '../../../types'
+import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
 
 export class TryStatementHelper {
 	static syntaxKind = ts.SyntaxKind.TryStatement
@@ -39,9 +35,15 @@ export class TryStatementHelper {
 		parent: ts.TryStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<
-		ProgramStructureTreeType.TryBlock | ProgramStructureTreeType.CatchClause | ProgramStructureTreeType.FinallyBlock
-		> } | undefined
+	):
+		| {
+				resolve(): ProgramStructureTree<
+					| ProgramStructureTreeType.TryBlock
+					| ProgramStructureTreeType.CatchClause
+					| ProgramStructureTreeType.FinallyBlock
+				>
+		  }
+		| undefined
 		| undefined {
 		if (parent.tryBlock === node) {
 			return {
