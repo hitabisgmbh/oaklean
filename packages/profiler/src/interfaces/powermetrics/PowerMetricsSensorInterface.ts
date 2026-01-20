@@ -122,7 +122,10 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 	}
 
 	isRunning(): boolean {
-		return this._childProcess?.pid !== undefined && BaseSensorInterface.pidIsRunning(this._childProcess.pid)
+		return (
+			this._childProcess?.pid !== undefined &&
+			BaseSensorInterface.pidIsRunning(this._childProcess.pid)
+		)
 	}
 
 	static runningInstances(): string[] {
@@ -135,39 +138,61 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		}
 	}
 
-	async readSensorValues(pid: number): Promise<MetricsDataCollection | undefined> {
+	async readSensorValues(
+		pid: number
+	): Promise<MetricsDataCollection | undefined> {
 		if (!(await this.couldBeExecuted())) {
 			return undefined
 		}
 		let tries = 0
 		while (this.isRunning() && tries < 10) {
-			LoggerHelper.error(`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
+			LoggerHelper.error(
+				`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`
+			)
 			tries += 1
 			await TimeHelper.sleep(1000)
 		}
 
 		if (this.startTime === undefined || this.stopTime === undefined) {
-			throw new Error('PowerMetricsSensorInterface.readSensorValues: start or stop time could not be determined')
+			throw new Error(
+				'PowerMetricsSensorInterface.readSensorValues: start or stop time could not be determined'
+			)
 		}
 
-		if (!fs.existsSync(this._options.outputFilePath) || !(await this.canBeExecuted())) {
-			return new MetricsDataCollection(pid, MetricsDataCollectionType.PowerMetricsPerProcess, [], {
-				startTime: this.startTime,
-				stopTime: this.stopTime
-			})
+		if (
+			!fs.existsSync(this._options.outputFilePath) ||
+			!(await this.canBeExecuted())
+		) {
+			return new MetricsDataCollection(
+				pid,
+				MetricsDataCollectionType.PowerMetricsPerProcess,
+				[],
+				{
+					startTime: this.startTime,
+					stopTime: this.stopTime
+				}
+			)
 		}
 
 		const content = fs.readFileSync(this._options.outputFilePath).toString()
 		const contents = content.split('\x00')
 
 		const data = contents.map(
-			(content: string) => new PowerMetricsData(plist.parse(content) as unknown as IPowerMetricsOutputFormat)
+			(content: string) =>
+				new PowerMetricsData(
+					plist.parse(content) as unknown as IPowerMetricsOutputFormat
+				)
 		)
 
-		return new MetricsDataCollection(pid, MetricsDataCollectionType.PowerMetricsPerProcess, data, {
-			startTime: this.startTime,
-			stopTime: this.stopTime
-		})
+		return new MetricsDataCollection(
+			pid,
+			MetricsDataCollectionType.PowerMetricsPerProcess,
+			data,
+			{
+				startTime: this.startTime,
+				stopTime: this.stopTime
+			}
+		)
 	}
 
 	get startTime(): NanoSeconds_BigInt | undefined {
@@ -203,11 +228,14 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 			}
 		}
 
-		this._fileWatcher = fs.watchFile(this._options.outputFilePath, (curr, prev) => {
-			if (curr.size > prev.size) {
-				this._eventHandler.fire('measurementCaptured')
+		this._fileWatcher = fs.watchFile(
+			this._options.outputFilePath,
+			(curr, prev) => {
+				if (curr.size > prev.size) {
+					this._eventHandler.fire('measurementCaptured')
+				}
 			}
-		})
+		)
 
 		process.on('exit', this.cleanExit) // add event listener to close powermetrics if the parent process exits
 
@@ -242,7 +270,9 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		let seconds = 0
 		while (this.isRunning()) {
 			if (seconds > 10) {
-				throw new Error('Waited 10 seconds for powermetrics to shut down, it is still running')
+				throw new Error(
+					'Waited 10 seconds for powermetrics to shut down, it is still running'
+				)
 			}
 			await TimeHelper.sleep(1000)
 			seconds++

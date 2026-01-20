@@ -15,7 +15,8 @@ type SourceLocationTransitionOptions = {
 	presentInOriginalSourceCode: boolean
 }
 
-type ProjectTransitionOptions = TransitionOptions & SourceLocationTransitionOptions
+type ProjectTransitionOptions = TransitionOptions &
+	SourceLocationTransitionOptions
 
 type ModuleTransitionOptions = TransitionOptions &
 	SourceLocationTransitionOptions & {
@@ -37,7 +38,10 @@ export type ToModuleTransition = {
 	options: ModuleTransitionOptions
 }
 
-export type Transition = ToProjectTransition | ToLangInternalTransition | ToModuleTransition
+export type Transition =
+	| ToProjectTransition
+	| ToLangInternalTransition
+	| ToModuleTransition
 
 export type TransitionResult = {
 	nextState: State

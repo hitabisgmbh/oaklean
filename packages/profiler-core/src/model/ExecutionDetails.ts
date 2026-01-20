@@ -9,7 +9,10 @@ import { UnifiedPath } from '../system/UnifiedPath'
 import { GitHelper } from '../helper/GitHelper'
 import { TimeHelper } from '../helper/TimeHelper'
 // Types
-import { IProjectReportExecutionDetailsDuringMeasurement, ProjectReportOrigin } from '../types'
+import {
+	IProjectReportExecutionDetailsDuringMeasurement,
+	ProjectReportOrigin
+} from '../types'
 
 export class ExecutionDetails {
 	static async resolveExecutionDetails(
@@ -32,7 +35,8 @@ export class ExecutionDetails {
 					)
 			)
 		}
-		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
+		const usedConfig =
+			config !== undefined ? config : ProfilerConfig.autoResolve()
 
 		const engineModule = NodeModule.currentEngineModule()
 
@@ -51,7 +55,9 @@ export class ExecutionDetails {
 		}
 	}
 
-	static loadFromFile(filePath: UnifiedPath): IProjectReportExecutionDetailsDuringMeasurement | undefined {
+	static loadFromFile(
+		filePath: UnifiedPath
+	): IProjectReportExecutionDetailsDuringMeasurement | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
@@ -59,7 +65,13 @@ export class ExecutionDetails {
 		return JSON.parse(json)
 	}
 
-	static storeToFile(executionDetails: IProjectReportExecutionDetailsDuringMeasurement, filePath: UnifiedPath): void {
-		PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(executionDetails))
+	static storeToFile(
+		executionDetails: IProjectReportExecutionDetailsDuringMeasurement,
+		filePath: UnifiedPath
+	): void {
+		PermissionHelper.writeFileWithUserPermission(
+			filePath,
+			JSON.stringify(executionDetails)
+		)
 	}
 }

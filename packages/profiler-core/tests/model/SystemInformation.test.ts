@@ -10,7 +10,11 @@ import { LoggerHelper } from '../../src'
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
 const EXAMPLE_SYSTEM_INFORMATION: ISystemInformation = JSON.parse(
-	fs.readFileSync(CURRENT_DIR.join('assets', 'SystemInformation', 'example.json').toString()).toString()
+	fs
+		.readFileSync(
+			CURRENT_DIR.join('assets', 'SystemInformation', 'example.json').toString()
+		)
+		.toString()
 ) as ISystemInformation
 
 describe('SystemInformation', () => {
@@ -149,17 +153,23 @@ describe('SystemInformation', () => {
 	})
 
 	test('collect', async () => {
-		expect((await SystemInformation.collect()).toJSON()).toEqual(EXAMPLE_SYSTEM_INFORMATION)
+		expect((await SystemInformation.collect()).toJSON()).toEqual(
+			EXAMPLE_SYSTEM_INFORMATION
+		)
 	})
 
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
-			const reportFromString = SystemInformation.fromJSON(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION))
+			const reportFromString = SystemInformation.fromJSON(
+				JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)
+			)
 			expect(reportFromString.toJSON()).toEqual(EXAMPLE_SYSTEM_INFORMATION)
 		})
 
 		test('deserialization from object', () => {
-			const reportFromObject = SystemInformation.fromJSON(EXAMPLE_SYSTEM_INFORMATION)
+			const reportFromObject = SystemInformation.fromJSON(
+				EXAMPLE_SYSTEM_INFORMATION
+			)
 			expect(reportFromObject.toJSON()).toEqual(EXAMPLE_SYSTEM_INFORMATION)
 		})
 	})
@@ -180,84 +190,139 @@ describe('SystemInformation', () => {
 				SystemInformation.sameSystem()
 			}
 
-			expect(t).toThrow('SystemInformation.merge: no SystemInformation were given')
+			expect(t).toThrow(
+				'SystemInformation.merge: no SystemInformation were given'
+			)
 		})
 
 		test('equal total', () => {
-			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, EXAMPLE_SYSTEM_INFORMATION)).toBe(true)
+			expect(
+				SystemInformation.sameSystem(
+					EXAMPLE_SYSTEM_INFORMATION,
+					EXAMPLE_SYSTEM_INFORMATION
+				)
+			).toBe(true)
 
 			expect(consoleError).toHaveBeenCalledTimes(0)
 		})
 		test('different system', () => {
-			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
+			const DIFF = JSON.parse(
+				JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)
+			) as ISystemInformation
 			DIFF.system.manufacturer = 'abc'
 
-			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
+			expect(
+				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
+			).toBe(false)
 
-			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different systems')
+			expect(consoleError).toHaveBeenCalledWith(
+				'SystemInformation.isSame: detected different systems'
+			)
 		})
 
 		test('different baseboard', () => {
-			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
+			const DIFF = JSON.parse(
+				JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)
+			) as ISystemInformation
 			DIFF.baseBoard.manufacturer = 'abc'
 
-			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
+			expect(
+				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
+			).toBe(false)
 
-			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different baseboards')
+			expect(consoleError).toHaveBeenCalledWith(
+				'SystemInformation.isSame: detected different baseboards'
+			)
 		})
 
 		test('different chassis', () => {
-			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
+			const DIFF = JSON.parse(
+				JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)
+			) as ISystemInformation
 			DIFF.chassis.manufacturer = 'abc'
 
-			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
+			expect(
+				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
+			).toBe(false)
 
-			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different chassis')
+			expect(consoleError).toHaveBeenCalledWith(
+				'SystemInformation.isSame: detected different chassis'
+			)
 		})
 
 		test('different cpu', () => {
-			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
+			const DIFF = JSON.parse(
+				JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)
+			) as ISystemInformation
 			DIFF.cpu.manufacturer = 'abc'
 
-			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
+			expect(
+				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
+			).toBe(false)
 
-			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different cpus')
+			expect(consoleError).toHaveBeenCalledWith(
+				'SystemInformation.isSame: detected different cpus'
+			)
 		})
 
 		test('different memory', () => {
-			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
+			const DIFF = JSON.parse(
+				JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)
+			) as ISystemInformation
 			DIFF.memory.total -= 1
 
-			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
+			expect(
+				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
+			).toBe(false)
 
-			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different memory')
+			expect(consoleError).toHaveBeenCalledWith(
+				'SystemInformation.isSame: detected different memory'
+			)
 		})
 
 		test('different memoryLayout', () => {
-			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
+			const DIFF = JSON.parse(
+				JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)
+			) as ISystemInformation
 			DIFF.memoryLayout.push(DIFF.memoryLayout[0])
 
-			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
+			expect(
+				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
+			).toBe(false)
 
-			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different memoryLayout')
+			expect(consoleError).toHaveBeenCalledWith(
+				'SystemInformation.isSame: detected different memoryLayout'
+			)
 		})
 
 		test('different battery', () => {
-			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
+			const DIFF = JSON.parse(
+				JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)
+			) as ISystemInformation
 			DIFF.battery.manufacturer = 'abc'
 
-			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
+			expect(
+				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
+			).toBe(false)
 
-			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different battery')
+			expect(consoleError).toHaveBeenCalledWith(
+				'SystemInformation.isSame: detected different battery'
+			)
 		})
 
 		test('different os', () => {
-			const DIFF = JSON.parse(JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)) as ISystemInformation
+			const DIFF = JSON.parse(
+				JSON.stringify(EXAMPLE_SYSTEM_INFORMATION)
+			) as ISystemInformation
 			DIFF.os.platform = 'abc'
 
-			expect(SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)).toBe(false)
+			expect(
+				SystemInformation.sameSystem(EXAMPLE_SYSTEM_INFORMATION, DIFF)
+			).toBe(false)
 
-			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different os')
+			expect(consoleError).toHaveBeenCalledWith(
+				'SystemInformation.isSame: detected different os'
+			)
 		})
 	})
 })

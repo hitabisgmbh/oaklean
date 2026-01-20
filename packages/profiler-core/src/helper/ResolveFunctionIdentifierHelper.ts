@@ -14,7 +14,11 @@ import { SourceMap } from '../model/SourceMap'
 import { NodeModule } from '../model/NodeModule'
 import { ProgramStructureTree } from '../model/ProgramStructureTree'
 import { UnifiedPath } from '../system/UnifiedPath'
-import { UnifiedPath_string, ResolvedSourceNodeLocation, ProgramStructureTreeType } from '../types'
+import {
+	UnifiedPath_string,
+	ResolvedSourceNodeLocation,
+	ProgramStructureTreeType
+} from '../types'
 
 type ResolveFunctionIdentifierResult = {
 	sourceNodeLocation: ResolvedSourceNodeLocation
@@ -23,7 +27,9 @@ type ResolveFunctionIdentifierResult = {
 	relativeNodeModulePath: UnifiedPath | null
 }
 
-type NodeModulePerFilePathCacheResult = ReturnType<typeof NodeModuleUtils.nodeModuleFromFilePath>
+type NodeModulePerFilePathCacheResult = ReturnType<
+	typeof NodeModuleUtils.nodeModuleFromFilePath
+>
 
 /**
  * This helper resolves a function identifier from a CPU profile's source location.
@@ -40,15 +46,27 @@ export class ResolveFunctionIdentifierHelper {
 	private externalResourceHelper: ExternalResourceHelper
 
 	// script id -> PST
-	private PSTperNodeScript: Map<string, ProgramStructureTree<ProgramStructureTreeType.Root>>
+	private PSTperNodeScript: Map<
+		string,
+		ProgramStructureTree<ProgramStructureTreeType.Root>
+	>
 	// file path -> PST
-	private PSTperOriginalFile: Map<UnifiedPath_string, ProgramStructureTree<ProgramStructureTreeType.Root> | null>
+	private PSTperOriginalFile: Map<
+		UnifiedPath_string,
+		ProgramStructureTree<ProgramStructureTreeType.Root> | null
+	>
 	// cpu profile source location id -> cached ResolveFunctionIdentifierResult
 	private functionIdentifierCache: Map<number, ResolveFunctionIdentifierResult>
 
-	private _nodeModulePerFileCache: Map<UnifiedPath_string, NodeModulePerFilePathCacheResult>
+	private _nodeModulePerFileCache: Map<
+		UnifiedPath_string,
+		NodeModulePerFilePathCacheResult
+	>
 
-	constructor(rootDir: UnifiedPath, externalResourceHelper: ExternalResourceHelper) {
+	constructor(
+		rootDir: UnifiedPath,
+		externalResourceHelper: ExternalResourceHelper
+	) {
 		this.rootDir = rootDir
 		this.externalResourceHelper = externalResourceHelper
 		this.PSTperNodeScript = new Map()
@@ -60,28 +78,43 @@ export class ResolveFunctionIdentifierHelper {
 	/**
 	 * Adds a caching layer to the NodeModuleUtils.nodeModuleFromFilePath function
 	 */
-	private nodeModuleFromFilePath(relativeFilePath: UnifiedPath): NodeModulePerFilePathCacheResult {
-		let cacheEntry = this._nodeModulePerFileCache.get(relativeFilePath.toString())
+	private nodeModuleFromFilePath(
+		relativeFilePath: UnifiedPath
+	): NodeModulePerFilePathCacheResult {
+		let cacheEntry = this._nodeModulePerFileCache.get(
+			relativeFilePath.toString()
+		)
 		if (cacheEntry !== undefined) {
 			return cacheEntry
 		}
 
-		cacheEntry = NodeModuleUtils.nodeModuleFromFilePath(this.externalResourceHelper, relativeFilePath)
+		cacheEntry = NodeModuleUtils.nodeModuleFromFilePath(
+			this.externalResourceHelper,
+			relativeFilePath
+		)
 		this._nodeModulePerFileCache.set(relativeFilePath.toString(), cacheEntry)
 
 		return cacheEntry
 	}
 
-	async resolveFunctionIdentifier(sourceLocation: CPUProfileSourceLocation): Promise<ResolveFunctionIdentifierResult> {
+	async resolveFunctionIdentifier(
+		sourceLocation: CPUProfileSourceLocation
+	): Promise<ResolveFunctionIdentifierResult> {
 		// check wether the given source location was already resolved by checking the cache
-		const functionIdentifierCacheResult = this.functionIdentifierCache.get(sourceLocation.index)
+		const functionIdentifierCacheResult = this.functionIdentifierCache.get(
+			sourceLocation.index
+		)
 		if (functionIdentifierCacheResult !== undefined) {
 			return functionIdentifierCacheResult
 		}
 
-		let programStructureTreeNodeScript: ProgramStructureTree<ProgramStructureTreeType.Root> | undefined =
-			this.PSTperNodeScript.get(sourceLocation.scriptID)
-		let programStructureTreeOriginal: ProgramStructureTree<ProgramStructureTreeType.Root> | undefined | null = undefined
+		let programStructureTreeNodeScript:
+			| ProgramStructureTree<ProgramStructureTreeType.Root>
+			| undefined = this.PSTperNodeScript.get(sourceLocation.scriptID)
+		let programStructureTreeOriginal:
+			| ProgramStructureTree<ProgramStructureTreeType.Root>
+			| undefined
+			| null = undefined
 		const { lineNumber, columnNumber } = sourceLocation.sourceLocation
 		let functionIdentifierPresentInOriginalFile = true
 		let sourceNodeLocation: ResolvedSourceNodeLocation | undefined = undefined
@@ -90,7 +123,10 @@ export class ResolveFunctionIdentifierHelper {
 		if (programStructureTreeNodeScript === undefined) {
 			// request source code from the node engine
 			// (it is already transformed event if it is the original file path)
-			const sourceCode = await this.externalResourceHelper.sourceCodeFromScriptID(sourceLocation.scriptID)
+			const sourceCode =
+				await this.externalResourceHelper.sourceCodeFromScriptID(
+					sourceLocation.scriptID
+				)
 			if (sourceCode === null) {
 				throw new Error(
 					'ResolveFunctionIdentifierHelper.resolveFunctionIdentifier: sourceCode should not be null' +
@@ -98,15 +134,22 @@ export class ResolveFunctionIdentifierHelper {
 						` (${sourceLocation.absoluteUrl.toPlatformString()})`
 				)
 			}
-			programStructureTreeNodeScript = TypescriptParser.parseSource(sourceLocation.absoluteUrl, sourceCode)
-			this.PSTperNodeScript.set(sourceLocation.scriptID, programStructureTreeNodeScript)
+			programStructureTreeNodeScript = TypescriptParser.parseSource(
+				sourceLocation.absoluteUrl,
+				sourceCode
+			)
+			this.PSTperNodeScript.set(
+				sourceLocation.scriptID,
+				programStructureTreeNodeScript
+			)
 		}
 
 		// function identifier of the executed source code
-		const functionIdentifier = programStructureTreeNodeScript.identifierBySourceLocation({
-			line: lineNumber,
-			column: columnNumber
-		})
+		const functionIdentifier =
+			programStructureTreeNodeScript.identifierBySourceLocation({
+				line: lineNumber,
+				column: columnNumber
+			})
 
 		const sourceMap = await this.externalResourceHelper.sourceMapFromScriptID(
 			sourceLocation.scriptID,
@@ -128,21 +171,29 @@ export class ResolveFunctionIdentifierHelper {
 			originalPosition.line !== null &&
 			originalPosition.column !== null
 		) {
-			const { url: originalPositionPath, protocol: urlProtocol } = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(
-				this.rootDir,
-				originalPosition.source
-			)
+			const { url: originalPositionPath, protocol: urlProtocol } =
+				UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(
+					this.rootDir,
+					originalPosition.source
+				)
 			const absoluteOriginalSourcePath = originalPositionPath.isRelative()
 				? new UnifiedPath(
 						path.resolve(
-							path.join(path.dirname(sourceLocation.absoluteUrl.toString()), originalPositionPath.toString())
+							path.join(
+								path.dirname(sourceLocation.absoluteUrl.toString()),
+								originalPositionPath.toString()
+							)
 						)
 					)
 				: originalPositionPath
 
-			const relativeOriginalSourcePath = this.rootDir.pathTo(absoluteOriginalSourcePath)
+			const relativeOriginalSourcePath = this.rootDir.pathTo(
+				absoluteOriginalSourcePath
+			)
 
-			programStructureTreeOriginal = this.PSTperOriginalFile.get(relativeOriginalSourcePath.toString())
+			programStructureTreeOriginal = this.PSTperOriginalFile.get(
+				relativeOriginalSourcePath.toString()
+			)
 			if (programStructureTreeOriginal === undefined) {
 				try {
 					// found the original source file from the source map but it is not yet parsed
@@ -150,7 +201,10 @@ export class ResolveFunctionIdentifierHelper {
 						relativeOriginalSourcePath,
 						absoluteOriginalSourcePath
 					)
-					this.PSTperOriginalFile.set(relativeOriginalSourcePath.toString(), programStructureTreeOriginal)
+					this.PSTperOriginalFile.set(
+						relativeOriginalSourcePath.toString(),
+						programStructureTreeOriginal
+					)
 				} catch {
 					// could not parse original source file,
 					// sometimes WebFrameworks include sourcemaps that point to e.g. .svg files
@@ -159,12 +213,15 @@ export class ResolveFunctionIdentifierHelper {
 			}
 			if (programStructureTreeOriginal !== null) {
 				if (programStructureTreeOriginal !== undefined) {
-					const originalFunctionIdentifier = programStructureTreeOriginal.identifierBySourceLocation({
-						line: originalPosition.line,
-						column: originalPosition.column
-					})
+					const originalFunctionIdentifier =
+						programStructureTreeOriginal.identifierBySourceLocation({
+							line: originalPosition.line,
+							column: originalPosition.column
+						})
 					functionIdentifierPresentInOriginalFile =
-						programStructureTreeOriginal.sourceLocationOfIdentifier(functionIdentifier) !== null
+						programStructureTreeOriginal.sourceLocationOfIdentifier(
+							functionIdentifier
+						) !== null
 					sourceNodeLocation = {
 						relativeFilePath: relativeOriginalSourcePath,
 						functionIdentifier: originalFunctionIdentifier
@@ -197,26 +254,38 @@ export class ResolveFunctionIdentifierHelper {
 			}
 		}
 
-		let { relativeNodeModulePath, nodeModule }: NodeModulePerFilePathCacheResult = {
+		let {
+			relativeNodeModulePath,
+			nodeModule
+		}: NodeModulePerFilePathCacheResult = {
 			relativeNodeModulePath: null,
 			nodeModule: null
 		}
 
 		if (sourceNodeLocation.relativeFilePath.toString() !== './') {
 			// determine the node module of the source node location if there is one
-			;({ relativeNodeModulePath, nodeModule } = this.nodeModuleFromFilePath(sourceNodeLocation.relativeFilePath))
+			;({ relativeNodeModulePath, nodeModule } = this.nodeModuleFromFilePath(
+				sourceNodeLocation.relativeFilePath
+			))
 
 			if (relativeNodeModulePath && nodeModule) {
 				// since the source node location is within a node module
 				// adjust the relativeFilePath so its relative to that node module directory
-				sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(sourceNodeLocation.relativeFilePath)
+				sourceNodeLocation.relativeFilePath = relativeNodeModulePath.pathTo(
+					sourceNodeLocation.relativeFilePath
+				)
 			}
 		} else {
-			sourceNodeLocation.relativeFilePath = new UnifiedPath(UNKNOWN_SCRIPTS_FOLDER_NAME).join(sourceLocation.scriptID)
+			sourceNodeLocation.relativeFilePath = new UnifiedPath(
+				UNKNOWN_SCRIPTS_FOLDER_NAME
+			).join(sourceLocation.scriptID)
 			functionIdentifierPresentInOriginalFile = false
 		}
 
-		if (originalSourceFileNotFoundError !== undefined && (!relativeNodeModulePath || !nodeModule)) {
+		if (
+			originalSourceFileNotFoundError !== undefined &&
+			(!relativeNodeModulePath || !nodeModule)
+		) {
 			// The original source file does not exist, only print an error if:
 			// - the source file is NOT part of a node module,
 			//		since node modules often include source maps that point to non-existing files we ignore them
@@ -293,7 +362,10 @@ export class ResolveFunctionIdentifierHelper {
 		lineNumber: number,
 		columnNumber: number
 	): Promise<NullableMappedPosition | undefined> {
-		const originalPosition = await sourceMap.getOriginalSourceLocation(lineNumber, columnNumber)
+		const originalPosition = await sourceMap.getOriginalSourceLocation(
+			lineNumber,
+			columnNumber
+		)
 
 		// check if position could be resolved
 		if (originalPosition && originalPosition.source) {
@@ -301,14 +373,18 @@ export class ResolveFunctionIdentifierHelper {
 		} else {
 			// if position could not be resolved
 			// resolve function via ProgramStructureTree and try to resolve the original position again
-			const identifierNode = programStructureTreeNodeScript.identifierNodeBySourceLocation({
-				line: lineNumber,
-				column: columnNumber
-			})
+			const identifierNode =
+				programStructureTreeNodeScript.identifierNodeBySourceLocation({
+					line: lineNumber,
+					column: columnNumber
+				})
 			if (identifierNode === undefined) {
 				return undefined
 			}
-			return sourceMap.getOriginalSourceLocation(identifierNode.node.beginLoc.line, identifierNode.node.beginLoc.column)
+			return sourceMap.getOriginalSourceLocation(
+				identifierNode.node.beginLoc.line,
+				identifierNode.node.beginLoc.column
+			)
 		}
 	}
 }

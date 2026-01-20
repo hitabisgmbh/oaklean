@@ -259,9 +259,12 @@ describe('ts.SyntaxKind.Parameter', () => {
 })
 
 const forDeclarations = {
-	'ts.SyntaxKind.ForStatement': 'let i = 0; i < 10; i = (function ForStatement() { return i+1 })()',
-	'ts.SyntaxKind.ForOfStatement': 'const ForInStatement of function ForOfStatement() {}',
-	'ts.SyntaxKind.ForInStatement': 'const ForInStatement in function ForInStatement() {}'
+	'ts.SyntaxKind.ForStatement':
+		'let i = 0; i < 10; i = (function ForStatement() { return i+1 })()',
+	'ts.SyntaxKind.ForOfStatement':
+		'const ForInStatement of function ForOfStatement() {}',
+	'ts.SyntaxKind.ForInStatement':
+		'const ForInStatement in function ForInStatement() {}'
 }
 
 describe('ForStatement', () => {
@@ -271,7 +274,10 @@ describe('ForStatement', () => {
 				for(${declaration}) {}
 			`
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 
@@ -294,15 +300,20 @@ describe('ForStatement', () => {
 })
 
 const whileCodes = {
-	'ts.SyntaxKind.WhileStatement': "while (typeof (function WhileStatement() {}) === 'function') {}",
-	'ts.SyntaxKind.DoStatement': "do {} while (typeof (function DoStatement() {}) === 'function')"
+	'ts.SyntaxKind.WhileStatement':
+		"while (typeof (function WhileStatement() {}) === 'function') {}",
+	'ts.SyntaxKind.DoStatement':
+		"do {} while (typeof (function DoStatement() {}) === 'function')"
 }
 
 describe('WhileStatement', () => {
 	for (const [kind, code] of Object.entries(whileCodes)) {
 		describe(kind, () => {
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 
@@ -403,7 +414,11 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 	`
 
 	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
+		const pst = TypescriptParser.parseSource(
+			new UnifiedPath('test.ts'),
+			code,
+			'TSX'
+		)
 
 		const hierarchy = pst.identifierHierarchy()
 

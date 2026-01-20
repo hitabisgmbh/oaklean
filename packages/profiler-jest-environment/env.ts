@@ -81,7 +81,8 @@ class CustomEnvironment implements JestEnvironment {
 		profiler: Profiler,
 		config: ProfilerConfig
 	): Promise<IProjectReportExecutionDetailsDuringMeasurement> {
-		const executionDetailsPath = profiler.exportAssetHelper.outputExecutionDetailsPath()
+		const executionDetailsPath =
+			profiler.exportAssetHelper.outputExecutionDetailsPath()
 
 		let executionDetails = ExecutionDetails.loadFromFile(executionDetailsPath)
 
@@ -104,12 +105,17 @@ class CustomEnvironment implements JestEnvironment {
 				performance.stop('jestEnv.env.resolveConfig')
 
 				performance.start('jestEnv.env.resolveExecutionDetails')
-				const executionDetails = await this.getExecutionDetails(this.profiler, config)
+				const executionDetails = await this.getExecutionDetails(
+					this.profiler,
+					config
+				)
 				performance.stop('jestEnv.env.resolveExecutionDetails')
 
 				performance.stop('jestEnv.env.setup')
 				performance.printReport('jestEnv.env.setup')
-				performance.exportAndSum(this.profiler.exportAssetHelper.outputPerformancePath())
+				performance.exportAndSum(
+					this.profiler.exportAssetHelper.outputPerformancePath()
+				)
 
 				await this.profiler.start(this.testPath.toString(), executionDetails)
 			} catch (e) {
@@ -127,7 +133,9 @@ class CustomEnvironment implements JestEnvironment {
 				const stopTime = TimeHelper.getCurrentHighResolutionTime()
 				performance.stop('jestEnv.env.teardown')
 				performance.printReport('jestEnv.env.teardown')
-				performance.exportAndSum(this.profiler.exportAssetHelper.outputPerformancePath())
+				performance.exportAndSum(
+					this.profiler.exportAssetHelper.outputPerformancePath()
+				)
 
 				await this.profiler.finish(this.testPath.toString(), stopTime)
 			} catch (e) {

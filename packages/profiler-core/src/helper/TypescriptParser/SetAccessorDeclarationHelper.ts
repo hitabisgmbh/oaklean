@@ -7,7 +7,11 @@ import { NamingHelper } from './NamingHelper'
 import { LoggerHelper } from '../LoggerHelper'
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../types'
 
 export class SetAccessorDeclarationHelper {
 	static syntaxKind = ts.SyntaxKind.SetAccessor
@@ -26,13 +30,20 @@ export class SetAccessorDeclarationHelper {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {
-				const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
+				const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node)
+					? '@static'
+					: ''
 
-				const { identifier, identifierType } = NamingHelper.getName(node.name, sourceFile, traverseNodeInfo)
+				const { identifier, identifierType } = NamingHelper.getName(
+					node.name,
+					sourceFile,
+					traverseNodeInfo
+				)
 
 				if (identifierType === IdentifierType.Anonymous) {
 					LoggerHelper.error(
-						'SetAccessorDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' + node.name.kind,
+						'SetAccessorDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' +
+							node.name.kind,
 						{
 							filePath: traverseNodeInfo.filePath,
 							kind: node.name.kind,
@@ -40,7 +51,8 @@ export class SetAccessorDeclarationHelper {
 						}
 					)
 					throw new Error(
-						'SetAccessorDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' + node.name.kind
+						'SetAccessorDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' +
+							node.name.kind
 					)
 				}
 

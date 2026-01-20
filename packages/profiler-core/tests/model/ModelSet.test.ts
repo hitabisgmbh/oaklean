@@ -42,7 +42,10 @@ class SubClass extends BaseModel {
 	}
 
 	toBuffer(): Buffer {
-		const buffers = [BufferHelper.String2LToBuffer(this.name), BufferHelper.BooleanToBuffer(this.next !== undefined)]
+		const buffers = [
+			BufferHelper.String2LToBuffer(this.name),
+			BufferHelper.BooleanToBuffer(this.next !== undefined)
+		]
 		if (this.next !== undefined) {
 			buffers.push(this.next.toBuffer())
 		}
@@ -55,14 +58,16 @@ class SubClass extends BaseModel {
 		remainingBuffer: Buffer
 	} {
 		let remainingBuffer = buffer
-		const { instance: name, remainingBuffer: newRemainingBuffer1 } = BufferHelper.String2LFromBuffer(remainingBuffer)
+		const { instance: name, remainingBuffer: newRemainingBuffer1 } =
+			BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
 		const instance = new SubClass(name)
 		const { instance: nextIsPresent, remainingBuffer: newRemainingBuffer2 } =
 			BufferHelper.BooleanFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer2
 		if (nextIsPresent) {
-			const { instance: next, remainingBuffer: newRemainingBuffer } = SubClass.fromBuffer(remainingBuffer)
+			const { instance: next, remainingBuffer: newRemainingBuffer } =
+				SubClass.fromBuffer(remainingBuffer)
 			remainingBuffer = newRemainingBuffer
 			instance.next = next
 		}
@@ -223,7 +228,9 @@ function runInstanceTests(
 		})
 
 		test('toBuffer', () => {
-			expect(instance.toBuffer().toString('hex')).toEqual(EXAMPLE_MODEL_SET_BUFFER)
+			expect(instance.toBuffer().toString('hex')).toEqual(
+				EXAMPLE_MODEL_SET_BUFFER
+			)
 		})
 	})
 }
@@ -283,13 +290,19 @@ describe('ModelSet', () => {
 		const buffer = Buffer.from(EXAMPLE_MODEL_SET_BUFFER, 'hex')
 
 		test('consume from buffer', () => {
-			const { instance, remainingBuffer } = ModelSet.consumeFromBuffer(buffer, SubClass.fromBuffer)
+			const { instance, remainingBuffer } = ModelSet.consumeFromBuffer(
+				buffer,
+				SubClass.fromBuffer
+			)
 			expect(instance.toJSON()).toEqual(EXAMPLE_MODEL_SET)
 			expect(remainingBuffer.byteLength).toBe(0)
 		})
 
 		runInstanceTests('consume from buffer instance related', () => {
-			const { instance } = ModelSet.consumeFromBuffer(buffer, SubClass.fromBuffer)
+			const { instance } = ModelSet.consumeFromBuffer(
+				buffer,
+				SubClass.fromBuffer
+			)
 			return {
 				instance: instance,
 				values: Array.from(instance.entries())

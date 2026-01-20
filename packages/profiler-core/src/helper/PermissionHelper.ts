@@ -28,7 +28,9 @@ function createDirectoriesRecursively(targetDir: string) {
 		}
 	}
 
-	let currentPath = path.isAbsolute(targetDir) ? (isAbsoluteWindowsPath ? windowsPrefix : '') + path.sep : '.'
+	let currentPath = path.isAbsolute(targetDir)
+		? (isAbsoluteWindowsPath ? windowsPrefix : '') + path.sep
+		: '.'
 
 	for (const segment of segments) {
 		if (segment) {
@@ -94,7 +96,10 @@ export class PermissionHelper {
 		PermissionHelper.changeFileOwnershipBackToUser(filePath)
 	}
 
-	static writeFileWithStorageFunctionWithUserPermission(path: UnifiedPath, storeFunction: () => void) {
+	static writeFileWithStorageFunctionWithUserPermission(
+		path: UnifiedPath,
+		storeFunction: () => void
+	) {
 		const dirPath = path.dirName()
 		if (!fs.existsSync(dirPath.toPlatformString())) {
 			PermissionHelper.mkdirRecursivelyWithUserPermission(dirPath)
@@ -104,11 +109,17 @@ export class PermissionHelper {
 		PermissionHelper.changeFileOwnershipBackToUser(filePath)
 	}
 
-	static writeFileWithUserPermission(path: UnifiedPath, data: string | NodeJS.ArrayBufferView) {
-		PermissionHelper.writeFileWithStorageFunctionWithUserPermission(path, () => {
-			const filePath = path.toPlatformString()
-			fs.writeFileSync(filePath, data)
-		})
+	static writeFileWithUserPermission(
+		path: UnifiedPath,
+		data: string | NodeJS.ArrayBufferView
+	) {
+		PermissionHelper.writeFileWithStorageFunctionWithUserPermission(
+			path,
+			() => {
+				const filePath = path.toPlatformString()
+				fs.writeFileSync(filePath, data)
+			}
+		)
 	}
 
 	static checkWindowsAdminRights(): Promise<boolean> {
@@ -118,13 +129,16 @@ export class PermissionHelper {
 				resolve(false)
 			}
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			ChildProcess.exec('fsutil dirty query ' + SYSTEM_DRIVE, function (err, stdout, stderr) {
-				if (err) {
-					resolve(false)
-				} else {
-					resolve(true)
+			ChildProcess.exec(
+				'fsutil dirty query ' + SYSTEM_DRIVE,
+				function (err, stdout, stderr) {
+					if (err) {
+						resolve(false)
+					} else {
+						resolve(true)
+					}
 				}
-			})
+			)
 		})
 	}
 }

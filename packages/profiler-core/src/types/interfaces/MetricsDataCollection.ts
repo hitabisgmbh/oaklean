@@ -23,6 +23,10 @@ export type ITimeInfo = {
 export interface IMetricsDataCollection {
 	type: MetricsDataCollectionType
 	pid: number
-	items: (IPowerMetricsData | IPerfMetricsData | IWindowsSensorInterfaceMetricsData)[]
+	items: (
+		| IPowerMetricsData
+		| IPerfMetricsData
+		| IWindowsSensorInterfaceMetricsData
+	)[]
 	timeInfo: ITimeInfo
 }

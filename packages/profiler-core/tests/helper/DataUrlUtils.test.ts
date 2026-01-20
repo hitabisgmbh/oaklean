@@ -54,7 +54,9 @@ describe('DataUrlUtils', () => {
 				DataUrlUtils.base64StringFromDataUrl(invalidDataUrl)
 			}
 
-			expect(t).toThrow('DataUrlUtils.base64StringFromDataUrl: The Format charset=utf-abc;base64 is not supported')
+			expect(t).toThrow(
+				'DataUrlUtils.base64StringFromDataUrl: The Format charset=utf-abc;base64 is not supported'
+			)
 		})
 	})
 })

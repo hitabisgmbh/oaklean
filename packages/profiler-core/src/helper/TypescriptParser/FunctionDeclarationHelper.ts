@@ -7,7 +7,11 @@ import { TraverseNodeInfo } from './TraverseNodeInfo'
 import { LoggerHelper } from '../LoggerHelper'
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../types'
 
 export class FunctionDeclarationHelper {
 	static syntaxKind = ts.SyntaxKind.FunctionDeclaration
@@ -27,7 +31,11 @@ export class FunctionDeclarationHelper {
 			resolveWithNoChildren: true,
 			resolve() {
 				if (node.name !== undefined) {
-					const { identifier, identifierType } = NamingHelper.getName(node.name, sourceFile, traverseNodeInfo)
+					const { identifier, identifierType } = NamingHelper.getName(
+						node.name,
+						sourceFile,
+						traverseNodeInfo
+					)
 					return new ProgramStructureTree(
 						traverseNodeInfo.resolvedTree(),
 						traverseNodeInfo.nextId(),
@@ -51,14 +59,16 @@ export class FunctionDeclarationHelper {
 					)
 				}
 				LoggerHelper.error(
-					'FunctionDeclarationHelper (parseNode): unhandled case, ' + 'function has no name and is now default export',
+					'FunctionDeclarationHelper (parseNode): unhandled case, ' +
+						'function has no name and is now default export',
 					{
 						filePath: traverseNodeInfo.filePath,
 						pos: TypescriptHelper.posToLoc(sourceFile, node.getStart() || 0)
 					}
 				)
 				throw new Error(
-					'FunctionDeclarationHelper (parseNode): unhandled case, ' + 'function has no name and is now default export'
+					'FunctionDeclarationHelper (parseNode): unhandled case, ' +
+						'function has no name and is now default export'
 				)
 			}
 		}

@@ -454,7 +454,11 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 	`
 
 	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
+		const pst = TypescriptParser.parseSource(
+			new UnifiedPath('test.ts'),
+			code,
+			'TSX'
+		)
 
 		const hierarchy = pst.identifierHierarchy()
 

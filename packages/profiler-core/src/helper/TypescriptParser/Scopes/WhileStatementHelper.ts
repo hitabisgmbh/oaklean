@@ -4,7 +4,11 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../../types'
 
 export class WhileStatementHelper {
 	static syntaxKind = [ts.SyntaxKind.WhileStatement, ts.SyntaxKind.DoStatement]
@@ -13,7 +17,9 @@ export class WhileStatementHelper {
 		node: ts.WhileStatement | ts.DoStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.WhileStatement> } {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.WhileStatement>
+	} {
 		return {
 			resolve() {
 				const statementName = `(while:${traverseNodeInfo.counters.whileStatementCounter++})`

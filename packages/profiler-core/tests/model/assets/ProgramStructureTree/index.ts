@@ -17,8 +17,13 @@ type TestCase = {
 	}
 }
 
-function loadTestCase(sourcePath: UnifiedPath, expectedPath: UnifiedPath): TestCase {
-	const expectedContent = fs.readFileSync(expectedPath.toPlatformString()).toString()
+function loadTestCase(
+	sourcePath: UnifiedPath,
+	expectedPath: UnifiedPath
+): TestCase {
+	const expectedContent = fs
+		.readFileSync(expectedPath.toPlatformString())
+		.toString()
 
 	return {
 		source: {
@@ -33,9 +38,15 @@ function loadTestCase(sourcePath: UnifiedPath, expectedPath: UnifiedPath): TestC
 	}
 }
 
-export function updateTestCase(expected: Omit<TestCase['expected'], 'content'>, shouldUpdate: boolean) {
+export function updateTestCase(
+	expected: Omit<TestCase['expected'], 'content'>,
+	shouldUpdate: boolean
+) {
 	if (shouldUpdate) {
-		fs.writeFileSync(expected.path.toPlatformString(), JSON.stringify(expected.object, null, '\t'))
+		fs.writeFileSync(
+			expected.path.toPlatformString(),
+			JSON.stringify(expected.object, null, '\t')
+		)
 	}
 }
 

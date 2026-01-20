@@ -6,7 +6,10 @@ import { NamingHelper } from './NamingHelper'
 
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
-import { ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../types'
+import {
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../types'
 
 export class ArrowFunctionHelper {
 	static syntaxKind = ts.SyntaxKind.ArrowFunction
@@ -22,7 +25,11 @@ export class ArrowFunctionHelper {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {
-				const { suffix, identifier, identifierType } = NamingHelper.getName(node.parent, sourceFile, traverseNodeInfo)
+				const { suffix, identifier, identifierType } = NamingHelper.getName(
+					node.parent,
+					sourceFile,
+					traverseNodeInfo
+				)
 
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),

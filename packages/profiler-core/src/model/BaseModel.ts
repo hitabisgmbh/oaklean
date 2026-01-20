@@ -9,7 +9,10 @@ export abstract class BaseModel {
 		return {}
 	}
 	static recordToJSON<T>(record: Record<string, BaseModel>): Record<string, T> {
-		const result = Object.keys(record).reduce((acc, key) => ({ ...acc, [key]: record[key].toJSON() }), {})
+		const result = Object.keys(record).reduce(
+			(acc, key) => ({ ...acc, [key]: record[key].toJSON() }),
+			{}
+		)
 		return result
 	}
 

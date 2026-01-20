@@ -1,4 +1,8 @@
-import { MetricsDataCollection, NanoSeconds_BigInt, SensorInterfaceType } from '@oaklean/profiler-core'
+import {
+	MetricsDataCollection,
+	NanoSeconds_BigInt,
+	SensorInterfaceType
+} from '@oaklean/profiler-core'
 
 export class BaseSensorInterface {
 	protected _couldBeExecuted: boolean | undefined
@@ -27,7 +31,9 @@ export class BaseSensorInterface {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	async readSensorValues(pid: number): Promise<MetricsDataCollection | undefined> {
+	async readSensorValues(
+		pid: number
+	): Promise<MetricsDataCollection | undefined> {
 		throw new Error('BaseSensorInterface.readSensorValues must be implemented')
 	}
 
@@ -36,7 +42,9 @@ export class BaseSensorInterface {
 	}
 
 	async measurementStarted() {
-		throw new Error('BaseSensorInterface.measurementStarted must be implemented')
+		throw new Error(
+			'BaseSensorInterface.measurementStarted must be implemented'
+		)
 	}
 
 	async stopProfiling() {

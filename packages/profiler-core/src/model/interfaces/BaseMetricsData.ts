@@ -15,7 +15,9 @@ export class BaseMetricsData {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	energyPortionOfProcess(pid: number): number {
-		throw new Error('BaseMetricsData.energyPortionOfProcess must be implemented')
+		throw new Error(
+			'BaseMetricsData.energyPortionOfProcess must be implemented'
+		)
 	}
 
 	totalEnergyImpact(): number {
@@ -42,7 +44,10 @@ export class BaseMetricsData {
 		throw new Error('BaseMetricsData.ramEnergy must be implemented')
 	}
 
-	toJSON(): IPowerMetricsData | IPerfMetricsData | IWindowsSensorInterfaceMetricsData {
+	toJSON():
+		| IPowerMetricsData
+		| IPerfMetricsData
+		| IWindowsSensorInterfaceMetricsData {
 		throw new Error('BaseMetricsData.toJSON must be implemented')
 	}
 

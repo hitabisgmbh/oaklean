@@ -29,13 +29,23 @@ export class ModuleIndex extends BaseModel {
 	private _id: ModuleID_number
 	children: ModelMap<UnifiedPathPart_string, PathIndex>
 
-	constructor(identifier: NodeModuleIdentifier_string, globalIndex: GlobalIndex, id?: ModuleID_number) {
+	constructor(
+		identifier: NodeModuleIdentifier_string,
+		globalIndex: GlobalIndex,
+		id?: ModuleID_number
+	) {
 		super()
 		this.children = new ModelMap<UnifiedPathPart_string, PathIndex>('string')
 		this.identifier = identifier
 		this.globalIndex = globalIndex
-		this._id = id !== undefined ? id : (globalIndex.newId(this, 'module') as ModuleID_number)
-		this.pathMap = new ModelMap<UnifiedPath_string | LangInternalPath_string, PathIndex>('string')
+		this._id =
+			id !== undefined
+				? id
+				: (globalIndex.newId(this, 'module') as ModuleID_number)
+		this.pathMap = new ModelMap<
+			UnifiedPath_string | LangInternalPath_string,
+			PathIndex
+		>('string')
 		this.reversePathMap = new ModelMap<PathID_number, PathIndex>('number')
 	}
 
@@ -85,15 +95,23 @@ export class ModuleIndex extends BaseModel {
 			globalIndex.setReverseIndex(id, result, 'module')
 		}
 		if (data.children !== undefined) {
-			for (const key of Object.keys(data.children) as UnifiedPathPart_string[]) {
-				result.children.set(key, PathIndex.fromJSON(data.children[key], [key], result))
+			for (const key of Object.keys(
+				data.children
+			) as UnifiedPathPart_string[]) {
+				result.children.set(
+					key,
+					PathIndex.fromJSON(data.children[key], [key], result)
+				)
 			}
 		}
 
 		return result
 	}
 
-	getFilePathIndex<T extends IndexRequestType, R = T extends 'upsert' ? PathIndex : PathIndex | undefined>(
+	getFilePathIndex<
+		T extends IndexRequestType,
+		R = T extends 'upsert' ? PathIndex : PathIndex | undefined
+	>(
 		indexRequestType: T,
 		filePath: UnifiedPath_string | LangInternalPath_string
 	): R {
@@ -116,7 +134,9 @@ export class ModuleIndex extends BaseModel {
 						return undefined as R
 					case 'upsert':
 						{
-							let slicedPath = new UnifiedPath('./').join(...pathParts.slice(0, i + 1)).toString()
+							let slicedPath = new UnifiedPath('./')
+								.join(...pathParts.slice(0, i + 1))
+								.toString()
 							if (slicedPath.startsWith('./node:') || slicedPath === './') {
 								slicedPath = slicedPath.slice(2) as UnifiedPath_string
 							}
@@ -137,9 +157,10 @@ export class ModuleIndex extends BaseModel {
 						case 'upsert':
 							pathIndex.selfAssignId()
 							if (pathIndex.file === undefined) {
-								pathIndex.file = new ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>(
-									'string'
-								)
+								pathIndex.file = new ModelMap<
+									SourceNodeIdentifierPart_string,
+									SourceNodeIndex<SourceNodeIndexType>
+								>('string')
 							}
 							break
 						default:
@@ -153,7 +174,10 @@ export class ModuleIndex extends BaseModel {
 						case 'get':
 							return undefined as R
 						case 'upsert':
-							pathIndex.children = new ModelMap<UnifiedPathPart_string, PathIndex>('string')
+							pathIndex.children = new ModelMap<
+								UnifiedPathPart_string,
+								PathIndex
+							>('string')
 							break
 						default:
 							return undefined as R
@@ -168,7 +192,9 @@ export class ModuleIndex extends BaseModel {
 
 	nodeModule(): NodeModule | undefined {
 		if (this.identifier !== '{self}' && this.identifier !== '{node}') {
-			return NodeModule.fromIdentifier(this.identifier as NodeModuleIdentifier_string)
+			return NodeModule.fromIdentifier(
+				this.identifier as NodeModuleIdentifier_string
+			)
 		}
 		return undefined
 	}

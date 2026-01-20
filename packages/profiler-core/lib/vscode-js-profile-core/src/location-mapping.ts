@@ -18,7 +18,10 @@ export interface ISourceLocation {
 /**
  * Adds the relativePath to the candidate based on the given root path..
  */
-export const addRelativeDiskPath = (rootPath: string, candidate: ISourceLocation): ISourceLocation => {
+export const addRelativeDiskPath = (
+	rootPath: string,
+	candidate: ISourceLocation
+): ISourceLocation => {
 	if (candidate.source.path && candidate.source.sourceReference === 0) {
 		return {
 			...candidate,

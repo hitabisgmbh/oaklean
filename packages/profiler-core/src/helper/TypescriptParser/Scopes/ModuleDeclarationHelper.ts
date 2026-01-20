@@ -5,7 +5,10 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import { ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
+import {
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../../types'
 
 export class ModuleDeclarationHelper {
 	static syntaxKind = ts.SyntaxKind.ModuleDeclaration
@@ -14,7 +17,9 @@ export class ModuleDeclarationHelper {
 		node: ts.ModuleDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.ModuleDeclaration> } | null {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ModuleDeclaration>
+	} | null {
 		if (node.name.kind !== ts.SyntaxKind.Identifier) {
 			// module is a ambient module declaration, no implementation is allowed within it
 			// so there cant be any executable code within it
@@ -50,12 +55,17 @@ export class ModuleDeclarationHelper {
 						// so there cant be any executable code within it
 						break
 					}
-					const { identifier } = NamingHelper.getIdentifierName(newNode.name, sourceFile, traverseNodeInfo)
+					const { identifier } = NamingHelper.getIdentifierName(
+						newNode.name,
+						sourceFile,
+						traverseNodeInfo
+					)
 					identifierChain = `${identifier}.${identifierChain}`
 					currentNode = newNode
 				}
 
-				const identifierCounter = traverseNodeInfo.requestModuleIdentificationCounter(identifierChain)
+				const identifierCounter =
+					traverseNodeInfo.requestModuleIdentificationCounter(identifierChain)
 
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),

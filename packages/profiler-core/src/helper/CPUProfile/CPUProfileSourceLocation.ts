@@ -5,9 +5,15 @@ import { LangInternalSourceNodeRegExpRegexString } from '../../constants/SourceN
 import { UnifiedPath } from '../../system/UnifiedPath'
 import { UrlProtocolHelper } from '../UrlProtocolHelper'
 // Types
-import { ScriptID_string, SourceNodeIdentifier_string, CPUProfileSourceLocationType } from '../../types'
+import {
+	ScriptID_string,
+	SourceNodeIdentifier_string,
+	CPUProfileSourceLocationType
+} from '../../types'
 
-export const RegExpTestRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
+export const RegExpTestRegex = new RegExp(
+	`^${LangInternalSourceNodeRegExpRegexString}$`
+)
 
 export class CPUProfileSourceLocation {
 	private _index: number
@@ -25,7 +31,11 @@ export class CPUProfileSourceLocation {
 	private _relativeUrl?: UnifiedPath
 	private _sourceNodeIdentifier?: SourceNodeIdentifier_string
 
-	constructor(rootDir: UnifiedPath, locationId: number, callFrame: Cdp.Runtime.CallFrame) {
+	constructor(
+		rootDir: UnifiedPath,
+		locationId: number,
+		callFrame: Cdp.Runtime.CallFrame
+	) {
 		this._index = locationId
 		this._callFrame = callFrame
 		// ensure scriptId is a string, sometimes it is a number
@@ -34,11 +44,17 @@ export class CPUProfileSourceLocation {
 		this._isEmpty = false
 
 		// determine the type of the source location
-		if (this.callFrame.scriptId === '0' || this.callFrame.url.startsWith('node:')) {
+		if (
+			this.callFrame.scriptId === '0' ||
+			this.callFrame.url.startsWith('node:')
+		) {
 			this._type = CPUProfileSourceLocationType.LANG_INTERNAL
 		} else if (this.callFrame.url.startsWith('wasm://')) {
 			this._type = CPUProfileSourceLocationType.WASM
-		} else if (this.callFrame.url.startsWith('webpack://') || this.callFrame.url.startsWith('webpack-internal://')) {
+		} else if (
+			this.callFrame.url.startsWith('webpack://') ||
+			this.callFrame.url.startsWith('webpack-internal://')
+		) {
 			this._type = CPUProfileSourceLocationType.WEBPACK
 		} else {
 			this._type = CPUProfileSourceLocationType.DEFAULT
@@ -112,7 +128,9 @@ export class CPUProfileSourceLocation {
 				if (result !== null) {
 					url = new UnifiedPath(result.filePath)
 				} else {
-					throw new Error('Could not parse webpack-internal url: ' + this.rawUrl)
+					throw new Error(
+						'Could not parse webpack-internal url: ' + this.rawUrl
+					)
 				}
 			} else {
 				url = new UnifiedPath(this.rawUrl)
@@ -136,9 +154,13 @@ export class CPUProfileSourceLocation {
 	get sourceNodeIdentifier() {
 		if (this._sourceNodeIdentifier === undefined) {
 			if (RegExpTestRegex.test(this.rawFunctionName)) {
-				this._sourceNodeIdentifier = this.rawFunctionName as SourceNodeIdentifier_string
+				this._sourceNodeIdentifier = this
+					.rawFunctionName as SourceNodeIdentifier_string
 			} else {
-				this._sourceNodeIdentifier = SourceNodeIdentifierHelper.functionNameToSourceNodeIdentifier(this.rawFunctionName)
+				this._sourceNodeIdentifier =
+					SourceNodeIdentifierHelper.functionNameToSourceNodeIdentifier(
+						this.rawFunctionName
+					)
 			}
 		}
 		return this._sourceNodeIdentifier

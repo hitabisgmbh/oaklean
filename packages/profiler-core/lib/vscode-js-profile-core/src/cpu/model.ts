@@ -60,7 +60,10 @@ export interface IProfileModel {
  * Recursive function that computes and caches the aggregate time for the
  * children of the computed now.
  */
-const computeAggregateTime = (index: number, nodes: IComputedNode[]): number => {
+const computeAggregateTime = (
+	index: number,
+	nodes: IComputedNode[]
+): number => {
 	const row = nodes[index]
 	if (row.aggregateTime) {
 		return row.aggregateTime
@@ -78,13 +81,18 @@ const computeAggregateTime = (index: number, nodes: IComputedNode[]): number => 
  * Ensures that all profile nodes have a location ID, setting them if they
  * aren't provided by default.
  */
-const ensureSourceLocations = (profile: ICpuProfileRaw): ReadonlyArray<IAnnotationLocation> => {
+const ensureSourceLocations = (
+	profile: ICpuProfileRaw
+): ReadonlyArray<IAnnotationLocation> => {
 	if (profile.$vscode) {
 		return profile.$vscode.locations // profiles we generate are already good
 	}
 
 	let locationIdCounter = 0
-	const locationsByRef = new Map<string, { id: number; callFrame: Cdp.Runtime.CallFrame; location: ISourceLocation }>()
+	const locationsByRef = new Map<
+		string,
+		{ id: number; callFrame: Cdp.Runtime.CallFrame; location: ISourceLocation }
+	>()
 
 	const getLocationIdFor = (callFrame: Cdp.Runtime.CallFrame) => {
 		const ref = [
@@ -177,7 +185,10 @@ export const buildModel = (profile: ICpuProfileRaw): IProfileModel => {
 		}
 	})
 
-	const idMap = new Map<number /* id in profile */, number /* incrementing ID */>()
+	const idMap = new Map<
+		number /* id in profile */,
+		number /* incrementing ID */
+	>()
 	const mapId = (nodeId: number) => {
 		let id = idMap.get(nodeId)
 		if (id === undefined) {
@@ -237,7 +248,10 @@ export const buildModel = (profile: ICpuProfileRaw): IProfileModel => {
 	}
 
 	// 3. Add the aggregate times for all node children and locations
-	const calcAggregatedTimeOfLocations = (node: IComputedNode, visited: Set<number>) => {
+	const calcAggregatedTimeOfLocations = (
+		node: IComputedNode,
+		visited: Set<number>
+	) => {
 		const location = locations[node.locationId]
 		let selfAdded = false
 		if (!visited.has(node.locationId)) {

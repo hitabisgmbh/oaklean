@@ -4,7 +4,11 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../../types'
 
 export class TryStatementHelper {
 	static syntaxKind = ts.SyntaxKind.TryStatement
@@ -13,7 +17,9 @@ export class TryStatementHelper {
 		node: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.TryStatement> } {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.TryStatement>
+	} {
 		return {
 			resolve() {
 				const statementName = `(try:${traverseNodeInfo.counters.tryStatementCounter++})`

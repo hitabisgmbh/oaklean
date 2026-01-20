@@ -21,7 +21,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 	let stateMachine: InsertCPUProfileStateMachine
 
 	beforeEach(() => {
-		projectReport = new ProjectReport(EXAMPLE_EXECUTION_DETAILS, ReportKind.measurement)
+		projectReport = new ProjectReport(
+			EXAMPLE_EXECUTION_DETAILS,
+			ReportKind.measurement
+		)
 		stateMachine = new InsertCPUProfileStateMachine(projectReport)
 	})
 
@@ -34,7 +37,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
 			externCPUTime: 20
@@ -95,7 +101,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
@@ -176,7 +185,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
@@ -277,7 +289,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
@@ -350,7 +365,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
@@ -426,7 +444,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
@@ -506,7 +527,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
@@ -656,7 +680,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
@@ -743,7 +770,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.lang_internal.toJSON()).toBeUndefined()
@@ -886,13 +916,22 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			createLocationTreeCPUModel([
 				SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
 				[
-					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], [[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]]],
-					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'], [[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]]]
+					[
+						SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
+						[[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]]
+					],
+					[
+						SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'],
+						[[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]]
+					]
 				]
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
@@ -1006,13 +1045,22 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			createLocationTreeCPUModel([
 				SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
 				[
-					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], [[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]]],
-					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'], [[SOURCE_LOCATIONS_DEFAULT['project-fileA-2'], []]]]
+					[
+						SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
+						[[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]]
+					],
+					[
+						SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'],
+						[[SOURCE_LOCATIONS_DEFAULT['project-fileA-2'], []]]
+					]
 				]
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
@@ -1140,13 +1188,21 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			createLocationTreeCPUModel([
 				SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
 				[
-					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], [[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]]],
+					[
+						SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'],
+						[[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]]
+					],
 					[
 						SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'],
 						[
 							[
 								SOURCE_LOCATIONS_DEFAULT['project-fileA-2'],
-								[[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-2'], [[SOURCE_LOCATIONS_DEFAULT['project-fileA-3'], []]]]]
+								[
+									[
+										SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-2'],
+										[[SOURCE_LOCATIONS_DEFAULT['project-fileA-3'], []]]
+									]
+								]
 							]
 						]
 					]
@@ -1154,7 +1210,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({
@@ -1322,14 +1381,24 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 						[
 							[
 								SOURCE_LOCATIONS_DEFAULT['project-fileA-1'],
-								[[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'], [[SOURCE_LOCATIONS_DEFAULT['project-fileA-3'], []]]]]
+								[
+									[
+										SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-1'],
+										[[SOURCE_LOCATIONS_DEFAULT['project-fileA-3'], []]]
+									]
+								]
 							],
 							[
 								SOURCE_LOCATIONS_DEFAULT['project-fileA-2'],
 								[
 									[
 										SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-2'],
-										[[SOURCE_LOCATIONS_DEFAULT['project-fileA-4'], [[SOURCE_LOCATIONS_DEFAULT['project-fileA-5'], []]]]]
+										[
+											[
+												SOURCE_LOCATIONS_DEFAULT['project-fileA-4'],
+												[[SOURCE_LOCATIONS_DEFAULT['project-fileA-5'], []]]
+											]
+										]
 									]
 								]
 							]
@@ -1339,7 +1408,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE executes PRO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({

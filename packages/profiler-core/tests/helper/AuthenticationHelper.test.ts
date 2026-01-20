@@ -14,22 +14,31 @@ jest.mock('../../src/constants/env')
 describe('AuthenticationHelper', () => {
 	describe('getAuthentication', () => {
 		it('should return the authentication key from the auth file if no env variable is specified', async () => {
-			const configDir = new UnifiedPath(os.homedir()).join(STATIC_GLOBAL_CONFIG_DIR)
+			const configDir = new UnifiedPath(os.homedir()).join(
+				STATIC_GLOBAL_CONFIG_DIR
+			)
 			const authFile = configDir.join('auth')
 
 			;(fs.existsSync as jest.Mock).mockImplementation((path: fs.PathLike) => {
-				if (path === configDir.toPlatformString() || path === authFile.toPlatformString()) {
+				if (
+					path === configDir.toPlatformString() ||
+					path === authFile.toPlatformString()
+				) {
 					return true
 				}
 				return fs.existsSync(path)
 			})
-			;(fs.readFileSync as jest.Mock).mockImplementation((path: fs.PathOrFileDescriptor) => {
-				if (path === authFile.toPlatformString()) {
-					return EXAMPLE_AUTH_KEY
+			;(fs.readFileSync as jest.Mock).mockImplementation(
+				(path: fs.PathOrFileDescriptor) => {
+					if (path === authFile.toPlatformString()) {
+						return EXAMPLE_AUTH_KEY
+					}
+					return fs.readFileSync(path)
 				}
-				return fs.readFileSync(path)
-			})
-			expect(await AuthenticationHelper.getAuthentication()).toBe(EXAMPLE_AUTH_KEY)
+			)
+			expect(await AuthenticationHelper.getAuthentication()).toBe(
+				EXAMPLE_AUTH_KEY
+			)
 			;(fs.existsSync as jest.Mock).mockRestore()
 			;(fs.readFileSync as jest.Mock).mockRestore()
 		})
@@ -38,7 +47,9 @@ describe('AuthenticationHelper', () => {
 			const mockedEnv = jest.mocked(env)
 			const originalAuthKey = mockedEnv.OAKLEAN_AUTH_KEY
 			mockedEnv.OAKLEAN_AUTH_KEY = EXAMPLE_AUTH_KEY
-			expect(await AuthenticationHelper.getAuthentication()).toBe(EXAMPLE_AUTH_KEY)
+			expect(await AuthenticationHelper.getAuthentication()).toBe(
+				EXAMPLE_AUTH_KEY
+			)
 			mockedEnv.OAKLEAN_AUTH_KEY = originalAuthKey
 		})
 	})

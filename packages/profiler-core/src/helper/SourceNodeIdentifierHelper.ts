@@ -28,21 +28,31 @@ import {
 } from '../constants/SourceNodeRegex'
 // Types
 import { ProgramStructureTreeType } from '../types/model/ProgramStructureTree'
-import { SourceNodeIdentifier_string, SourceNodeIdentifierPart_string } from '../types/SourceNodeIdentifiers'
+import {
+	SourceNodeIdentifier_string,
+	SourceNodeIdentifierPart_string
+} from '../types/SourceNodeIdentifiers'
 
-const SourceNodeIdentifierPathRegex_match = new RegExp(`{${SourceNodeIdentifierPathRegexString}}`, 'g')
+const SourceNodeIdentifierPathRegex_match = new RegExp(
+	`{${SourceNodeIdentifierPathRegexString}}`,
+	'g'
+)
 
 const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
 	[ProgramStructureTreeType.Root]: RootRegex,
-	[ProgramStructureTreeType.ConstructorDeclaration]: ConstructorDeclarationRegex,
+	[ProgramStructureTreeType.ConstructorDeclaration]:
+		ConstructorDeclarationRegex,
 	[ProgramStructureTreeType.ClassDeclaration]: ClassDeclarationRegex,
 	[ProgramStructureTreeType.ClassExpression]: ClassExpressionRegex,
 	[ProgramStructureTreeType.MethodDefinition]: MethodDefinitionRegex,
-	[ProgramStructureTreeType.GetAccessorDeclaration]: GetAccessorDeclarationRegex,
-	[ProgramStructureTreeType.SetAccessorDeclaration]: SetAccessorDeclarationRegex,
+	[ProgramStructureTreeType.GetAccessorDeclaration]:
+		GetAccessorDeclarationRegex,
+	[ProgramStructureTreeType.SetAccessorDeclaration]:
+		SetAccessorDeclarationRegex,
 	[ProgramStructureTreeType.FunctionDeclaration]: FunctionDeclarationRegex,
 	[ProgramStructureTreeType.FunctionExpression]: FunctionExpressionRegex,
-	[ProgramStructureTreeType.ObjectLiteralExpression]: ObjectLiteralExpressionRegex,
+	[ProgramStructureTreeType.ObjectLiteralExpression]:
+		ObjectLiteralExpressionRegex,
 	[ProgramStructureTreeType.IfStatement]: IfStatementRegex,
 	[ProgramStructureTreeType.IfThenStatement]: IfThenStatementRegex,
 	[ProgramStructureTreeType.IfElseStatement]: IfElseStatementRegex,
@@ -54,13 +64,16 @@ const REGEX_PER_PST_TYPE: Record<ProgramStructureTreeType, RegExp> = {
 	[ProgramStructureTreeType.FinallyBlock]: FinallyBlockStatementRegex,
 	[ProgramStructureTreeType.SwitchStatement]: SwitchStatementRegex,
 	[ProgramStructureTreeType.Block]: BlockStatementRegex,
-	[ProgramStructureTreeType.ClassStaticBlockDeclaration]: ClassStaticBlockDeclarationRegex,
+	[ProgramStructureTreeType.ClassStaticBlockDeclaration]:
+		ClassStaticBlockDeclarationRegex,
 	[ProgramStructureTreeType.SwitchCaseClause]: SwitchCaseClauseRegex,
 	[ProgramStructureTreeType.ModuleDeclaration]: ModuleDeclarationRegex
 }
 
 export class SourceNodeIdentifierHelper {
-	static split(identifier: SourceNodeIdentifier_string): SourceNodeIdentifierPart_string[] {
+	static split(
+		identifier: SourceNodeIdentifier_string
+	): SourceNodeIdentifierPart_string[] {
 		if (identifier[0] && identifier[0] === '{') {
 			// case SourceNodeIdentifier {}.{}...
 			const matches = identifier.match(SourceNodeIdentifierPathRegex_match)
@@ -72,7 +85,9 @@ export class SourceNodeIdentifierHelper {
 		return [identifier] as unknown as SourceNodeIdentifierPart_string[]
 	}
 
-	static join(identifierParts: SourceNodeIdentifierPart_string[]): SourceNodeIdentifier_string {
+	static join(
+		identifierParts: SourceNodeIdentifierPart_string[]
+	): SourceNodeIdentifier_string {
 		return identifierParts.join('.') as SourceNodeIdentifier_string
 	}
 
@@ -82,8 +97,13 @@ export class SourceNodeIdentifierHelper {
 	 *
 	 * @returns wether the identifier part is valid or not
 	 */
-	static validateSourceNodeIdentifierPart(identifierPart: SourceNodeIdentifierPart_string) {
-		return RootRegex.test(identifierPart) || SourceNodeIdentifierPartRegex.test(identifierPart)
+	static validateSourceNodeIdentifierPart(
+		identifierPart: SourceNodeIdentifierPart_string
+	) {
+		return (
+			RootRegex.test(identifierPart) ||
+			SourceNodeIdentifierPartRegex.test(identifierPart)
+		)
 	}
 
 	static parseSourceNodeIdentifierPart(
@@ -101,7 +121,9 @@ export class SourceNodeIdentifierHelper {
 		return null
 	}
 
-	static functionNameToSourceNodeIdentifier(functionName: string): SourceNodeIdentifier_string {
+	static functionNameToSourceNodeIdentifier(
+		functionName: string
+	): SourceNodeIdentifier_string {
 		const chunks = []
 
 		let chunk = ''

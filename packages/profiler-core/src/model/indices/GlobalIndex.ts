@@ -25,18 +25,26 @@ export class GlobalIndex extends BaseModel {
 
 	moduleReverseIndex: ModelMap<ModuleID_number, ModuleIndex>
 	pathReverseIndex: ModelMap<PathID_number, PathIndex>
-	sourceNodeReverseIndex: ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>
+	sourceNodeReverseIndex: ModelMap<
+		SourceNodeID_number,
+		SourceNodeIndex<SourceNodeIndexType.SourceNode>
+	>
 
 	constructor(engineModule: NodeModule, currentId = 0) {
 		super()
 		this.currentId = currentId
 		this.engineModule = engineModule
-		this.moduleMap = new ModelMap<NodeModuleIdentifier_string, ModuleIndex>('string')
-		this.moduleReverseIndex = new ModelMap<ModuleID_number, ModuleIndex>('number')
-		this.pathReverseIndex = new ModelMap<PathID_number, PathIndex>('number')
-		this.sourceNodeReverseIndex = new ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>(
+		this.moduleMap = new ModelMap<NodeModuleIdentifier_string, ModuleIndex>(
+			'string'
+		)
+		this.moduleReverseIndex = new ModelMap<ModuleID_number, ModuleIndex>(
 			'number'
 		)
+		this.pathReverseIndex = new ModelMap<PathID_number, PathIndex>('number')
+		this.sourceNodeReverseIndex = new ModelMap<
+			SourceNodeID_number,
+			SourceNodeIndex<SourceNodeIndexType.SourceNode>
+		>('number')
 	}
 
 	toBuffer(): Buffer {
@@ -50,7 +58,10 @@ export class GlobalIndex extends BaseModel {
 		}
 	}
 
-	static fromJSON(json: string | IGlobalIndex, engineModule: NodeModule): GlobalIndex {
+	static fromJSON(
+		json: string | IGlobalIndex,
+		engineModule: NodeModule
+	): GlobalIndex {
 		let data: IGlobalIndex
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -108,12 +119,17 @@ export class GlobalIndex extends BaseModel {
 		return this.pathReverseIndex.get(id)
 	}
 
-	getSourceNodeIndexByID(id: SourceNodeID_number): SourceNodeIndex<SourceNodeIndexType.SourceNode> | undefined {
+	getSourceNodeIndexByID(
+		id: SourceNodeID_number
+	): SourceNodeIndex<SourceNodeIndexType.SourceNode> | undefined {
 		return this.sourceNodeReverseIndex.get(id)
 	}
 
 	newId(
-		index: ModuleIndex | PathIndex | SourceNodeIndex<SourceNodeIndexType.SourceNode>,
+		index:
+			| ModuleIndex
+			| PathIndex
+			| SourceNodeIndex<SourceNodeIndexType.SourceNode>,
 		type: GlobalIndexType
 	): number {
 		const id = this.currentId++
@@ -121,11 +137,13 @@ export class GlobalIndex extends BaseModel {
 		return id
 	}
 
-	getLangInternalIndex<T extends IndexRequestType, R = T extends 'upsert' ? ModuleIndex : ModuleIndex | undefined>(
-		indexRequestType: T
-	): R {
+	getLangInternalIndex<
+		T extends IndexRequestType,
+		R = T extends 'upsert' ? ModuleIndex : ModuleIndex | undefined
+	>(indexRequestType: T): R {
 		const moduleIdentifier = '{node}' as NodeModuleIdentifier_string
-		let moduleIndex: ModuleIndex | undefined = this.moduleMap.get(moduleIdentifier)
+		let moduleIndex: ModuleIndex | undefined =
+			this.moduleMap.get(moduleIdentifier)
 		if (moduleIndex === undefined) {
 			switch (indexRequestType) {
 				case 'get':
@@ -139,14 +157,20 @@ export class GlobalIndex extends BaseModel {
 		return moduleIndex as R
 	}
 
-	getModuleIndex<T extends IndexRequestType, R = T extends 'upsert' ? ModuleIndex : ModuleIndex | undefined>(
+	getModuleIndex<
+		T extends IndexRequestType,
+		R = T extends 'upsert' ? ModuleIndex : ModuleIndex | undefined
+	>(
 		indexRequestType: T,
 		nodeModuleIdentifier?: NodeModuleIdentifier_string
 	): R {
 		const moduleIdentifier =
-			nodeModuleIdentifier !== undefined ? nodeModuleIdentifier : ('{self}' as NodeModuleIdentifier_string)
+			nodeModuleIdentifier !== undefined
+				? nodeModuleIdentifier
+				: ('{self}' as NodeModuleIdentifier_string)
 
-		let moduleIndex: ModuleIndex | undefined = this.moduleMap.get(moduleIdentifier)
+		let moduleIndex: ModuleIndex | undefined =
+			this.moduleMap.get(moduleIdentifier)
 		if (moduleIndex === undefined) {
 			switch (indexRequestType) {
 				case 'get':
@@ -173,11 +197,17 @@ export class GlobalIndex extends BaseModel {
 		if (identifier.isLangInternal()) {
 			moduleIndex = this.getLangInternalIndex(indexRequestType)
 		} else {
-			moduleIndex = this.getModuleIndex(indexRequestType, identifier.nodeModule?.identifier)
+			moduleIndex = this.getModuleIndex(
+				indexRequestType,
+				identifier.nodeModule?.identifier
+			)
 		}
 
 		return moduleIndex
 			?.getFilePathIndex(indexRequestType, identifier.path)
-			?.getSourceNodeIndex(indexRequestType, identifier.sourceNodeIdentifier) as R
+			?.getSourceNodeIndex(
+				indexRequestType,
+				identifier.sourceNodeIdentifier
+			) as R
 	}
 }

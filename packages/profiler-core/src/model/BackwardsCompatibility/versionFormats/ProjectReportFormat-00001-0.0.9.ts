@@ -5,27 +5,45 @@ const UnifiedPathPartSymbol: unique symbol = Symbol('UnifiedPathPartSymbol')
 export type UnifiedPathPart_string = string & { [UnifiedPathPartSymbol]: never }
 
 const NodeInternalPathSymbol: unique symbol = Symbol('NodeInternalPathSymbol')
-export type NodeInternalPath_string = string & { [NodeInternalPathSymbol]: never }
+export type NodeInternalPath_string = string & {
+	[NodeInternalPathSymbol]: never
+}
 
-const NodeModuleIdentifierSymbol: unique symbol = Symbol('NodeModuleIdentifierSymbol')
-export type NodeModuleIdentifier_string = string & { [NodeModuleIdentifierSymbol]: never }
+const NodeModuleIdentifierSymbol: unique symbol = Symbol(
+	'NodeModuleIdentifierSymbol'
+)
+export type NodeModuleIdentifier_string = string & {
+	[NodeModuleIdentifierSymbol]: never
+}
 
-const NodeInternalSourceNodeIdentifierSymbol: unique symbol = Symbol('NodeInternalSourceNodeIdentifierSymbol')
-export type NodeInternalSourceNodeIdentifier_string = string & { [NodeInternalSourceNodeIdentifierSymbol]: never }
+const NodeInternalSourceNodeIdentifierSymbol: unique symbol = Symbol(
+	'NodeInternalSourceNodeIdentifierSymbol'
+)
+export type NodeInternalSourceNodeIdentifier_string = string & {
+	[NodeInternalSourceNodeIdentifierSymbol]: never
+}
 
-const SourceNodeIdentifierSymbol: unique symbol = Symbol('SourceNodeIdentifierSymbol')
+const SourceNodeIdentifierSymbol: unique symbol = Symbol(
+	'SourceNodeIdentifierSymbol'
+)
 export type SourceNodeIdentifier_string =
 	| (string & { [SourceNodeIdentifierSymbol]: never })
 	| NodeInternalSourceNodeIdentifier_string
 
-const GlobalSourceNodeIdentifierSymbol: unique symbol = Symbol('GlobalSourceNodeIdentifierSymbol')
-export type GlobalSourceNodeIdentifier_string = string & { [GlobalSourceNodeIdentifierSymbol]: never }
+const GlobalSourceNodeIdentifierSymbol: unique symbol = Symbol(
+	'GlobalSourceNodeIdentifierSymbol'
+)
+export type GlobalSourceNodeIdentifier_string = string & {
+	[GlobalSourceNodeIdentifierSymbol]: never
+}
 
 const UUIDSymbol: unique symbol = Symbol('IUUIDSymbol')
 export type UUID_string = string & { [UUIDSymbol]: never }
 
 const ProjectIdentifierSymbol: unique symbol = Symbol('ProjectIdentifierSymbol')
-export type ProjectIdentifier_string = UUID_string & { [ProjectIdentifierSymbol]: never }
+export type ProjectIdentifier_string = UUID_string & {
+	[ProjectIdentifierSymbol]: never
+}
 
 const GitHashSymbol: unique symbol = Symbol('GitHashSymbol')
 export type GitHash_string = string & { [GitHashSymbol]: never }

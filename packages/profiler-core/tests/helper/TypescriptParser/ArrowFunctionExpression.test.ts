@@ -260,7 +260,8 @@ describe('ts.SyntaxKind.Parameter', () => {
 })
 
 const forDeclarations = {
-	'ts.SyntaxKind.ForStatement': 'let i = 0; i < 10; i = (() => { return i+1 })()',
+	'ts.SyntaxKind.ForStatement':
+		'let i = 0; i < 10; i = (() => { return i+1 })()',
 	'ts.SyntaxKind.ForOfStatement': 'const ForInStatement of () => {}',
 	'ts.SyntaxKind.ForInStatement': 'const ForInStatement in () => {}'
 }
@@ -273,7 +274,10 @@ describe('ForStatement', () => {
 			`
 
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 
@@ -304,7 +308,10 @@ describe('WhileStatement', () => {
 	for (const [kind, code] of Object.entries(whileCodes)) {
 		describe(kind, () => {
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 
@@ -405,7 +412,11 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 	`
 
 	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
+		const pst = TypescriptParser.parseSource(
+			new UnifiedPath('test.ts'),
+			code,
+			'TSX'
+		)
 
 		const hierarchy = pst.identifierHierarchy()
 

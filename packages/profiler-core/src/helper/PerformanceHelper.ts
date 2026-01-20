@@ -7,7 +7,10 @@ import { LoggerHelper } from './LoggerHelper'
 import { NanoSeconds_BigInt } from '../types'
 import { UnifiedPath } from '../system/UnifiedPath'
 // Types
-import { IPerformanceInterval, IPerformanceHelper } from '../types/helper/PerformanceHelper'
+import {
+	IPerformanceInterval,
+	IPerformanceHelper
+} from '../types/helper/PerformanceHelper'
 import { OAKLEAN_ENABLE_PERFORMANCE_TRACKING } from '../constants/env'
 
 export class PerformanceHelper {
@@ -23,14 +26,19 @@ export class PerformanceHelper {
 
 	static loadFromFile(path: UnifiedPath): IPerformanceHelper {
 		if (fs.existsSync(path.toPlatformString())) {
-			const jsonString = fs.readFileSync(path.toPlatformString(), 'utf8').toString()
+			const jsonString = fs
+				.readFileSync(path.toPlatformString(), 'utf8')
+				.toString()
 			return JSON.parse(jsonString) as IPerformanceHelper
 		}
 		return { measures: {} }
 	}
 
 	static storeToFile(path: UnifiedPath, data: IPerformanceHelper) {
-		PermissionHelper.writeFileWithUserPermission(path, JSON.stringify(data, null, 2))
+		PermissionHelper.writeFileWithUserPermission(
+			path,
+			JSON.stringify(data, null, 2)
+		)
 	}
 
 	exportAndSum(path: UnifiedPath) {
@@ -112,7 +120,11 @@ export class PerformanceHelper {
 				}
 			}
 		}
-		LoggerHelper.log(`Performance report (${title}):`, (total / 1e9).toFixed(3), 's')
+		LoggerHelper.log(
+			`Performance report (${title}):`,
+			(total / 1e9).toFixed(3),
+			's'
+		)
 		LoggerHelper.table(report, ['Duration', 'Percentage'])
 	}
 }

@@ -35,7 +35,10 @@ export class PowerMetricsData extends BaseMetricsData {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-	static fromJSON(json: string | IPowerMetricsData, ...args: any[]): PowerMetricsData {
+	static fromJSON(
+		json: string | IPowerMetricsData,
+		...args: any[]
+	): PowerMetricsData {
 		let data: IPowerMetricsData
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -97,7 +100,9 @@ export class PowerMetricsData extends BaseMetricsData {
 		const energyImpactOfProcess = this.energyImpactPerTask().get(pid)
 
 		if (energyImpactOfProcess === undefined) {
-			throw new Error('Processes energy could not be found in the PowerMetrics measurements')
+			throw new Error(
+				'Processes energy could not be found in the PowerMetrics measurements'
+			)
 		}
 		return energyImpactOfProcess / this.totalEnergyImpact()
 	}

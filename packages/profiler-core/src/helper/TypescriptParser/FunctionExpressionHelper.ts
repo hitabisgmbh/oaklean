@@ -6,7 +6,11 @@ import { NamingHelper } from './NamingHelper'
 
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../types'
 
 export class FunctionExpressionHelper {
 	static syntaxKind = ts.SyntaxKind.FunctionExpression
@@ -35,7 +39,11 @@ export class FunctionExpressionHelper {
 						TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 					)
 				}
-				const { suffix, identifier, identifierType } = NamingHelper.getName(node.parent, sourceFile, traverseNodeInfo)
+				const { suffix, identifier, identifierType } = NamingHelper.getName(
+					node.parent,
+					sourceFile,
+					traverseNodeInfo
+				)
 
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),

@@ -8,7 +8,8 @@ export class CallIdentifier {
 
 	readonly report: ProjectReport | ModuleReport
 	readonly sourceNode: SourceNodeMetaData<
-		SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
+		| SourceNodeMetaDataType.SourceNode
+		| SourceNodeMetaDataType.LangInternalSourceNode
 	> | null
 	readonly sourceNodeIDString: string
 	readonly compensationLayerDepth: number
@@ -16,7 +17,8 @@ export class CallIdentifier {
 	constructor(
 		report: ProjectReport | ModuleReport,
 		sourceNode: SourceNodeMetaData<
-			SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
+			| SourceNodeMetaDataType.SourceNode
+			| SourceNodeMetaDataType.LangInternalSourceNode
 		> | null,
 		compensationLayerDepth: number
 	) {

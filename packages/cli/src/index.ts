@@ -11,7 +11,9 @@ import InitCommands from './commands/InitCommands'
 import JestCommands from './commands/JestCommands'
 import MetricsDataCommands from './commands/MetricsDataCommands'
 
-program.version(VERSION).description('An CLI to interact with the @oaklean suite')
+program
+	.version(VERSION)
+	.description('An CLI to interact with the @oaklean suite')
 
 ConfigCommands.init()
 InitCommands.init()

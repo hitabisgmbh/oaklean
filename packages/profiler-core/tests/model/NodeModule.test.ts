@@ -48,7 +48,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => NodeModule) {
 		})
 
 		test('toBuffer', () => {
-			expect(instance.toBuffer().toString('hex')).toBe(EXAMPLE_NODE_MODULE_BUFFER)
+			expect(instance.toBuffer().toString('hex')).toBe(
+				EXAMPLE_NODE_MODULE_BUFFER
+			)
 		})
 	})
 }
@@ -73,10 +75,14 @@ describe('NodeModule', () => {
 			expect(b).toThrow('NodeModule.fromIdentifier: invalid format: package')
 
 			const c = () => {
-				NodeModule.fromIdentifier('@scope/package' as NodeModuleIdentifier_string)
+				NodeModule.fromIdentifier(
+					'@scope/package' as NodeModuleIdentifier_string
+				)
 			}
 
-			expect(c).toThrow('NodeModule.fromIdentifier: invalid format: @scope/package')
+			expect(c).toThrow(
+				'NodeModule.fromIdentifier: invalid format: @scope/package'
+			)
 
 			const d = () => {
 				NodeModule.fromIdentifier('@1.0.1' as NodeModuleIdentifier_string)
@@ -86,14 +92,22 @@ describe('NodeModule', () => {
 		})
 
 		test('package with version', () => {
-			expect(NodeModule.fromIdentifier('package@1.0.1' as NodeModuleIdentifier_string).toJSON()).toEqual({
+			expect(
+				NodeModule.fromIdentifier(
+					'package@1.0.1' as NodeModuleIdentifier_string
+				).toJSON()
+			).toEqual({
 				name: 'package',
 				version: '1.0.1'
 			})
 		})
 
 		test('scoped package with version', () => {
-			expect(NodeModule.fromIdentifier('@scope/package@1.0.1' as NodeModuleIdentifier_string).toJSON()).toEqual({
+			expect(
+				NodeModule.fromIdentifier(
+					'@scope/package@1.0.1' as NodeModuleIdentifier_string
+				).toJSON()
+			).toEqual({
 				name: '@scope/package',
 				version: '1.0.1'
 			})
@@ -102,7 +116,9 @@ describe('NodeModule', () => {
 
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
-			const instanceFromString = NodeModule.fromJSON(JSON.stringify(EXAMPLE_NODE_MODULE))
+			const instanceFromString = NodeModule.fromJSON(
+				JSON.stringify(EXAMPLE_NODE_MODULE)
+			)
 			expect(instanceFromString.toJSON()).toEqual(EXAMPLE_NODE_MODULE)
 		})
 
@@ -133,7 +149,12 @@ describe('NodeModule', () => {
 
 	describe('fromNodeModulePath', () => {
 		test('load existing node module', () => {
-			const nodeModulePath = CURRENT_DIR.join('..', '..', 'node_modules', 'find-up')
+			const nodeModulePath = CURRENT_DIR.join(
+				'..',
+				'..',
+				'node_modules',
+				'find-up'
+			)
 			const existingNodeModule = NodeModule.fromNodeModulePath(nodeModulePath)
 
 			expect(existingNodeModule?.name).toBe('find-up')
@@ -142,7 +163,8 @@ describe('NodeModule', () => {
 
 		test('load non existing node module', () => {
 			const nodeModulePath = CURRENT_DIR.join('')
-			const nonExistingNodeModule = NodeModule.fromNodeModulePath(nodeModulePath)
+			const nonExistingNodeModule =
+				NodeModule.fromNodeModulePath(nodeModulePath)
 			expect(nonExistingNodeModule).toBeUndefined()
 		})
 	})

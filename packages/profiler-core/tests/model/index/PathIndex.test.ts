@@ -46,11 +46,19 @@ function runInstanceTests(title: string, preDefinedInstance: () => PathIndex) {
 		})
 
 		test('get on non existing sourceNodeIdentifier', () => {
-			expect(instance.getSourceNodeIndex('get', '{root}.{class:ABC}' as SourceNodeIdentifier_string)).toBeUndefined()
+			expect(
+				instance.getSourceNodeIndex(
+					'get',
+					'{root}.{class:ABC}' as SourceNodeIdentifier_string
+				)
+			).toBeUndefined()
 
 			// check non existing request type
 			expect(
-				instance.getSourceNodeIndex('xyz' as IndexRequestType, '{root}' as SourceNodeIdentifier_string)
+				instance.getSourceNodeIndex(
+					'xyz' as IndexRequestType,
+					'{root}' as SourceNodeIdentifier_string
+				)
 			).toBeUndefined()
 		})
 
@@ -97,7 +105,10 @@ function runInstanceTests(title: string, preDefinedInstance: () => PathIndex) {
 			)
 
 			expect(
-				instance.getSourceNodeIndex('get', '{root}.{class:GlobalIndex}' as SourceNodeIdentifier_string)
+				instance.getSourceNodeIndex(
+					'get',
+					'{root}.{class:GlobalIndex}' as SourceNodeIdentifier_string
+				)
 			).toBeUndefined()
 
 			// check non existing request type
@@ -139,15 +150,23 @@ function runInstanceTests(title: string, preDefinedInstance: () => PathIndex) {
 
 describe('PathIndex', () => {
 	runInstanceTests('instance related', () => {
-		const globalIndex: GlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+		const globalIndex: GlobalIndex = new GlobalIndex(
+			NodeModule.currentEngineModule()
+		)
 		const moduleIndex: ModuleIndex = globalIndex.getModuleIndex('upsert')
-		const instance: PathIndex = moduleIndex.getFilePathIndex('upsert', './abc/def' as UnifiedPath_string)
+		const instance: PathIndex = moduleIndex.getFilePathIndex(
+			'upsert',
+			'./abc/def' as UnifiedPath_string
+		)
 
 		instance.getSourceNodeIndex(
 			'upsert',
 			'{root}.{class:GlobalIndex}.{constructor:constructor}' as SourceNodeIdentifier_string
 		)
-		instance.getSourceNodeIndex('upsert', '{root}.{class:GlobalIndex}.{method:toJSON}' as SourceNodeIdentifier_string)
+		instance.getSourceNodeIndex(
+			'upsert',
+			'{root}.{class:GlobalIndex}.{method:toJSON}' as SourceNodeIdentifier_string
+		)
 		instance.getSourceNodeIndex(
 			'upsert',
 			'{root}.{class:GlobalIndex}.{method:getModuleIndex}' as SourceNodeIdentifier_string
@@ -158,29 +177,47 @@ describe('PathIndex', () => {
 
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
-			const globalIndex: GlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+			const globalIndex: GlobalIndex = new GlobalIndex(
+				NodeModule.currentEngineModule()
+			)
 			const moduleIndex: ModuleIndex = globalIndex.getModuleIndex('upsert')
 			const path = new UnifiedPath('./abc/def')
 
-			const reportFromString = PathIndex.fromJSON(JSON.stringify(EXAMPLE_PATH_INDEX), path.split(), moduleIndex)
+			const reportFromString = PathIndex.fromJSON(
+				JSON.stringify(EXAMPLE_PATH_INDEX),
+				path.split(),
+				moduleIndex
+			)
 			expect(reportFromString.toJSON()).toEqual(EXAMPLE_PATH_INDEX)
 		})
 
 		test('deserialization from object', () => {
-			const globalIndex: GlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+			const globalIndex: GlobalIndex = new GlobalIndex(
+				NodeModule.currentEngineModule()
+			)
 			const moduleIndex: ModuleIndex = globalIndex.getModuleIndex('upsert')
 			const path = new UnifiedPath('./abc/def')
 
-			const reportFromObject = PathIndex.fromJSON(EXAMPLE_PATH_INDEX, path.split(), moduleIndex)
+			const reportFromObject = PathIndex.fromJSON(
+				EXAMPLE_PATH_INDEX,
+				path.split(),
+				moduleIndex
+			)
 			expect(reportFromObject.toJSON()).toEqual(EXAMPLE_PATH_INDEX)
 		})
 
 		runInstanceTests('deserialized instance related', () => {
-			const globalIndex: GlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+			const globalIndex: GlobalIndex = new GlobalIndex(
+				NodeModule.currentEngineModule()
+			)
 			const moduleIndex: ModuleIndex = globalIndex.getModuleIndex('upsert')
 			const path = new UnifiedPath('./abc/def')
 
-			const reportFromString = PathIndex.fromJSON(JSON.stringify(EXAMPLE_PATH_INDEX), path.split(), moduleIndex)
+			const reportFromString = PathIndex.fromJSON(
+				JSON.stringify(EXAMPLE_PATH_INDEX),
+				path.split(),
+				moduleIndex
+			)
 			return reportFromString
 		})
 	})

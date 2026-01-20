@@ -4,16 +4,26 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../../types'
 
 export class ForStatementHelper {
-	static syntaxKind = [ts.SyntaxKind.ForStatement, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement]
+	static syntaxKind = [
+		ts.SyntaxKind.ForStatement,
+		ts.SyntaxKind.ForInStatement,
+		ts.SyntaxKind.ForOfStatement
+	]
 
 	static parseNode(
 		node: ts.ForStatement | ts.ForInStatement | ts.ForOfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.ForStatement> } {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ForStatement>
+	} {
 		return {
 			resolve() {
 				const statementName = `(for:${traverseNodeInfo.counters.forStatementCounter++})`

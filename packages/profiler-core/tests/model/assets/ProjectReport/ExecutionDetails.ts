@@ -13,7 +13,11 @@ import {
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
 export const EXAMPLE_SYSTEM_INFORMATION: ISystemInformation = JSON.parse(
-	fs.readFileSync(CURRENT_DIR.join('..', 'SystemInformation', 'example.json').toString()).toString()
+	fs
+		.readFileSync(
+			CURRENT_DIR.join('..', 'SystemInformation', 'example.json').toString()
+		)
+		.toString()
 ) as ISystemInformation
 
 export const EXAMPLE_EXECUTION_DETAILS = {

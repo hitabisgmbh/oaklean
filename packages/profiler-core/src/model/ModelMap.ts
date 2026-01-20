@@ -5,7 +5,11 @@ import { BufferHelper } from '../helper/BufferHelper'
 import { UnifiedPath_string } from '../types'
 
 export type ModelMapKeyType = UnifiedPath_string | string | number
-export type ModelValueKeyType = BaseModel | string | number | Set<string | number>
+export type ModelValueKeyType =
+	| BaseModel
+	| string
+	| number
+	| Set<string | number>
 
 enum ModelMapValueType {
 	string = 0,
@@ -13,7 +17,10 @@ enum ModelMapValueType {
 	object = 2
 }
 
-export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKeyType> extends BaseModel {
+export class ModelMap<
+	TKEY extends ModelMapKeyType,
+	TVALUE extends ModelValueKeyType
+> extends BaseModel {
 	private _map: Map<TKEY, TVALUE>
 	private _keyType: 'string' | 'number'
 
@@ -36,17 +43,27 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKey
 			} else if (value instanceof Set) {
 				result[key] = Array.from(value) as unknown as T
 			} else {
-				result[key] = (value as Exclude<ModelValueKeyType, string | number | Set<string | number>>).toJSON() as T
+				result[key] = (
+					value as Exclude<
+						ModelValueKeyType,
+						string | number | Set<string | number>
+					>
+				).toJSON() as T
 			}
 		}
 		return result
 	}
 
-	static fromJSON<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKeyType>(
+	static fromJSON<
+		TKEY extends ModelMapKeyType,
+		TVALUE extends ModelValueKeyType
+	>(
 		json: string | object,
 		keyType: 'string' | 'number',
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		fromJSON: TVALUE extends BaseModel ? (json: string | any, ...args: any[]) => TVALUE : 'string' | 'number'
+		fromJSON: TVALUE extends BaseModel
+			? (json: string | any, ...args: any[]) => TVALUE
+			: 'string' | 'number'
 	): ModelMap<TKEY, TVALUE> {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		let data: any
@@ -92,25 +109,38 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKey
 					)
 					break
 				case 'number':
-					buffers.push(BufferHelper.UInt8ToBuffer(ModelMapValueType.number), BufferHelper.UIntToBuffer(value as number))
+					buffers.push(
+						BufferHelper.UInt8ToBuffer(ModelMapValueType.number),
+						BufferHelper.UIntToBuffer(value as number)
+					)
 					break
 				default:
-					buffers.push(BufferHelper.UInt8ToBuffer(ModelMapValueType.object), (value as BaseModel).toBuffer())
+					buffers.push(
+						BufferHelper.UInt8ToBuffer(ModelMapValueType.object),
+						(value as BaseModel).toBuffer()
+					)
 			}
 		}
 		return Buffer.concat(buffers)
 	}
 
-	static consumeFromBuffer<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKeyType>(
+	static consumeFromBuffer<
+		TKEY extends ModelMapKeyType,
+		TVALUE extends ModelValueKeyType
+	>(
 		buffer: Buffer,
 		keyType: 'string' | 'number',
 		consumeFromBuffer: TVALUE extends BaseModel
 			? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-				(buffer: Buffer, ...args: any[]) => { instance: TVALUE; remainingBuffer: Buffer }
+				(
+					buffer: Buffer,
+					...args: any[]
+				) => { instance: TVALUE; remainingBuffer: Buffer }
 			: 'string' | 'number'
 	): { instance: ModelMap<TKEY, TVALUE>; remainingBuffer: Buffer } {
 		let remainingBuffer = buffer
-		const { instance: size, remainingBuffer: newRemainingBuffer1 } = BufferHelper.UIntFromBuffer(buffer)
+		const { instance: size, remainingBuffer: newRemainingBuffer1 } =
+			BufferHelper.UIntFromBuffer(buffer)
 		remainingBuffer = newRemainingBuffer1
 
 		const result = new ModelMap<TKEY, TVALUE>(keyType)
@@ -120,26 +150,35 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKey
 			switch (keyType) {
 				case 'string':
 					{
-						const { instance, remainingBuffer: newRemainingBuffer } = BufferHelper.String2LFromBuffer(remainingBuffer)
+						const { instance, remainingBuffer: newRemainingBuffer } =
+							BufferHelper.String2LFromBuffer(remainingBuffer)
 						key = instance
 						remainingBuffer = newRemainingBuffer
 					}
 					break
 				case 'number': {
-					const { instance, remainingBuffer: newRemainingBuffer } = BufferHelper.UIntFromBuffer(remainingBuffer)
+					const { instance, remainingBuffer: newRemainingBuffer } =
+						BufferHelper.UIntFromBuffer(remainingBuffer)
 					key = instance
 					remainingBuffer = newRemainingBuffer
 				}
 			}
-			const { instance: valueType, remainingBuffer: newRemainingBuffer } = BufferHelper.UInt8FromBuffer(remainingBuffer)
+			const { instance: valueType, remainingBuffer: newRemainingBuffer } =
+				BufferHelper.UInt8FromBuffer(remainingBuffer)
 			remainingBuffer = newRemainingBuffer
 			switch (valueType) {
 				case ModelMapValueType.object:
 					{
-						if (consumeFromBuffer === 'string' || consumeFromBuffer === 'number') {
-							throw new Error('ModelMap.consumeFromBuffer: expected a consumeFromBuffer to be given')
+						if (
+							consumeFromBuffer === 'string' ||
+							consumeFromBuffer === 'number'
+						) {
+							throw new Error(
+								'ModelMap.consumeFromBuffer: expected a consumeFromBuffer to be given'
+							)
 						}
-						const { instance: value, remainingBuffer: newRemainingBuffer } = consumeFromBuffer(remainingBuffer)
+						const { instance: value, remainingBuffer: newRemainingBuffer } =
+							consumeFromBuffer(remainingBuffer)
 						remainingBuffer = newRemainingBuffer
 						result.set(key as TKEY, value as TVALUE)
 					}
@@ -153,7 +192,8 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKey
 					}
 					break
 				case ModelMapValueType.number: {
-					const { instance: value, remainingBuffer: newRemainingBuffer } = BufferHelper.UIntFromBuffer(remainingBuffer)
+					const { instance: value, remainingBuffer: newRemainingBuffer } =
+						BufferHelper.UIntFromBuffer(remainingBuffer)
 					remainingBuffer = newRemainingBuffer
 					result.set(key as TKEY, value as TVALUE)
 				}

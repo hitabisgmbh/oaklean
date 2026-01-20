@@ -1,6 +1,9 @@
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
-import { SourceNodeMetaData, SourceNodeMetaDataTypeNotAggregate } from './SourceNodeMetaData'
+import {
+	SourceNodeMetaData,
+	SourceNodeMetaDataTypeNotAggregate
+} from './SourceNodeMetaData'
 import { WASM_NODE_MODULE } from './NodeModule'
 import { SensorValues } from './SensorValues'
 import { SourceNodeGraph } from './SourceNodeGraph'
@@ -54,14 +57,18 @@ export class AggregatedSourceNodeMetaData extends BaseModel {
 		}
 	}
 
-	static join(...args: AggregatedSourceNodeMetaData[]): AggregatedSourceNodeMetaData {
+	static join(
+		...args: AggregatedSourceNodeMetaData[]
+	): AggregatedSourceNodeMetaData {
 		return new AggregatedSourceNodeMetaData(
 			SourceNodeMetaData.sum(...args.map((x) => x.total)),
 			SourceNodeMetaData.max(...args.map((x) => x.max))
 		)
 	}
 
-	static fromJSON(json: string | IAggregatedSourceNodeMetaData): AggregatedSourceNodeMetaData {
+	static fromJSON(
+		json: string | IAggregatedSourceNodeMetaData
+	): AggregatedSourceNodeMetaData {
 		let data: IAggregatedSourceNodeMetaData
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -70,8 +77,14 @@ export class AggregatedSourceNodeMetaData extends BaseModel {
 		}
 
 		return new AggregatedSourceNodeMetaData(
-			SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.Aggregate>(data.total, undefined),
-			SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.Aggregate>(data.max, undefined)
+			SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.Aggregate>(
+				data.total,
+				undefined
+			),
+			SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.Aggregate>(
+				data.max,
+				undefined
+			)
 		)
 	}
 }
@@ -80,12 +93,18 @@ export class SourceFileMetaData extends BaseModel {
 	path: UnifiedPath_string | LangInternalPath_string
 	private _functions?: ModelMap<
 		SourceNodeID_number,
-		SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>
+		SourceNodeMetaData<
+			| SourceNodeMetaDataType.SourceNode
+			| SourceNodeMetaDataType.LangInternalSourceNode
+		>
 	>
 
 	pathIndex: PathIndex
 
-	constructor(path: UnifiedPath_string | LangInternalPath_string, pathIndex: PathIndex) {
+	constructor(
+		path: UnifiedPath_string | LangInternalPath_string,
+		pathIndex: PathIndex
+	) {
 		super()
 		this.path = path
 		this.pathIndex = pathIndex
@@ -106,7 +125,10 @@ export class SourceFileMetaData extends BaseModel {
 
 	normalize(newGlobalIndex: GlobalIndex) {
 		function sortIDsByIdentifier(
-			input: ModelMap<SourceNodeID_number, SourceNodeMetaData<SourceNodeMetaDataTypeNotAggregate>>
+			input: ModelMap<
+				SourceNodeID_number,
+				SourceNodeMetaData<SourceNodeMetaDataTypeNotAggregate>
+			>
 		): SourceNodeID_number[] {
 			return Array.from(input.values())
 				.map((value) => ({
@@ -120,7 +142,10 @@ export class SourceFileMetaData extends BaseModel {
 		const newPathIndex = this.pathIndex.insertToOtherIndex(newGlobalIndex)
 		const newFunctions = new ModelMap<
 			SourceNodeID_number,
-			SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>
+			SourceNodeMetaData<
+				| SourceNodeMetaDataType.SourceNode
+				| SourceNodeMetaDataType.LangInternalSourceNode
+			>
 		>('number')
 		for (const sourceNodeID of sortIDsByIdentifier(this.functions)) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -134,18 +159,25 @@ export class SourceFileMetaData extends BaseModel {
 
 	static merge(pathIndex: PathIndex, ...args: SourceFileMetaData[]) {
 		if (args.length === 0) {
-			throw new Error('SourceFileMetaData.merge: no SourceFileMetaDatas were given')
+			throw new Error(
+				'SourceFileMetaData.merge: no SourceFileMetaDatas were given'
+			)
 		}
 
 		const path = args[0].path
 		const containsUncommittedChanges = args
 			.map((x) => x.containsUncommittedChanges)
-			.reduce((prevValue: boolean, currValue: boolean) => prevValue || currValue)
+			.reduce(
+				(prevValue: boolean, currValue: boolean) => prevValue || currValue
+			)
 
 		const valuesToMerge: {
 			functions: Record<
 				SourceNodeIdentifier_string,
-				SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>[]
+				SourceNodeMetaData<
+					| SourceNodeMetaDataType.SourceNode
+					| SourceNodeMetaDataType.LangInternalSourceNode
+				>[]
 			>
 		} = {
 			functions: {}
@@ -153,15 +185,24 @@ export class SourceFileMetaData extends BaseModel {
 
 		for (const currentSourceFileMetaData of args) {
 			if (path !== currentSourceFileMetaData.path) {
-				throw new Error('SourceFileMetaData.merge: all SourceFileMetaDatas should be from the same file.')
+				throw new Error(
+					'SourceFileMetaData.merge: all SourceFileMetaDatas should be from the same file.'
+				)
 			}
-			for (const [sourceNodeID, sourceNodeMetaData] of currentSourceFileMetaData.functions) {
-				const sourceNodeIndex = currentSourceFileMetaData.getSourceNodeIndexByID(sourceNodeID)
+			for (const [
+				sourceNodeID,
+				sourceNodeMetaData
+			] of currentSourceFileMetaData.functions) {
+				const sourceNodeIndex =
+					currentSourceFileMetaData.getSourceNodeIndexByID(sourceNodeID)
 
 				if (sourceNodeIndex === undefined) {
-					throw new Error('SourceFileMetaData.merge: could not resolve sourceNode from id')
+					throw new Error(
+						'SourceFileMetaData.merge: could not resolve sourceNode from id'
+					)
 				}
-				const identifier = sourceNodeIndex.identifier as SourceNodeIdentifier_string
+				const identifier =
+					sourceNodeIndex.identifier as SourceNodeIdentifier_string
 
 				if (!valuesToMerge.functions[identifier]) {
 					valuesToMerge.functions[identifier] = []
@@ -171,13 +212,22 @@ export class SourceFileMetaData extends BaseModel {
 		}
 
 		const result = new SourceFileMetaData(path, pathIndex)
-		for (const [identifier, sourceNodeMetaDatas] of Object.entries(valuesToMerge.functions)) {
-			const sourceNodeIndex = result.getSourceNodeIndex('upsert', identifier as SourceNodeIdentifier_string)
+		for (const [identifier, sourceNodeMetaDatas] of Object.entries(
+			valuesToMerge.functions
+		)) {
+			const sourceNodeIndex = result.getSourceNodeIndex(
+				'upsert',
+				identifier as SourceNodeIdentifier_string
+			)
 			const sourceNodeID = sourceNodeIndex.id as SourceNodeID_number
 
 			result.functions.set(
 				sourceNodeID,
-				SourceNodeMetaData.merge(sourceNodeID, sourceNodeIndex, ...sourceNodeMetaDatas)
+				SourceNodeMetaData.merge(
+					sourceNodeID,
+					sourceNodeIndex,
+					...sourceNodeMetaDatas
+				)
 			)
 		}
 		result.containsUncommittedChanges = containsUncommittedChanges
@@ -186,12 +236,18 @@ export class SourceFileMetaData extends BaseModel {
 
 	get functions(): ModelMap<
 		SourceNodeID_number,
-		SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>
+		SourceNodeMetaData<
+			| SourceNodeMetaDataType.SourceNode
+			| SourceNodeMetaDataType.LangInternalSourceNode
+		>
 	> {
 		if (!this._functions) {
 			this._functions = new ModelMap<
 				SourceNodeID_number,
-				SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>
+				SourceNodeMetaData<
+					| SourceNodeMetaDataType.SourceNode
+					| SourceNodeMetaDataType.LangInternalSourceNode
+				>
 			>('number')
 		}
 		return this._functions
@@ -205,7 +261,10 @@ export class SourceFileMetaData extends BaseModel {
 		indexRequestType: T,
 		sourceNodeIdentifier: SourceNodeIdentifier_string
 	) {
-		return this.pathIndex.getSourceNodeIndex<T>(indexRequestType, sourceNodeIdentifier)
+		return this.pathIndex.getSourceNodeIndex<T>(
+			indexRequestType,
+			sourceNodeIdentifier
+		)
 	}
 
 	validate() {
@@ -213,12 +272,23 @@ export class SourceFileMetaData extends BaseModel {
 			const sourceNodeIndex = this.getSourceNodeIndexByID(sourceNodeID)
 
 			if (sourceNodeIndex === undefined) {
-				throw new Error('SourceFileMetaData.validate: could not resolve source node index')
+				throw new Error(
+					'SourceFileMetaData.validate: could not resolve source node index'
+				)
 			}
 
-			const identifier = sourceNodeIndex?.identifier as SourceNodeIdentifier_string
-			if (!(sourceNodeIndex.pathIndex.moduleIndex.identifier === WASM_NODE_MODULE.identifier)) {
-				if (sourceNodeMetaData.type === SourceNodeMetaDataType.LangInternalSourceNode) {
+			const identifier =
+				sourceNodeIndex?.identifier as SourceNodeIdentifier_string
+			if (
+				!(
+					sourceNodeIndex.pathIndex.moduleIndex.identifier ===
+					WASM_NODE_MODULE.identifier
+				)
+			) {
+				if (
+					sourceNodeMetaData.type ===
+					SourceNodeMetaDataType.LangInternalSourceNode
+				) {
 					if (!LangInternalSourceNodeIdentifierRegex.test(identifier)) {
 						throw new Error(
 							'SourceFileMetaData.validate: invalid LangInternalSourceNodeIdentifier_string:' +
@@ -251,7 +321,10 @@ export class SourceFileMetaData extends BaseModel {
 		}
 	}
 
-	static fromJSON(json: string | ISourceFileMetaData, pathIndex: PathIndex): SourceFileMetaData {
+	static fromJSON(
+		json: string | ISourceFileMetaData,
+		pathIndex: PathIndex
+	): SourceFileMetaData {
 		let data: ISourceFileMetaData
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -260,16 +333,28 @@ export class SourceFileMetaData extends BaseModel {
 		}
 		const result = new SourceFileMetaData(data.path, pathIndex)
 		if (data.functions) {
-			for (const [sourceNodeID_string, nodeMetaData] of Object.entries(data.functions)) {
-				const sourceNodeID = parseInt(sourceNodeID_string) as SourceNodeID_number
-				result.functions.set(sourceNodeID, SourceNodeMetaData.fromJSON(nodeMetaData, pathIndex.moduleIndex.globalIndex))
+			for (const [sourceNodeID_string, nodeMetaData] of Object.entries(
+				data.functions
+			)) {
+				const sourceNodeID = parseInt(
+					sourceNodeID_string
+				) as SourceNodeID_number
+				result.functions.set(
+					sourceNodeID,
+					SourceNodeMetaData.fromJSON(
+						nodeMetaData,
+						pathIndex.moduleIndex.globalIndex
+					)
+				)
 			}
 		}
 		return result
 	}
 
 	createOrGetSourceNodeMetaData<
-		T extends SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
+		T extends
+			| SourceNodeMetaDataType.SourceNode
+			| SourceNodeMetaDataType.LangInternalSourceNode
 	>(identifier: SourceNodeIdentifier_string, type: T): SourceNodeMetaData<T> {
 		const sourceNodeIndex = this.getSourceNodeIndex('upsert', identifier)
 		const sourceNodeID = sourceNodeIndex.id as SourceNodeID_number
@@ -278,7 +363,9 @@ export class SourceFileMetaData extends BaseModel {
 		if (!node) {
 			node = new SourceNodeMetaData<T>(
 				type,
-				sourceNodeID as T extends SourceNodeMetaDataType.Aggregate ? undefined : SourceNodeID_number,
+				sourceNodeID as T extends SourceNodeMetaDataType.Aggregate
+					? undefined
+					: SourceNodeID_number,
 				new SensorValues({}),
 				sourceNodeIndex as T extends SourceNodeMetaDataType.Aggregate
 					? undefined
@@ -359,7 +446,8 @@ export class SourceFileMetaData extends BaseModel {
 		langInternal: ModelMap<PathID_number, SensorValues>
 	} {
 		const listToSum: SourceNodeMetaData<
-			SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
+			| SourceNodeMetaDataType.SourceNode
+			| SourceNodeMetaDataType.LangInternalSourceNode
 		>[] = []
 		const intern = new ModelMap<PathID_number, SensorValues>('number')
 		const extern = new ModelMap<PathID_number, SensorValues>('number')
@@ -373,7 +461,8 @@ export class SourceFileMetaData extends BaseModel {
 				sourceNodeMetaData.extern
 			]) {
 				for (const sourceNodeMetaDataReference of sourceNodeMetaDataReferences.values()) {
-					const pathID = sourceNodeMetaDataReference.sourceNodeIndex.pathIndex.id
+					const pathID =
+						sourceNodeMetaDataReference.sourceNodeIndex.pathIndex.id
 
 					if (pathID === undefined) {
 						throw new Error('totalSourceNodeMetaData: expected pathID')
@@ -462,24 +551,32 @@ export class SourceFileMetaData extends BaseModel {
 		globalIndex: GlobalIndex
 	): { instance: SourceFileMetaData; remainingBuffer: Buffer } {
 		let remainingBuffer = buffer
-		const { instance: pathID, remainingBuffer: newRemainingBuffer1 } = BufferHelper.UIntFromBuffer(remainingBuffer)
+		const { instance: pathID, remainingBuffer: newRemainingBuffer1 } =
+			BufferHelper.UIntFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
 
 		const pathIndex = globalIndex.getPathIndexByID(pathID as PathID_number)
 		if (pathIndex === undefined) {
-			throw new Error('SourceFileMetaData.consumeFromBuffer: could not resolve pathIndex')
+			throw new Error(
+				'SourceFileMetaData.consumeFromBuffer: could not resolve pathIndex'
+			)
 		}
 		const instance = new SourceFileMetaData(pathIndex.identifier, pathIndex)
 		const consumeFromBufferWithModuleIndex = (buffer: Buffer) => {
 			return SourceNodeMetaData.consumeFromBuffer<
-				SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode
+				| SourceNodeMetaDataType.SourceNode
+				| SourceNodeMetaDataType.LangInternalSourceNode
 			>(buffer, globalIndex)
 		}
 
-		const { instance: functions, remainingBuffer: newRemainingBuffer2 } = ModelMap.consumeFromBuffer<
-			SourceNodeID_number,
-			SourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>
-		>(remainingBuffer, 'number', consumeFromBufferWithModuleIndex)
+		const { instance: functions, remainingBuffer: newRemainingBuffer2 } =
+			ModelMap.consumeFromBuffer<
+				SourceNodeID_number,
+				SourceNodeMetaData<
+					| SourceNodeMetaDataType.SourceNode
+					| SourceNodeMetaDataType.LangInternalSourceNode
+				>
+			>(remainingBuffer, 'number', consumeFromBufferWithModuleIndex)
 		instance._functions = functions
 		remainingBuffer = newRemainingBuffer2
 

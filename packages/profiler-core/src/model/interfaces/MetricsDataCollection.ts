@@ -26,7 +26,12 @@ export class MetricsDataCollection extends BaseModel {
 
 	private _timeInfo: TimeInfo // represents the timestamps when the measurement was called to start and stop (not the actual measurement start/stop)
 
-	constructor(pid: number, type: MetricsDataCollectionType, items: BaseMetricsData[], timeInfo: TimeInfo) {
+	constructor(
+		pid: number,
+		type: MetricsDataCollectionType,
+		items: BaseMetricsData[],
+		timeInfo: TimeInfo
+	) {
 		super()
 		this._pid = pid
 		this._type = type
@@ -67,7 +72,10 @@ export class MetricsDataCollection extends BaseModel {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-	static fromJSON(json: string | IMetricsDataCollection, ...args: any[]): MetricsDataCollection {
+	static fromJSON(
+		json: string | IMetricsDataCollection,
+		...args: any[]
+	): MetricsDataCollection {
 		let data: IMetricsDataCollection
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -85,7 +93,9 @@ export class MetricsDataCollection extends BaseModel {
 					case MetricsDataCollectionType.PerfTotalSystem:
 						return PerfMetricsData.fromJSON(x as IPerfMetricsData)
 					case MetricsDataCollectionType.WindowsSensorInterfaceTotalSystem:
-						return WindowsSensorInterfaceMetricsData.fromJSON(x as IWindowsSensorInterfaceMetricsData)
+						return WindowsSensorInterfaceMetricsData.fromJSON(
+							x as IWindowsSensorInterfaceMetricsData
+						)
 				}
 			}),
 			{
@@ -95,10 +105,14 @@ export class MetricsDataCollection extends BaseModel {
 		)
 	}
 
-	static loadFromFile(filePath: UnifiedPath): MetricsDataCollection | undefined {
+	static loadFromFile(
+		filePath: UnifiedPath
+	): MetricsDataCollection | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
-		return MetricsDataCollection.fromJSON(fs.readFileSync(filePath.toPlatformString()).toString())
+		return MetricsDataCollection.fromJSON(
+			fs.readFileSync(filePath.toPlatformString()).toString()
+		)
 	}
 }

@@ -17,9 +17,14 @@ export class TimeHelper {
 		return process.hrtime.bigint() as NanoSeconds_BigInt
 	}
 
-	static timestampToHighResolutionTime(timestamp: MilliSeconds_number, timeDelta?: NanoSeconds_BigInt) {
+	static timestampToHighResolutionTime(
+		timestamp: MilliSeconds_number,
+		timeDelta?: NanoSeconds_BigInt
+	) {
 		return (BigInt(timestamp) * BigInt(1e6) -
-			(timeDelta !== undefined ? timeDelta : loadNanoDiff)) as NanoSeconds_BigInt
+			(timeDelta !== undefined
+				? timeDelta
+				: loadNanoDiff)) as NanoSeconds_BigInt
 	}
 
 	static async sleep(millis: number) {

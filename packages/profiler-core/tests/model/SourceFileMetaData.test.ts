@@ -1,4 +1,7 @@
-import { SourceFileMetaData, AggregatedSourceNodeMetaData } from '../../src/model/SourceFileMetaData'
+import {
+	SourceFileMetaData,
+	AggregatedSourceNodeMetaData
+} from '../../src/model/SourceFileMetaData'
 import { SourceNodeMetaData } from '../../src/model/SourceNodeMetaData'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
@@ -167,12 +170,14 @@ describe('AggregatedSourceNodeMetaData', () => {
 			}
 		}
 		test('deserialization from string', () => {
-			const aggregatedSourceNodeMetaData = AggregatedSourceNodeMetaData.fromJSON(JSON.stringify(expected))
+			const aggregatedSourceNodeMetaData =
+				AggregatedSourceNodeMetaData.fromJSON(JSON.stringify(expected))
 			expect(aggregatedSourceNodeMetaData.toJSON()).toEqual(expected)
 		})
 
 		test('deserialization from object', () => {
-			const aggregatedSourceNodeMetaData = AggregatedSourceNodeMetaData.fromJSON(expected)
+			const aggregatedSourceNodeMetaData =
+				AggregatedSourceNodeMetaData.fromJSON(expected)
 			expect(aggregatedSourceNodeMetaData.toJSON()).toEqual(expected)
 		})
 	})
@@ -291,7 +296,9 @@ function runInstanceTests(
 				sum: ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
 				intern: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>
 				extern: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>
-				langInternal: ReturnType<ModelMap<PathID_number, SensorValues>['toJSON']>
+				langInternal: ReturnType<
+					ModelMap<PathID_number, SensorValues>['toJSON']
+				>
 			})
 		})
 
@@ -318,7 +325,9 @@ function runInstanceTests(
 		})
 
 		test('toBuffer', () => {
-			expect(instance.toBuffer().toString('hex')).toEqual(EXAMPLE_SOURCE_FILE_META_DATA_BUFFER)
+			expect(instance.toBuffer().toString('hex')).toEqual(
+				EXAMPLE_SOURCE_FILE_META_DATA_BUFFER
+			)
 		})
 
 		test('containsUncommittedChanges', () => {
@@ -334,7 +343,9 @@ describe('SourceFileMetaData', () => {
 	runInstanceTests('instance related', () => {
 		const filePath = new UnifiedPath('./file.js').toString()
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-		const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+		const pathIndex = globalIndex
+			.getModuleIndex('upsert')
+			.getFilePathIndex('upsert', filePath)
 
 		const instance = new SourceFileMetaData(filePath, pathIndex)
 
@@ -408,7 +419,9 @@ describe('SourceFileMetaData', () => {
 		beforeEach(() => {
 			const filePath = new UnifiedPath('./file.js').toString()
 			globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+			pathIndex = globalIndex
+				.getModuleIndex('upsert')
+				.getFilePathIndex('upsert', filePath)
 			pathIndex.getSourceNodeIndex(
 				'upsert',
 				'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
@@ -420,17 +433,26 @@ describe('SourceFileMetaData', () => {
 		})
 
 		test('deserialization from string', () => {
-			const instanceFromString = SourceFileMetaData.fromJSON(JSON.stringify(EXAMPLE_SOURCE_FILE_META_DATA), pathIndex)
+			const instanceFromString = SourceFileMetaData.fromJSON(
+				JSON.stringify(EXAMPLE_SOURCE_FILE_META_DATA),
+				pathIndex
+			)
 			expect(instanceFromString.toJSON()).toEqual(EXAMPLE_SOURCE_FILE_META_DATA)
 		})
 
 		test('deserialization from object', () => {
-			const instanceFromObject = SourceFileMetaData.fromJSON(EXAMPLE_SOURCE_FILE_META_DATA, pathIndex)
+			const instanceFromObject = SourceFileMetaData.fromJSON(
+				EXAMPLE_SOURCE_FILE_META_DATA,
+				pathIndex
+			)
 			expect(instanceFromObject.toJSON()).toEqual(EXAMPLE_SOURCE_FILE_META_DATA)
 		})
 
 		runInstanceTests('deserialized instance related', () => {
-			const instanceFromString = SourceFileMetaData.fromJSON(JSON.stringify(EXAMPLE_SOURCE_FILE_META_DATA), pathIndex)
+			const instanceFromString = SourceFileMetaData.fromJSON(
+				JSON.stringify(EXAMPLE_SOURCE_FILE_META_DATA),
+				pathIndex
+			)
 			return {
 				instance: instanceFromString,
 				sourceNodeGraph: new SourceNodeGraph()
@@ -441,7 +463,9 @@ describe('SourceFileMetaData', () => {
 	describe('consume from buffer', () => {
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 		const filePath = new UnifiedPath('./file.js').toString()
-		const filePathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+		const filePathIndex = globalIndex
+			.getModuleIndex('upsert')
+			.getFilePathIndex('upsert', filePath)
 		filePathIndex.getSourceNodeIndex(
 			'upsert',
 			'{root}.{class:class}.{method:method}.{functionExpression:0}' as SourceNodeIdentifier_string
@@ -454,13 +478,17 @@ describe('SourceFileMetaData', () => {
 		const buffer = Buffer.from(EXAMPLE_SOURCE_FILE_META_DATA_BUFFER, 'hex')
 
 		test('consume from buffer', () => {
-			const { instance, remainingBuffer } = SourceFileMetaData.consumeFromBuffer(buffer, globalIndex)
+			const { instance, remainingBuffer } =
+				SourceFileMetaData.consumeFromBuffer(buffer, globalIndex)
 			expect(instance.toJSON()).toEqual(EXAMPLE_SOURCE_FILE_META_DATA)
 			expect(remainingBuffer.byteLength).toBe(0)
 		})
 
 		runInstanceTests('consume from buffer instance related', () => {
-			const { instance } = SourceFileMetaData.consumeFromBuffer(buffer, globalIndex)
+			const { instance } = SourceFileMetaData.consumeFromBuffer(
+				buffer,
+				globalIndex
+			)
 			return {
 				instance,
 				sourceNodeGraph: new SourceNodeGraph()
@@ -500,11 +528,15 @@ describe('SourceFileMetaData', () => {
 							lang_internal: {
 								[firstGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: firstGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -514,11 +546,15 @@ describe('SourceFileMetaData', () => {
 								},
 								[firstGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: firstGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -616,11 +652,15 @@ describe('SourceFileMetaData', () => {
 							lang_internal: {
 								[firstGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: firstGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -630,11 +670,15 @@ describe('SourceFileMetaData', () => {
 								} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
 								[firstGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: firstGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -647,12 +691,17 @@ describe('SourceFileMetaData', () => {
 								ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
 							>
 						} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
-					} as Record<SourceNodeIdentifier_string, ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>>
+					} as Record<
+						SourceNodeIdentifier_string,
+						ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
+					>
 				},
 				firstPathIndex
 			)
 
-			const secondGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+			const secondGlobalIndex = new GlobalIndex(
+				NodeModule.currentEngineModule()
+			)
 			const secondPathIndex = secondGlobalIndex
 				.getModuleIndex('upsert')
 				.getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
@@ -681,11 +730,15 @@ describe('SourceFileMetaData', () => {
 							lang_internal: {
 								[secondGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: secondGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -695,11 +748,15 @@ describe('SourceFileMetaData', () => {
 								},
 								[secondGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: secondGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -709,7 +766,9 @@ describe('SourceFileMetaData', () => {
 								},
 								[secondGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: secondGlobalIndex.getSourceNodeIndex(
 										'upsert',
@@ -815,11 +874,15 @@ describe('SourceFileMetaData', () => {
 							lang_internal: {
 								[secondGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: secondGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -829,11 +892,15 @@ describe('SourceFileMetaData', () => {
 								},
 								[secondGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: secondGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -889,7 +956,10 @@ describe('SourceFileMetaData', () => {
 								ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
 							>
 						}
-					} as Record<SourceNodeIdentifier_string, ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>>
+					} as Record<
+						SourceNodeIdentifier_string,
+						ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
+					>
 				},
 				secondPathIndex
 			)
@@ -923,11 +993,15 @@ describe('SourceFileMetaData', () => {
 							lang_internal: {
 								[thirdGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: thirdGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -937,11 +1011,15 @@ describe('SourceFileMetaData', () => {
 								},
 								[thirdGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: thirdGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -951,7 +1029,9 @@ describe('SourceFileMetaData', () => {
 								},
 								[thirdGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: thirdGlobalIndex.getSourceNodeIndex(
 										'upsert',
@@ -1077,11 +1157,15 @@ describe('SourceFileMetaData', () => {
 							lang_internal: {
 								[thirdGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: thirdGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -1091,11 +1175,15 @@ describe('SourceFileMetaData', () => {
 								},
 								[thirdGlobalIndex.getSourceNodeIndex(
 									'upsert',
-									GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+									GlobalIdentifier.fromIdentifier(
+										'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+									)
 								).id]: {
 									id: thirdGlobalIndex.getSourceNodeIndex(
 										'upsert',
-										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+										)
 									).id,
 									type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 									sensorValues: {
@@ -1175,7 +1263,10 @@ describe('SourceFileMetaData', () => {
 								ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
 							>
 						}
-					} as Record<SourceNodeIdentifier_string, ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>>
+					} as Record<
+						SourceNodeIdentifier_string,
+						ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
+					>
 				},
 				thirdPathIndex
 			)
@@ -1186,19 +1277,25 @@ describe('SourceFileMetaData', () => {
 		test('empty arguments', () => {
 			const filePath = new UnifiedPath('./file.js').toString()
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+			const pathIndex = globalIndex
+				.getModuleIndex('upsert')
+				.getFilePathIndex('upsert', filePath)
 
 			const t = () => {
 				SourceFileMetaData.merge(pathIndex, ...[])
 			}
 
-			expect(t).toThrow('SourceFileMetaData.merge: no SourceFileMetaDatas were given')
+			expect(t).toThrow(
+				'SourceFileMetaData.merge: no SourceFileMetaDatas were given'
+			)
 		})
 
 		test('wrong paths', () => {
 			const filePath = new UnifiedPath('./file.js').toString()
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+			const pathIndex = globalIndex
+				.getModuleIndex('upsert')
+				.getFilePathIndex('upsert', filePath)
 
 			instancesToMerge[1].path = './abc.js' as UnifiedPath_string
 
@@ -1206,15 +1303,22 @@ describe('SourceFileMetaData', () => {
 				SourceFileMetaData.merge(pathIndex, ...instancesToMerge)
 			}
 
-			expect(t).toThrow('SourceFileMetaData.merge: all SourceFileMetaDatas should be from the same file.')
+			expect(t).toThrow(
+				'SourceFileMetaData.merge: all SourceFileMetaDatas should be from the same file.'
+			)
 		})
 
 		test('merges correctly', () => {
 			const filePath = new UnifiedPath('./file.js').toString()
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+			const pathIndex = globalIndex
+				.getModuleIndex('upsert')
+				.getFilePathIndex('upsert', filePath)
 
-			const mergeResult = SourceFileMetaData.merge(pathIndex, ...instancesToMerge)
+			const mergeResult = SourceFileMetaData.merge(
+				pathIndex,
+				...instancesToMerge
+			)
 
 			expect(mergeResult.toJSON()).toEqual({
 				path: './file.js',
@@ -1240,12 +1344,16 @@ describe('SourceFileMetaData', () => {
 						lang_internal: {
 							[globalIndex.getSourceNodeIndex(
 								'get',
-								GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+								GlobalIdentifier.fromIdentifier(
+									'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+								)
 							)?.id || -1]: {
 								id:
 									globalIndex.getSourceNodeIndex(
 										'get',
-										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+										)
 									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
@@ -1255,12 +1363,16 @@ describe('SourceFileMetaData', () => {
 							},
 							[globalIndex.getSourceNodeIndex(
 								'get',
-								GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+								GlobalIdentifier.fromIdentifier(
+									'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+								)
 							)?.id || -1]: {
 								id:
 									globalIndex.getSourceNodeIndex(
 										'get',
-										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+										)
 									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
@@ -1270,7 +1382,9 @@ describe('SourceFileMetaData', () => {
 							},
 							[globalIndex.getSourceNodeIndex(
 								'get',
-								GlobalIdentifier.fromIdentifier('{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string)
+								GlobalIdentifier.fromIdentifier(
+									'{}{stopSamplingHeapProfiling}' as GlobalSourceNodeIdentifier_string
+								)
 							)?.id || -1]: {
 								id:
 									globalIndex.getSourceNodeIndex(
@@ -1431,12 +1545,16 @@ describe('SourceFileMetaData', () => {
 						lang_internal: {
 							[globalIndex.getSourceNodeIndex(
 								'get',
-								GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+								GlobalIdentifier.fromIdentifier(
+									'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+								)
 							)?.id || -1]: {
 								id:
 									globalIndex.getSourceNodeIndex(
 										'get',
-										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+										)
 									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
@@ -1446,12 +1564,16 @@ describe('SourceFileMetaData', () => {
 							},
 							[globalIndex.getSourceNodeIndex(
 								'get',
-								GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+								GlobalIdentifier.fromIdentifier(
+									'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+								)
 							)?.id || -1]: {
 								id:
 									globalIndex.getSourceNodeIndex(
 										'get',
-										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+										)
 									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
@@ -1482,12 +1604,16 @@ describe('SourceFileMetaData', () => {
 						lang_internal: {
 							[globalIndex.getSourceNodeIndex(
 								'get',
-								GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+								GlobalIdentifier.fromIdentifier(
+									'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+								)
 							)?.id || -1]: {
 								id:
 									globalIndex.getSourceNodeIndex(
 										'get',
-										GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+										)
 									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
@@ -1497,12 +1623,16 @@ describe('SourceFileMetaData', () => {
 							},
 							[globalIndex.getSourceNodeIndex(
 								'get',
-								GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+								GlobalIdentifier.fromIdentifier(
+									'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+								)
 							)?.id || -1]: {
 								id:
 									globalIndex.getSourceNodeIndex(
 										'get',
-										GlobalIdentifier.fromIdentifier('{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string)
+										GlobalIdentifier.fromIdentifier(
+											'{}{(garbage collector)}' as GlobalSourceNodeIdentifier_string
+										)
 									)?.id || -1,
 								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 								sensorValues: {
@@ -1584,13 +1714,18 @@ describe('SourceFileMetaData', () => {
 			test('all false', () => {
 				const filePath = new UnifiedPath('./file.js').toString()
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-				const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+				const pathIndex = globalIndex
+					.getModuleIndex('upsert')
+					.getFilePathIndex('upsert', filePath)
 
 				instancesToMerge[0].containsUncommittedChanges = false
 				instancesToMerge[1].containsUncommittedChanges = false
 				instancesToMerge[2].containsUncommittedChanges = false
 
-				const mergeResult = SourceFileMetaData.merge(pathIndex, ...instancesToMerge)
+				const mergeResult = SourceFileMetaData.merge(
+					pathIndex,
+					...instancesToMerge
+				)
 
 				expect(mergeResult.containsUncommittedChanges).toBe(false)
 			})
@@ -1598,13 +1733,18 @@ describe('SourceFileMetaData', () => {
 			test('one is true', () => {
 				const filePath = new UnifiedPath('./file.js').toString()
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-				const pathIndex = globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', filePath)
+				const pathIndex = globalIndex
+					.getModuleIndex('upsert')
+					.getFilePathIndex('upsert', filePath)
 
 				instancesToMerge[0].containsUncommittedChanges = false
 				instancesToMerge[1].containsUncommittedChanges = true
 				instancesToMerge[2].containsUncommittedChanges = false
 
-				const mergeResult = SourceFileMetaData.merge(pathIndex, ...instancesToMerge)
+				const mergeResult = SourceFileMetaData.merge(
+					pathIndex,
+					...instancesToMerge
+				)
 
 				expect(mergeResult.containsUncommittedChanges).toBe(true)
 			})
@@ -1642,12 +1782,24 @@ describe('SourceFileMetaData', () => {
 		 */
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 		const selfModuleIndex = globalIndex.getModuleIndex('upsert')
-		const filePathIndexA = selfModuleIndex.getFilePathIndex('upsert', './fileA.js' as UnifiedPath_string)
-		const filePathIndexB = selfModuleIndex.getFilePathIndex('upsert', './fileB.js' as UnifiedPath_string)
+		const filePathIndexA = selfModuleIndex.getFilePathIndex(
+			'upsert',
+			'./fileA.js' as UnifiedPath_string
+		)
+		const filePathIndexB = selfModuleIndex.getFilePathIndex(
+			'upsert',
+			'./fileB.js' as UnifiedPath_string
+		)
 
-		const sourceFileMetaDataA = new SourceFileMetaData('./fileA.js' as UnifiedPath_string, filePathIndexA)
+		const sourceFileMetaDataA = new SourceFileMetaData(
+			'./fileA.js' as UnifiedPath_string,
+			filePathIndexA
+		)
 
-		const sourceFileMetaDataB = new SourceFileMetaData('./fileB.js' as UnifiedPath_string, filePathIndexB)
+		const sourceFileMetaDataB = new SourceFileMetaData(
+			'./fileB.js' as UnifiedPath_string,
+			filePathIndexB
+		)
 
 		const methodA = sourceFileMetaDataA.createOrGetSourceNodeMetaData(
 			'{root}{class:ClassA}.{method:methodA}' as SourceNodeIdentifier_string,

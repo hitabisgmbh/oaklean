@@ -9,7 +9,8 @@ describe('CommonJS', () => {
 	 * This case is important because we need to detect this to correct the scope.
 	 */
 	describe('empty module', () => {
-		const code = '(function (exports, require, module, __filename, __dirname) {})'
+		const code =
+			'(function (exports, require, module, __filename, __dirname) {})'
 
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)

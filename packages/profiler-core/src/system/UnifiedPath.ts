@@ -84,7 +84,10 @@ export class UnifiedPath {
 	}
 
 	isRelative(): boolean {
-		return this._unifiedPath === '' || (this._unifiedPath[0] !== '/' && !this.isAbsoluteWindowsPath())
+		return (
+			this._unifiedPath === '' ||
+			(this._unifiedPath[0] !== '/' && !this.isAbsoluteWindowsPath())
+		)
 	}
 
 	isAbsoluteWindowsPath(): boolean {
@@ -101,7 +104,9 @@ export class UnifiedPath {
 		if (typeof other === 'string') {
 			other = new UnifiedPath(other as string)
 		}
-		return new UnifiedPath(PathUtils.getPathRelativeTo(this.toString(), other.toString()))
+		return new UnifiedPath(
+			PathUtils.getPathRelativeTo(this.toString(), other.toString())
+		)
 	}
 
 	/**
@@ -147,14 +152,20 @@ export class UnifiedPath {
 	 * @param dirName
 	 * @returns
 	 */
-	pathUntilSubDir(dirName: UnifiedPathPart_string): { match: UnifiedPath; remainder: UnifiedPath } | undefined {
+	pathUntilSubDir(
+		dirName: UnifiedPathPart_string
+	): { match: UnifiedPath; remainder: UnifiedPath } | undefined {
 		const pathParts = this.split()
 		const firstMatch = pathParts.indexOf(dirName)
 
 		if (firstMatch !== -1) {
 			return {
-				match: new UnifiedPath(path.posix.join(...pathParts.slice(0, firstMatch + 1))),
-				remainder: new UnifiedPath(path.posix.join(...pathParts.slice(firstMatch + 1)))
+				match: new UnifiedPath(
+					path.posix.join(...pathParts.slice(0, firstMatch + 1))
+				),
+				remainder: new UnifiedPath(
+					path.posix.join(...pathParts.slice(firstMatch + 1))
+				)
 			}
 		}
 		return undefined

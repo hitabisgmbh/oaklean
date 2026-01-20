@@ -3,7 +3,8 @@ import crypto from 'crypto'
 // Types
 import { UUID_string } from '../types'
 
-const UUID4_REGEX = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
+const UUID4_REGEX =
+	/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
 
 export class Crypto {
 	static hash(value: string | Buffer): string {

@@ -51,7 +51,10 @@ export class ModelSet<TVALUE extends ModelSetValueType> extends BaseModel {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	forEach(callback: (value: TVALUE, value2: TVALUE, set: Set<TVALUE>) => void, thisArg?: any): void {
+	forEach(
+		callback: (value: TVALUE, value2: TVALUE, set: Set<TVALUE>) => void,
+		thisArg?: any
+	): void {
 		this._set.forEach(callback, thisArg)
 	}
 
@@ -73,7 +76,9 @@ export class ModelSet<TVALUE extends ModelSetValueType> extends BaseModel {
 	static fromJSON<TVALUE extends ModelSetValueType>(
 		json: string | object,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		fromJSON: TVALUE extends BaseModel ? (json: string | any, ...args: any[]) => TVALUE : 'string' | 'number'
+		fromJSON: TVALUE extends BaseModel
+			? (json: string | any, ...args: any[]) => TVALUE
+			: 'string' | 'number'
 	): ModelSet<TVALUE> {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		let data: any
@@ -124,14 +129,18 @@ export class ModelSet<TVALUE extends ModelSetValueType> extends BaseModel {
 		buffer: Buffer,
 		fromBuffer: TVALUE extends BaseModel
 			? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-				(buffer: Buffer, ...args: any[]) => { instance: TVALUE; remainingBuffer: Buffer }
+				(
+					buffer: Buffer,
+					...args: any[]
+				) => { instance: TVALUE; remainingBuffer: Buffer }
 			: 'string' | 'number'
 	): {
 		instance: ModelSet<TVALUE>
 		remainingBuffer: Buffer
 	} {
 		let remainingBuffer = buffer
-		const { instance: size, remainingBuffer: newRemainingBuffer1 } = BufferHelper.UIntFromBuffer(buffer)
+		const { instance: size, remainingBuffer: newRemainingBuffer1 } =
+			BufferHelper.UIntFromBuffer(buffer)
 		const result = new ModelSet<TVALUE>()
 		remainingBuffer = newRemainingBuffer1
 
@@ -145,14 +154,16 @@ export class ModelSet<TVALUE extends ModelSetValueType> extends BaseModel {
 			switch (valueType) {
 				case ModelSetValueTypeEnum.string:
 					{
-						const { instance, remainingBuffer: newRemainingBuffer } = BufferHelper.String2LFromBuffer(remainingBuffer)
+						const { instance, remainingBuffer: newRemainingBuffer } =
+							BufferHelper.String2LFromBuffer(remainingBuffer)
 						result.add(instance as TVALUE)
 						remainingBuffer = newRemainingBuffer
 					}
 					break
 				case ModelSetValueTypeEnum.number:
 					{
-						const { instance, remainingBuffer: newRemainingBuffer } = BufferHelper.UIntFromBuffer(remainingBuffer)
+						const { instance, remainingBuffer: newRemainingBuffer } =
+							BufferHelper.UIntFromBuffer(remainingBuffer)
 						result.add(instance as TVALUE)
 						remainingBuffer = newRemainingBuffer
 					}
@@ -160,7 +171,8 @@ export class ModelSet<TVALUE extends ModelSetValueType> extends BaseModel {
 				case ModelSetValueTypeEnum.object:
 					{
 						if (fromBuffer !== 'string' && fromBuffer !== 'number') {
-							const { instance, remainingBuffer: newRemainingBuffer } = fromBuffer(remainingBuffer)
+							const { instance, remainingBuffer: newRemainingBuffer } =
+								fromBuffer(remainingBuffer)
 							result.add(instance as TVALUE)
 							remainingBuffer = newRemainingBuffer
 						}

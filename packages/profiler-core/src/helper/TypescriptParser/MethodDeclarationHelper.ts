@@ -7,7 +7,11 @@ import { NamingHelper } from './NamingHelper'
 import { LoggerHelper } from '../LoggerHelper'
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../types'
 
 export class MethodDeclarationHelper {
 	static syntaxKind = ts.SyntaxKind.MethodDeclaration
@@ -26,20 +30,30 @@ export class MethodDeclarationHelper {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {
-				const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
+				const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node)
+					? '@static'
+					: ''
 
-				const { identifier, identifierType } = NamingHelper.getName(node.name, sourceFile, traverseNodeInfo)
+				const { identifier, identifierType } = NamingHelper.getName(
+					node.name,
+					sourceFile,
+					traverseNodeInfo
+				)
 
 				if (identifierType === IdentifierType.Anonymous) {
 					LoggerHelper.error(
-						'MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' + node.name.kind,
+						'MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' +
+							node.name.kind,
 						{
 							filePath: traverseNodeInfo.filePath,
 							kind: node.name.kind,
 							pos: TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
 						}
 					)
-					throw new Error('MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' + node.name.kind)
+					throw new Error(
+						'MethodDeclarationHelper (parseNode): unhandled case: node.name.kind  === ' +
+							node.name.kind
+					)
 				}
 
 				return new ProgramStructureTree(

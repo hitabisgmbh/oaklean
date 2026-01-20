@@ -7,7 +7,9 @@ import { UUID_string } from '../system/Crypto'
 import { GitHash_string } from '../helper/GitHelper'
 
 const ProjectIdentifierSymbol: unique symbol = Symbol('ProjectIdentifierSymbol')
-export type ProjectIdentifier_string = UUID_string & { [ProjectIdentifierSymbol]: never }
+export type ProjectIdentifier_string = UUID_string & {
+	[ProjectIdentifierSymbol]: never
+}
 
 export type IProjectMetaData = {
 	projectID: ProjectIdentifier_string

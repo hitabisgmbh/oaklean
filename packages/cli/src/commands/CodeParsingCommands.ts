@@ -16,7 +16,9 @@ import { program } from 'commander'
 
 export default class CodeParsingCommands {
 	constructor() {
-		const parseCommand = program.command('parse').description('commands to parse javascript or typescript files')
+		const parseCommand = program
+			.command('parse')
+			.description('commands to parse javascript or typescript files')
 
 		parseCommand
 			.command('toPST')
@@ -44,7 +46,8 @@ export default class CodeParsingCommands {
 			.command('external-resource')
 			.alias('er')
 			.description(
-				'commands to interact with external resource files ' + `(${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION})`
+				'commands to interact with external resource files ' +
+					`(${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION})`
 			)
 
 		externalResourceCommand
@@ -53,16 +56,31 @@ export default class CodeParsingCommands {
 			.description(
 				'Parses all source files in all resource files within a given path and verifies that all identifiers are valid and unique'
 			)
-			.argument('<input>', `File path to the directory containing the ${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION} files`)
+			.argument(
+				'<input>',
+				`File path to the directory containing the ${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION} files`
+			)
 			.action(this.verifyIdentifiers.bind(this))
 
 		externalResourceCommand
 			.command('extract')
 			.alias('e')
-			.description('Extract a file from a resource file and stores it into a separate file')
-			.argument('<input>', `File path to the ${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION} file`)
-			.argument('<file>', 'File to extract from the resource file (scriptID or file path)')
-			.option('-o, --output <output>', 'Path to store the file (default: execute directory + code.ts)', undefined)
+			.description(
+				'Extract a file from a resource file and stores it into a separate file'
+			)
+			.argument(
+				'<input>',
+				`File path to the ${EXTERNAL_RESOURCE_HELPER_FILE_EXTENSION} file`
+			)
+			.argument(
+				'<file>',
+				'File to extract from the resource file (scriptID or file path)'
+			)
+			.option(
+				'-o, --output <output>',
+				'Path to store the file (default: execute directory + code.ts)',
+				undefined
+			)
 			.action(this.extractFile.bind(this))
 	}
 
@@ -97,7 +115,10 @@ export default class CodeParsingCommands {
 		if (code === null) {
 			return
 		}
-		const tmpName = (addToDebug.scriptID !== undefined ? addToDebug.scriptID : addToDebug.filePath) || 'tmp.ts'
+		const tmpName =
+			(addToDebug.scriptID !== undefined
+				? addToDebug.scriptID
+				: addToDebug.filePath) || 'tmp.ts'
 		TypescriptParser.parseSource(
 			new UnifiedPath(tmpName),
 			code,
@@ -113,12 +134,17 @@ export default class CodeParsingCommands {
 		)
 	}
 
-	async verifySourceFilesIdentifiers(input: string, options: { t262?: boolean }) {
+	async verifySourceFilesIdentifiers(
+		input: string,
+		options: { t262?: boolean }
+	) {
 		let inputPath = new UnifiedPath(input)
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
 		}
-		const globPattern = inputPath.join('**', '*.{js,ts,jsx,tsx}').toPlatformString()
+		const globPattern = inputPath
+			.join('**', '*.{js,ts,jsx,tsx}')
+			.toPlatformString()
 		if (fs.existsSync(inputPath.toPlatformString())) {
 			const filePaths = sync(globPattern.toString(), { dot: true })
 			filePaths.map((filePath) => new UnifiedPath(filePath))
@@ -141,12 +167,17 @@ export default class CodeParsingCommands {
 						filePath: sourceFilePath.toString()
 					})
 				} catch (error) {
-					LoggerHelper.error(`Error parsing file ${sourceFilePath.toPlatformString()}:`, error)
+					LoggerHelper.error(
+						`Error parsing file ${sourceFilePath.toPlatformString()}:`,
+						error
+					)
 					continue
 				}
 			}
 		} else {
-			LoggerHelper.error(`Input path does not exist: ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`Input path does not exist: ${inputPath.toPlatformString()}`
+			)
 			return
 		}
 	}
@@ -159,15 +190,21 @@ export default class CodeParsingCommands {
 
 		const exportAssetHelper = new ExportAssetHelper(inputPath)
 		const cwdPath = new UnifiedPath(process.cwd())
-		const externalResourcePaths = exportAssetHelper.allExternalResourcePathsInOutputDir()
+		const externalResourcePaths =
+			exportAssetHelper.allExternalResourcePathsInOutputDir()
 
 		for (const externalResourcePath of externalResourcePaths) {
 			const relativePath = cwdPath.pathTo(externalResourcePath)
 
-			const resourceFile = ExternalResourceHelper.loadFromFile(new UnifiedPath(process.cwd()), externalResourcePath)
+			const resourceFile = ExternalResourceHelper.loadFromFile(
+				new UnifiedPath(process.cwd()),
+				externalResourcePath
+			)
 
 			if (resourceFile === undefined) {
-				LoggerHelper.error(`Could not load resource file: ${relativePath.toPlatformString()}`)
+				LoggerHelper.error(
+					`Could not load resource file: ${relativePath.toPlatformString()}`
+				)
 				continue
 			}
 
@@ -203,30 +240,46 @@ export default class CodeParsingCommands {
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
 		}
-		let outputPath = new UnifiedPath(options.output !== undefined ? options.output : 'code.ts')
+		let outputPath = new UnifiedPath(
+			options.output !== undefined ? options.output : 'code.ts'
+		)
 		if (outputPath.isRelative()) {
 			outputPath = new UnifiedPath(process.cwd()).join(outputPath)
 		}
 		const cwdPath = new UnifiedPath(process.cwd())
 		const relativeInputPath = cwdPath.pathTo(inputPath)
 
-		const resourceFile = ExternalResourceHelper.loadFromFile(new UnifiedPath(process.cwd()), inputPath)
+		const resourceFile = ExternalResourceHelper.loadFromFile(
+			new UnifiedPath(process.cwd()),
+			inputPath
+		)
 
 		if (resourceFile === undefined) {
-			LoggerHelper.error(`Could not load resource file: ${relativeInputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`Could not load resource file: ${relativeInputPath.toPlatformString()}`
+			)
 			return
 		}
 
 		let code: string | null = ''
 		if (resourceFile.scriptIDs.includes(file as ScriptID_string)) {
 			code = await resourceFile.sourceCodeFromScriptID(file as ScriptID_string)
-		} else if (resourceFile.loadedFilePaths.includes(file as UnifiedPath_string)) {
-			code = await resourceFile.sourceCodeFromPath(file as UnifiedPath_string, file as UnifiedPath_string)
+		} else if (
+			resourceFile.loadedFilePaths.includes(file as UnifiedPath_string)
+		) {
+			code = await resourceFile.sourceCodeFromPath(
+				file as UnifiedPath_string,
+				file as UnifiedPath_string
+			)
 		} else {
-			LoggerHelper.error(`File ${file} not found in resource file: ${relativeInputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`File ${file} not found in resource file: ${relativeInputPath.toPlatformString()}`
+			)
 		}
 		if (code === null) {
-			LoggerHelper.error(`File '${file}' is marked as missing (was not present during profiling)`)
+			LoggerHelper.error(
+				`File '${file}' is marked as missing (was not present during profiling)`
+			)
 			return
 		}
 

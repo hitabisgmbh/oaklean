@@ -1,7 +1,10 @@
 import { BaseModel } from './BaseModel'
 import { ModelMap } from './ModelMap'
 import { NodeModule } from './NodeModule'
-import { AggregatedSourceNodeMetaData, SourceFileMetaData } from './SourceFileMetaData'
+import {
+	AggregatedSourceNodeMetaData,
+	SourceFileMetaData
+} from './SourceFileMetaData'
 import { SourceNodeMetaData } from './SourceNodeMetaData'
 import { ProfilerConfig } from './ProfilerConfig'
 import { SensorValues } from './SensorValues'
@@ -120,7 +123,9 @@ export class Report extends BaseModel {
 		}
 
 		if (reportToCheck !== undefined) {
-			const sourceFileMetaData = reportToCheck.getSourceFileMetaDataByPathID(pathIndex.id)
+			const sourceFileMetaData = reportToCheck.getSourceFileMetaDataByPathID(
+				pathIndex.id
+			)
 			if (sourceFileMetaData === undefined) {
 				return {
 					error: true,
@@ -161,7 +166,9 @@ export class Report extends BaseModel {
 	}
 
 	normalize(newGlobalIndex: GlobalIndex) {
-		function sortIDsByPath(input: ModelMap<PathID_number, SourceFileMetaData>): PathID_number[] {
+		function sortIDsByPath(
+			input: ModelMap<PathID_number, SourceFileMetaData>
+		): PathID_number[] {
 			return Array.from(input.values())
 				.map((value) => ({
 					path: value.path,
@@ -171,7 +178,9 @@ export class Report extends BaseModel {
 				.sort((a, b) => a.path.localeCompare(b.path)) // Sort by path
 				.map((pair) => pair.id) // Extract sorted ids
 		}
-		function sortIDsByModuleIdentifier(input: ModelMap<ModuleID_number, ModuleReport>): ModuleID_number[] {
+		function sortIDsByModuleIdentifier(
+			input: ModelMap<ModuleID_number, ModuleReport>
+		): ModuleID_number[] {
 			return Array.from(input.values())
 				.map((value) => ({
 					identifier: value.nodeModule.identifier,
@@ -181,13 +190,17 @@ export class Report extends BaseModel {
 				.map((pair) => pair.id) // Extract sorted ids
 		}
 
-		const new_lang_internal = new ModelMap<PathID_number, SourceFileMetaData>('number')
+		const new_lang_internal = new ModelMap<PathID_number, SourceFileMetaData>(
+			'number'
+		)
 		for (const pathID of sortIDsByPath(this.lang_internal)) {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const sourceFileMetaData = this.lang_internal.get(pathID)!
 			sourceFileMetaData.normalize(newGlobalIndex)
 			if (sourceFileMetaData.pathIndex.id === undefined) {
-				throw new Error('Report.normalize(lang_internal): cannot resolve id of new created pathIndex')
+				throw new Error(
+					'Report.normalize(lang_internal): cannot resolve id of new created pathIndex'
+				)
 			}
 			new_lang_internal.set(sourceFileMetaData.pathIndex.id, sourceFileMetaData)
 		}
@@ -198,7 +211,9 @@ export class Report extends BaseModel {
 			const sourceFileMetaData = this.intern.get(pathID)!
 			sourceFileMetaData.normalize(newGlobalIndex)
 			if (sourceFileMetaData.pathIndex.id === undefined) {
-				throw new Error('Report.normalize(intern): cannot resolve id of new created pathIndex')
+				throw new Error(
+					'Report.normalize(intern): cannot resolve id of new created pathIndex'
+				)
 			}
 			new_intern.set(sourceFileMetaData.pathIndex.id, sourceFileMetaData)
 		}
@@ -228,7 +243,9 @@ export class Report extends BaseModel {
 
 	get lang_internal(): ModelMap<PathID_number, SourceFileMetaData> {
 		if (!this._lang_internal) {
-			this._lang_internal = new ModelMap<PathID_number, SourceFileMetaData>('number')
+			this._lang_internal = new ModelMap<PathID_number, SourceFileMetaData>(
+				'number'
+			)
 		}
 		return this._lang_internal
 	}
@@ -247,10 +264,10 @@ export class Report extends BaseModel {
 		return this._extern
 	}
 
-	getLangInternalPathIndex<T extends IndexRequestType, R = T extends 'upsert' ? PathIndex : PathIndex | undefined>(
-		indexRequestType: T,
-		filePath: LangInternalPath_string
-	) {
+	getLangInternalPathIndex<
+		T extends IndexRequestType,
+		R = T extends 'upsert' ? PathIndex : PathIndex | undefined
+	>(indexRequestType: T, filePath: LangInternalPath_string) {
 		return this.moduleIndex.globalIndex
 			.getLangInternalIndex(indexRequestType)
 			?.getFilePathIndex(indexRequestType, filePath) as R
@@ -260,25 +277,31 @@ export class Report extends BaseModel {
 		return this.moduleIndex.globalIndex.getModuleIndexByID(id)
 	}
 
-	getModuleIndex<T extends IndexRequestType, R = T extends 'upsert' ? ModuleIndex : ModuleIndex | undefined>(
-		indexRequestType: T,
-		moduleIdentifier: NodeModuleIdentifier_string
-	): R {
-		return this.moduleIndex.globalIndex.getModuleIndex(indexRequestType, moduleIdentifier) as R
+	getModuleIndex<
+		T extends IndexRequestType,
+		R = T extends 'upsert' ? ModuleIndex : ModuleIndex | undefined
+	>(indexRequestType: T, moduleIdentifier: NodeModuleIdentifier_string): R {
+		return this.moduleIndex.globalIndex.getModuleIndex(
+			indexRequestType,
+			moduleIdentifier
+		) as R
 	}
 
 	getPathIndexByID(id: PathID_number) {
 		return this.moduleIndex.globalIndex.getPathIndexByID(id)
 	}
 
-	getPathIndex<T extends IndexRequestType, R = T extends 'upsert' ? PathIndex : PathIndex | undefined>(
-		indexRequestType: T,
-		filePath: UnifiedPath_string
-	): R {
+	getPathIndex<
+		T extends IndexRequestType,
+		R = T extends 'upsert' ? PathIndex : PathIndex | undefined
+	>(indexRequestType: T, filePath: UnifiedPath_string): R {
 		return this.moduleIndex.getFilePathIndex(indexRequestType, filePath) as R
 	}
 
-	addToLangInternal(filePath: LangInternalPath_string, functionIdentifier: LangInternalSourceNodeIdentifier_string) {
+	addToLangInternal(
+		filePath: LangInternalPath_string,
+		functionIdentifier: LangInternalSourceNodeIdentifier_string
+	) {
 		const pathIndex = this.getLangInternalPathIndex('upsert', filePath)
 		const filePathID = pathIndex.id as PathID_number
 
@@ -294,7 +317,10 @@ export class Report extends BaseModel {
 		)
 	}
 
-	addToIntern(filePath: UnifiedPath_string, functionIdentifier: SourceNodeIdentifier_string) {
+	addToIntern(
+		filePath: UnifiedPath_string,
+		functionIdentifier: SourceNodeIdentifier_string
+	) {
 		const filePathIndex = this.getPathIndex('upsert', filePath)
 		const filePathID = filePathIndex.id as PathID_number
 
@@ -304,11 +330,21 @@ export class Report extends BaseModel {
 			sourceFileMetaData = new SourceFileMetaData(filePath, filePathIndex)
 			this.intern.set(filePathID, sourceFileMetaData)
 		}
-		return sourceFileMetaData.createOrGetSourceNodeMetaData(functionIdentifier, SourceNodeMetaDataType.SourceNode)
+		return sourceFileMetaData.createOrGetSourceNodeMetaData(
+			functionIdentifier,
+			SourceNodeMetaDataType.SourceNode
+		)
 	}
 
-	addToExtern(filePath: UnifiedPath, nodeModule: NodeModule, functionIdentifier: SourceNodeIdentifier_string) {
-		const moduleIndex = this.moduleIndex.globalIndex.getModuleIndex('upsert', nodeModule.identifier)
+	addToExtern(
+		filePath: UnifiedPath,
+		nodeModule: NodeModule,
+		functionIdentifier: SourceNodeIdentifier_string
+	) {
+		const moduleIndex = this.moduleIndex.globalIndex.getModuleIndex(
+			'upsert',
+			nodeModule.identifier
+		)
 
 		// check if filePath is in extern
 		let moduleReport = this.extern.get(moduleIndex.id as ModuleID_number)
@@ -316,7 +352,10 @@ export class Report extends BaseModel {
 			moduleReport = new ModuleReport(moduleIndex, nodeModule, this.kind)
 			this.extern.set(moduleIndex.id as ModuleID_number, moduleReport)
 		}
-		const sourceNodeMetaData = moduleReport.addToIntern(filePath.toString(), functionIdentifier)
+		const sourceNodeMetaData = moduleReport.addToIntern(
+			filePath.toString(),
+			functionIdentifier
+		)
 		return {
 			report: moduleReport,
 			sourceNodeMetaData: sourceNodeMetaData
@@ -356,7 +395,10 @@ export class Report extends BaseModel {
 		absoluteFilePath: UnifiedPath
 	): SourceFileMetaData | undefined {
 		if (!this.relativeRootDir) {
-			const absoluteFilePathIndex = this.getPathIndex('get', absoluteFilePath.toString())
+			const absoluteFilePathIndex = this.getPathIndex(
+				'get',
+				absoluteFilePath.toString()
+			)
 			if (absoluteFilePathIndex === undefined) {
 				return undefined
 			}
@@ -364,8 +406,14 @@ export class Report extends BaseModel {
 
 			return this.intern.get(absoluteFilePathID)
 		}
-		const relativeFilePath = projectReportFilePath.dirName().join(this.relativeRootDir).pathTo(absoluteFilePath)
-		const relativeFilePathIndex = this.getPathIndex('get', relativeFilePath.toString())
+		const relativeFilePath = projectReportFilePath
+			.dirName()
+			.join(this.relativeRootDir)
+			.pathTo(absoluteFilePath)
+		const relativeFilePathIndex = this.getPathIndex(
+			'get',
+			relativeFilePath.toString()
+		)
 		if (relativeFilePathIndex === undefined) {
 			return undefined
 		}
@@ -401,12 +449,24 @@ export class Report extends BaseModel {
 		}
 		const allSensorValues = aggregate(this)
 
-		const totalSensorValues = SensorValues.sum(...allSensorValues).cloneAsIsolated()
+		const totalSensorValues = SensorValues.sum(
+			...allSensorValues
+		).cloneAsIsolated()
 		const maxSensorValues = SensorValues.max(...allSensorValues)
 
 		return new AggregatedSourceNodeMetaData(
-			new SourceNodeMetaData(SourceNodeMetaDataType.Aggregate, undefined, totalSensorValues, undefined),
-			new SourceNodeMetaData(SourceNodeMetaDataType.Aggregate, undefined, maxSensorValues, undefined)
+			new SourceNodeMetaData(
+				SourceNodeMetaDataType.Aggregate,
+				undefined,
+				totalSensorValues,
+				undefined
+			),
+			new SourceNodeMetaData(
+				SourceNodeMetaDataType.Aggregate,
+				undefined,
+				maxSensorValues,
+				undefined
+			)
 		)
 	}
 
@@ -434,7 +494,10 @@ export class Report extends BaseModel {
 		}
 	}
 
-	static fromJSONReport(json: string | IReport, moduleIndex: ModuleIndex): Report {
+	static fromJSONReport(
+		json: string | IReport,
+		moduleIndex: ModuleIndex
+	): Report {
 		let data: IReport
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -448,15 +511,22 @@ export class Report extends BaseModel {
 				const keyNumber = parseInt(key) as PathID_number
 				const pathIndex = result.getPathIndexByID(keyNumber)
 				if (pathIndex === undefined) {
-					throw new Error(`Report.fromJSONReport: (lang_internal) could not resolve path index from id: ${keyNumber}`)
+					throw new Error(
+						`Report.fromJSONReport: (lang_internal) could not resolve path index from id: ${keyNumber}`
+					)
 				}
 
-				result.lang_internal.set(keyNumber, SourceFileMetaData.fromJSON(data.lang_internal[keyNumber], pathIndex))
+				result.lang_internal.set(
+					keyNumber,
+					SourceFileMetaData.fromJSON(data.lang_internal[keyNumber], pathIndex)
+				)
 			}
 		}
 
 		if (data.headlessSensorValues) {
-			result.headlessSensorValues = SensorValues.fromJSON(data.headlessSensorValues)
+			result.headlessSensorValues = SensorValues.fromJSON(
+				data.headlessSensorValues
+			)
 		}
 
 		if (data.intern) {
@@ -464,25 +534,40 @@ export class Report extends BaseModel {
 				const keyNumber = parseInt(key) as PathID_number
 				const pathIndex = result.getPathIndexByID(keyNumber)
 				if (pathIndex === undefined) {
-					throw new Error(`Report.fromJSONReport: (intern) could not resolve path index from id: ${keyNumber}`)
+					throw new Error(
+						`Report.fromJSONReport: (intern) could not resolve path index from id: ${keyNumber}`
+					)
 				}
 
-				result.intern.set(keyNumber, SourceFileMetaData.fromJSON(data.intern[keyNumber], pathIndex))
+				result.intern.set(
+					keyNumber,
+					SourceFileMetaData.fromJSON(data.intern[keyNumber], pathIndex)
+				)
 			}
 		}
 
 		if (data.extern) {
 			for (const key of Object.keys(data.extern)) {
 				const keyNumber = parseInt(key) as ModuleID_number
-				const nodeModule = NodeModule.fromJSON(data.extern[keyNumber].nodeModule)
+				const nodeModule = NodeModule.fromJSON(
+					data.extern[keyNumber].nodeModule
+				)
 
-				const nextModuleIndex = moduleIndex.globalIndex.getModuleIndex('upsert', nodeModule.identifier)
+				const nextModuleIndex = moduleIndex.globalIndex.getModuleIndex(
+					'upsert',
+					nodeModule.identifier
+				)
 
-				result.extern.set(keyNumber, ModuleReport.fromJSON(data.extern[keyNumber], nextModuleIndex))
+				result.extern.set(
+					keyNumber,
+					ModuleReport.fromJSON(data.extern[keyNumber], nextModuleIndex)
+				)
 			}
 		}
 		if (data.relativeRootDir) {
-			result.relativeRootDir = new UnifiedPath(data.relativeRootDir as unknown as string)
+			result.relativeRootDir = new UnifiedPath(
+				data.relativeRootDir as unknown as string
+			)
 		}
 		result.reportVersion = data.reportVersion
 
@@ -496,26 +581,39 @@ export class Report extends BaseModel {
 		config?: ProfilerConfig
 	) {
 		if (!this.relativeRootDir) {
-			const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
+			const usedConfig =
+				config !== undefined ? config : ProfilerConfig.autoResolve()
 			this.relativeRootDir = filePath.dirName().pathTo(usedConfig.getRootDir())
 		}
 
 		switch (kind) {
 			case 'pretty-json':
-				PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(this, null, 2))
+				PermissionHelper.writeFileWithUserPermission(
+					filePath,
+					JSON.stringify(this, null, 2)
+				)
 				break
 			case 'json':
-				PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(this))
+				PermissionHelper.writeFileWithUserPermission(
+					filePath,
+					JSON.stringify(this)
+				)
 				break
 			case 'bin':
-				PermissionHelper.writeFileWithUserPermission(filePath, this.toBuffer(type))
+				PermissionHelper.writeFileWithUserPermission(
+					filePath,
+					this.toBuffer(type)
+				)
 				break
 			default:
 				break
 		}
 	}
 
-	static merge(moduleIndex: ModuleIndex, ...args: (ProjectReport | ModuleReport)[]): Report {
+	static merge(
+		moduleIndex: ModuleIndex,
+		...args: (ProjectReport | ModuleReport)[]
+	): Report {
 		if (args.length === 0) {
 			throw new Error('Report.merge: no Reports were given')
 		}
@@ -537,17 +635,26 @@ export class Report extends BaseModel {
 
 		for (const currentProjectReport of args) {
 			if (currentProjectReport.reportVersion !== version) {
-				throw new Error('ProjectReport.merge: Project reports versions are not compatible')
+				throw new Error(
+					'ProjectReport.merge: Project reports versions are not compatible'
+				)
 			}
 			headlessSensorValues.push(currentProjectReport.headlessSensorValues)
 
-			for (const [langInternalPathID, sourceFileMetaData] of currentProjectReport.lang_internal.entries()) {
-				const langInternalPathIndex = currentProjectReport.getPathIndexByID(langInternalPathID)
+			for (const [
+				langInternalPathID,
+				sourceFileMetaData
+			] of currentProjectReport.lang_internal.entries()) {
+				const langInternalPathIndex =
+					currentProjectReport.getPathIndexByID(langInternalPathID)
 
 				if (langInternalPathIndex === undefined) {
-					throw new Error('Report.merge: (lang_internal) could not resolve langInternalPath from id')
+					throw new Error(
+						'Report.merge: (lang_internal) could not resolve langInternalPath from id'
+					)
 				}
-				const langInternalPath = langInternalPathIndex.identifier as LangInternalPath_string
+				const langInternalPath =
+					langInternalPathIndex.identifier as LangInternalPath_string
 
 				if (!valuesToMerge.lang_internal[langInternalPath]) {
 					valuesToMerge.lang_internal[langInternalPath] = []
@@ -555,13 +662,20 @@ export class Report extends BaseModel {
 				valuesToMerge.lang_internal[langInternalPath].push(sourceFileMetaData)
 			}
 
-			for (const [sourceFilePathID, sourceFileMetaData] of currentProjectReport.intern.entries()) {
-				const sourceFilePathIndex = currentProjectReport.getPathIndexByID(sourceFilePathID)
+			for (const [
+				sourceFilePathID,
+				sourceFileMetaData
+			] of currentProjectReport.intern.entries()) {
+				const sourceFilePathIndex =
+					currentProjectReport.getPathIndexByID(sourceFilePathID)
 
 				if (sourceFilePathIndex === undefined) {
-					throw new Error('Report.merge: (intern) could not resolve sourceFilePath from id')
+					throw new Error(
+						'Report.merge: (intern) could not resolve sourceFilePath from id'
+					)
 				}
-				const sourceFilePath = sourceFilePathIndex.identifier as UnifiedPath_string
+				const sourceFilePath =
+					sourceFilePathIndex.identifier as UnifiedPath_string
 
 				if (!valuesToMerge.intern[sourceFilePath]) {
 					valuesToMerge.intern[sourceFilePath] = []
@@ -569,13 +683,20 @@ export class Report extends BaseModel {
 				valuesToMerge.intern[sourceFilePath].push(sourceFileMetaData)
 			}
 
-			for (const [moduleID, moduleReport] of currentProjectReport.extern.entries()) {
-				const nodeModuleIndex = currentProjectReport.getModuleIndexByID(moduleID)
+			for (const [
+				moduleID,
+				moduleReport
+			] of currentProjectReport.extern.entries()) {
+				const nodeModuleIndex =
+					currentProjectReport.getModuleIndexByID(moduleID)
 
 				if (nodeModuleIndex === undefined) {
-					throw new Error('Report.merge: (intern) could not resolve nodeModuleIdentifier from id')
+					throw new Error(
+						'Report.merge: (intern) could not resolve nodeModuleIdentifier from id'
+					)
 				}
-				const nodeModuleIdentifier = nodeModuleIndex.identifier as NodeModuleIdentifier_string
+				const nodeModuleIdentifier =
+					nodeModuleIndex.identifier as NodeModuleIdentifier_string
 
 				if (!valuesToMerge.extern[nodeModuleIdentifier]) {
 					valuesToMerge.extern[nodeModuleIdentifier] = []
@@ -584,7 +705,9 @@ export class Report extends BaseModel {
 			}
 		}
 
-		for (const [langInternalPath, sourceFileMetaDatas] of Object.entries(valuesToMerge.lang_internal)) {
+		for (const [langInternalPath, sourceFileMetaDatas] of Object.entries(
+			valuesToMerge.lang_internal
+		)) {
 			const langInternalPathIndex = result.getLangInternalPathIndex(
 				'upsert',
 				langInternalPath as LangInternalPath_string
@@ -597,18 +720,34 @@ export class Report extends BaseModel {
 			)
 		}
 
-		for (const [sourceFilePath, sourceFileMetaDatas] of Object.entries(valuesToMerge.intern)) {
-			const sourceFilePathIndex = result.getPathIndex('upsert', sourceFilePath as UnifiedPath_string)
+		for (const [sourceFilePath, sourceFileMetaDatas] of Object.entries(
+			valuesToMerge.intern
+		)) {
+			const sourceFilePathIndex = result.getPathIndex(
+				'upsert',
+				sourceFilePath as UnifiedPath_string
+			)
 			const sourceFilePathID = sourceFilePathIndex.id as PathID_number
 
-			result.intern.set(sourceFilePathID, SourceFileMetaData.merge(sourceFilePathIndex, ...sourceFileMetaDatas))
+			result.intern.set(
+				sourceFilePathID,
+				SourceFileMetaData.merge(sourceFilePathIndex, ...sourceFileMetaDatas)
+			)
 		}
 
-		for (const [nodeModuleIdentifier, moduleReports] of Object.entries(valuesToMerge.extern)) {
-			const nodeModuleIndex = result.getModuleIndex('upsert', nodeModuleIdentifier as NodeModuleIdentifier_string)
+		for (const [nodeModuleIdentifier, moduleReports] of Object.entries(
+			valuesToMerge.extern
+		)) {
+			const nodeModuleIndex = result.getModuleIndex(
+				'upsert',
+				nodeModuleIdentifier as NodeModuleIdentifier_string
+			)
 			const nodeModuleID = nodeModuleIndex.id as ModuleID_number
 
-			result.extern.set(nodeModuleID, ModuleReport.merge(nodeModuleIndex, ...moduleReports))
+			result.extern.set(
+				nodeModuleID,
+				ModuleReport.merge(nodeModuleIndex, ...moduleReports)
+			)
 		}
 		result.headlessSensorValues = SensorValues.sum(...headlessSensorValues)
 
@@ -623,7 +762,9 @@ export class Report extends BaseModel {
 			BufferHelper.BooleanToBuffer(this.relativeRootDir !== undefined)
 		]
 		if (this.relativeRootDir !== undefined) {
-			buffers.push(BufferHelper.String2LToBuffer(this.relativeRootDir.toString()))
+			buffers.push(
+				BufferHelper.String2LToBuffer(this.relativeRootDir.toString())
+			)
 		}
 		// if current Oaklean version is greater or equal to 0.1.4
 		// add lang_internal_headless_cpu_time to the buffer
@@ -631,7 +772,11 @@ export class Report extends BaseModel {
 			buffers.push(this.headlessSensorValues.toBuffer())
 		}
 
-		buffers.push(this.intern.toBuffer(), this.lang_internal.toBuffer(), this.extern.toBuffer())
+		buffers.push(
+			this.intern.toBuffer(),
+			this.lang_internal.toBuffer(),
+			this.extern.toBuffer()
+		)
 
 		return Buffer.concat(buffers)
 	}
@@ -645,19 +790,24 @@ export class Report extends BaseModel {
 			BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer0
 
-		const { instance: kind, remainingBuffer: newRemainingBuffer1 } = BufferHelper.UInt8FromBuffer(remainingBuffer)
+		const { instance: kind, remainingBuffer: newRemainingBuffer1 } =
+			BufferHelper.UInt8FromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
 
-		const { instance: type, remainingBuffer: newRemainingBuffer2 } = BufferHelper.UInt8FromBuffer(remainingBuffer)
+		const { instance: type, remainingBuffer: newRemainingBuffer2 } =
+			BufferHelper.UInt8FromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer2
 
-		const { instance: relativeRootDirPresent, remainingBuffer: newRemainingBuffer3 } =
-			BufferHelper.BooleanFromBuffer(remainingBuffer)
+		const {
+			instance: relativeRootDirPresent,
+			remainingBuffer: newRemainingBuffer3
+		} = BufferHelper.BooleanFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer3
 
 		let relativeRootDir = undefined
 		if (relativeRootDirPresent) {
-			const { instance, remainingBuffer: newRemainingBuffer3 } = BufferHelper.String2LFromBuffer(remainingBuffer)
+			const { instance, remainingBuffer: newRemainingBuffer3 } =
+				BufferHelper.String2LFromBuffer(remainingBuffer)
 			relativeRootDir = instance
 			remainingBuffer = newRemainingBuffer3
 		}
@@ -666,8 +816,10 @@ export class Report extends BaseModel {
 		// if the version of the Report is greater or equal to 0.1.4
 		// consume lang_internal_headless_cpu_time from the buffer
 		if (VersionHelper.compare(reportVersion, '0.1.4') >= 0) {
-			const { instance: headlessSensorValues_instance, remainingBuffer: newRemainingBuffer3_1 } =
-				SensorValues.consumeFromBuffer(remainingBuffer)
+			const {
+				instance: headlessSensorValues_instance,
+				remainingBuffer: newRemainingBuffer3_1
+			} = SensorValues.consumeFromBuffer(remainingBuffer)
 			remainingBuffer = newRemainingBuffer3_1
 			headlessSensorValues = headlessSensorValues_instance
 		}
@@ -679,38 +831,57 @@ export class Report extends BaseModel {
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				instance: internMapping,
 				remainingBuffer: newRemainingBuffer4
-			} = ModelMap.consumeFromBuffer<PathID_number, PathID_number>(remainingBuffer, 'number', 'number')
+			} = ModelMap.consumeFromBuffer<PathID_number, PathID_number>(
+				remainingBuffer,
+				'number',
+				'number'
+			)
 			remainingBuffer = newRemainingBuffer4
 		}
 
 		const consumeFromBuffer_SourceFileMetaData = (buffer: Buffer) => {
-			return SourceFileMetaData.consumeFromBuffer(buffer, moduleIndex.globalIndex)
+			return SourceFileMetaData.consumeFromBuffer(
+				buffer,
+				moduleIndex.globalIndex
+			)
 		}
-		const { instance: intern, remainingBuffer: newRemainingBuffer5 } = ModelMap.consumeFromBuffer<
-			PathID_number,
-			SourceFileMetaData
-		>(remainingBuffer, 'number', consumeFromBuffer_SourceFileMetaData)
+		const { instance: intern, remainingBuffer: newRemainingBuffer5 } =
+			ModelMap.consumeFromBuffer<PathID_number, SourceFileMetaData>(
+				remainingBuffer,
+				'number',
+				consumeFromBuffer_SourceFileMetaData
+			)
 		remainingBuffer = newRemainingBuffer5
 
-		const { instance: lang_internal, remainingBuffer: newRemainingBuffer6 } = ModelMap.consumeFromBuffer<
-			PathID_number,
-			SourceFileMetaData
-		>(remainingBuffer, 'number', consumeFromBuffer_SourceFileMetaData)
+		const { instance: lang_internal, remainingBuffer: newRemainingBuffer6 } =
+			ModelMap.consumeFromBuffer<PathID_number, SourceFileMetaData>(
+				remainingBuffer,
+				'number',
+				consumeFromBuffer_SourceFileMetaData
+			)
 		remainingBuffer = newRemainingBuffer6
 
 		const consumeFromBuffer_ModuleReport = (buffer: Buffer) => {
-			return ModuleReport.consumeFromBuffer_ModuleReport(buffer, moduleIndex.globalIndex)
+			return ModuleReport.consumeFromBuffer_ModuleReport(
+				buffer,
+				moduleIndex.globalIndex
+			)
 		}
 
-		const { instance: extern, remainingBuffer: newRemainingBuffer7 } = ModelMap.consumeFromBuffer<
-			ModuleID_number,
-			ModuleReport
-		>(remainingBuffer, 'number', consumeFromBuffer_ModuleReport)
+		const { instance: extern, remainingBuffer: newRemainingBuffer7 } =
+			ModelMap.consumeFromBuffer<ModuleID_number, ModuleReport>(
+				remainingBuffer,
+				'number',
+				consumeFromBuffer_ModuleReport
+			)
 		remainingBuffer = newRemainingBuffer7
 
 		const result = new Report(moduleIndex, kind)
 		result.reportVersion = reportVersion
-		result.relativeRootDir = relativeRootDir !== undefined ? new UnifiedPath(relativeRootDir) : undefined
+		result.relativeRootDir =
+			relativeRootDir !== undefined
+				? new UnifiedPath(relativeRootDir)
+				: undefined
 		result._intern = intern
 		result._lang_internal = lang_internal
 		result._extern = extern

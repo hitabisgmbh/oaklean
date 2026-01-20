@@ -11,7 +11,10 @@ describe('exports', () => {
 			`
 
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 
@@ -32,7 +35,10 @@ describe('exports', () => {
 			`
 
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 

@@ -2,13 +2,22 @@ import { CPUNode } from './CPUNode'
 import { CPUProfileSourceLocation } from './CPUProfileSourceLocation'
 
 import { PermissionHelper } from '../PermissionHelper'
-import { IComputedNode, IProfileModel, buildModel } from '../../../lib/vscode-js-profile-core/src/cpu/model'
+import {
+	IComputedNode,
+	IProfileModel,
+	buildModel
+} from '../../../lib/vscode-js-profile-core/src/cpu/model'
 import { ICpuProfileRaw } from '../../../lib/vscode-js-profile-core/src/cpu/types'
 import { UnifiedPath } from '../../system/UnifiedPath'
 import { MetricsDataCollection } from '../../model/interfaces/MetricsDataCollection'
 import { JSONHelper } from '../JSONHelper'
 // Types
-import { NanoSeconds_BigInt, MicroSeconds_number, MilliJoule_number, EnergyValuesType } from '../../types'
+import {
+	NanoSeconds_BigInt,
+	MicroSeconds_number,
+	MilliJoule_number,
+	EnergyValuesType
+} from '../../types'
 
 export class CPUModel {
 	private rootDir: UnifiedPath
@@ -18,18 +27,29 @@ export class CPUModel {
 	private _cpuProfilerBeginTime: NanoSeconds_BigInt
 	private _startTime: number
 	private _endTime: number
-	private _energyValuesPerNode: [MilliJoule_number, MilliJoule_number][] | undefined
+	private _energyValuesPerNode:
+		| [MilliJoule_number, MilliJoule_number][]
+		| undefined
 	private _cpuNodes: Map<number, CPUNode>
 
 	private _profilerHitsPerNode: number[]
 
-	constructor(rootDir: UnifiedPath, profile: ICpuProfileRaw, highResolutionBeginTime: NanoSeconds_BigInt) {
+	constructor(
+		rootDir: UnifiedPath,
+		profile: ICpuProfileRaw,
+		highResolutionBeginTime: NanoSeconds_BigInt
+	) {
 		this.rootDir = rootDir
 		this._startTime = profile.startTime
 		this._endTime = profile.endTime
 		this.cpuModel = buildModel(profile)
 		this.sourceLocations = this.cpuModel.locations.map(
-			(location) => new CPUProfileSourceLocation(this.rootDir, location.id, location.callFrame)
+			(location) =>
+				new CPUProfileSourceLocation(
+					this.rootDir,
+					location.id,
+					location.callFrame
+				)
 		)
 
 		this._cpuProfilerBeginTime = highResolutionBeginTime
@@ -44,9 +64,13 @@ export class CPUModel {
 		return this._profilerHitsPerNode
 	}
 
-	set energyValuesPerNode(values: [MilliJoule_number, MilliJoule_number][] | undefined) {
+	set energyValuesPerNode(
+		values: [MilliJoule_number, MilliJoule_number][] | undefined
+	) {
 		if (!values || values.length !== this.INodes.length) {
-			throw new Error('CPUModel.energyValuesPerNode: node size and energy value size must be the same')
+			throw new Error(
+				'CPUModel.energyValuesPerNode: node size and energy value size must be the same'
+			)
 		}
 		this._energyValuesPerNode = values
 	}
@@ -57,7 +81,9 @@ export class CPUModel {
 	 * index 0 of each tuple represents the cpuEnergy
 	 * index 1 of each tuple represents the ramEnergy
 	 */
-	get energyValuesPerNode(): [MilliJoule_number, MilliJoule_number][] | undefined {
+	get energyValuesPerNode():
+		| [MilliJoule_number, MilliJoule_number][]
+		| undefined {
 		return this._energyValuesPerNode
 	}
 
@@ -119,24 +145,31 @@ export class CPUModel {
 		 * index 0 of each tuple represents the cpuEnergy
 		 * index 1 of each tuple represents the ramEnergy
 		 */
-		const energyValuesPerNode: [MilliJoule_number, MilliJoule_number][] = new Array(this.INodes.length).fill([0, 0])
+		const energyValuesPerNode: [MilliJoule_number, MilliJoule_number][] =
+			new Array(this.INodes.length).fill([0, 0])
 		const sensorDataBeginTime = metricsDataCollection.items[0].startTime
 		let offset = (this._cpuProfilerBeginTime -
 			sensorDataBeginTime +
 			BigInt(this.timeDeltas[0] * 1000)) as NanoSeconds_BigInt
 
 		if (offset < BigInt(0)) {
-			throw new Error('V8 Profile was measured before the sensor interface began to measure')
+			throw new Error(
+				'V8 Profile was measured before the sensor interface began to measure'
+			)
 		}
 
 		let currentItemNumber = 0
 		let currentMetricsData = metricsDataCollection.items[currentItemNumber]
-		let energyOfMeasuredProcess: [MilliJoule_number, MilliJoule_number] | undefined = undefined
+		let energyOfMeasuredProcess:
+			| [MilliJoule_number, MilliJoule_number]
+			| undefined = undefined
 
 		for (let i = 1; i < this.timeDeltas.length; i++) {
 			if (offset > currentMetricsData.duration) {
 				if (currentItemNumber >= metricsDataCollection.items.length) {
-					throw new Error('The sensor interface did not measure the whole time the V8 Profiler was running')
+					throw new Error(
+						'The sensor interface did not measure the whole time the V8 Profiler was running'
+					)
 				}
 				offset = (offset - currentMetricsData.duration) as NanoSeconds_BigInt
 				currentMetricsData = metricsDataCollection.items[++currentItemNumber]
@@ -149,7 +182,9 @@ export class CPUModel {
 			}
 			if (energyOfMeasuredProcess === undefined) {
 				if (currentMetricsData.processIsPresent(metricsDataCollection.pid)) {
-					const factor = currentMetricsData.energyPortionOfProcess(metricsDataCollection.pid)
+					const factor = currentMetricsData.energyPortionOfProcess(
+						metricsDataCollection.pid
+					)
 					energyOfMeasuredProcess = [
 						(factor * currentMetricsData.cpuEnergy()) as MilliJoule_number,
 						(factor * currentMetricsData.ramEnergy()) as MilliJoule_number
@@ -158,17 +193,23 @@ export class CPUModel {
 					// sometimes outputs of a sensor interface do not include the measured process (e.g. powermetrics)
 					// It's not clear why this happens, as the PID is present in later reports again.
 					// one reason could be that the energy usage of the process was negligible and therefore not present
-					energyOfMeasuredProcess = [0 as MilliJoule_number, 0 as MilliJoule_number]
+					energyOfMeasuredProcess = [
+						0 as MilliJoule_number,
+						0 as MilliJoule_number
+					]
 				}
 			}
 			energyValuesPerNode[this.samples[i - 1]] = [
 				(energyOfMeasuredProcess[EnergyValuesType.CPU] *
-					(this.timeDeltas[i] / Number(currentMetricsData.duration))) as MilliJoule_number,
+					(this.timeDeltas[i] /
+						Number(currentMetricsData.duration))) as MilliJoule_number,
 				(energyOfMeasuredProcess[EnergyValuesType.RAM] *
-					(this.timeDeltas[i] / Number(currentMetricsData.duration))) as MilliJoule_number
+					(this.timeDeltas[i] /
+						Number(currentMetricsData.duration))) as MilliJoule_number
 			]
 
-			offset = (offset + BigInt(this.timeDeltas[i] * 1000)) as NanoSeconds_BigInt
+			offset = (offset +
+				BigInt(this.timeDeltas[i] * 1000)) as NanoSeconds_BigInt
 		}
 
 		return energyValuesPerNode
@@ -184,14 +225,18 @@ export class CPUModel {
 	}
 
 	async storeToFile(filePath: UnifiedPath) {
-		await PermissionHelper.writeFileWithStorageFunctionWithUserPermissionAsync(filePath, async () => {
-			await JSONHelper.storeBigJSON(
-				filePath,
-				this,
-				// eslint-disable-next-line
-				(key: any, value: any) => (typeof value === 'bigint' ? value.toString() : value), // return everything else unchanged
-				2
-			)
-		})
+		await PermissionHelper.writeFileWithStorageFunctionWithUserPermissionAsync(
+			filePath,
+			async () => {
+				await JSONHelper.storeBigJSON(
+					filePath,
+					this,
+					// eslint-disable-next-line
+					(key: any, value: any) =>
+						typeof value === 'bigint' ? value.toString() : value, // return everything else unchanged
+					2
+				)
+			}
+		)
 	}
 }

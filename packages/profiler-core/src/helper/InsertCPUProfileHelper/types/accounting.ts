@@ -1,7 +1,11 @@
 import { SensorValues } from '../../../model/SensorValues'
 import { SourceNodeMetaData } from '../../../model/SourceNodeMetaData'
 // Types
-import { ISensorValues, SourceNodeMetaDataType_Node, SourceNodeMetaDataType_Reference } from '../../../types'
+import {
+	ISensorValues,
+	SourceNodeMetaDataType_Node,
+	SourceNodeMetaDataType_Reference
+} from '../../../types'
 
 type AccountingType =
 	| 'accountToLangInternal'
@@ -23,7 +27,9 @@ export type AccountingSourceNodeInfo<T extends SourceNodeMetaDataType_Node> = {
 	node: SourceNodeMetaData<T>
 }
 
-export type AccountingSourceNodeReferenceInfo<T extends SourceNodeMetaDataType_Reference> = {
+export type AccountingSourceNodeReferenceInfo<
+	T extends SourceNodeMetaDataType_Reference
+> = {
 	firstTimeVisited: boolean
 	reference?: SourceNodeMetaData<T>
 }

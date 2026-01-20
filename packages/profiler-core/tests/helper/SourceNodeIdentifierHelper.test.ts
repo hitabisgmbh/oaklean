@@ -1,5 +1,8 @@
 import { SourceNodeIdentifierHelper } from '../../src/helper/SourceNodeIdentifierHelper'
-import { SourceNodeIdentifier_string, SourceNodeIdentifierPart_string } from '../../src/types/SourceNodeIdentifiers'
+import {
+	SourceNodeIdentifier_string,
+	SourceNodeIdentifierPart_string
+} from '../../src/types/SourceNodeIdentifiers'
 import { ProgramStructureTreeType } from '../../src/types/model/ProgramStructureTree'
 
 const EXAMPLE_IDENTIFIER =
@@ -120,7 +123,9 @@ const EXAMPLE_IDENTIFIER_PARTS_PER_TYPE: Record<
 
 const EXAMPLE_IDENTIFIER_REGEXP =
 	'RegExp: ^\\s*([^\\s"\'<>/=]+)(?:\\s*((?:=))[ \\t\\n\\f\\r]*(?:"([^"]*)"+|\'([^\']*)\'+|([^ \\t\\n\\f\\r"\'`=<>]+)))?' as SourceNodeIdentifier_string
-const EXAMPLE_IDENTIFIER_REGEXP_PARTS = [EXAMPLE_IDENTIFIER_REGEXP as unknown] as SourceNodeIdentifierPart_string[]
+const EXAMPLE_IDENTIFIER_REGEXP_PARTS = [
+	EXAMPLE_IDENTIFIER_REGEXP as unknown
+] as SourceNodeIdentifierPart_string[]
 
 const SPECIAL_CASES: {
 	functionName: string
@@ -130,7 +135,11 @@ const SPECIAL_CASES: {
 	{
 		functionName: 'Module._extensions..js',
 		identifier: '{Module}.{_extensions}.{.js}' as SourceNodeIdentifier_string,
-		parts: ['{Module}', '{_extensions}', '{.js}'] as SourceNodeIdentifierPart_string[]
+		parts: [
+			'{Module}',
+			'{_extensions}',
+			'{.js}'
+		] as SourceNodeIdentifierPart_string[]
 	}
 ]
 
@@ -159,7 +168,9 @@ describe('SourceNodeIdentifierHelper', () => {
 			expect(result).toEqual(EXAMPLE_IDENTIFIER)
 		})
 		test('should handle a case with a single part', () => {
-			const result = SourceNodeIdentifierHelper.join(EXAMPLE_IDENTIFIER_REGEXP_PARTS)
+			const result = SourceNodeIdentifierHelper.join(
+				EXAMPLE_IDENTIFIER_REGEXP_PARTS
+			)
 			expect(result).toEqual(EXAMPLE_IDENTIFIER_REGEXP)
 		})
 
@@ -174,31 +185,39 @@ describe('SourceNodeIdentifierHelper', () => {
 	describe('validateSourceNodeIdentifierPart', () => {
 		test('should validate a valid identifier part', () => {
 			for (const part of EXAMPLE_IDENTIFIER_PARTS) {
-				const result = SourceNodeIdentifierHelper.validateSourceNodeIdentifierPart(part)
+				const result =
+					SourceNodeIdentifierHelper.validateSourceNodeIdentifierPart(part)
 				expect(result).toBe(true)
 			}
 		})
 
 		test('should validate a valid identifier part with RegExp', () => {
-			const result = SourceNodeIdentifierHelper.validateSourceNodeIdentifierPart(EXAMPLE_IDENTIFIER_PARTS[0])
+			const result =
+				SourceNodeIdentifierHelper.validateSourceNodeIdentifierPart(
+					EXAMPLE_IDENTIFIER_PARTS[0]
+				)
 			expect(result).toBe(true)
 		})
 
 		test('should invalidate an invalid identifier part', () => {
-			const result = SourceNodeIdentifierHelper.validateSourceNodeIdentifierPart(
-				'invalidPart' as SourceNodeIdentifierPart_string
-			)
+			const result =
+				SourceNodeIdentifierHelper.validateSourceNodeIdentifierPart(
+					'invalidPart' as SourceNodeIdentifierPart_string
+				)
 			expect(result).toBe(false)
 		})
 	})
 
 	describe('parseSourceNodeIdentifierPart', () => {
 		describe('should return the correct type for a valid identifier part', () => {
-			for (const [type, example] of Object.entries(EXAMPLE_IDENTIFIER_PARTS_PER_TYPE)) {
+			for (const [type, example] of Object.entries(
+				EXAMPLE_IDENTIFIER_PARTS_PER_TYPE
+			)) {
 				test(type, () => {
-					const result = SourceNodeIdentifierHelper.parseSourceNodeIdentifierPart(
-						example.input as SourceNodeIdentifierPart_string
-					)
+					const result =
+						SourceNodeIdentifierHelper.parseSourceNodeIdentifierPart(
+							example.input as SourceNodeIdentifierPart_string
+						)
 
 					expect(result).toEqual({
 						type: type as ProgramStructureTreeType,
@@ -219,13 +238,19 @@ describe('SourceNodeIdentifierHelper', () => {
 	describe('functionNameToSourceNodeIdentifier', () => {
 		test('should convert a function name to a SourceNodeIdentifier', () => {
 			const functionName = 'Module.require'
-			const result = SourceNodeIdentifierHelper.functionNameToSourceNodeIdentifier(functionName)
+			const result =
+				SourceNodeIdentifierHelper.functionNameToSourceNodeIdentifier(
+					functionName
+				)
 			expect(result).toBe('{Module}.{require}')
 		})
 
 		test('should handle special cases', () => {
 			for (const { functionName, identifier } of SPECIAL_CASES) {
-				const result = SourceNodeIdentifierHelper.functionNameToSourceNodeIdentifier(functionName)
+				const result =
+					SourceNodeIdentifierHelper.functionNameToSourceNodeIdentifier(
+						functionName
+					)
 				expect(result).toEqual(identifier)
 			}
 		})

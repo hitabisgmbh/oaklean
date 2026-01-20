@@ -17,12 +17,16 @@ const EXAMPLE_DECOMPRESSED_DATA = 'Hello World'
 const EXAMPLE_COMPRESSED_DATA = '789cf348cdc9c95708cf2fca490100180b041d'
 
 function demoNumberMap(length: number, empty = false) {
-	const typeMap: Record<string, PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double> = {}
+	const typeMap: Record<
+		string,
+		PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double
+	> = {}
 
 	const values: Record<string, number> = {}
 
 	for (let i = 1; i < length + 1; i++) {
-		typeMap[i.toString()] = i % 2 === 0 ? PrimitiveBufferTypes.Double : PrimitiveBufferTypes.UInt
+		typeMap[i.toString()] =
+			i % 2 === 0 ? PrimitiveBufferTypes.Double : PrimitiveBufferTypes.UInt
 		values[i.toString()] = empty ? 0 : i % 2 === 0 ? i / 1000 : i
 	}
 
@@ -40,15 +44,13 @@ describe('BufferHelper', () => {
 		})
 
 		it('converts buffer to tiny int', () => {
-			const { instance: trueInstance, remainingBuffer: trueRemainingBuffer } = BufferHelper.UInt8FromBuffer(
-				Buffer.from('01', 'hex')
-			)
+			const { instance: trueInstance, remainingBuffer: trueRemainingBuffer } =
+				BufferHelper.UInt8FromBuffer(Buffer.from('01', 'hex'))
 			expect(trueInstance).toBe(1)
 			expect(trueRemainingBuffer.byteLength).toBe(0)
 
-			const { instance: falseInstance, remainingBuffer: falseRemainingBuffer } = BufferHelper.UInt8FromBuffer(
-				Buffer.from('ff', 'hex')
-			)
+			const { instance: falseInstance, remainingBuffer: falseRemainingBuffer } =
+				BufferHelper.UInt8FromBuffer(Buffer.from('ff', 'hex'))
 			expect(falseInstance).toBe(255)
 			expect(falseRemainingBuffer.byteLength).toBe(0)
 		})
@@ -61,15 +63,13 @@ describe('BufferHelper', () => {
 		})
 
 		it('converts buffer to boolean', () => {
-			const { instance: trueInstance, remainingBuffer: trueRemainingBuffer } = BufferHelper.BooleanFromBuffer(
-				Buffer.from('01', 'hex')
-			)
+			const { instance: trueInstance, remainingBuffer: trueRemainingBuffer } =
+				BufferHelper.BooleanFromBuffer(Buffer.from('01', 'hex'))
 			expect(trueInstance).toBe(true)
 			expect(trueRemainingBuffer.byteLength).toBe(0)
 
-			const { instance: falseInstance, remainingBuffer: falseRemainingBuffer } = BufferHelper.BooleanFromBuffer(
-				Buffer.from('00', 'hex')
-			)
+			const { instance: falseInstance, remainingBuffer: falseRemainingBuffer } =
+				BufferHelper.BooleanFromBuffer(Buffer.from('00', 'hex'))
 			expect(falseInstance).toBe(false)
 			expect(falseRemainingBuffer.byteLength).toBe(0)
 		})
@@ -77,7 +77,9 @@ describe('BufferHelper', () => {
 
 	describe('String2L', () => {
 		it('converts string to buffer', () => {
-			expect(BufferHelper.String2LToBuffer(EXAMPLE_STRING_2L).toString('hex')).toBe(EXAMPLE_STRING_2L_BUFFER)
+			expect(
+				BufferHelper.String2LToBuffer(EXAMPLE_STRING_2L).toString('hex')
+			).toBe(EXAMPLE_STRING_2L_BUFFER)
 		})
 
 		it('converts buffer to string', () => {
@@ -92,7 +94,9 @@ describe('BufferHelper', () => {
 
 	describe('String4L', () => {
 		it('converts string to buffer', () => {
-			expect(BufferHelper.String4LToBuffer(EXAMPLE_STRING_4L).toString('hex')).toBe(EXAMPLE_STRING_4L_BUFFER)
+			expect(
+				BufferHelper.String4LToBuffer(EXAMPLE_STRING_4L).toString('hex')
+			).toBe(EXAMPLE_STRING_4L_BUFFER)
 		})
 
 		it('converts buffer to string', () => {
@@ -106,11 +110,15 @@ describe('BufferHelper', () => {
 	})
 	describe('UInt', () => {
 		it('converts UInt to buffer', () => {
-			expect(BufferHelper.UIntToBuffer(EXAMPLE_UINT).toString('hex')).toBe(EXAMPLE_UINT_BUFFER)
+			expect(BufferHelper.UIntToBuffer(EXAMPLE_UINT).toString('hex')).toBe(
+				EXAMPLE_UINT_BUFFER
+			)
 		})
 
 		it('converts buffer to UInt', () => {
-			const { instance, remainingBuffer } = BufferHelper.UIntFromBuffer(Buffer.from(EXAMPLE_UINT_BUFFER, 'hex'))
+			const { instance, remainingBuffer } = BufferHelper.UIntFromBuffer(
+				Buffer.from(EXAMPLE_UINT_BUFFER, 'hex')
+			)
 
 			expect(instance).toBe(EXAMPLE_UINT)
 			expect(remainingBuffer.byteLength).toBe(0)
@@ -119,11 +127,15 @@ describe('BufferHelper', () => {
 
 	describe('Double', () => {
 		it('converts UInt to buffer', () => {
-			expect(BufferHelper.DoubleToBuffer(EXAMPLE_DOUBLE).toString('hex')).toBe(EXAMPLE_DOUBLE_BUFFER)
+			expect(BufferHelper.DoubleToBuffer(EXAMPLE_DOUBLE).toString('hex')).toBe(
+				EXAMPLE_DOUBLE_BUFFER
+			)
 		})
 
 		it('converts buffer to UInt', () => {
-			const { instance, remainingBuffer } = BufferHelper.DoubleFromBuffer(Buffer.from(EXAMPLE_DOUBLE_BUFFER, 'hex'))
+			const { instance, remainingBuffer } = BufferHelper.DoubleFromBuffer(
+				Buffer.from(EXAMPLE_DOUBLE_BUFFER, 'hex')
+			)
 
 			expect(instance).toBe(EXAMPLE_DOUBLE)
 			expect(remainingBuffer.byteLength).toBe(0)
@@ -152,12 +164,16 @@ describe('BufferHelper', () => {
 	describe('compression', () => {
 		it('compresses correctly', async () => {
 			const data = Buffer.from(EXAMPLE_DECOMPRESSED_DATA)
-			expect((await BufferHelper.compressBuffer(data)).toString('hex')).toEqual(EXAMPLE_COMPRESSED_DATA)
+			expect((await BufferHelper.compressBuffer(data)).toString('hex')).toEqual(
+				EXAMPLE_COMPRESSED_DATA
+			)
 		})
 
 		it('decompresses correctly', async () => {
 			const data = Buffer.from(EXAMPLE_COMPRESSED_DATA, 'hex')
-			expect((await BufferHelper.decompressBuffer(data)).toString()).toEqual(EXAMPLE_DECOMPRESSED_DATA)
+			expect((await BufferHelper.decompressBuffer(data)).toString()).toEqual(
+				EXAMPLE_DECOMPRESSED_DATA
+			)
 		})
 
 		it('decompresses with error', async () => {
@@ -268,7 +284,10 @@ describe('BufferHelper', () => {
 		})
 
 		describe('fractioned', () => {
-			const typeMap: Record<string, PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double> = {}
+			const typeMap: Record<
+				string,
+				PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double
+			> = {}
 			const values: Record<string, number> = {}
 
 			for (let i = 1; i < 101; i++) {

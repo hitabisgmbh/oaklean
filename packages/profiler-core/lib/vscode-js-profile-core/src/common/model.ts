@@ -31,7 +31,10 @@ export interface ICommonNode extends INode {
 /**
  * Categorizes the given call frame.
  */
-export const categorize = (callFrame: Cdp.Runtime.CallFrame, src: ISourceLocation | undefined) => {
+export const categorize = (
+	callFrame: Cdp.Runtime.CallFrame,
+	src: ISourceLocation | undefined
+) => {
 	callFrame.functionName = callFrame.functionName || '(anonymous)'
 	if (callFrame.lineNumber < 0) {
 		return Category.System

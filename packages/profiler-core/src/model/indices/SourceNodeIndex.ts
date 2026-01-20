@@ -18,16 +18,23 @@ import {
 } from '../../types'
 
 export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
-	identifier: SourceNodeIdentifier_string | LangInternalSourceNodeIdentifier_string
+	identifier:
+		| SourceNodeIdentifier_string
+		| LangInternalSourceNodeIdentifier_string
 
 	private _id: SourceNodeIndexID<T>
-	children?: ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>
+	children?: ModelMap<
+		SourceNodeIdentifierPart_string,
+		SourceNodeIndex<SourceNodeIndexType>
+	>
 
 	type: T
 	pathIndex: PathIndex
 
 	constructor(
-		identifier: SourceNodeIdentifier_string | LangInternalSourceNodeIdentifier_string,
+		identifier:
+			| SourceNodeIdentifier_string
+			| LangInternalSourceNodeIdentifier_string,
 		pathIndex: PathIndex,
 		type: T,
 		id?: SourceNodeIndexID<T>
@@ -36,7 +43,13 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		this.identifier = identifier
 		this.pathIndex = pathIndex
 		this.type = type
-		this._id = (this.isSourceNode() ? (id === undefined ? this.selfAssignId() : id) : undefined) as SourceNodeIndexID<T>
+		this._id = (
+			this.isSourceNode()
+				? id === undefined
+					? this.selfAssignId()
+					: id
+				: undefined
+		) as SourceNodeIndexID<T>
 	}
 
 	private _notPresentInOriginalSourceCode?: boolean
@@ -52,13 +65,17 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 	public get functionName(): string {
 		if (this._functionName === undefined) {
 			const parts = SourceNodeIdentifierHelper.split(this.identifier)
-			const parsed = SourceNodeIdentifierHelper.parseSourceNodeIdentifierPart(parts[parts.length - 1])
+			const parsed = SourceNodeIdentifierHelper.parseSourceNodeIdentifierPart(
+				parts[parts.length - 1]
+			)
 			this._functionName = parsed ? parsed.name : this.identifier
 		}
 		return this._functionName
 	}
 
-	insertToOtherIndex(globalIndex: GlobalIndex): SourceNodeIndex<SourceNodeIndexType.SourceNode> {
+	insertToOtherIndex(
+		globalIndex: GlobalIndex
+	): SourceNodeIndex<SourceNodeIndexType.SourceNode> {
 		const newPathIndex = this.pathIndex.insertToOtherIndex(globalIndex)
 		return newPathIndex.getSourceNodeIndex('upsert', this.identifier)
 	}
@@ -72,9 +89,13 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 	}
 
 	// make selfAssignId only available for instances of type SourceNodeIndex<SourceNodeIndexType.SourceNode>
-	selfAssignId: T extends SourceNodeIndexType.SourceNode ? () => SourceNodeIndexID<T> : never = (() => {
+	selfAssignId: T extends SourceNodeIndexType.SourceNode
+		? () => SourceNodeIndexID<T>
+		: never = (() => {
 		if (!this.isSourceNode()) {
-			throw new Error('SourceNodeIndex.selfAssignId: can only be called on a SourceNodeIndex of type SourceNode')
+			throw new Error(
+				'SourceNodeIndex.selfAssignId: can only be called on a SourceNodeIndex of type SourceNode'
+			)
 		}
 		const self = this as SourceNodeIndex<SourceNodeIndexType.SourceNode>
 		self._id = this.pathIndex.moduleIndex.globalIndex.newId(
@@ -91,7 +112,9 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 	}
 
 	toJSON(): ISourceNodeIndex<T> {
-		const presentInOriginalSourceCode = this.presentInOriginalSourceCode ? {} : { npiosc: true }
+		const presentInOriginalSourceCode = this.presentInOriginalSourceCode
+			? {}
+			: { npiosc: true }
 
 		return {
 			id: this.id,
@@ -112,23 +135,40 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 		} else {
 			data = json
 		}
-		const result = new SourceNodeIndex<T>(SourceNodeIdentifierHelper.join(sourceNodeParts), pathIndex, type, data.id)
-		result.presentInOriginalSourceCode = data.npiosc === undefined ? true : false
+		const result = new SourceNodeIndex<T>(
+			SourceNodeIdentifierHelper.join(sourceNodeParts),
+			pathIndex,
+			type,
+			data.id
+		)
+		result.presentInOriginalSourceCode =
+			data.npiosc === undefined ? true : false
 		if (result.isSourceNode()) {
 			result.pathIndex.addToSourceNodeMap(result)
-			result.pathIndex.moduleIndex.globalIndex.setReverseIndex(result.id, result, 'sourceNode')
+			result.pathIndex.moduleIndex.globalIndex.setReverseIndex(
+				result.id,
+				result,
+				'sourceNode'
+			)
 		}
 
 		if (data.children) {
-			result.children = new ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>('string')
-			for (const key of Object.keys(data.children) as SourceNodeIdentifierPart_string[]) {
+			result.children = new ModelMap<
+				SourceNodeIdentifierPart_string,
+				SourceNodeIndex<SourceNodeIndexType>
+			>('string')
+			for (const key of Object.keys(
+				data.children
+			) as SourceNodeIdentifierPart_string[]) {
 				result.children.set(
 					key,
 					SourceNodeIndex.fromJSON(
 						data.children[key],
 						[...sourceNodeParts, key],
 						pathIndex,
-						data.children[key].id !== undefined ? SourceNodeIndexType.SourceNode : SourceNodeIndexType.Intermediate
+						data.children[key].id !== undefined
+							? SourceNodeIndexType.SourceNode
+							: SourceNodeIndexType.Intermediate
 					)
 				)
 			}
@@ -139,12 +179,15 @@ export class SourceNodeIndex<T extends SourceNodeIndexType> extends BaseModel {
 
 	globalIdentifier(): GlobalIdentifier {
 		const isLangInternal =
-			this.pathIndex.moduleIndex === this.pathIndex.moduleIndex.globalIndex.getLangInternalIndex('get')
+			this.pathIndex.moduleIndex ===
+			this.pathIndex.moduleIndex.globalIndex.getLangInternalIndex('get')
 
 		return new GlobalIdentifier(
 			this.pathIndex.identifier as UnifiedPath_string,
 			this.identifier as SourceNodeIdentifier_string,
-			isLangInternal ? this.pathIndex.moduleIndex.globalIndex.engineModule : this.pathIndex.moduleIndex.nodeModule()
+			isLangInternal
+				? this.pathIndex.moduleIndex.globalIndex.engineModule
+				: this.pathIndex.moduleIndex.nodeModule()
 		)
 	}
 }

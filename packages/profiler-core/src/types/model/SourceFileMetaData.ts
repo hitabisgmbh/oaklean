@@ -1,4 +1,7 @@
-import { ISourceNodeMetaData, SourceNodeMetaDataType } from './SourceNodeMetaData'
+import {
+	ISourceNodeMetaData,
+	SourceNodeMetaDataType
+} from './SourceNodeMetaData'
 import { SourceNodeID_number } from './indices/SourceNodeIndex'
 
 import { UnifiedPath_string } from '../system/UnifiedPath'
@@ -8,7 +11,10 @@ export interface ISourceFileMetaData {
 	path: UnifiedPath_string | LangInternalPath_string
 	functions?: Record<
 		SourceNodeID_number,
-		ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode | SourceNodeMetaDataType.LangInternalSourceNode>
+		ISourceNodeMetaData<
+			| SourceNodeMetaDataType.SourceNode
+			| SourceNodeMetaDataType.LangInternalSourceNode
+		>
 	>
 }
 

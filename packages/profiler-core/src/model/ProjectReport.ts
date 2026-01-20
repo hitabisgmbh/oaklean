@@ -44,13 +44,17 @@ export class ProjectReport extends Report {
 		let index = globalIndex
 		if (index === undefined) {
 			index = new GlobalIndex(
-				new NodeModule(executionDetails.languageInformation.name, executionDetails.languageInformation.version)
+				new NodeModule(
+					executionDetails.languageInformation.name,
+					executionDetails.languageInformation.version
+				)
 			)
 		}
 		super(index.getModuleIndex('upsert'), kind)
 		this.globalIndex = index
 
-		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
+		const usedConfig =
+			config !== undefined ? config : ProfilerConfig.autoResolve()
 
 		this.executionDetails = executionDetails
 
@@ -88,7 +92,10 @@ export class ProjectReport extends Report {
 		return this.reportVersion === other.reportVersion
 	}
 
-	static merge(moduleIndex: ModuleIndex, ...args: ProjectReport[]): ProjectReport {
+	static merge(
+		moduleIndex: ModuleIndex,
+		...args: ProjectReport[]
+	): ProjectReport {
 		if (args.length === 0) {
 			throw new Error('ProjectReport.merge: no ProjectReports were given')
 		}
@@ -106,30 +113,51 @@ export class ProjectReport extends Report {
 			return 0
 		})
 
-		const systemInformationList = sortedReports.map((x) => x.executionDetails.systemInformation)
+		const systemInformationList = sortedReports.map(
+			(x) => x.executionDetails.systemInformation
+		)
 
 		if (!SystemInformation.sameSystem(...systemInformationList)) {
-			throw new Error('ProjectReport.merge: cannot merge ProjectReports from different systems')
+			throw new Error(
+				'ProjectReport.merge: cannot merge ProjectReports from different systems'
+			)
 		}
 		const executionDetails = sortedReports[0].executionDetails
 
 		for (const currentProjectReport of sortedReports) {
-			if (currentProjectReport.executionDetails.commitHash !== executionDetails.commitHash) {
-				throw new Error('ProjectReport.merge: Project reports commit hashs are not the same')
+			if (
+				currentProjectReport.executionDetails.commitHash !==
+				executionDetails.commitHash
+			) {
+				throw new Error(
+					'ProjectReport.merge: Project reports commit hashs are not the same'
+				)
 			}
-			if (currentProjectReport.executionDetails.origin !== executionDetails.origin) {
-				throw new Error('ProjectReport.merge: Project reports have different origins')
+			if (
+				currentProjectReport.executionDetails.origin !== executionDetails.origin
+			) {
+				throw new Error(
+					'ProjectReport.merge: Project reports have different origins'
+				)
 			}
-			if (executionDetails.uncommittedChanges || currentProjectReport.executionDetails.uncommittedChanges) {
+			if (
+				executionDetails.uncommittedChanges ||
+				currentProjectReport.executionDetails.uncommittedChanges
+			) {
 				executionDetails.uncommittedChanges = true
 			}
-			if (currentProjectReport.executionDetails.timestamp < executionDetails.timestamp) {
+			if (
+				currentProjectReport.executionDetails.timestamp <
+				executionDetails.timestamp
+			) {
 				// set execution timestamp to the earliest
 				// if e.g. multiple test reports are merged, the first report marks the first test execution
-				executionDetails.timestamp = currentProjectReport.executionDetails.timestamp
+				executionDetails.timestamp =
+					currentProjectReport.executionDetails.timestamp
 
 				// only keep the system information of the first report
-				executionDetails.systemInformation = currentProjectReport.executionDetails.systemInformation
+				executionDetails.systemInformation =
+					currentProjectReport.executionDetails.systemInformation
 			}
 		}
 
@@ -177,20 +205,30 @@ export class ProjectReport extends Report {
 			null
 		)
 
-		const result = Object.assign(projectReport, Report.fromJSONReport(data, projectReport.moduleIndex))
+		const result = Object.assign(
+			projectReport,
+			Report.fromJSONReport(data, projectReport.moduleIndex)
+		)
 
 		return result
 	}
 
-	static loadFromFile(filePath: UnifiedPath, kind: 'json' | 'bin'): ProjectReport | undefined {
+	static loadFromFile(
+		filePath: UnifiedPath,
+		kind: 'json' | 'bin'
+	): ProjectReport | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
 		switch (kind) {
 			case 'json':
-				return ProjectReport.fromJSON(fs.readFileSync(filePath.toPlatformString()).toString())
+				return ProjectReport.fromJSON(
+					fs.readFileSync(filePath.toPlatformString()).toString()
+				)
 			case 'bin': {
-				const { instance } = ProjectReport.consumeFromBuffer(fs.readFileSync(filePath.toPlatformString()))
+				const { instance } = ProjectReport.consumeFromBuffer(
+					fs.readFileSync(filePath.toPlatformString())
+				)
 				return instance
 			}
 			default:
@@ -198,10 +236,14 @@ export class ProjectReport extends Report {
 		}
 	}
 
-	trackUncommittedFiles(rootDir: UnifiedPath, externalResourceHelper: ExternalResourceHelper) {
+	trackUncommittedFiles(
+		rootDir: UnifiedPath,
+		externalResourceHelper: ExternalResourceHelper
+	) {
 		// if git is not available, set default value of uncommitted changes to undefined
 		this.executionDetails.uncommittedChanges = undefined
-		const containsUncommittedChanges = externalResourceHelper.trackUncommittedFiles(rootDir, this.globalIndex)
+		const containsUncommittedChanges =
+			externalResourceHelper.trackUncommittedFiles(rootDir, this.globalIndex)
 
 		if (containsUncommittedChanges === null) {
 			// git is not available
@@ -217,11 +259,23 @@ export class ProjectReport extends Report {
 		metricsDataCollection?: MetricsDataCollection
 	) {
 		const stateMachine = new InsertCPUProfileStateMachine(this)
-		const resolveFunctionIdentifierHelper = new ResolveFunctionIdentifierHelper(rootDir, externalResourceHelper)
-		await stateMachine.insertCPUProfile(rootDir, resolveFunctionIdentifierHelper, profile, metricsDataCollection)
+		const resolveFunctionIdentifierHelper = new ResolveFunctionIdentifierHelper(
+			rootDir,
+			externalResourceHelper
+		)
+		await stateMachine.insertCPUProfile(
+			rootDir,
+			resolveFunctionIdentifierHelper,
+			profile,
+			metricsDataCollection
+		)
 	}
 
-	storeToFile(filePath: UnifiedPath, kind: 'pretty-json' | 'json' | 'bin', config?: ProfilerConfig) {
+	storeToFile(
+		filePath: UnifiedPath,
+		kind: 'pretty-json' | 'json' | 'bin',
+		config?: ProfilerConfig
+	) {
 		super.storeToFileReport(filePath, kind, ReportType.ProjectReport, config)
 	}
 
@@ -241,24 +295,33 @@ export class ProjectReport extends Report {
 	async shouldBeStoredInRegistry() {
 		// every accumulated report should be stored in the registry
 		// and every report that was not created in the jest environment should be stored in the registry
-		return this.executionDetails.origin !== ProjectReportOrigin.jestEnv || this.kind === ReportKind.accumulated
+		return (
+			this.executionDetails.origin !== ProjectReportOrigin.jestEnv ||
+			this.kind === ReportKind.accumulated
+		)
 	}
 
 	static versionFromBinFile(filePath: UnifiedPath) {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
-		return ProjectReport.versionFromBuffer(fs.readFileSync(filePath.toPlatformString()))
+		return ProjectReport.versionFromBuffer(
+			fs.readFileSync(filePath.toPlatformString())
+		)
 	}
 
 	static versionFromBuffer(buffer: Buffer) {
 		let remainingBuffer = buffer
 		if (buffer.byteLength < 2) {
-			throw new Error('ProjectReport.consumeFromBuffer: not enough bytes remaining')
+			throw new Error(
+				'ProjectReport.consumeFromBuffer: not enough bytes remaining'
+			)
 		}
 		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
 		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
-			throw new Error(`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`)
+			throw new Error(
+				`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`
+			)
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const { instance: reportVersion, remainingBuffer: newRemainingBuffer0 } =
@@ -275,11 +338,15 @@ export class ProjectReport extends Report {
 	) {
 		let remainingBuffer = buffer
 		if (buffer.byteLength < 2) {
-			throw new Error('ProjectReport.consumeFromBuffer: not enough bytes remaining')
+			throw new Error(
+				'ProjectReport.consumeFromBuffer: not enough bytes remaining'
+			)
 		}
 		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
 		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
-			throw new Error(`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`)
+			throw new Error(
+				`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`
+			)
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const {
@@ -289,33 +356,55 @@ export class ProjectReport extends Report {
 		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer0
 
-		const { instance: executionDetails_JSON_string, remainingBuffer: newRemainingBuffer1 } =
-			BufferHelper.String2LFromBuffer(remainingBuffer)
+		const {
+			instance: executionDetails_JSON_string,
+			remainingBuffer: newRemainingBuffer1
+		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
-		const executionDetails = JSON.parse(executionDetails_JSON_string) as IProjectReportExecutionDetails
+		const executionDetails = JSON.parse(
+			executionDetails_JSON_string
+		) as IProjectReportExecutionDetails
 
-		const { instance: projectMetaData_JSON_string, remainingBuffer: newRemainingBuffer2 } =
-			BufferHelper.String2LFromBuffer(remainingBuffer)
+		const {
+			instance: projectMetaData_JSON_string,
+			remainingBuffer: newRemainingBuffer2
+		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer2
-		const projectMetaData = JSON.parse(projectMetaData_JSON_string) as IProjectMetaData
+		const projectMetaData = JSON.parse(
+			projectMetaData_JSON_string
+		) as IProjectMetaData
 
-		const { instance: globalIndex_JSON_string, remainingBuffer: newRemainingBuffer3 } =
-			BufferHelper.String4LFromBuffer(remainingBuffer)
+		const {
+			instance: globalIndex_JSON_string,
+			remainingBuffer: newRemainingBuffer3
+		} = BufferHelper.String4LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer3
 
 		const globalIndex = GlobalIndex.fromJSON(
 			globalIndex_JSON_string,
-			new NodeModule(executionDetails.languageInformation.name, executionDetails.languageInformation.version)
+			new NodeModule(
+				executionDetails.languageInformation.name,
+				executionDetails.languageInformation.version
+			)
 		)
 		const {
 			instance: report,
 			type: reportType,
 			remainingBuffer: newRemainingBuffer4
-		} = Report.consumeFromBufferReport(remainingBuffer, globalIndex.getModuleIndex('get'))
+		} = Report.consumeFromBufferReport(
+			remainingBuffer,
+			globalIndex.getModuleIndex('get')
+		)
 		remainingBuffer = newRemainingBuffer4
 
 		const result = Object.assign(
-			new ProjectReport(executionDetails, report.kind, projectMetaData, globalIndex, null),
+			new ProjectReport(
+				executionDetails,
+				report.kind,
+				projectMetaData,
+				globalIndex,
+				null
+			),
 			report
 		)
 

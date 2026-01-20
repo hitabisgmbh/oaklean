@@ -16,15 +16,25 @@ import {
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
-const EXPECTED_INDEX = JSON.parse(fs.readFileSync(CURRENT_DIR.join('assets', 'index.json').toString()).toString())
+const EXPECTED_INDEX = JSON.parse(
+	fs
+		.readFileSync(CURRENT_DIR.join('assets', 'index.json').toString())
+		.toString()
+)
 
 const EXPECTED_INDEX_MAP = JSON.parse(
-	fs.readFileSync(CURRENT_DIR.join('assets', 'indexMap.json').toString()).toString()
+	fs
+		.readFileSync(CURRENT_DIR.join('assets', 'indexMap.json').toString())
+		.toString()
 )
 
 const TEST_IDENTIFIERS: GlobalIdentifier[] = JSON.parse(
-	fs.readFileSync(CURRENT_DIR.join('assets', 'identifiers.json').toString()).toString()
-).map((identifier: GlobalSourceNodeIdentifier_string) => GlobalIdentifier.fromIdentifier(identifier))
+	fs
+		.readFileSync(CURRENT_DIR.join('assets', 'identifiers.json').toString())
+		.toString()
+).map((identifier: GlobalSourceNodeIdentifier_string) =>
+	GlobalIdentifier.fromIdentifier(identifier)
+)
 
 const TEST_UNIQUE_MODULE_IDENTIFIERS = [
 	...new Set(
@@ -49,12 +59,16 @@ function runInstanceTests(title: string, preDefinedInstance: GlobalIndex) {
 		})
 
 		it('should generate the expected index', () => {
-			expect(JSON.stringify(instance, null, 2)).toEqual(JSON.stringify(EXPECTED_INDEX, null, 2))
+			expect(JSON.stringify(instance, null, 2)).toEqual(
+				JSON.stringify(EXPECTED_INDEX, null, 2)
+			)
 		})
 
 		it('should generate the correct indexMap', () => {
 			for (const [key, value] of instance.moduleReverseIndex.entries()) {
-				expect(value.identifier).toBe(EXPECTED_INDEX_MAP.moduleReverseIndex[key])
+				expect(value.identifier).toBe(
+					EXPECTED_INDEX_MAP.moduleReverseIndex[key]
+				)
 			}
 
 			for (const [key, value] of instance.pathReverseIndex.entries()) {
@@ -62,33 +76,41 @@ function runInstanceTests(title: string, preDefinedInstance: GlobalIndex) {
 			}
 
 			for (const [key, value] of instance.sourceNodeReverseIndex.entries()) {
-				expect(value.identifier).toBe(EXPECTED_INDEX_MAP.sourceNodeReverseIndex[key])
-			}
-		})
-
-		it('should return the correct indices via the get(Index)ByID methods', () => {
-			for (const key of Object.keys(EXPECTED_INDEX_MAP.moduleReverseIndex)) {
-				expect(instance.getModuleIndexByID(parseInt(key) as ModuleID_number)?.identifier).toBe(
-					EXPECTED_INDEX_MAP.moduleReverseIndex[key]
-				)
-			}
-
-			for (const key of Object.keys(EXPECTED_INDEX_MAP.pathReverseIndex)) {
-				expect(instance.getPathIndexByID(parseInt(key) as PathID_number)?.identifier).toBe(
-					EXPECTED_INDEX_MAP.pathReverseIndex[key]
-				)
-			}
-
-			for (const key of Object.keys(EXPECTED_INDEX_MAP.sourceNodeReverseIndex)) {
-				expect(instance.getSourceNodeIndexByID(parseInt(key) as SourceNodeID_number)?.identifier).toBe(
+				expect(value.identifier).toBe(
 					EXPECTED_INDEX_MAP.sourceNodeReverseIndex[key]
 				)
 			}
 		})
 
+		it('should return the correct indices via the get(Index)ByID methods', () => {
+			for (const key of Object.keys(EXPECTED_INDEX_MAP.moduleReverseIndex)) {
+				expect(
+					instance.getModuleIndexByID(parseInt(key) as ModuleID_number)
+						?.identifier
+				).toBe(EXPECTED_INDEX_MAP.moduleReverseIndex[key])
+			}
+
+			for (const key of Object.keys(EXPECTED_INDEX_MAP.pathReverseIndex)) {
+				expect(
+					instance.getPathIndexByID(parseInt(key) as PathID_number)?.identifier
+				).toBe(EXPECTED_INDEX_MAP.pathReverseIndex[key])
+			}
+
+			for (const key of Object.keys(
+				EXPECTED_INDEX_MAP.sourceNodeReverseIndex
+			)) {
+				expect(
+					instance.getSourceNodeIndexByID(parseInt(key) as SourceNodeID_number)
+						?.identifier
+				).toBe(EXPECTED_INDEX_MAP.sourceNodeReverseIndex[key])
+			}
+		})
+
 		it('should stay the same after multiple equal inserts', () => {
 			const backup = JSON.stringify(instance, null, 2)
-			TEST_IDENTIFIERS.map((identifier: GlobalIdentifier) => instance.getSourceNodeIndex('upsert', identifier))
+			TEST_IDENTIFIERS.map((identifier: GlobalIdentifier) =>
+				instance.getSourceNodeIndex('upsert', identifier)
+			)
 
 			expect(JSON.stringify(instance, null, 2)).toBe(backup)
 		})
@@ -127,7 +149,9 @@ function runInstanceTests(title: string, preDefinedInstance: GlobalIndex) {
 
 describe('GlobalIndex', () => {
 	const instance = new GlobalIndex(NodeModule.currentEngineModule())
-	TEST_IDENTIFIERS.map((identifier: GlobalIdentifier) => instance.getSourceNodeIndex('upsert', identifier))
+	TEST_IDENTIFIERS.map((identifier: GlobalIdentifier) =>
+		instance.getSourceNodeIndex('upsert', identifier)
+	)
 	runInstanceTests('instance related', instance)
 
 	describe('get and upsert', () => {
@@ -146,9 +170,16 @@ describe('GlobalIndex', () => {
 			expect(instance.currentId).toBe(0)
 
 			expect(instance.getModuleIndex('get')).toBeUndefined()
-			expect(instance.getModuleIndex('get', 'expect@29.5.0' as NodeModuleIdentifier_string)).toBeUndefined()
+			expect(
+				instance.getModuleIndex(
+					'get',
+					'expect@29.5.0' as NodeModuleIdentifier_string
+				)
+			).toBeUndefined()
 			expect(instance.getLangInternalIndex('get')).toBeUndefined()
-			expect(instance.getSourceNodeIndex('get', globalIdentifier)).toBeUndefined()
+			expect(
+				instance.getSourceNodeIndex('get', globalIdentifier)
+			).toBeUndefined()
 			expect(instance.currentId).toBe(0)
 		})
 
@@ -162,7 +193,10 @@ describe('GlobalIndex', () => {
 
 			const id0 = instance.getModuleIndex('upsert')?.id
 			expect(id0 !== undefined && id0 > -1).toBeTruthy()
-			const id1 = instance.getModuleIndex('upsert', 'expect@29.5.0' as NodeModuleIdentifier_string)?.id
+			const id1 = instance.getModuleIndex(
+				'upsert',
+				'expect@29.5.0' as NodeModuleIdentifier_string
+			)?.id
 			expect(id1 !== undefined && id1 > -1).toBeTruthy()
 			const id2 = instance.getLangInternalIndex('upsert')?.id
 			expect(id2 !== undefined && id2 > -1).toBeTruthy()
@@ -174,7 +208,10 @@ describe('GlobalIndex', () => {
 			// check that get returns the values that were previously upsert
 			const get_id0 = instance.getModuleIndex('get')?.id
 			expect(id0 === get_id0).toBeTruthy()
-			const get_id1 = instance.getModuleIndex('get', 'expect@29.5.0' as NodeModuleIdentifier_string)?.id
+			const get_id1 = instance.getModuleIndex(
+				'get',
+				'expect@29.5.0' as NodeModuleIdentifier_string
+			)?.id
 			expect(id1 === get_id1).toBeTruthy()
 			const get_id2 = instance.getLangInternalIndex('get')?.id
 			expect(id2 === get_id2).toBeTruthy()
@@ -187,7 +224,10 @@ describe('GlobalIndex', () => {
 
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
-			const instanceFromString = GlobalIndex.fromJSON(JSON.stringify(EXPECTED_INDEX), NodeModule.currentEngineModule())
+			const instanceFromString = GlobalIndex.fromJSON(
+				JSON.stringify(EXPECTED_INDEX),
+				NodeModule.currentEngineModule()
+			)
 			expect(instanceFromString.toJSON()).toEqual(EXPECTED_INDEX)
 
 			// check wether it stays the same after inserting the same entries
@@ -198,7 +238,10 @@ describe('GlobalIndex', () => {
 		})
 
 		test('deserialization from object', () => {
-			const instanceFromObject = GlobalIndex.fromJSON(EXPECTED_INDEX, NodeModule.currentEngineModule())
+			const instanceFromObject = GlobalIndex.fromJSON(
+				EXPECTED_INDEX,
+				NodeModule.currentEngineModule()
+			)
 			expect(instanceFromObject.toJSON()).toEqual(EXPECTED_INDEX)
 
 			// check wether it stays the same after inserting the same entries
@@ -208,7 +251,10 @@ describe('GlobalIndex', () => {
 			expect(instanceFromObject.toJSON()).toEqual(EXPECTED_INDEX)
 		})
 
-		const instance = GlobalIndex.fromJSON(JSON.stringify(EXPECTED_INDEX), NodeModule.currentEngineModule())
+		const instance = GlobalIndex.fromJSON(
+			JSON.stringify(EXPECTED_INDEX),
+			NodeModule.currentEngineModule()
+		)
 		runInstanceTests('deserialized instance related', instance)
 	})
 })

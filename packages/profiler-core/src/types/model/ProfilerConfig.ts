@@ -4,8 +4,14 @@ import {
 	IPowerMetricsSensorInterfaceOptions,
 	IPowerMetricsSensorInterfaceOptions_schema
 } from '../interfaces/powermetrics/types'
-import { IPerfSensorInterfaceOptions, IPerfSensorInterfaceOptions_schema } from '../interfaces/perf/types'
-import { IWindowsSensorInterfaceOptions, IWindowsSensorInterfaceOptions_schema } from '../interfaces/windows/types'
+import {
+	IPerfSensorInterfaceOptions,
+	IPerfSensorInterfaceOptions_schema
+} from '../interfaces/perf/types'
+import {
+	IWindowsSensorInterfaceOptions,
+	IWindowsSensorInterfaceOptions_schema
+} from '../interfaces/windows/types'
 import { DeepPartial } from '../shared'
 
 export enum SensorInterfaceType {

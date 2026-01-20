@@ -14,7 +14,11 @@ import {
 	LoggerHelper,
 	EventHandler
 } from '@oaklean/profiler-core'
-import { getPlatformSpecificBinaryPath, SupportedPlatforms, InstallHelper } from '@oaklean/windows-sensorinterface'
+import {
+	getPlatformSpecificBinaryPath,
+	SupportedPlatforms,
+	InstallHelper
+} from '@oaklean/windows-sensorinterface'
 
 import { BaseSensorInterface } from '../BaseSensorInterface'
 
@@ -102,11 +106,17 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 	}
 
 	async commandLineArgs() {
-		return ['samplerate=' + this._options.sampleInterval.toString(), 'filename=' + this._options.outputFilePath]
+		return [
+			'samplerate=' + this._options.sampleInterval.toString(),
+			'filename=' + this._options.outputFilePath
+		]
 	}
 
 	isRunning(): boolean {
-		return this._childProcess?.pid !== undefined && BaseSensorInterface.pidIsRunning(this._childProcess.pid)
+		return (
+			this._childProcess?.pid !== undefined &&
+			BaseSensorInterface.pidIsRunning(this._childProcess.pid)
+		)
 	}
 
 	getOutputContent(): string | undefined {
@@ -117,30 +127,43 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 		return fs.readFileSync(this._options.outputFilePath).toString()
 	}
 
-	async readSensorValues(pid: number): Promise<MetricsDataCollection | undefined> {
+	async readSensorValues(
+		pid: number
+	): Promise<MetricsDataCollection | undefined> {
 		if (!(await this.couldBeExecuted())) {
 			return undefined
 		}
 		let tries = 0
 		while (this.isRunning() && tries < 10) {
-			LoggerHelper.error(`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
+			LoggerHelper.error(
+				`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`
+			)
 			tries += 1
 			await TimeHelper.sleep(1000)
 		}
 
 		if (this.startTime === undefined || this.stopTime === undefined) {
-			throw new Error('WindowsSensorInterface.readSensorValues: start or stop time could not be determined')
+			throw new Error(
+				'WindowsSensorInterface.readSensorValues: start or stop time could not be determined'
+			)
 		}
 		if (this._offsetTime === undefined) {
-			throw new Error('WindowsSensorInterface.readSensorValues: offset time could not be determined')
+			throw new Error(
+				'WindowsSensorInterface.readSensorValues: offset time could not be determined'
+			)
 		}
 
 		const content = this.getOutputContent()
 		if (content === undefined) {
-			return new MetricsDataCollection(pid, MetricsDataCollectionType.WindowsSensorInterfaceTotalSystem, [], {
-				startTime: this.startTime,
-				stopTime: this.stopTime
-			})
+			return new MetricsDataCollection(
+				pid,
+				MetricsDataCollectionType.WindowsSensorInterfaceTotalSystem,
+				[],
+				{
+					startTime: this.startTime,
+					stopTime: this.stopTime
+				}
+			)
 		}
 
 		const lines = content.split('\n')
@@ -171,7 +194,9 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 					case WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE:
 						{
 							if (col + 1 < values.length && values[col + 1] !== undefined) {
-								cpu_energy = (parseFloat(values[++col].replace(/,/g, '.')) * delta * 1e3) as MilliJoule_number
+								cpu_energy = (parseFloat(values[++col].replace(/,/g, '.')) *
+									delta *
+									1e3) as MilliJoule_number
 							}
 							captured[WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE] = true
 						}
@@ -179,7 +204,9 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 					case WindowsSensorInterfaceEvent.ENERGY_GPU:
 						{
 							if (col + 1 < values.length && values[col + 1] !== undefined) {
-								gpu_energy = (parseFloat(values[++col].replace(/,/g, '.')) * delta * 1e3) as MilliJoule_number
+								gpu_energy = (parseFloat(values[++col].replace(/,/g, '.')) *
+									delta *
+									1e3) as MilliJoule_number
 							}
 							captured[WindowsSensorInterfaceEvent.ENERGY_GPU] = true
 						}
@@ -193,10 +220,16 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 				new WindowsSensorInterfaceMetricsData({
 					elapsed_ns: BigInt(Math.round(delta * 1e9)) as NanoSeconds_BigInt, // convert into nano seconds
 					timestamp: (this.startTime +
-						BigInt(Math.ceil(duration * 1e9 - this._offsetTime * 1e9))) as NanoSeconds_BigInt,
-					cpu_energy: captured[WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE] ? cpu_energy : (0 as MilliJoule_number),
+						BigInt(
+							Math.ceil(duration * 1e9 - this._offsetTime * 1e9)
+						)) as NanoSeconds_BigInt,
+					cpu_energy: captured[WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE]
+						? cpu_energy
+						: (0 as MilliJoule_number),
 					ram_energy: 0 as MilliJoule_number,
-					gpu_energy: captured[WindowsSensorInterfaceEvent.ENERGY_GPU] ? gpu_energy : (0 as MilliJoule_number)
+					gpu_energy: captured[WindowsSensorInterfaceEvent.ENERGY_GPU]
+						? gpu_energy
+						: (0 as MilliJoule_number)
 				})
 			)
 			captured[WindowsSensorInterfaceEvent.ENERGY_CPU_PACKAGE] = false
@@ -204,10 +237,15 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 			lastDuration = duration
 		}
 
-		return new MetricsDataCollection(pid, MetricsDataCollectionType.WindowsSensorInterfaceTotalSystem, data, {
-			startTime: this.startTime,
-			stopTime: this.stopTime
-		})
+		return new MetricsDataCollection(
+			pid,
+			MetricsDataCollectionType.WindowsSensorInterfaceTotalSystem,
+			data,
+			{
+				startTime: this.startTime,
+				stopTime: this.stopTime
+			}
+		)
 	}
 
 	get startTime(): NanoSeconds_BigInt | undefined {
@@ -226,9 +264,13 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 			fs.unlinkSync(this._options.outputFilePath) // remove output file to ensure clean measurements
 		}
 
-		this._childProcess = spawn(this._executable, [...(await this.commandLineArgs())], {
-			detached: true
-		})
+		this._childProcess = spawn(
+			this._executable,
+			[...(await this.commandLineArgs())],
+			{
+				detached: true
+			}
+		)
 
 		this.cleanExit = () => {
 			if (this._childProcess) {
@@ -245,7 +287,8 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 				const content = data.toString()
 				if (!content.startsWith('BEGIN_MEASUREMENT')) {
 					LoggerHelper.error(
-						'WindowsSensorInterface.startProfiling: ' + 'Could not capture first measurement, unexpected output:',
+						'WindowsSensorInterface.startProfiling: ' +
+							'Could not capture first measurement, unexpected output:',
 						content
 					)
 					return
@@ -260,11 +303,14 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 			}
 		}
 
-		this._fileWatcher = fs.watchFile(this._options.outputFilePath, (curr, prev) => {
-			if (curr.size > prev.size) {
-				this._eventHandler.fire('measurementCaptured')
+		this._fileWatcher = fs.watchFile(
+			this._options.outputFilePath,
+			(curr, prev) => {
+				if (curr.size > prev.size) {
+					this._eventHandler.fire('measurementCaptured')
+				}
 			}
-		})
+		)
 
 		this._childProcess.stdout?.on('data', onFirstCapture)
 
@@ -303,7 +349,9 @@ export class WindowsSensorInterface extends BaseSensorInterface {
 		let seconds = 0
 		while (this.isRunning()) {
 			if (seconds > 10) {
-				throw new Error('Waited 10 seconds for powermetrics to shut down, it is still running')
+				throw new Error(
+					'Waited 10 seconds for powermetrics to shut down, it is still running'
+				)
 			}
 			await TimeHelper.sleep(1000)
 			seconds++

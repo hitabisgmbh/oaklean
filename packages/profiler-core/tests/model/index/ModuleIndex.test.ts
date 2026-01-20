@@ -47,7 +47,10 @@ const EXAMPLE_MODULE_INDEX: IModuleIndex = {
 	}
 }
 
-function runInstanceTests(title: string, preDefinedInstance: () => ModuleIndex) {
+function runInstanceTests(
+	title: string,
+	preDefinedInstance: () => ModuleIndex
+) {
 	describe(title, () => {
 		let instance: ModuleIndex
 
@@ -56,18 +59,33 @@ function runInstanceTests(title: string, preDefinedInstance: () => ModuleIndex) 
 		})
 
 		test('get on non existing path', () => {
-			expect(instance.getFilePathIndex('get', './abc/def' as UnifiedPath_string)).toBeUndefined()
-
-			// check non existing request type
-			expect(instance.getFilePathIndex('xyz' as IndexRequestType, './abc/def' as UnifiedPath_string)).toBeUndefined()
-		})
-
-		test('get on half existing path', () => {
-			expect(instance.getFilePathIndex('get', './packages/profiler-core/abc' as UnifiedPath_string)).toBeUndefined()
+			expect(
+				instance.getFilePathIndex('get', './abc/def' as UnifiedPath_string)
+			).toBeUndefined()
 
 			// check non existing request type
 			expect(
-				instance.getFilePathIndex('xyz' as IndexRequestType, './packages/profiler-core/abc' as UnifiedPath_string)
+				instance.getFilePathIndex(
+					'xyz' as IndexRequestType,
+					'./abc/def' as UnifiedPath_string
+				)
+			).toBeUndefined()
+		})
+
+		test('get on half existing path', () => {
+			expect(
+				instance.getFilePathIndex(
+					'get',
+					'./packages/profiler-core/abc' as UnifiedPath_string
+				)
+			).toBeUndefined()
+
+			// check non existing request type
+			expect(
+				instance.getFilePathIndex(
+					'xyz' as IndexRequestType,
+					'./packages/profiler-core/abc' as UnifiedPath_string
+				)
 			).toBeUndefined()
 		})
 
@@ -109,8 +127,14 @@ describe('ModuleIndex', () => {
 	runInstanceTests('instance related', () => {
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 		const instance = globalIndex.getModuleIndex('upsert')
-		instance.getFilePathIndex('upsert', './packages/profiler-core/src/model/index/GlobalIndex.ts' as UnifiedPath_string)
-		instance.getFilePathIndex('upsert', './packages/profiler-core/src/model/helper/CPUModel.ts' as UnifiedPath_string)
+		instance.getFilePathIndex(
+			'upsert',
+			'./packages/profiler-core/src/model/index/GlobalIndex.ts' as UnifiedPath_string
+		)
+		instance.getFilePathIndex(
+			'upsert',
+			'./packages/profiler-core/src/model/helper/CPUModel.ts' as UnifiedPath_string
+		)
 
 		return instance
 	})

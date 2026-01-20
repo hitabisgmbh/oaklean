@@ -30,13 +30,23 @@ export class PathIndex extends BaseModel {
 		SourceNodeIndex<SourceNodeIndexType.SourceNode>
 	>
 
-	reverseSourceNodeMap: ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>
+	reverseSourceNodeMap: ModelMap<
+		SourceNodeID_number,
+		SourceNodeIndex<SourceNodeIndexType.SourceNode>
+	>
 
 	private _id?: PathID_number
 	children?: ModelMap<UnifiedPathPart_string, PathIndex>
-	file?: ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>
+	file?: ModelMap<
+		SourceNodeIdentifierPart_string,
+		SourceNodeIndex<SourceNodeIndexType>
+	>
 
-	constructor(identifier: UnifiedPath_string | LangInternalPath_string, moduleIndex: ModuleIndex, id?: PathID_number) {
+	constructor(
+		identifier: UnifiedPath_string | LangInternalPath_string,
+		moduleIndex: ModuleIndex,
+		id?: PathID_number
+	) {
 		super()
 		this.identifier = identifier
 		this.moduleIndex = moduleIndex
@@ -46,9 +56,10 @@ export class PathIndex extends BaseModel {
 			SourceNodeIndex<SourceNodeIndexType.SourceNode>
 		>('string')
 
-		this.reverseSourceNodeMap = new ModelMap<SourceNodeID_number, SourceNodeIndex<SourceNodeIndexType.SourceNode>>(
-			'number'
-		)
+		this.reverseSourceNodeMap = new ModelMap<
+			SourceNodeID_number,
+			SourceNodeIndex<SourceNodeIndexType.SourceNode>
+		>('number')
 	}
 
 	private _containsUncommittedChanges?: boolean
@@ -73,7 +84,9 @@ export class PathIndex extends BaseModel {
 		return Array.from(this.reverseSourceNodeMap.keys())
 	}
 
-	addToSourceNodeMap(sourceNodeIndex: SourceNodeIndex<SourceNodeIndexType.SourceNode>) {
+	addToSourceNodeMap(
+		sourceNodeIndex: SourceNodeIndex<SourceNodeIndexType.SourceNode>
+	) {
 		this.sourceNodeMap.set(sourceNodeIndex.identifier, sourceNodeIndex)
 		this.reverseSourceNodeMap.set(sourceNodeIndex.id, sourceNodeIndex)
 	}
@@ -96,7 +109,9 @@ export class PathIndex extends BaseModel {
 	}
 
 	toJSON(): IPathIndex {
-		const containsUncommittedChanges = this.containsUncommittedChanges ? { cucc: true } : {}
+		const containsUncommittedChanges = this.containsUncommittedChanges
+			? { cucc: true }
+			: {}
 
 		return {
 			id: this._id,
@@ -106,7 +121,11 @@ export class PathIndex extends BaseModel {
 		}
 	}
 
-	static fromJSON(json: string | IPathIndex, pathParts: string[], moduleIndex: ModuleIndex): PathIndex {
+	static fromJSON(
+		json: string | IPathIndex,
+		pathParts: string[],
+		moduleIndex: ModuleIndex
+	): PathIndex {
 		let data: IPathIndex
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -125,22 +144,40 @@ export class PathIndex extends BaseModel {
 		result.containsUncommittedChanges = data.cucc === undefined ? false : true
 
 		if (data.children) {
-			result.children = new ModelMap<UnifiedPathPart_string, PathIndex>('string')
-			for (const key of Object.keys(data.children) as UnifiedPathPart_string[]) {
-				result.children.set(key, PathIndex.fromJSON(data.children[key], [...pathParts, key], moduleIndex))
+			result.children = new ModelMap<UnifiedPathPart_string, PathIndex>(
+				'string'
+			)
+			for (const key of Object.keys(
+				data.children
+			) as UnifiedPathPart_string[]) {
+				result.children.set(
+					key,
+					PathIndex.fromJSON(
+						data.children[key],
+						[...pathParts, key],
+						moduleIndex
+					)
+				)
 			}
 		}
 
 		if (data.file) {
-			result.file = new ModelMap<SourceNodeIdentifierPart_string, SourceNodeIndex<SourceNodeIndexType>>('string')
-			for (const key of Object.keys(data.file) as SourceNodeIdentifierPart_string[]) {
+			result.file = new ModelMap<
+				SourceNodeIdentifierPart_string,
+				SourceNodeIndex<SourceNodeIndexType>
+			>('string')
+			for (const key of Object.keys(
+				data.file
+			) as SourceNodeIdentifierPart_string[]) {
 				result.file.set(
 					key,
 					SourceNodeIndex.fromJSON(
 						data.file[key],
 						[key],
 						result,
-						data.file[key].id === undefined ? SourceNodeIndexType.Intermediate : SourceNodeIndexType.SourceNode
+						data.file[key].id === undefined
+							? SourceNodeIndexType.Intermediate
+							: SourceNodeIndexType.SourceNode
 					)
 				)
 			}
@@ -172,11 +209,11 @@ export class PathIndex extends BaseModel {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		> = this.file!
 
-		const sourceNodeIdentifierParts = SourceNodeIdentifierHelper.split(sourceNodeIdentifier)
+		const sourceNodeIdentifierParts =
+			SourceNodeIdentifierHelper.split(sourceNodeIdentifier)
 		for (let i = 0; i < sourceNodeIdentifierParts.length; i++) {
-			let sourceNodeIndex: SourceNodeIndex<SourceNodeIndexType> | undefined = currentSourceNodeMap.get(
-				sourceNodeIdentifierParts[i]
-			)
+			let sourceNodeIndex: SourceNodeIndex<SourceNodeIndexType> | undefined =
+				currentSourceNodeMap.get(sourceNodeIdentifierParts[i])
 
 			if (sourceNodeIndex === undefined) {
 				switch (indexRequestType) {
@@ -184,11 +221,16 @@ export class PathIndex extends BaseModel {
 						return undefined as R
 					case 'upsert':
 						sourceNodeIndex = new SourceNodeIndex(
-							SourceNodeIdentifierHelper.join(sourceNodeIdentifierParts.slice(0, i + 1)),
+							SourceNodeIdentifierHelper.join(
+								sourceNodeIdentifierParts.slice(0, i + 1)
+							),
 							this,
 							SourceNodeIndexType.Intermediate
 						)
-						currentSourceNodeMap.set(sourceNodeIdentifierParts[i], sourceNodeIndex)
+						currentSourceNodeMap.set(
+							sourceNodeIdentifierParts[i],
+							sourceNodeIndex
+						)
 						break
 					default:
 						return undefined as R

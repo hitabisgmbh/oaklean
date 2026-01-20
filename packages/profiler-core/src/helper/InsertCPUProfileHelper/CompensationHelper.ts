@@ -25,7 +25,10 @@ export class CompensationHelper {
 	}
 
 	static addToCompensation(target: Compensation, add: Compensation) {
-		target.carriedComp = SensorValues.sum(target.carriedComp, add.createdComp || add.carriedComp)
+		target.carriedComp = SensorValues.sum(
+			target.carriedComp,
+			add.createdComp || add.carriedComp
+		)
 	}
 
 	static createCompensationIfNecessary(
@@ -91,8 +94,13 @@ export class CompensationHelper {
 	) {
 		if (accountingInfo.accountedSourceNode.firstTimeVisited) {
 			// only compensate the accounted source node if its the first occurrence in the call tree (from the root)
-			accountingInfo.accountedSourceNode.node.sensorValues.addToAggregated(compensation.carriedComp, -1)
-		} else if (accountingInfo.accountedSourceNode.firstTimeInCurrentCompensationLayer) {
+			accountingInfo.accountedSourceNode.node.sensorValues.addToAggregated(
+				compensation.carriedComp,
+				-1
+			)
+		} else if (
+			accountingInfo.accountedSourceNode.firstTimeInCurrentCompensationLayer
+		) {
 			// if its not the first time visited, but the first time in the current compensation layer
 			// we need to add the currents cpu node's aggregated sensor values
 			// to prevent double compensation
@@ -108,13 +116,20 @@ export class CompensationHelper {
 		}
 
 		if (debug !== undefined) {
-			StateMachineLogger.logCompensation(debug.depth, node, currentState, compensation, 'APPLY COMPENSATION')
+			StateMachineLogger.logCompensation(
+				debug.depth,
+				node,
+				currentState,
+				compensation,
+				'APPLY COMPENSATION'
+			)
 		}
 
 		// if the current reference was already visited before
 		// we need to add the currents cpu node's aggregated sensor values
 		// to prevent double compensation
-		const referenceCompensation = accountingInfo.accountedSourceNodeReference.firstTimeVisited
+		const referenceCompensation = accountingInfo.accountedSourceNodeReference
+			.firstTimeVisited
 			? compensation.carriedComp
 			: compensation.carriedComp.clone().addToAggregated(node.sensorValues, -1)
 
@@ -123,12 +138,17 @@ export class CompensationHelper {
 		}
 
 		if (debug !== undefined) {
-			LoggerHelper.warn(`[REFERENCE-COMPENSATION] ${accountingInfo.accountedSourceNodeReference.reference.id}`)
+			LoggerHelper.warn(
+				`[REFERENCE-COMPENSATION] ${accountingInfo.accountedSourceNodeReference.reference.id}`
+			)
 		}
 
 		// only compensate (lang_internal|intern|extern) when there was a link created
 		// compensate the accounted source node reference
-		accountingInfo.accountedSourceNodeReference.reference.sensorValues.addToAggregated(referenceCompensation, -1)
+		accountingInfo.accountedSourceNodeReference.reference.sensorValues.addToAggregated(
+			referenceCompensation,
+			-1
+		)
 
 		if (parentState.callIdentifier.sourceNode === null) {
 			// parent source node does not exist (e.g. root)
@@ -137,13 +157,22 @@ export class CompensationHelper {
 
 		switch (accountingInfo.type) {
 			case 'accountToIntern':
-				parentState.callIdentifier.sourceNode.sensorValues.addToIntern(referenceCompensation, -1)
+				parentState.callIdentifier.sourceNode.sensorValues.addToIntern(
+					referenceCompensation,
+					-1
+				)
 				break
 			case 'accountToExtern':
-				parentState.callIdentifier.sourceNode.sensorValues.addToExtern(referenceCompensation, -1)
+				parentState.callIdentifier.sourceNode.sensorValues.addToExtern(
+					referenceCompensation,
+					-1
+				)
 				break
 			case 'accountToLangInternal':
-				parentState.callIdentifier.sourceNode.sensorValues.addToLangInternal(referenceCompensation, -1)
+				parentState.callIdentifier.sourceNode.sensorValues.addToLangInternal(
+					referenceCompensation,
+					-1
+				)
 				break
 			case 'accountOwnCodeGetsExecutedByExternal':
 				throw new Error(
@@ -170,13 +199,20 @@ export class CompensationHelper {
 			currentState: State
 		}
 	) {
-		if (parentStackFrame !== undefined && parentStackFrame.result !== undefined) {
+		if (
+			parentStackFrame !== undefined &&
+			parentStackFrame.result !== undefined
+		) {
 			if (parentStackFrame.result.compensation === undefined) {
 				// carry upwards
-				parentStackFrame.result.compensation = CompensationHelper.createCompForParent(compensation)
+				parentStackFrame.result.compensation =
+					CompensationHelper.createCompForParent(compensation)
 			} else {
 				// add to existing compensation (also carried upwards)
-				CompensationHelper.addToCompensation(parentStackFrame.result.compensation, compensation)
+				CompensationHelper.addToCompensation(
+					parentStackFrame.result.compensation,
+					compensation
+				)
 			}
 			if (debugInfo !== undefined) {
 				LoggerHelper.log(
@@ -192,7 +228,11 @@ export class CompensationHelper {
 						`├─ Parent Compensated CPU Energy : created=${parentStackFrame.result.compensation.createdComp?.aggregatedCPUEnergyConsumption} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedCPUEnergyConsumption} µs \n` +
 						`├─ Parent Compensated RAM Energy : created=${parentStackFrame.result.compensation.createdComp?.aggregatedRAMEnergyConsumption} µs | carried=${parentStackFrame.result.compensation.carriedComp.aggregatedRAMEnergyConsumption} µs \n`
 				)
-				StateMachineLogger.logState(debugInfo.depth + 1, debugInfo.node, debugInfo.currentState)
+				StateMachineLogger.logState(
+					debugInfo.depth + 1,
+					debugInfo.node,
+					debugInfo.currentState
+				)
 			}
 		}
 	}

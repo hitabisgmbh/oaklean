@@ -20,7 +20,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 	let stateMachine: InsertCPUProfileStateMachine
 
 	beforeEach(() => {
-		projectReport = new ProjectReport(EXAMPLE_EXECUTION_DETAILS, ReportKind.measurement)
+		projectReport = new ProjectReport(
+			EXAMPLE_EXECUTION_DETAILS,
+			ReportKind.measurement
+		)
 		stateMachine = new InsertCPUProfileStateMachine(projectReport)
 	})
 
@@ -33,7 +36,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
 			langInternalCPUTime: 60
@@ -78,10 +84,16 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 
 	test('LA.0 -> LA.0', async () => {
 		const cpuNode = mockedCPUModel(
-			createLocationChainCPUModel([SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'], SOURCE_LOCATIONS_LANG_INTERNAL['libA-0']])
+			createLocationChainCPUModel([
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0']
+			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
 			langInternalCPUTime: 30
@@ -116,7 +128,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
 			langInternalCPUTime: 100
@@ -169,7 +184,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
 			langInternalCPUTime: 50
@@ -229,17 +247,30 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 				[
 					[
 						SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
-						[[SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'], [[SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'], []]]]]
+						[
+							[
+								SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+								[[SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'], []]]
+							]
+						]
 					],
 					[
 						SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'],
-						[[SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'], [[SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'], []]]]]
+						[
+							[
+								SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+								[[SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'], []]]
+							]
+						]
 					]
 				]
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({
 			langInternalCPUTime: 190

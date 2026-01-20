@@ -18,26 +18,35 @@ export default async function () {
 	}
 	const performance = new PerformanceHelper()
 	performance.start('jestEnv.teardown')
-	LoggerHelper.log('Profiler: Combine Measurements and generate an aggregated report')
+	LoggerHelper.log(
+		'Profiler: Combine Measurements and generate an aggregated report'
+	)
 
 	performance.start('jestEnv.teardown.resolveConfig')
 	const profilerConfig = ProfilerConfig.autoResolve()
 	performance.stop('jestEnv.teardown.resolveConfig')
-	const exportAssetHelper = new ExportAssetHelper(profilerConfig.getOutDir().join('jest'))
+	const exportAssetHelper = new ExportAssetHelper(
+		profilerConfig.getOutDir().join('jest')
+	)
 
 	const reportPaths = exportAssetHelper.allReportPathsInOutputDir()
 	performance.start('jestEnv.teardown.loadReports')
 	const reports = reportPaths.map((filePath: UnifiedPath) => {
 		const report = ProjectReport.loadFromFile(filePath, 'bin')
 		if (!report) {
-			throw new Error(`ProjectReport could not be found: ${filePath.toPlatformString()}`)
+			throw new Error(
+				`ProjectReport could not be found: ${filePath.toPlatformString()}`
+			)
 		}
 		return report
 	})
 	performance.stop('jestEnv.teardown.loadReports')
 
 	performance.start('jestEnv.teardown.resolveEngineModule')
-	const engineModule = reports.length > 0 ? reports[0].globalIndex.engineModule : NodeModule.currentEngineModule()
+	const engineModule =
+		reports.length > 0
+			? reports[0].globalIndex.engineModule
+			: NodeModule.currentEngineModule()
 	performance.stop('jestEnv.teardown.resolveEngineModule')
 
 	const globalIndex = new GlobalIndex(engineModule)
@@ -47,10 +56,15 @@ export default async function () {
 	const accumulatedProjectReport = ProjectReport.merge(moduleIndex, ...reports)
 	performance.stop('jestEnv.teardown.mergeReports')
 
-	const accumulatedProjectReportPath = exportAssetHelper.outputAccumulatedReportPath()
+	const accumulatedProjectReportPath =
+		exportAssetHelper.outputAccumulatedReportPath()
 
 	performance.start('jestEnv.teardown.exportReport')
-	accumulatedProjectReport.storeToFile(accumulatedProjectReportPath, 'bin', profilerConfig)
+	accumulatedProjectReport.storeToFile(
+		accumulatedProjectReportPath,
+		'bin',
+		profilerConfig
+	)
 	performance.stop('jestEnv.teardown.exportReport')
 
 	const commitHash = accumulatedProjectReport.executionDetails.commitHash
@@ -58,11 +72,18 @@ export default async function () {
 		.getOutHistoryDir()
 		.join(
 			`${accumulatedProjectReport.projectMetaData.projectID}`,
-			ExportAssetHelper.historyReportFileName(accumulatedProjectReport.executionDetails.timestamp, commitHash)
+			ExportAssetHelper.historyReportFileName(
+				accumulatedProjectReport.executionDetails.timestamp,
+				commitHash
+			)
 		)
 
 	performance.start('jestEnv.teardown.exportHistoryReport')
-	accumulatedProjectReport.storeToFile(accumulatedProjectReportHistoryPath, 'bin', profilerConfig)
+	accumulatedProjectReport.storeToFile(
+		accumulatedProjectReportHistoryPath,
+		'bin',
+		profilerConfig
+	)
 	performance.stop('jestEnv.teardown.exportHistoryReport')
 
 	if (await accumulatedProjectReport.shouldBeStoredInRegistry()) {

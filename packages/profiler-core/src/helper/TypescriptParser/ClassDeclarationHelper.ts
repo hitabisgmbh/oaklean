@@ -7,7 +7,11 @@ import { TraverseNodeInfo } from './TraverseNodeInfo'
 import { LoggerHelper } from '../LoggerHelper'
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../types'
 
 export class ClassDeclarationHelper {
 	static syntaxKind = ts.SyntaxKind.ClassDeclaration
@@ -24,7 +28,11 @@ export class ClassDeclarationHelper {
 			resolveWithNoChildren: true,
 			resolve() {
 				if (node.name?.kind === ts.SyntaxKind.Identifier) {
-					const { identifier, identifierType } = NamingHelper.getIdentifierName(node.name, sourceFile, traverseNodeInfo)
+					const { identifier, identifierType } = NamingHelper.getIdentifierName(
+						node.name,
+						sourceFile,
+						traverseNodeInfo
+					)
 					return new ProgramStructureTree(
 						traverseNodeInfo.resolvedTree(),
 						traverseNodeInfo.nextId(),
@@ -47,14 +55,20 @@ export class ClassDeclarationHelper {
 					)
 				}
 				LoggerHelper.error(
-					'ClassDeclarationHelper (parseNode): unhandled case: node.name.kind === ' + node.name?.kind,
+					'ClassDeclarationHelper (parseNode): unhandled case: node.name.kind === ' +
+						node.name?.kind,
 					{
 						filePath: traverseNodeInfo.filePath,
 						kind: node.name?.kind ? ts.SyntaxKind[node.name?.kind] : undefined,
-						pos: node.name ? TypescriptHelper.posToLoc(sourceFile, node.name.getStart()) : undefined
+						pos: node.name
+							? TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
+							: undefined
 					}
 				)
-				throw new Error('ClassDeclarationHelper (parseNode): unhandled case: node.name.kind === ' + node.name?.kind)
+				throw new Error(
+					'ClassDeclarationHelper (parseNode): unhandled case: node.name.kind === ' +
+						node.name?.kind
+				)
 			}
 		}
 	}

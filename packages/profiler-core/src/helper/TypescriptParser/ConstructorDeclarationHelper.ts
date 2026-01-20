@@ -5,7 +5,11 @@ import { TraverseNodeInfo } from './TraverseNodeInfo'
 
 import { ProgramStructureTree } from '../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../types'
 
 export class ConstructorDeclarationHelper {
 	static syntaxKind = ts.SyntaxKind.Constructor
@@ -16,7 +20,8 @@ export class ConstructorDeclarationHelper {
 		traverseNodeInfo: TraverseNodeInfo
 	): {
 		resolve(): ProgramStructureTree<
-			ProgramStructureTreeType.ConstructorDeclaration | ProgramStructureTreeType.MethodDefinition
+			| ProgramStructureTreeType.ConstructorDeclaration
+			| ProgramStructureTreeType.MethodDefinition
 		>
 		resolveWithNoChildren: true
 	} | null {
@@ -26,7 +31,9 @@ export class ConstructorDeclarationHelper {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {
-				const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
+				const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node)
+					? '@static'
+					: ''
 
 				if (staticSuffix !== '') {
 					// static constructors are just methods

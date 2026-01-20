@@ -6,7 +6,10 @@ import { SourceNodeMetaData } from '../../src/model/SourceNodeMetaData'
 import { ModelMap } from '../../src/model/ModelMap'
 import { ProjectReport } from '../../src/model/ProjectReport'
 import { SourceNodeGraph } from '../../src/model/SourceNodeGraph'
-import { SourceFileMetaData, AggregatedSourceNodeMetaData } from '../../src/model/SourceFileMetaData'
+import {
+	SourceFileMetaData,
+	AggregatedSourceNodeMetaData
+} from '../../src/model/SourceFileMetaData'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { SensorValues } from '../../src/model/SensorValues'
 import { GlobalIndex } from '../../src/model/indices/GlobalIndex'
@@ -39,7 +42,11 @@ describe('SourceFileMetaDataTree', () => {
 
 		beforeEach(() => {
 			globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
-			instance = new SourceFileMetaDataTree(SourceFileMetaDataTreeType.Root, undefined, globalIndex)
+			instance = new SourceFileMetaDataTree(
+				SourceFileMetaDataTreeType.Root,
+				undefined,
+				globalIndex
+			)
 			sourceNodeGraph = new SourceNodeGraph()
 			const pathIndex = globalIndex
 				.getModuleIndex('upsert')
@@ -103,7 +110,9 @@ describe('SourceFileMetaDataTree', () => {
 		})
 
 		it('should have a method addToAggregatedInternSourceNodeMetaDataOfTree()', () => {
-			expect(instance.addToAggregatedInternSourceNodeMetaDataOfTree).toBeTruthy()
+			expect(
+				instance.addToAggregatedInternSourceNodeMetaDataOfTree
+			).toBeTruthy()
 		})
 
 		it('should have a static method fromProjectReport()', () => {
@@ -143,129 +152,133 @@ describe('SourceFileMetaDataTree', () => {
 		})
 
 		test('serialization', () => {
-			const expectedObj: ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Root> = {
-				headlessSensorValues: {},
-				filePath: undefined,
-				aggregatedInternSourceMetaData: {
-					total: {
-						type: SourceNodeMetaDataType.Aggregate,
-						sensorValues: {
-							profilerHits: 1,
-							selfCPUTime: 200,
-							aggregatedCPUTime: 200
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
-					max: {
-						type: SourceNodeMetaDataType.Aggregate,
-						sensorValues: {
-							profilerHits: 1,
-							selfCPUTime: 200,
-							aggregatedCPUTime: 200
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
-				},
-				type: SourceFileMetaDataTreeType.Root,
-				internChildren: {
-					['directory' as UnifiedPathPart_string]: {
-						engineModule: undefined,
-						aggregatedInternSourceMetaData: {
-							total: {
-								type: SourceNodeMetaDataType.Aggregate,
-								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 200,
-									aggregatedCPUTime: 200
-								}
-							} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
-							max: {
-								type: SourceNodeMetaDataType.Aggregate,
-								sensorValues: {
-									profilerHits: 1,
-									selfCPUTime: 200,
-									aggregatedCPUTime: 200
-								}
-							} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
-						},
-						globalIndex: undefined,
-						type: SourceFileMetaDataTreeType.Directory,
-						filePath: './directory' as UnifiedPath_string,
-						internChildren: {
-							['file' as UnifiedPathPart_string]: {
-								engineModule: undefined,
-								globalIndex: undefined,
-								aggregatedInternSourceMetaData: {
-									total: {
-										type: SourceNodeMetaDataType.Aggregate,
-										sensorValues: {
-											profilerHits: 1,
-											selfCPUTime: 200,
-											aggregatedCPUTime: 200
-										}
-									} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
-									max: {
-										type: SourceNodeMetaDataType.Aggregate,
-										sensorValues: {
-											profilerHits: 1,
-											selfCPUTime: 200,
-											aggregatedCPUTime: 200
-										}
-									} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
-								},
-								type: SourceFileMetaDataTreeType.File,
-								filePath: './directory/file' as UnifiedPath_string,
-								internChildren: {},
-								linkedMetaData: {
-									internReportID: 0,
-									sourceFileMetaData: {
-										path: './directory/file' as UnifiedPath_string,
-										functions: {
-											[instance.index.getSourceNodeIndex(
-												'upsert',
-												GlobalIdentifier.fromIdentifier(
-													'{./directory/file}{root}.{class:Class}.{method:method}' as GlobalSourceNodeIdentifier_string
-												)
-											).id]: {
-												id: instance.index.getSourceNodeIndex(
+			const expectedObj: ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Root> =
+				{
+					headlessSensorValues: {},
+					filePath: undefined,
+					aggregatedInternSourceMetaData: {
+						total: {
+							type: SourceNodeMetaDataType.Aggregate,
+							sensorValues: {
+								profilerHits: 1,
+								selfCPUTime: 200,
+								aggregatedCPUTime: 200
+							}
+						} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
+						max: {
+							type: SourceNodeMetaDataType.Aggregate,
+							sensorValues: {
+								profilerHits: 1,
+								selfCPUTime: 200,
+								aggregatedCPUTime: 200
+							}
+						} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
+					},
+					type: SourceFileMetaDataTreeType.Root,
+					internChildren: {
+						['directory' as UnifiedPathPart_string]: {
+							engineModule: undefined,
+							aggregatedInternSourceMetaData: {
+								total: {
+									type: SourceNodeMetaDataType.Aggregate,
+									sensorValues: {
+										profilerHits: 1,
+										selfCPUTime: 200,
+										aggregatedCPUTime: 200
+									}
+								} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
+								max: {
+									type: SourceNodeMetaDataType.Aggregate,
+									sensorValues: {
+										profilerHits: 1,
+										selfCPUTime: 200,
+										aggregatedCPUTime: 200
+									}
+								} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
+							},
+							globalIndex: undefined,
+							type: SourceFileMetaDataTreeType.Directory,
+							filePath: './directory' as UnifiedPath_string,
+							internChildren: {
+								['file' as UnifiedPathPart_string]: {
+									engineModule: undefined,
+									globalIndex: undefined,
+									aggregatedInternSourceMetaData: {
+										total: {
+											type: SourceNodeMetaDataType.Aggregate,
+											sensorValues: {
+												profilerHits: 1,
+												selfCPUTime: 200,
+												aggregatedCPUTime: 200
+											}
+										} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>,
+										max: {
+											type: SourceNodeMetaDataType.Aggregate,
+											sensorValues: {
+												profilerHits: 1,
+												selfCPUTime: 200,
+												aggregatedCPUTime: 200
+											}
+										} as ISourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
+									},
+									type: SourceFileMetaDataTreeType.File,
+									filePath: './directory/file' as UnifiedPath_string,
+									internChildren: {},
+									linkedMetaData: {
+										internReportID: 0,
+										sourceFileMetaData: {
+											path: './directory/file' as UnifiedPath_string,
+											functions: {
+												[instance.index.getSourceNodeIndex(
 													'upsert',
 													GlobalIdentifier.fromIdentifier(
 														'{./directory/file}{root}.{class:Class}.{method:method}' as GlobalSourceNodeIdentifier_string
 													)
-												).id,
-												type: SourceNodeMetaDataType.SourceNode,
-												sensorValues: {
-													profilerHits: 1,
-													selfCPUTime: 200,
-													aggregatedCPUTime: 200
-												}
-											} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
+												).id]: {
+													id: instance.index.getSourceNodeIndex(
+														'upsert',
+														GlobalIdentifier.fromIdentifier(
+															'{./directory/file}{root}.{class:Class}.{method:method}' as GlobalSourceNodeIdentifier_string
+														)
+													).id,
+													type: SourceNodeMetaDataType.SourceNode,
+													sensorValues: {
+														profilerHits: 1,
+														selfCPUTime: 200,
+														aggregatedCPUTime: 200
+													}
+												} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
+											}
 										}
 									}
 								}
 							}
 						}
-					}
-				},
-				globalIndex: {
-					currentId: 3,
-					moduleMap: {
-						['{self}' as NodeModuleIdentifier_string]: {
-							id: 0 as ModuleID_number,
-							children: {
-								['directory' as UnifiedPathPart_string]: {
-									children: {
-										['file' as UnifiedPathPart_string]: {
-											id: 1 as PathID_number,
-											file: {
-												['{root}' as SourceNodeIdentifierPart_string]: {
-													id: undefined,
-													children: {
-														['{class:Class}' as SourceNodeIdentifierPart_string]: {
-															id: undefined,
-															children: {
-																['{method:method}' as SourceNodeIdentifierPart_string]: {
-																	id: 2 as SourceNodeID_number
+					},
+					globalIndex: {
+						currentId: 3,
+						moduleMap: {
+							['{self}' as NodeModuleIdentifier_string]: {
+								id: 0 as ModuleID_number,
+								children: {
+									['directory' as UnifiedPathPart_string]: {
+										children: {
+											['file' as UnifiedPathPart_string]: {
+												id: 1 as PathID_number,
+												file: {
+													['{root}' as SourceNodeIdentifierPart_string]: {
+														id: undefined,
+														children: {
+															['{class:Class}' as SourceNodeIdentifierPart_string]:
+																{
+																	id: undefined,
+																	children: {
+																		['{method:method}' as SourceNodeIdentifierPart_string]:
+																			{
+																				id: 2 as SourceNodeID_number
+																			}
+																	}
 																}
-															}
 														}
 													}
 												}
@@ -275,10 +288,9 @@ describe('SourceFileMetaDataTree', () => {
 								}
 							}
 						}
-					}
-				},
-				engineModule: NodeModule.currentEngineModule().toJSON()
-			}
+					},
+					engineModule: NodeModule.currentEngineModule().toJSON()
+				}
 
 			expect(JSON.stringify(instance)).toEqual(JSON.stringify(expectedObj))
 		})
@@ -293,7 +305,9 @@ describe('SourceFileMetaDataTree', () => {
 				'test-profile',
 				'sourceFileMetaDataTree.json'
 			)
-			if (fs.existsSync(sourceFileMetaDataTreePath.dirName().toPlatformString())) {
+			if (
+				fs.existsSync(sourceFileMetaDataTreePath.dirName().toPlatformString())
+			) {
 				fs.rmSync(sourceFileMetaDataTreePath.dirName().toPlatformString(), {
 					recursive: true
 				})
@@ -345,7 +359,9 @@ describe('SourceFileMetaDataTree', () => {
 						sourceFileMetaData
 					)
 				}
-				expect(t).toThrow('SourceFileMetaDataTree.insertPath: path was already inserted ./directory/file')
+				expect(t).toThrow(
+					'SourceFileMetaDataTree.insertPath: path was already inserted ./directory/file'
+				)
 			})
 		})
 	})
@@ -390,10 +406,22 @@ describe('SourceFileMetaDataTree', () => {
 						engineModule: undefined
 					},
 					SourceFileMetaDataTreeType.Directory,
-					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex('upsert')
+					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex(
+						'upsert'
+					)
 				)
-				expect(SourceNodeMetaData.equals(instance.aggregatedLangInternalSourceNodeMetaData.total, expected.total))
-				expect(SourceNodeMetaData.equals(instance.aggregatedLangInternalSourceNodeMetaData.max, expected.max))
+				expect(
+					SourceNodeMetaData.equals(
+						instance.aggregatedLangInternalSourceNodeMetaData.total,
+						expected.total
+					)
+				)
+				expect(
+					SourceNodeMetaData.equals(
+						instance.aggregatedLangInternalSourceNodeMetaData.max,
+						expected.max
+					)
+				)
 			})
 
 			test('not defined', () => {
@@ -405,18 +433,30 @@ describe('SourceFileMetaDataTree', () => {
 						engineModule: undefined
 					},
 					SourceFileMetaDataTreeType.Directory,
-					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex('upsert')
+					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex(
+						'upsert'
+					)
 				)
 				expect(
 					SourceNodeMetaData.equals(
 						instance.aggregatedLangInternalSourceNodeMetaData.total,
-						new SourceNodeMetaData(SourceNodeMetaDataType.Aggregate, undefined, new SensorValues({}), undefined)
+						new SourceNodeMetaData(
+							SourceNodeMetaDataType.Aggregate,
+							undefined,
+							new SensorValues({}),
+							undefined
+						)
 					)
 				)
 				expect(
 					SourceNodeMetaData.equals(
 						instance.aggregatedLangInternalSourceNodeMetaData.max,
-						new SourceNodeMetaData(SourceNodeMetaDataType.Aggregate, undefined, new SensorValues({}), undefined)
+						new SourceNodeMetaData(
+							SourceNodeMetaDataType.Aggregate,
+							undefined,
+							new SensorValues({}),
+							undefined
+						)
 					)
 				)
 			})
@@ -462,10 +502,22 @@ describe('SourceFileMetaDataTree', () => {
 						engineModule: undefined
 					},
 					SourceFileMetaDataTreeType.Directory,
-					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex('upsert')
+					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex(
+						'upsert'
+					)
 				)
-				expect(SourceNodeMetaData.equals(instance.aggregatedInternSourceMetaData.total, expected.total))
-				expect(SourceNodeMetaData.equals(instance.aggregatedInternSourceMetaData.max, expected.max))
+				expect(
+					SourceNodeMetaData.equals(
+						instance.aggregatedInternSourceMetaData.total,
+						expected.total
+					)
+				)
+				expect(
+					SourceNodeMetaData.equals(
+						instance.aggregatedInternSourceMetaData.max,
+						expected.max
+					)
+				)
 			})
 
 			test('not defined', () => {
@@ -477,18 +529,30 @@ describe('SourceFileMetaDataTree', () => {
 						engineModule: undefined
 					},
 					SourceFileMetaDataTreeType.Directory,
-					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex('upsert')
+					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex(
+						'upsert'
+					)
 				)
 				expect(
 					SourceNodeMetaData.equals(
 						instance.aggregatedInternSourceMetaData.total,
-						new SourceNodeMetaData(SourceNodeMetaDataType.Aggregate, undefined, new SensorValues({}), undefined)
+						new SourceNodeMetaData(
+							SourceNodeMetaDataType.Aggregate,
+							undefined,
+							new SensorValues({}),
+							undefined
+						)
 					)
 				)
 				expect(
 					SourceNodeMetaData.equals(
 						instance.aggregatedInternSourceMetaData.max,
-						new SourceNodeMetaData(SourceNodeMetaDataType.Aggregate, undefined, new SensorValues({}), undefined)
+						new SourceNodeMetaData(
+							SourceNodeMetaDataType.Aggregate,
+							undefined,
+							new SensorValues({}),
+							undefined
+						)
 					)
 				)
 			})
@@ -534,10 +598,22 @@ describe('SourceFileMetaDataTree', () => {
 						engineModule: undefined
 					},
 					SourceFileMetaDataTreeType.Directory,
-					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex('upsert')
+					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex(
+						'upsert'
+					)
 				)
-				expect(SourceNodeMetaData.equals(instance.aggregatedExternSourceMetaData.total, expected.total))
-				expect(SourceNodeMetaData.equals(instance.aggregatedExternSourceMetaData.max, expected.max))
+				expect(
+					SourceNodeMetaData.equals(
+						instance.aggregatedExternSourceMetaData.total,
+						expected.total
+					)
+				)
+				expect(
+					SourceNodeMetaData.equals(
+						instance.aggregatedExternSourceMetaData.max,
+						expected.max
+					)
+				)
 			})
 
 			test('not defined', () => {
@@ -549,18 +625,30 @@ describe('SourceFileMetaDataTree', () => {
 						engineModule: undefined
 					},
 					SourceFileMetaDataTreeType.Directory,
-					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex('upsert')
+					new GlobalIndex(NodeModule.currentEngineModule()).getModuleIndex(
+						'upsert'
+					)
 				)
 				expect(
 					SourceNodeMetaData.equals(
 						instance.aggregatedExternSourceMetaData.total,
-						new SourceNodeMetaData(SourceNodeMetaDataType.Aggregate, undefined, new SensorValues({}), undefined)
+						new SourceNodeMetaData(
+							SourceNodeMetaDataType.Aggregate,
+							undefined,
+							new SensorValues({}),
+							undefined
+						)
 					)
 				)
 				expect(
 					SourceNodeMetaData.equals(
 						instance.aggregatedExternSourceMetaData.max,
-						new SourceNodeMetaData(SourceNodeMetaDataType.Aggregate, undefined, new SensorValues({}), undefined)
+						new SourceNodeMetaData(
+							SourceNodeMetaDataType.Aggregate,
+							undefined,
+							new SensorValues({}),
+							undefined
+						)
 					)
 				)
 			})
@@ -570,15 +658,18 @@ describe('SourceFileMetaDataTree', () => {
 			test('defined', () => {
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 
-				const expected = new ModelMap<UnifiedPathPart_string, SourceFileMetaDataTree<SourceFileMetaDataTreeType.File>>(
-					'string'
-				)
+				const expected = new ModelMap<
+					UnifiedPathPart_string,
+					SourceFileMetaDataTree<SourceFileMetaDataTreeType.File>
+				>('string')
 				expected.set(
 					'file.js' as UnifiedPathPart_string,
 					new SourceFileMetaDataTree(
 						SourceFileMetaDataTreeType.File,
 						new UnifiedPath('./file.js'),
-						globalIndex.getModuleIndex('upsert').getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
+						globalIndex
+							.getModuleIndex('upsert')
+							.getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
 					)
 				)
 
@@ -613,9 +704,11 @@ describe('SourceFileMetaDataTree', () => {
 					undefined
 				)
 				expect(instance.internChildren.size).toBe(1)
-				expect(instance.internChildren.get('file.js' as UnifiedPathPart_string)?.toJSON()).toEqual(
-					expected.get('file.js' as UnifiedPathPart_string)?.toJSON()
-				)
+				expect(
+					instance.internChildren
+						.get('file.js' as UnifiedPathPart_string)
+						?.toJSON()
+				).toEqual(expected.get('file.js' as UnifiedPathPart_string)?.toJSON())
 			})
 
 			test('not defined', () => {
@@ -646,7 +739,10 @@ describe('SourceFileMetaDataTree', () => {
 				const moduleNode = new SourceFileMetaDataTree(
 					SourceFileMetaDataTreeType.Module,
 					new UnifiedPath('./node_modules/package@1.0.1'),
-					globalIndex.getModuleIndex('upsert', 'package@1.0.1' as NodeModuleIdentifier_string)
+					globalIndex.getModuleIndex(
+						'upsert',
+						'package@1.0.1' as NodeModuleIdentifier_string
+					)
 				)
 
 				moduleNode.internChildren.set(
@@ -655,7 +751,10 @@ describe('SourceFileMetaDataTree', () => {
 						SourceFileMetaDataTreeType.File,
 						new UnifiedPath('./file.js'),
 						globalIndex
-							.getModuleIndex('upsert', 'package@1.0.1' as NodeModuleIdentifier_string)
+							.getModuleIndex(
+								'upsert',
+								'package@1.0.1' as NodeModuleIdentifier_string
+							)
 							.getFilePathIndex('upsert', './file.js' as UnifiedPath_string)
 					)
 				)
@@ -671,7 +770,9 @@ describe('SourceFileMetaDataTree', () => {
 							['package@1.0.1' as NodeModuleIdentifier_string]: {
 								engineModule: undefined,
 								type: SourceFileMetaDataTreeType.Module,
-								filePath: new UnifiedPath('./node_modules/package@1.0.1').toString(),
+								filePath: new UnifiedPath(
+									'./node_modules/package@1.0.1'
+								).toString(),
 								internChildren: {
 									['./file.js' as UnifiedPathPart_string]: {
 										engineModule: undefined,
@@ -701,7 +802,11 @@ describe('SourceFileMetaDataTree', () => {
 					undefined
 				)
 				expect(instance.externChildren.size).toBe(1)
-				expect(instance.externChildren.get('package@1.0.1' as NodeModuleIdentifier_string)?.toJSON()).toEqual(
+				expect(
+					instance.externChildren
+						.get('package@1.0.1' as NodeModuleIdentifier_string)
+						?.toJSON()
+				).toEqual(
 					expected.get('package@1.0.1' as NodeModuleIdentifier_string)?.toJSON()
 				)
 			})
@@ -727,53 +832,81 @@ describe('SourceFileMetaDataTree', () => {
 
 	describe('loadFromFile', () => {
 		test('test case example001', () => {
-			const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
-			const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
+			const projectReportPath = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example001.oak.json'
+			)
+			const projectReport = ProjectReport.loadFromFile(
+				projectReportPath,
+				'json'
+			)
 
 			if (projectReport === undefined) {
-				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example001.oak.json')
+				throw new Error(
+					'SourceFileMetaDataTree.test.loadFromFile: could not load example001.oak.json'
+				)
 			}
-			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport).filter(
-				projectReport.asSourceNodeGraph(),
-				undefined,
-				undefined
-			).node!
+			const tree = SourceFileMetaDataTree.fromProjectReport(
+				projectReport
+			).filter(projectReport.asSourceNodeGraph(), undefined, undefined).node!
 
-			const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example001.json')
+			const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join(
+				'assets',
+				'SourceFileMetaDataTree',
+				'example001.json'
+			)
 			if (UPDATE_TEST_REPORTS) {
 				tree.storeToFile(expectedSourceFileMetaDataTreePath, 'pretty-json')
 			}
 
-			const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
+			const expected = SourceFileMetaDataTree.loadFromFile(
+				expectedSourceFileMetaDataTreePath
+			)
 
 			expect(tree.toJSON()).toEqual(expected?.toJSON())
 		})
 
 		test('test case example002', () => {
-			const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join('assets', 'SourceFileMetaDataTree', 'example002.json')
+			const expectedSourceFileMetaDataTreePath = CURRENT_DIR.join(
+				'assets',
+				'SourceFileMetaDataTree',
+				'example002.json'
+			)
 
-			const projectReportPath = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
-			const projectReport = ProjectReport.loadFromFile(projectReportPath, 'json')
+			const projectReportPath = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example002.oak.json'
+			)
+			const projectReport = ProjectReport.loadFromFile(
+				projectReportPath,
+				'json'
+			)
 
 			if (projectReport === undefined) {
-				throw new Error('SourceFileMetaDataTree.test.loadFromFile: could not load example002.oak.json')
+				throw new Error(
+					'SourceFileMetaDataTree.test.loadFromFile: could not load example002.oak.json'
+				)
 			}
 
-			const tree = SourceFileMetaDataTree.fromProjectReport(projectReport).filter(
-				projectReport.asSourceNodeGraph(),
-				undefined,
-				undefined
-			).node!
+			const tree = SourceFileMetaDataTree.fromProjectReport(
+				projectReport
+			).filter(projectReport.asSourceNodeGraph(), undefined, undefined).node!
 			if (UPDATE_TEST_REPORTS) {
 				tree.storeToFile(expectedSourceFileMetaDataTreePath, 'pretty-json')
 			}
-			const expected = SourceFileMetaDataTree.loadFromFile(expectedSourceFileMetaDataTreePath)
+			const expected = SourceFileMetaDataTree.loadFromFile(
+				expectedSourceFileMetaDataTreePath
+			)
 
 			expect(tree.toJSON()).toEqual(expected?.toJSON())
 		})
 
 		test('non existing file', () => {
-			expect(SourceFileMetaDataTree.loadFromFile(new UnifiedPath('./abc'))).toBeUndefined()
+			expect(
+				SourceFileMetaDataTree.loadFromFile(new UnifiedPath('./abc'))
+			).toBeUndefined()
 		})
 	})
 })

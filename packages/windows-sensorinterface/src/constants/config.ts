@@ -8,8 +8,16 @@ const BINARY_DISTRIBUTION_PACKAGES = {
 
 export type SupportedPlatforms = keyof typeof BINARY_DISTRIBUTION_PACKAGES
 
-export function getPlatformSpecificBinaryDirectoryPath(platform: SupportedPlatforms) {
-	return new UnifiedPath(__dirname).join('..', '..', 'bin', platform, BINARY_VERSION)
+export function getPlatformSpecificBinaryDirectoryPath(
+	platform: SupportedPlatforms
+) {
+	return new UnifiedPath(__dirname).join(
+		'..',
+		'..',
+		'bin',
+		platform,
+		BINARY_VERSION
+	)
 }
 
 export function getPlatformSpecificBinaryPath(platform: SupportedPlatforms) {

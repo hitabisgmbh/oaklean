@@ -21,7 +21,9 @@ type ParseIntermediateFunction = (
 	  }
 	| undefined
 
-const PARSE_INTERMEDIATE_NODE: Partial<Record<ts.SyntaxKind, ParseIntermediateFunction>> = {
+const PARSE_INTERMEDIATE_NODE: Partial<
+	Record<ts.SyntaxKind, ParseIntermediateFunction>
+> = {
 	[ts.SyntaxKind.IfStatement]: IfStatementHelper.ifCase,
 	[ts.SyntaxKind.CaseBlock]: SwitchStatementHelper.switchCase,
 	[ts.SyntaxKind.TryStatement]: TryStatementHelper.tryCatchFinally
@@ -38,7 +40,11 @@ export class ScopeHelper {
 		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeTypeIntermediateScope> } | undefined {
+	):
+		| {
+				resolve(): ProgramStructureTree<ProgramStructureTreeTypeIntermediateScope>
+		  }
+		| undefined {
 		const parseFunction = PARSE_INTERMEDIATE_NODE[node.parent?.kind]
 		if (parseFunction !== undefined) {
 			return parseFunction(node, node.parent, sourceFile, traverseNodeInfo)

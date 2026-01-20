@@ -88,7 +88,8 @@ export class CallRelationTracker {
 		}
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const lastChildIdentifier = mapEntry.children.pop()! // remove last child from parent
-		const numberOfLinks = mapEntry.linkCountToChild.get(lastChildIdentifier) || 0
+		const numberOfLinks =
+			mapEntry.linkCountToChild.get(lastChildIdentifier) || 0
 		if (numberOfLinks > 1) {
 			// reduce the number of links between parent and child
 			mapEntry.linkCountToChild.set(lastChildIdentifier, numberOfLinks - 1)
@@ -131,13 +132,18 @@ export class CallRelationTracker {
 	 * @param {CallIdentifier} childCallIdentifier - the callee's call identifier
 	 * @returns {number} the number of links between the two calls
 	 */
-	getNumberOfLinksBetweenCalls(parentCallIdentifier: CallIdentifier, childCallIdentifier: CallIdentifier): number {
+	getNumberOfLinksBetweenCalls(
+		parentCallIdentifier: CallIdentifier,
+		childCallIdentifier: CallIdentifier
+	): number {
 		const childCalls = this._map.get(parentCallIdentifier.toString())
 		if (childCalls === undefined) {
 			return 0
 		}
 		const childCallIdentifierString = childCallIdentifier.toString()
-		const numberOfLinks = childCalls.linkCountToChild.get(childCallIdentifierString)
+		const numberOfLinks = childCalls.linkCountToChild.get(
+			childCallIdentifierString
+		)
 		if (numberOfLinks === undefined) {
 			return 0
 		}
@@ -178,7 +184,9 @@ export class CallRelationTracker {
 	 * @param {CallIdentifier} callIdentifier - The call identifier
 	 */
 	removeCompensationLayerRecord(callIdentifier: CallIdentifier) {
-		this._compensationLayerSet.delete(callIdentifier.toCompensationLayerString())
+		this._compensationLayerSet.delete(
+			callIdentifier.toCompensationLayerString()
+		)
 	}
 
 	/**
@@ -188,7 +196,10 @@ export class CallRelationTracker {
 	 * @param {string} kind - The kind of the call (intern, extern, langInternal)
 	 * @returns {boolean} true if the call was initialized, false if it was already present
 	 */
-	initializeCallNodeIfAbsent(callIdentifier: CallIdentifier, kind: 'intern' | 'extern' | 'langInternal') {
+	initializeCallNodeIfAbsent(
+		callIdentifier: CallIdentifier,
+		kind: 'intern' | 'extern' | 'langInternal'
+	) {
 		if (!this.isCallRecorded(callIdentifier)) {
 			const callIdentifierString = callIdentifier.toString()
 			this._map.set(callIdentifierString, {
@@ -231,8 +242,12 @@ export class CallRelationTracker {
 			this._map.set(parentCallIdentifierString, previousEntry)
 		}
 		previousEntry.children.push(selfCallIdentifierString)
-		const numberOfExistingLinks = previousEntry.linkCountToChild.get(selfCallIdentifierString) || 0
-		previousEntry.linkCountToChild.set(selfCallIdentifierString, numberOfExistingLinks + 1)
+		const numberOfExistingLinks =
+			previousEntry.linkCountToChild.get(selfCallIdentifierString) || 0
+		previousEntry.linkCountToChild.set(
+			selfCallIdentifierString,
+			numberOfExistingLinks + 1
+		)
 		return numberOfExistingLinks > 0
 	}
 }

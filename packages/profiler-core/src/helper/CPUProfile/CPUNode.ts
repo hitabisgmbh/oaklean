@@ -24,7 +24,9 @@ export class CPUNode {
 	private cpuModel: CPUModel
 	private cpuNode: IComputedNode
 
-	private _aggregatedEnergyConsumption: [MilliJoule_number, MilliJoule_number] | undefined
+	private _aggregatedEnergyConsumption:
+		| [MilliJoule_number, MilliJoule_number]
+		| undefined
 
 	constructor(index: number, cpuModel: CPUModel, node: IComputedNode) {
 		this._index = index
@@ -60,8 +62,14 @@ export class CPUNode {
 		let totalCPU = this.selfCPUEnergyConsumption
 		let totalRAM = this.selfRAMEnergyConsumption
 		for (const child of this.children()) {
-			totalCPU = (totalCPU + child.aggregatedEnergyConsumption[EnergyValuesType.CPU]) as MilliJoule_number
-			totalRAM = (totalRAM + child.aggregatedEnergyConsumption[EnergyValuesType.RAM]) as MilliJoule_number
+			totalCPU = (totalCPU +
+				child.aggregatedEnergyConsumption[
+					EnergyValuesType.CPU
+				]) as MilliJoule_number
+			totalRAM = (totalRAM +
+				child.aggregatedEnergyConsumption[
+					EnergyValuesType.RAM
+				]) as MilliJoule_number
 		}
 
 		return (this._aggregatedEnergyConsumption = [totalCPU, totalRAM])
@@ -77,14 +85,16 @@ export class CPUNode {
 	get cpuEnergyConsumption(): IPureCPUEnergyConsumption {
 		return {
 			selfCPUEnergyConsumption: this.selfCPUEnergyConsumption,
-			aggregatedCPUEnergyConsumption: this.aggregatedEnergyConsumption[EnergyValuesType.CPU]
+			aggregatedCPUEnergyConsumption:
+				this.aggregatedEnergyConsumption[EnergyValuesType.CPU]
 		}
 	}
 
 	get ramEnergyConsumption(): IPureRAMEnergyConsumption {
 		return {
 			selfRAMEnergyConsumption: this.selfRAMEnergyConsumption,
-			aggregatedRAMEnergyConsumption: this.aggregatedEnergyConsumption[EnergyValuesType.RAM]
+			aggregatedRAMEnergyConsumption:
+				this.aggregatedEnergyConsumption[EnergyValuesType.RAM]
 		}
 	}
 

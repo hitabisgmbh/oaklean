@@ -14,7 +14,9 @@ export class GitHelper {
 			options.shell = 'powershell.exe'
 		}
 		try {
-			return ChildProcess.execSync(command, options).toString().trim() as GitHash_string
+			return ChildProcess.execSync(command, options)
+				.toString()
+				.trim() as GitHash_string
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (error) {
 			return undefined
@@ -73,7 +75,9 @@ export class GitHelper {
 			}
 
 			const result = ChildProcess.execSync(command, options).toString().trim()
-			return result.split('\0').map((filePath) => repositoriesRootDir.join(filePath))
+			return result
+				.split('\0')
+				.map((filePath) => repositoriesRootDir.join(filePath))
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (error) {
 			return null

@@ -2,10 +2,14 @@ import { LoggerHelper } from './LoggerHelper'
 
 import { UnifiedPath } from '../system/UnifiedPath'
 // Types
-import { KNOWN_URL_PROTOCOLS, UrlProtocols } from '../types/helper/UrlProtocolHelper'
+import {
+	KNOWN_URL_PROTOCOLS,
+	UrlProtocols
+} from '../types/helper/UrlProtocolHelper'
 
 const PROTOCOL_URL_REGEX = /^([^/]+):\/\//
-const WEBPACK_URL_REGEX = /(webpack:\/\/|webpack-internal:\/\/\/)(.*?[^/])?\/([^?]*)(?:\?(.*))?$/
+const WEBPACK_URL_REGEX =
+	/(webpack:\/\/|webpack-internal:\/\/\/)(.*?[^/])?\/([^?]*)(?:\?(.*))?$/
 
 // prevent multiple warnings for the same protocol
 const PROTOCOL_WARNING_TRACKER = new Set<UrlProtocols>()
@@ -26,7 +30,10 @@ export class UrlProtocolHelper {
 		const matches = PROTOCOL_URL_REGEX.exec(url)
 		if (matches && matches.length > 1) {
 			const protocol = matches[1] as UrlProtocols
-			if (!KNOWN_URL_PROTOCOLS.has(protocol) && !PROTOCOL_WARNING_TRACKER.has(protocol)) {
+			if (
+				!KNOWN_URL_PROTOCOLS.has(protocol) &&
+				!PROTOCOL_WARNING_TRACKER.has(protocol)
+			) {
 				PROTOCOL_WARNING_TRACKER.add(protocol)
 				// prevent multiple warnings for the same protocol
 				LoggerHelper.warn(
@@ -100,7 +107,8 @@ export class UrlProtocolHelper {
 		const matches = WEBPACK_URL_REGEX.exec(url)
 
 		if (matches && matches.length > 3) {
-			const protocol = matches[1] === 'webpack://' ? 'webpack' : 'webpack-internal'
+			const protocol =
+				matches[1] === 'webpack://' ? 'webpack' : 'webpack-internal'
 			const namespace = matches[2] || ''
 			const filePath = matches[3] || ''
 			const options = matches[4] || ''

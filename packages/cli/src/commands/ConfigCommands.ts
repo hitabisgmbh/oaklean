@@ -1,11 +1,17 @@
 import fs from 'fs'
 
-import { UnifiedPath, LoggerHelper, ProfilerConfig } from '@oaklean/profiler-core'
+import {
+	UnifiedPath,
+	LoggerHelper,
+	ProfilerConfig
+} from '@oaklean/profiler-core'
 import { program } from 'commander'
 
 export default class ConfigCommands {
 	constructor() {
-		const parseCommand = program.command('config').description('commands to interact with a config file')
+		const parseCommand = program
+			.command('config')
+			.description('commands to interact with a config file')
 
 		parseCommand
 			.command('resolve')
@@ -26,7 +32,9 @@ export default class ConfigCommands {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
 		}
 		if (!fs.existsSync(inputPath.toPlatformString())) {
-			LoggerHelper.error(`The file ${inputPath.toPlatformString()} does not exist`)
+			LoggerHelper.error(
+				`The file ${inputPath.toPlatformString()} does not exist`
+			)
 			return
 		}
 

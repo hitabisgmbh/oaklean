@@ -24,7 +24,9 @@ describe('testing index file', () => {
 	test(
 		'profile should be created',
 		async () => {
-			const uploadMethod = jest.spyOn(RegistryHelper, 'uploadToRegistry').mockResolvedValue(undefined)
+			const uploadMethod = jest
+				.spyOn(RegistryHelper, 'uploadToRegistry')
+				.mockResolvedValue(undefined)
 
 			const profile = new Profiler('test-profile')
 			await profile.start('latest')
@@ -32,19 +34,46 @@ describe('testing index file', () => {
 			await profile.finish('latest')
 			expect(uploadMethod).toHaveBeenCalledTimes(1)
 
-			const expectedPath = CURRENT_DIR.join('..', '..', '..', 'profiles', 'test-profile', 'latest.oak')
+			const expectedPath = CURRENT_DIR.join(
+				'..',
+				'..',
+				'..',
+				'profiles',
+				'test-profile',
+				'latest.oak'
+			)
 			expect(fs.existsSync(expectedPath.toPlatformString())).toBeTruthy()
 
-			const expectedCPUProfilePath = CURRENT_DIR.join('..', '..', '..', 'profiles', 'test-profile', 'latest.cpuprofile')
-			expect(fs.existsSync(expectedCPUProfilePath.toPlatformString())).toBeTruthy()
+			const expectedCPUProfilePath = CURRENT_DIR.join(
+				'..',
+				'..',
+				'..',
+				'profiles',
+				'test-profile',
+				'latest.cpuprofile'
+			)
+			expect(
+				fs.existsSync(expectedCPUProfilePath.toPlatformString())
+			).toBeTruthy()
 
-			const cpuProfile = JSON.parse(fs.readFileSync(expectedCPUProfilePath.toPlatformString()).toString())
+			const cpuProfile = JSON.parse(
+				fs.readFileSync(expectedCPUProfilePath.toPlatformString()).toString()
+			)
 
 			const t = () => {
 				buildModel(cpuProfile)
 			}
 			expect(t).not.toThrow()
-			fs.rmSync(CURRENT_DIR.join('..', '..', '..', 'profiles', 'test-profile').toPlatformString(), { recursive: true })
+			fs.rmSync(
+				CURRENT_DIR.join(
+					'..',
+					'..',
+					'..',
+					'profiles',
+					'test-profile'
+				).toPlatformString(),
+				{ recursive: true }
+			)
 
 			uploadMethod.mockRestore()
 		},

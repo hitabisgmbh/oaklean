@@ -30,10 +30,17 @@ describe('TypescriptParser', () => {
 			})
 
 			it('prints error if the config file could not be parsed', () => {
-				const parseConfigFileTextToJsonMock = jest.spyOn(ts, 'parseConfigFileTextToJson')
+				const parseConfigFileTextToJsonMock = jest.spyOn(
+					ts,
+					'parseConfigFileTextToJson'
+				)
 				parseConfigFileTextToJsonMock.mockReturnValue({ config: undefined })
 
-				const configFilePath = CURRENT_DIR.join('assets', 'subDir', 'tsconfig.json').toPlatformString()
+				const configFilePath = CURRENT_DIR.join(
+					'assets',
+					'subDir',
+					'tsconfig.json'
+				).toPlatformString()
 
 				const config = TypescriptParser.readConfigFile(configFilePath)
 				parseConfigFileTextToJsonMock.mockRestore()
@@ -41,7 +48,8 @@ describe('TypescriptParser', () => {
 				expect(config).toBeUndefined()
 
 				expect(consoleErrorMock).toHaveBeenCalledWith(
-					'TypescriptParser.readConfigFile could not parse the config file: ' + configFilePath
+					'TypescriptParser.readConfigFile could not parse the config file: ' +
+						configFilePath
 				)
 			})
 
@@ -57,14 +65,21 @@ describe('TypescriptParser', () => {
 					}
 				]
 
-				const parseJsonConfigFileContentMock = jest.spyOn(ts, 'parseJsonConfigFileContent')
+				const parseJsonConfigFileContentMock = jest.spyOn(
+					ts,
+					'parseJsonConfigFileContent'
+				)
 				parseJsonConfigFileContentMock.mockReturnValue({
 					options: {},
 					errors: expectedErrors,
 					fileNames: []
 				})
 
-				const configFilePath = CURRENT_DIR.join('assets', 'subDir', 'tsconfig.json').toPlatformString()
+				const configFilePath = CURRENT_DIR.join(
+					'assets',
+					'subDir',
+					'tsconfig.json'
+				).toPlatformString()
 
 				const config = TypescriptParser.readConfigFile(configFilePath)
 				parseJsonConfigFileContentMock.mockRestore()
@@ -72,7 +87,8 @@ describe('TypescriptParser', () => {
 				expect(config).toBeUndefined()
 
 				expect(consoleErrorMock).toHaveBeenCalledWith(
-					'TypescriptParser.readConfigFile errors while parsing the config file: ' + configFilePath,
+					'TypescriptParser.readConfigFile errors while parsing the config file: ' +
+						configFilePath,
 					JSON.stringify(expectedErrors, null, 2)
 				)
 			})
@@ -99,11 +115,15 @@ describe('TypescriptParser', () => {
 				configFilePath: undefined
 			})
 
-			expect(config?.fileNames).toEqual([CURRENT_DIR.join('assets', 'subDir', 'test.ts').toString()])
+			expect(config?.fileNames).toEqual([
+				CURRENT_DIR.join('assets', 'subDir', 'test.ts').toString()
+			])
 		})
 
 		it('parses correctly case 1', () => {
-			const config = TypescriptParser.readConfigFile(CURRENT_DIR.join('assets', 'tsconfig.json').toPlatformString())
+			const config = TypescriptParser.readConfigFile(
+				CURRENT_DIR.join('assets', 'tsconfig.json').toPlatformString()
+			)
 
 			expect(config?.options).toEqual({
 				declaration: true,
@@ -133,7 +153,9 @@ describe('TypescriptParser', () => {
 			const findConfigFileMock = jest.spyOn(ts, 'findConfigFile')
 			findConfigFileMock.mockReturnValue(undefined)
 
-			const configPath = TypescriptParser.tsConfigFilePathFromFile(CURRENT_DIR.toPlatformString())
+			const configPath = TypescriptParser.tsConfigFilePathFromFile(
+				CURRENT_DIR.toPlatformString()
+			)
 			findConfigFileMock.mockRestore()
 
 			expect(configPath).toBeUndefined()

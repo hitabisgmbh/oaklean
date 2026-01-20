@@ -1,8 +1,15 @@
 import { CallIdentifier } from './CallIdentifier'
 import { CallRelationTracker } from './CallRelationTracker'
 import { State } from './types/state'
-import { ToLangInternalTransition, ToProjectTransition, ToModuleTransition } from './types/transition'
-import { AccountingInfo, AccountingSourceNodeReferenceInfo } from './types/accounting'
+import {
+	ToLangInternalTransition,
+	ToProjectTransition,
+	ToModuleTransition
+} from './types/transition'
+import {
+	AccountingInfo,
+	AccountingSourceNodeReferenceInfo
+} from './types/accounting'
 import { AwaiterStack } from './types/stack'
 
 import { CPUNode } from '../CPUProfile/CPUNode'
@@ -24,7 +31,10 @@ export class AccountingHelper {
 	// IMPORTANT to change when new measurement type gets added
 	// if a node was already visited, set the aggregated measurements to 0
 	// to avoid double counting of measurements
-	static sensorValuesForVisitedNode(sensorValues: ISensorValues, visited: boolean): ISensorValues {
+	static sensorValuesForVisitedNode(
+		sensorValues: ISensorValues,
+		visited: boolean
+	): ISensorValues {
 		const result = {
 			...sensorValues
 		}
@@ -64,38 +74,57 @@ export class AccountingHelper {
 	}> {
 		const sensorValues = cpuNode.sensorValues
 
-		const accountedSourceNode = currentState.callIdentifier.report.addToLangInternal(
-			cpuNode.sourceLocation.rawUrl as LangInternalPath_string,
-			cpuNode.sourceLocation.sourceNodeIdentifier as LangInternalSourceNodeIdentifier_string
-		)
+		const accountedSourceNode =
+			currentState.callIdentifier.report.addToLangInternal(
+				cpuNode.sourceLocation.rawUrl as LangInternalPath_string,
+				cpuNode.sourceLocation
+					.sourceNodeIdentifier as LangInternalSourceNodeIdentifier_string
+			)
 
 		const currentCallIdentifier = new CallIdentifier(
 			currentState.callIdentifier.report,
 			accountedSourceNode,
 			currentState.compensationLayerDepth
 		)
-		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(currentCallIdentifier, 'langInternal')
+		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
+			'langInternal'
+		)
 		const firstTimeInCurrentCompensationLayer =
-			callRelationTracker.initializeInCompensationLayerIfAbsent(currentCallIdentifier)
+			callRelationTracker.initializeInCompensationLayerIfAbsent(
+				currentCallIdentifier
+			)
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(sensorValues, !firstTimeVisited)
+		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
+			sensorValues,
+			!firstTimeVisited
+		)
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
 		let accountedSourceNodeReference: AccountingSourceNodeReferenceInfo<SourceNodeMetaDataType.LangInternalSourceNodeReference> | null
 
 		if (transition.options.createLink) {
 			if (currentState.callIdentifier.sourceNode === null) {
-				throw new Error('InsertCPUProfileStateMachine.accountToLangInternal: Current state has no source node assigned')
+				throw new Error(
+					'InsertCPUProfileStateMachine.accountToLangInternal: Current state has no source node assigned'
+				)
 			}
-			const alreadyLinked = callRelationTracker.linkCallToParent(currentCallIdentifier, currentState.callIdentifier)
-
-			const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(sensorValues, alreadyLinked)
-
-			const sourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToLangInternal(
-				accountedSourceNode.globalIdentifier(),
-				accountedSensorValues
+			const alreadyLinked = callRelationTracker.linkCallToParent(
+				currentCallIdentifier,
+				currentState.callIdentifier
 			)
+
+			const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
+				sensorValues,
+				alreadyLinked
+			)
+
+			const sourceNodeReference =
+				currentState.callIdentifier.sourceNode.addSensorValuesToLangInternal(
+					accountedSourceNode.globalIdentifier(),
+					accountedSensorValues
+				)
 			sourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
 
 			accountedSourceNodeReference = {
@@ -147,7 +176,10 @@ export class AccountingHelper {
 		awaiterStack: AwaiterStack
 	): Promise<{
 		nextState: State
-		accountingInfo: AccountingInfo<SourceNodeMetaDataType.SourceNode, SourceNodeMetaDataType.InternSourceNodeReference>
+		accountingInfo: AccountingInfo<
+			SourceNodeMetaDataType.SourceNode,
+			SourceNodeMetaDataType.InternSourceNodeReference
+		>
 	}> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
@@ -159,21 +191,33 @@ export class AccountingHelper {
 			sourceNodeLocation.relativeFilePath.toString(),
 			sourceNodeLocation.functionIdentifier
 		)
-		accountedSourceNode.presentInOriginalSourceCode = transition.options.presentInOriginalSourceCode
+		accountedSourceNode.presentInOriginalSourceCode =
+			transition.options.presentInOriginalSourceCode
 		const currentCallIdentifier = new CallIdentifier(
 			currentState.callIdentifier.report,
 			accountedSourceNode,
 			currentState.compensationLayerDepth
 		)
-		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(currentCallIdentifier, 'intern')
+		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
+			'intern'
+		)
 		const firstTimeInCurrentCompensationLayer =
-			callRelationTracker.initializeInCompensationLayerIfAbsent(currentCallIdentifier)
+			callRelationTracker.initializeInCompensationLayerIfAbsent(
+				currentCallIdentifier
+			)
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(sensorValues, !firstTimeVisited)
+		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
+			sensorValues,
+			!firstTimeVisited
+		)
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
-		if (sourceNodeLocation.functionIdentifier === TypescriptHelper.awaiterSourceNodeIdentifier()) {
+		if (
+			sourceNodeLocation.functionIdentifier ===
+			TypescriptHelper.awaiterSourceNodeIdentifier()
+		) {
 			currentCallIdentifier.isAwaiterSourceNode = true
 
 			// add the awaiter to the stack and the corresponding async function parent
@@ -183,26 +227,38 @@ export class AccountingHelper {
 			awaiterStack.push({
 				awaiter: accountedSourceNode,
 				awaiterParent:
-					currentState.callIdentifier.sourceNode?.type === SourceNodeMetaDataType.SourceNode
-						? (currentState.callIdentifier.sourceNode as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>)
+					currentState.callIdentifier.sourceNode?.type ===
+					SourceNodeMetaDataType.SourceNode
+						? (currentState.callIdentifier
+								.sourceNode as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>)
 						: undefined
 			})
 		}
 
 		if (transition.options.createLink) {
-			const alreadyLinked = callRelationTracker.linkCallToParent(currentCallIdentifier, currentState.callIdentifier)
+			const alreadyLinked = callRelationTracker.linkCallToParent(
+				currentCallIdentifier,
+				currentState.callIdentifier
+			)
 
 			if (currentState.callIdentifier.sourceNode === null) {
-				throw new Error('InsertCPUProfileStateMachine.accountToIntern: Current state has no source node assigned')
+				throw new Error(
+					'InsertCPUProfileStateMachine.accountToIntern: Current state has no source node assigned'
+				)
 			}
 
 			if (currentState.callIdentifier.sourceNode !== accountedSourceNode) {
 				// only create a reference if its not a recursive call
-				const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(sensorValues, alreadyLinked)
-				const sourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
-					accountedSourceNode.globalIdentifier(),
-					accountedSensorValues
-				)
+				const accountedSensorValues =
+					AccountingHelper.sensorValuesForVisitedNode(
+						sensorValues,
+						alreadyLinked
+					)
+				const sourceNodeReference =
+					currentState.callIdentifier.sourceNode.addSensorValuesToIntern(
+						accountedSourceNode.globalIdentifier(),
+						accountedSensorValues
+					)
 				sourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
 
 				accountedSourceNodeReference = {
@@ -267,7 +323,10 @@ export class AccountingHelper {
 		callRelationTracker: CallRelationTracker
 	): Promise<{
 		nextState: State
-		accountingInfo: AccountingInfo<SourceNodeMetaDataType.SourceNode, SourceNodeMetaDataType.ExternSourceNodeReference>
+		accountingInfo: AccountingInfo<
+			SourceNodeMetaDataType.SourceNode,
+			SourceNodeMetaDataType.ExternSourceNodeReference
+		>
 	}> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
@@ -281,33 +340,56 @@ export class AccountingHelper {
 		)
 
 		// extern
-		const { report, sourceNodeMetaData: accountedSourceNode } = currentState.callIdentifier.report.addToExtern(
-			sourceNodeLocation.relativeFilePath,
-			nodeModule,
-			sourceNodeLocation.functionIdentifier
+		const { report, sourceNodeMetaData: accountedSourceNode } =
+			currentState.callIdentifier.report.addToExtern(
+				sourceNodeLocation.relativeFilePath,
+				nodeModule,
+				sourceNodeLocation.functionIdentifier
+			)
+		accountedSourceNode.presentInOriginalSourceCode =
+			transition.options.presentInOriginalSourceCode
+		const currentCallIdentifier = new CallIdentifier(
+			report,
+			accountedSourceNode,
+			currentState.compensationLayerDepth
 		)
-		accountedSourceNode.presentInOriginalSourceCode = transition.options.presentInOriginalSourceCode
-		const currentCallIdentifier = new CallIdentifier(report, accountedSourceNode, currentState.compensationLayerDepth)
-		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(currentCallIdentifier, 'extern')
+		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
+			'extern'
+		)
 		const firstTimeInCurrentCompensationLayer =
-			callRelationTracker.initializeInCompensationLayerIfAbsent(currentCallIdentifier)
+			callRelationTracker.initializeInCompensationLayerIfAbsent(
+				currentCallIdentifier
+			)
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(sensorValues, !firstTimeVisited)
+		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
+			sensorValues,
+			!firstTimeVisited
+		)
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
 
 		if (transition.options.createLink) {
 			if (currentState.callIdentifier.sourceNode === null) {
-				throw new Error('InsertCPUProfileStateMachine.accountToIntern: Current state has no source node assigned')
+				throw new Error(
+					'InsertCPUProfileStateMachine.accountToIntern: Current state has no source node assigned'
+				)
 			}
-			const alreadyLinked = callRelationTracker.linkCallToParent(currentCallIdentifier, currentState.callIdentifier)
-
-			const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(sensorValues, alreadyLinked)
-
-			const sourceNodeReference = currentState.callIdentifier.sourceNode.addSensorValuesToExtern(
-				globalIdentifier,
-				accountedSensorValues
+			const alreadyLinked = callRelationTracker.linkCallToParent(
+				currentCallIdentifier,
+				currentState.callIdentifier
 			)
+
+			const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
+				sensorValues,
+				alreadyLinked
+			)
+
+			const sourceNodeReference =
+				currentState.callIdentifier.sourceNode.addSensorValuesToExtern(
+					globalIdentifier,
+					accountedSensorValues
+				)
 			sourceNodeReference.sensorValues.profilerHits += cpuNode.profilerHits
 
 			accountedSourceNodeReference = {
@@ -363,7 +445,10 @@ export class AccountingHelper {
 		originalReport: ProjectReport
 	): Promise<{
 		nextState: State
-		accountingInfo: AccountingInfo<SourceNodeMetaDataType.SourceNode, SourceNodeMetaDataType.InternSourceNodeReference>
+		accountingInfo: AccountingInfo<
+			SourceNodeMetaDataType.SourceNode,
+			SourceNodeMetaDataType.InternSourceNodeReference
+		>
 	}> {
 		const sensorValues = cpuNode.sensorValues
 		const sourceNodeLocation = transition.options.sourceNodeLocation
@@ -372,18 +457,27 @@ export class AccountingHelper {
 			sourceNodeLocation.relativeFilePath.toString(),
 			sourceNodeLocation.functionIdentifier
 		)
-		accountedSourceNode.presentInOriginalSourceCode = transition.options.presentInOriginalSourceCode
+		accountedSourceNode.presentInOriginalSourceCode =
+			transition.options.presentInOriginalSourceCode
 		const currentCallIdentifier = new CallIdentifier(
 			originalReport,
 			accountedSourceNode,
 			currentState.compensationLayerDepth + 1
 		)
-		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(currentCallIdentifier, 'intern')
+		const firstTimeVisited = callRelationTracker.initializeCallNodeIfAbsent(
+			currentCallIdentifier,
+			'intern'
+		)
 		const firstTimeInCurrentCompensationLayer =
-			callRelationTracker.initializeInCompensationLayerIfAbsent(currentCallIdentifier)
+			callRelationTracker.initializeInCompensationLayerIfAbsent(
+				currentCallIdentifier
+			)
 
 		accountedSourceNode.sensorValues.profilerHits += cpuNode.profilerHits
-		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(sensorValues, !firstTimeVisited)
+		const accountedSensorValues = AccountingHelper.sensorValuesForVisitedNode(
+			sensorValues,
+			!firstTimeVisited
+		)
 		// add measurements to original source code
 		accountedSourceNode.addToSensorValues(accountedSensorValues)
 

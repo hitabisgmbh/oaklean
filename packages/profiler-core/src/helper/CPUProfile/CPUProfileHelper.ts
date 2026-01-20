@@ -26,7 +26,11 @@ export class CPUProfileHelper {
 	 * @param cpuProfilePath path to the CPU profile that should be anonymized
 	 * @param outPath path to the output file
 	 */
-	static async anonymize(rootDir: UnifiedPath, cpuProfilePath: UnifiedPath, outPath: UnifiedPath) {
+	static async anonymize(
+		rootDir: UnifiedPath,
+		cpuProfilePath: UnifiedPath,
+		outPath: UnifiedPath
+	) {
 		const cpuProfile = await CPUProfileHelper.loadFromFile(cpuProfilePath)
 
 		if (cpuProfile === undefined) {
@@ -47,7 +51,9 @@ export class CPUProfileHelper {
 		await CPUProfileHelper.storeToFile(cpuProfile, outPath)
 	}
 
-	static async loadFromFile(cpuProfilePath: UnifiedPath): Promise<Cdp.Profiler.Profile | undefined> {
+	static async loadFromFile(
+		cpuProfilePath: UnifiedPath
+	): Promise<Cdp.Profiler.Profile | undefined> {
 		if (!fs.existsSync(cpuProfilePath.toPlatformString())) {
 			return undefined
 		}
@@ -55,13 +61,19 @@ export class CPUProfileHelper {
 		try {
 			return await JSONHelper.loadBigJSON(cpuProfilePath)
 		} catch (error) {
-			LoggerHelper.error(`Error loading CPU profile from ${cpuProfilePath.toPlatformString()}: ${error}`)
+			LoggerHelper.error(
+				`Error loading CPU profile from ${cpuProfilePath.toPlatformString()}: ${error}`
+			)
 			return undefined
 		}
 	}
 
 	static async inspect(cpuProfile: Cdp.Profiler.Profile) {
-		const cpuModel = new CPUModel(new UnifiedPath(__dirname).join('..'), cpuProfile, BigInt(0) as NanoSeconds_BigInt)
+		const cpuModel = new CPUModel(
+			new UnifiedPath(__dirname).join('..'),
+			cpuProfile,
+			BigInt(0) as NanoSeconds_BigInt
+		)
 
 		const nodeCount = cpuModel.INodes.length
 		const sourceNodeLocationCount = cpuModel.CPUProfileSourceLocations.length
@@ -87,7 +99,10 @@ export class CPUProfileHelper {
 		}
 	}
 
-	static async storeToFile(cpuProfile: Cdp.Profiler.Profile, cpuProfilePath: UnifiedPath): Promise<void> {
+	static async storeToFile(
+		cpuProfile: Cdp.Profiler.Profile,
+		cpuProfilePath: UnifiedPath
+	): Promise<void> {
 		await JSONHelper.storeBigJSON(cpuProfilePath, cpuProfile)
 	}
 }

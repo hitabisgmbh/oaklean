@@ -5,11 +5,14 @@ import { ProgramStructureTreeType } from '../../../../src/types'
 
 const examples = {
 	'ts.SyntaxKind.ForStatement': 'for(let i = 0; i < 10; i++) { $innerCode }',
-	'ts.SyntaxKind.ForStatement without block': 'for(let i = 0; i < 10; i++) $innerCode',
+	'ts.SyntaxKind.ForStatement without block':
+		'for(let i = 0; i < 10; i++) $innerCode',
 	'ts.SyntaxKind.ForOfStatement': 'for(const i of [1, 2, 3]) { $innerCode }',
-	'ts.SyntaxKind.ForOfStatement without block': 'for(const i of [1, 2, 3]) $innerCode',
+	'ts.SyntaxKind.ForOfStatement without block':
+		'for(const i of [1, 2, 3]) $innerCode',
 	'ts.SyntaxKind.ForInStatement': 'for(const i in [1, 2, 3]) { $innerCode }',
-	'ts.SyntaxKind.ForInStatement without block': 'for(const i in [1, 2, 3]) $innerCode'
+	'ts.SyntaxKind.ForInStatement without block':
+		'for(const i in [1, 2, 3]) $innerCode'
 }
 
 for (const [kind, example] of Object.entries(examples)) {
@@ -21,7 +24,10 @@ for (const [kind, example] of Object.entries(examples)) {
 			`
 
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 
@@ -43,7 +49,10 @@ for (const [kind, example] of Object.entries(examples)) {
 			`
 
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 

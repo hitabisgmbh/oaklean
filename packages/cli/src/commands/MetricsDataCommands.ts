@@ -1,4 +1,9 @@
-import { LoggerHelper, UnifiedPath, MetricsDataCollection, NanoSeconds_BigInt } from '@oaklean/profiler-core'
+import {
+	LoggerHelper,
+	UnifiedPath,
+	MetricsDataCollection,
+	NanoSeconds_BigInt
+} from '@oaklean/profiler-core'
 import { program } from 'commander'
 
 export default class MetricsDataCommands {
@@ -6,7 +11,9 @@ export default class MetricsDataCommands {
 		const baseCommand = program
 			.command('metrics-data')
 			.alias('md')
-			.description('commands to convert or inspect the metrics data collection format')
+			.description(
+				'commands to convert or inspect the metrics data collection format'
+			)
 
 		baseCommand
 			.command('show')
@@ -45,7 +52,9 @@ export default class MetricsDataCommands {
 			}[] = []
 
 			if (outputAsCSV) {
-				LoggerHelper.log(['process (mJ)', 'system (mJ)', 'portion', 'duration (ns)'].join(','))
+				LoggerHelper.log(
+					['process (mJ)', 'system (mJ)', 'portion', 'duration (ns)'].join(',')
+				)
 			}
 
 			for (const item of data.items) {
@@ -65,7 +74,12 @@ export default class MetricsDataCommands {
 
 					if (outputAsCSV) {
 						LoggerHelper.log(
-							[data.processEnergy, data.systemEnergy, data.energyPortionOfProcess, data.duration].join(',')
+							[
+								data.processEnergy,
+								data.systemEnergy,
+								data.energyPortionOfProcess,
+								data.duration
+							].join(',')
 						)
 					}
 				}

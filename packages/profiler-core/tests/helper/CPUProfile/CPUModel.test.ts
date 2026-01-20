@@ -19,9 +19,15 @@ describe('CPUModel', () => {
 			'CPUProfiles',
 			'example001.cpuprofile'
 		).toString()
-		const cpuProfile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
+		const cpuProfile = JSON.parse(
+			fs.readFileSync(cpuProfileFilePath).toString()
+		)
 
-		instance = new CPUModel(ROOT_DIR, cpuProfile, BigInt('2345442642551333') as NanoSeconds_BigInt)
+		instance = new CPUModel(
+			ROOT_DIR,
+			cpuProfile,
+			BigInt('2345442642551333') as NanoSeconds_BigInt
+		)
 	})
 
 	it('instance should be an instanceof CPUModel', () => {

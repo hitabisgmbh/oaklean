@@ -70,8 +70,14 @@ export class LoggerHelper {
 		}
 	}
 
-	static treeStyleKeyValues<KEYS extends string[]>(keys: KEYS, forcedIndentation?: number) {
-		const maxKeyLength = forcedIndentation !== undefined ? forcedIndentation : Math.max(...keys.map((k) => k.length))
+	static treeStyleKeyValues<KEYS extends string[]>(
+		keys: KEYS,
+		forcedIndentation?: number
+	) {
+		const maxKeyLength =
+			forcedIndentation !== undefined
+				? forcedIndentation
+				: Math.max(...keys.map((k) => k.length))
 
 		return function (entries: Record<KEYS[number], string>) {
 			let result = ''

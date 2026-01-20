@@ -54,7 +54,8 @@ export const SOURCE_LOCATIONS_WEBPACK = {
 			resolved: {
 				sourceNodeLocation: {
 					relativeFilePath: new UnifiedPath('./src/index.js'),
-					functionIdentifier: '{function:myFunction}' as SourceNodeIdentifier_string
+					functionIdentifier:
+						'{function:myFunction}' as SourceNodeIdentifier_string
 				},
 				functionIdentifierPresentInOriginalFile: true
 			}
@@ -72,7 +73,8 @@ export const SOURCE_LOCATIONS_WEBPACK = {
 			resolved: {
 				sourceNodeLocation: {
 					relativeFilePath: new UnifiedPath('./index.js'),
-					functionIdentifier: '{function:moduleFunction}' as SourceNodeIdentifier_string
+					functionIdentifier:
+						'{function:moduleFunction}' as SourceNodeIdentifier_string
 				},
 				functionIdentifierPresentInOriginalFile: true,
 				nodeModule: new NodeModule('moduleA', '1.0.0'),
@@ -103,13 +105,17 @@ function projectScopeNamedFunction(
 ) {
 	const filePath = `file:///Users/user/project/src/${fileName}.js`
 	return Object.assign(
-		new CPUProfileSourceLocation(undefined as any, globalSourceLocationIndex++, {
-			url: filePath,
-			functionName: functionName,
-			scriptId: scriptId(filePath).toString(),
-			lineNumber: index * 10,
-			columnNumber: 0
-		}),
+		new CPUProfileSourceLocation(
+			undefined as any,
+			globalSourceLocationIndex++,
+			{
+				url: filePath,
+				functionName: functionName,
+				scriptId: scriptId(filePath).toString(),
+				lineNumber: index * 10,
+				columnNumber: 0
+			}
+		),
 		{
 			resolved: {
 				sourceNodeLocation: {
@@ -129,8 +135,14 @@ function projectScopeDefaultFunction(
 	index: number
 ) {
 	const functionName = `projectFunction_${fileName}_${index}`
-	const functionIdentifier = `{function:${functionName}}` as SourceNodeIdentifier_string
-	return projectScopeNamedFunction(fileName, functionName, functionIdentifier, index + 1)
+	const functionIdentifier =
+		`{function:${functionName}}` as SourceNodeIdentifier_string
+	return projectScopeNamedFunction(
+		fileName,
+		functionName,
+		functionIdentifier,
+		index + 1
+	)
 }
 
 function moduleScopeDefaultFunction(
@@ -143,18 +155,23 @@ function moduleScopeDefaultFunction(
 	const filePath = `file:///Users/user/project/node_modules/${moduleName}/${fileName}.js`
 
 	return Object.assign(
-		new CPUProfileSourceLocation(undefined as any, globalSourceLocationIndex++, {
-			url: filePath,
-			functionName: functionName,
-			scriptId: scriptId(filePath).toString(),
-			lineNumber: 0,
-			columnNumber: 0
-		}),
+		new CPUProfileSourceLocation(
+			undefined as any,
+			globalSourceLocationIndex++,
+			{
+				url: filePath,
+				functionName: functionName,
+				scriptId: scriptId(filePath).toString(),
+				lineNumber: 0,
+				columnNumber: 0
+			}
+		),
 		{
 			resolved: {
 				sourceNodeLocation: {
 					relativeFilePath: new UnifiedPath(`${fileName}.js`),
-					functionIdentifier: `{function:${functionName}}` as SourceNodeIdentifier_string
+					functionIdentifier:
+						`{function:${functionName}}` as SourceNodeIdentifier_string
 				},
 				nodeModule: new NodeModule(moduleName, '1.0.0'),
 				relativeNodeModulePath: new UnifiedPath(`node_modules/${moduleName}`),
@@ -193,7 +210,9 @@ export const SOURCE_LOCATIONS_EMPTY = {
 		{
 			resolved: {
 				sourceNodeLocation: {
-					relativeFilePath: new UnifiedPath(UNKNOWN_SCRIPTS_FOLDER_NAME).join('1'),
+					relativeFilePath: new UnifiedPath(UNKNOWN_SCRIPTS_FOLDER_NAME).join(
+						'1'
+					),
 					functionIdentifier: '{root}' as SourceNodeIdentifier_string
 				},
 				functionIdentifierPresentInOriginalFile: false

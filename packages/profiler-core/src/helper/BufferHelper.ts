@@ -3,21 +3,30 @@ import Zlib from 'zlib'
 import { LoggerHelper } from './LoggerHelper'
 
 // Types
-import { BufferValueMapTypeMap, PrimitiveBufferTypes, PrimitiveBufferTypes_ByteSize_Map } from '../types'
+import {
+	BufferValueMapTypeMap,
+	PrimitiveBufferTypes,
+	PrimitiveBufferTypes_ByteSize_Map
+} from '../types'
 
-export const PRIMITIVE_BUFFER_TYPES_BYTE_SIZES: PrimitiveBufferTypes_ByteSize_Map = {
-	[PrimitiveBufferTypes.UInt]: 4,
-	[PrimitiveBufferTypes.Double]: 8,
-	[PrimitiveBufferTypes.String2L]: 2 ** 16 - 1,
-	[PrimitiveBufferTypes.String4L]: 2 ** 32 - 1,
-	[PrimitiveBufferTypes.Boolean]: 1,
-	[PrimitiveBufferTypes.UInt8]: 1
-}
+export const PRIMITIVE_BUFFER_TYPES_BYTE_SIZES: PrimitiveBufferTypes_ByteSize_Map =
+	{
+		[PrimitiveBufferTypes.UInt]: 4,
+		[PrimitiveBufferTypes.Double]: 8,
+		[PrimitiveBufferTypes.String2L]: 2 ** 16 - 1,
+		[PrimitiveBufferTypes.String4L]: 2 ** 32 - 1,
+		[PrimitiveBufferTypes.Boolean]: 1,
+		[PrimitiveBufferTypes.UInt8]: 1
+	}
 
 const VALUE_MAP_HEADER_SIZE = 2 // in bytes
 
 export class BufferHelper {
-	static outOfDomainError(value: number, type: string, error?: (type: string, value: number) => void) {
+	static outOfDomainError(
+		value: number,
+		type: string,
+		error?: (type: string, value: number) => void
+	) {
 		if (error) {
 			error(type, value)
 		}
@@ -36,7 +45,10 @@ export class BufferHelper {
 		const keys = Array.from(Object.keys(typeMap))
 		const valueBuffers: Buffer[] = []
 
-		const valueLen = Math.min(VALUE_MAP_HEADER_SIZE * 8 - 1, keys.length - keyOffset)
+		const valueLen = Math.min(
+			VALUE_MAP_HEADER_SIZE * 8 - 1,
+			keys.length - keyOffset
+		)
 		for (let i = 0; i < valueLen; i++) {
 			const key = keys[i + keyOffset]
 			const byteSize = typeMap[key]
@@ -63,11 +75,23 @@ export class BufferHelper {
 			}
 		}
 		if (keys.length - keyOffset > VALUE_MAP_HEADER_SIZE * 8 - 1) {
-			const nextBuffer = BufferHelper.numberMapToBuffer(typeMap, values, keyOffset + valueLen, tag)
-			if (nextBuffer.subarray(0, VALUE_MAP_HEADER_SIZE).toString('hex') === '00'.repeat(VALUE_MAP_HEADER_SIZE)) {
+			const nextBuffer = BufferHelper.numberMapToBuffer(
+				typeMap,
+				values,
+				keyOffset + valueLen,
+				tag
+			)
+			if (
+				nextBuffer.subarray(0, VALUE_MAP_HEADER_SIZE).toString('hex') ===
+				'00'.repeat(VALUE_MAP_HEADER_SIZE)
+			) {
 				return Buffer.concat([valueIsPresent_Buffer, ...valueBuffers])
 			}
-			BufferHelper.setBit(valueIsPresent_Buffer, VALUE_MAP_HEADER_SIZE * 8 - 1, 1)
+			BufferHelper.setBit(
+				valueIsPresent_Buffer,
+				VALUE_MAP_HEADER_SIZE * 8 - 1,
+				1
+			)
 
 			// still values to store
 			return Buffer.concat([valueIsPresent_Buffer, ...valueBuffers, nextBuffer])
@@ -79,7 +103,8 @@ export class BufferHelper {
 		typeMap: BufferValueMapTypeMap<Record<string, number>>,
 		buffer: Buffer
 	): { instance: Record<string, number>; remainingBuffer: Buffer } {
-		const { result: numberArray, remainingBuffer } = BufferHelper.numberArrayFromBuffer(buffer, typeMap)
+		const { result: numberArray, remainingBuffer } =
+			BufferHelper.numberArrayFromBuffer(buffer, typeMap)
 
 		const result: Record<string, number> = {}
 		const keys = Array.from(Object.keys(typeMap))
@@ -98,7 +123,9 @@ export class BufferHelper {
 		keyOffset?: number
 	): { result: number[]; remainingBuffer: Buffer } {
 		if (buffer.byteLength < 2) {
-			throw new Error('BufferHelper.valueMapFromBuffer: not enough bytes remaining')
+			throw new Error(
+				'BufferHelper.valueMapFromBuffer: not enough bytes remaining'
+			)
 		}
 		const valueIsPresent_Buffer = buffer.subarray(0, 2)
 		let remainingBuffer = buffer.subarray(2)
@@ -111,20 +138,24 @@ export class BufferHelper {
 				switch (typeMap[key]) {
 					case PrimitiveBufferTypes.UInt:
 						{
-							const { instance, remainingBuffer: newRemainingBuffer } = BufferHelper.UIntFromBuffer(remainingBuffer)
+							const { instance, remainingBuffer: newRemainingBuffer } =
+								BufferHelper.UIntFromBuffer(remainingBuffer)
 							remainingBuffer = newRemainingBuffer
 							data.push(instance)
 						}
 						break
 					case PrimitiveBufferTypes.Double:
 						{
-							const { instance, remainingBuffer: newRemainingBuffer } = BufferHelper.DoubleFromBuffer(remainingBuffer)
+							const { instance, remainingBuffer: newRemainingBuffer } =
+								BufferHelper.DoubleFromBuffer(remainingBuffer)
 							remainingBuffer = newRemainingBuffer
 							data.push(instance)
 						}
 						break
 					default:
-						throw new Error('SensorValues.toBuffer: unexpected primitive buffer type')
+						throw new Error(
+							'SensorValues.toBuffer: unexpected primitive buffer type'
+						)
 				}
 			} else {
 				data.push(0)
@@ -133,14 +164,18 @@ export class BufferHelper {
 
 		if (
 			keys.length - (keyOffset || 0) > VALUE_MAP_HEADER_SIZE * 8 - 1 &&
-			BufferHelper.readBit(valueIsPresent_Buffer, VALUE_MAP_HEADER_SIZE * 8 - 1) === 1
+			BufferHelper.readBit(
+				valueIsPresent_Buffer,
+				VALUE_MAP_HEADER_SIZE * 8 - 1
+			) === 1
 		) {
 			// still values to read
-			const { result, remainingBuffer: remainingBuffer_childCall } = BufferHelper.numberArrayFromBuffer(
-				remainingBuffer,
-				typeMap,
-				(keyOffset || 0) + VALUE_MAP_HEADER_SIZE * 8 - 1
-			)
+			const { result, remainingBuffer: remainingBuffer_childCall } =
+				BufferHelper.numberArrayFromBuffer(
+					remainingBuffer,
+					typeMap,
+					(keyOffset || 0) + VALUE_MAP_HEADER_SIZE * 8 - 1
+				)
 			return {
 				result: [...data, ...result],
 				remainingBuffer: remainingBuffer_childCall
@@ -152,12 +187,27 @@ export class BufferHelper {
 		}
 	}
 
-	static UInt8ToBuffer(tinyInt: number, error?: (type: string, value: number) => void): Buffer {
-		if (tinyInt < 0 || tinyInt > 2 ** (PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8] * 8) - 1) {
-			BufferHelper.outOfDomainError(tinyInt, 'BufferHelper.UInt8ToBuffer', error)
+	static UInt8ToBuffer(
+		tinyInt: number,
+		error?: (type: string, value: number) => void
+	): Buffer {
+		if (
+			tinyInt < 0 ||
+			tinyInt >
+				2 **
+					(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8] * 8) -
+					1
+		) {
+			BufferHelper.outOfDomainError(
+				tinyInt,
+				'BufferHelper.UInt8ToBuffer',
+				error
+			)
 		}
 
-		const result = Buffer.alloc(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8])
+		const result = Buffer.alloc(
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8]
+		)
 		result.writeUInt8(tinyInt)
 		return result
 	}
@@ -166,18 +216,25 @@ export class BufferHelper {
 		instance: number
 		remainingBuffer: Buffer
 	} {
-		if (buffer.byteLength < PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8]) {
+		if (
+			buffer.byteLength <
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8]
+		) {
 			throw new Error('BufferHelper.TIntFromBuffer: not enough bytes remaining')
 		}
 		const instance = buffer.readUInt8()
 		return {
 			instance: instance,
-			remainingBuffer: buffer.subarray(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8])
+			remainingBuffer: buffer.subarray(
+				PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt8]
+			)
 		}
 	}
 
 	static BooleanToBuffer(bool: boolean): Buffer {
-		const result = Buffer.alloc(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Boolean])
+		const result = Buffer.alloc(
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Boolean]
+		)
 		result.writeInt8(bool ? 1 : 0)
 		return result
 	}
@@ -186,21 +243,39 @@ export class BufferHelper {
 		instance: boolean
 		remainingBuffer: Buffer
 	} {
-		if (buffer.byteLength < PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Boolean]) {
-			throw new Error('BufferHelper.BooleanFromBuffer: not enough bytes remaining')
+		if (
+			buffer.byteLength <
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Boolean]
+		) {
+			throw new Error(
+				'BufferHelper.BooleanFromBuffer: not enough bytes remaining'
+			)
 		}
 		const instance = buffer.readInt8()
 		return {
 			instance: instance === 0 ? false : true,
-			remainingBuffer: buffer.subarray(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Boolean])
+			remainingBuffer: buffer.subarray(
+				PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Boolean]
+			)
 		}
 	}
 
-	static UIntToBuffer(int: number, error?: (type: string, value: number) => void): Buffer {
-		if (int < 0 || int > 2 ** (PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt] * 8) - 1) {
+	static UIntToBuffer(
+		int: number,
+		error?: (type: string, value: number) => void
+	): Buffer {
+		if (
+			int < 0 ||
+			int >
+				2 **
+					(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt] * 8) -
+					1
+		) {
 			BufferHelper.outOfDomainError(int, 'BufferHelper.UIntToBuffer', error)
 		}
-		const result = Buffer.alloc(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt])
+		const result = Buffer.alloc(
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt]
+		)
 		result.writeUInt32LE(int)
 		return result
 	}
@@ -209,18 +284,25 @@ export class BufferHelper {
 		instance: number
 		remainingBuffer: Buffer
 	} {
-		if (buffer.byteLength < PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt]) {
+		if (
+			buffer.byteLength <
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt]
+		) {
 			throw new Error('BufferHelper.UIntFromBuffer: not enough bytes remaining')
 		}
 		const instance = buffer.readUInt32LE()
 		return {
 			instance,
-			remainingBuffer: buffer.subarray(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt])
+			remainingBuffer: buffer.subarray(
+				PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.UInt]
+			)
 		}
 	}
 
 	static DoubleToBuffer(double: number): Buffer {
-		const result = Buffer.alloc(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Double])
+		const result = Buffer.alloc(
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Double]
+		)
 		result.writeDoubleLE(double)
 		return result
 	}
@@ -229,19 +311,31 @@ export class BufferHelper {
 		instance: number
 		remainingBuffer: Buffer
 	} {
-		if (buffer.byteLength < PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Double]) {
-			throw new Error('BufferHelper.DoubleFromBuffer: not enough bytes remaining')
+		if (
+			buffer.byteLength <
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Double]
+		) {
+			throw new Error(
+				'BufferHelper.DoubleFromBuffer: not enough bytes remaining'
+			)
 		}
 		const instance = buffer.readDoubleLE()
 		return {
 			instance,
-			remainingBuffer: buffer.subarray(PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Double])
+			remainingBuffer: buffer.subarray(
+				PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.Double]
+			)
 		}
 	}
 
 	static String2LToBuffer(string: string): Buffer {
-		if (string.length > PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.String2L]) {
-			throw new Error('BufferHelper.String2LToBuffer: only supports string smaller than 2^16 - 1 characters')
+		if (
+			string.length >
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.String2L]
+		) {
+			throw new Error(
+				'BufferHelper.String2LToBuffer: only supports string smaller than 2^16 - 1 characters'
+			)
 		}
 
 		const string_Buffer = Buffer.from(string)
@@ -256,11 +350,15 @@ export class BufferHelper {
 		remainingBuffer: Buffer
 	} {
 		if (buffer.byteLength < 2) {
-			throw new Error('BufferHelper.String2LFromBuffer: not enough bytes remaining')
+			throw new Error(
+				'BufferHelper.String2LFromBuffer: not enough bytes remaining'
+			)
 		}
 		const length = buffer.readUInt16LE()
 		if (buffer.byteLength - 2 - length < 0) {
-			throw new Error('BufferHelper.String2LFromBuffer: not enough bytes remaining')
+			throw new Error(
+				'BufferHelper.String2LFromBuffer: not enough bytes remaining'
+			)
 		}
 		const string = buffer.subarray(2, 2 + length).toString('utf-8')
 
@@ -271,8 +369,13 @@ export class BufferHelper {
 	}
 
 	static String4LToBuffer(string: string): Buffer {
-		if (string.length > PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.String4L]) {
-			throw new Error('BufferHelper.String4LToBuffer: only supports string smaller than 2^32 - 1 characters')
+		if (
+			string.length >
+			PRIMITIVE_BUFFER_TYPES_BYTE_SIZES[PrimitiveBufferTypes.String4L]
+		) {
+			throw new Error(
+				'BufferHelper.String4LToBuffer: only supports string smaller than 2^32 - 1 characters'
+			)
 		}
 
 		const string_Buffer = Buffer.from(string)
@@ -287,11 +390,15 @@ export class BufferHelper {
 		remainingBuffer: Buffer
 	} {
 		if (buffer.byteLength < 4) {
-			throw new Error('BufferHelper.String4LFromBuffer: not enough bytes remaining')
+			throw new Error(
+				'BufferHelper.String4LFromBuffer: not enough bytes remaining'
+			)
 		}
 		const length = buffer.readUInt32LE()
 		if (buffer.byteLength - 4 - length < 0) {
-			throw new Error('BufferHelper.String4LFromBuffer: not enough bytes remaining')
+			throw new Error(
+				'BufferHelper.String4LFromBuffer: not enough bytes remaining'
+			)
 		}
 		const string = buffer.subarray(4, 4 + length).toString('utf-8')
 
@@ -329,7 +436,10 @@ export class BufferHelper {
 		})
 	}
 
-	static async decompressBuffer(buffer: Buffer, maxOutputLength: number = 100 * 1024 * 1024): Promise<Buffer> {
+	static async decompressBuffer(
+		buffer: Buffer,
+		maxOutputLength: number = 100 * 1024 * 1024
+	): Promise<Buffer> {
 		return new Promise((resolve, reject) => {
 			Zlib.inflate(
 				buffer,

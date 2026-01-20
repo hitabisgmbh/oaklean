@@ -133,7 +133,12 @@ describe('UnifiedPath', () => {
 			new UnifiedPath('file')
 		)
 
-		const pMixed = new UnifiedPath('/').join(new UnifiedPath('path'), 'to', 'some', new UnifiedPath('file'))
+		const pMixed = new UnifiedPath('/').join(
+			new UnifiedPath('path'),
+			'to',
+			'some',
+			new UnifiedPath('file')
+		)
 
 		const emptyJoinString = new UnifiedPath('/').join()
 
@@ -151,7 +156,9 @@ describe('UnifiedPath', () => {
 		const result = p.pathUntilSubDir('node_modules' as UnifiedPathPart_string)
 		expect(result?.match.toString()).toBe('/path/to/node_modules')
 		expect(result?.remainder.toString()).toBe('./node_module_name/file')
-		expect(p.pathUntilSubDir('not_existing' as UnifiedPathPart_string)).toBe(undefined)
+		expect(p.pathUntilSubDir('not_existing' as UnifiedPathPart_string)).toBe(
+			undefined
+		)
 	})
 
 	it('copy()', () => {
@@ -181,7 +188,9 @@ describe('UnifiedPath', () => {
 		const filePathLinux = new UnifiedPath(
 			'/Users/user-name/Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
 		)
-		const filePathRelativeLinux = new UnifiedPath('Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js')
+		const filePathRelativeLinux = new UnifiedPath(
+			'Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
+		)
 		const filePathRelativeLinuxPrefix = new UnifiedPath(
 			'./Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
 		)
@@ -204,7 +213,9 @@ describe('UnifiedPath', () => {
 		const filePathLinux = new UnifiedPath(
 			'/Users/user-name/Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
 		)
-		const filePathRelativeLinux = new UnifiedPath('Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js')
+		const filePathRelativeLinux = new UnifiedPath(
+			'Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
+		)
 		const filePathRelativeLinuxPrefix = new UnifiedPath(
 			'./Desktop/GreenIT/profiler/packages/profiler/dist/src/Profiler.js'
 		)

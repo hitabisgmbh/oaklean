@@ -71,21 +71,32 @@ export class InsertCPUProfileStateMachine {
 		profile: ICpuProfileRaw,
 		metricsDataCollection?: MetricsDataCollection
 	) {
-		if (this.projectReport.executionDetails.highResolutionBeginTime === undefined) {
-			throw new Error('InsertCPUProfileHelper.insertCPUProfile: executionDetails.highResolutionBeginTime is undefined')
+		if (
+			this.projectReport.executionDetails.highResolutionBeginTime === undefined
+		) {
+			throw new Error(
+				'InsertCPUProfileHelper.insertCPUProfile: executionDetails.highResolutionBeginTime is undefined'
+			)
 		}
 		const cpuModel = new CPUModel(
 			rootDir,
 			profile,
-			BigInt(this.projectReport.executionDetails.highResolutionBeginTime) as NanoSeconds_BigInt
+			BigInt(
+				this.projectReport.executionDetails.highResolutionBeginTime
+			) as NanoSeconds_BigInt
 		)
 
 		if (metricsDataCollection && metricsDataCollection.items.length > 0) {
 			// fill the cpu model with energy values
-			cpuModel.energyValuesPerNode = cpuModel.energyValuesPerNodeByMetricsData(metricsDataCollection)
+			cpuModel.energyValuesPerNode = cpuModel.energyValuesPerNodeByMetricsData(
+				metricsDataCollection
+			)
 		}
 
-		await this.insertCPUNodes(cpuModel.getNode(0), resolveFunctionIdentifierHelper)
+		await this.insertCPUNodes(
+			cpuModel.getNode(0),
+			resolveFunctionIdentifierHelper
+		)
 	}
 
 	/**
@@ -94,7 +105,10 @@ export class InsertCPUProfileStateMachine {
 	 * @param rootNode the root node of the cpu model
 	 * @param resolveFunctionIdentifierHelper the helper to resolve function identifiers
 	 */
-	async insertCPUNodes(rootNode: CPUNode, resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper) {
+	async insertCPUNodes(
+		rootNode: CPUNode,
+		resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper
+	) {
 		const stack: StackFrame[] = [
 			{
 				// begin state
@@ -129,22 +143,40 @@ export class InsertCPUProfileStateMachine {
 				// check wether a link was created
 				if (accountingInfo.accountedSourceNodeReference !== null) {
 					// remove the last child call from the current state
-					if (!this.callRelationTracker.removeLastChildRecord(parentState.callIdentifier)) {
-						throw new Error('InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present')
+					if (
+						!this.callRelationTracker.removeLastChildRecord(
+							parentState.callIdentifier
+						)
+					) {
+						throw new Error(
+							'InsertCPUProfileHelper.insertCPUProfile.traverse: expected childCalls to be present'
+						)
 					}
 				}
-				if (currentStackFrame.result.accountingInfo.accountedSourceNode.firstTimeVisited) {
+				if (
+					currentStackFrame.result.accountingInfo.accountedSourceNode
+						.firstTimeVisited
+				) {
 					// last occurrence of the callIdentifier in the call stack
 					// remove it from the call relation tracker
 					this.callRelationTracker.removeCallRecord(currentState.callIdentifier)
 				}
-				if (currentStackFrame.result.accountingInfo.accountedSourceNode.firstTimeInCurrentCompensationLayer) {
+				if (
+					currentStackFrame.result.accountingInfo.accountedSourceNode
+						.firstTimeInCurrentCompensationLayer
+				) {
 					// last occurrence of the callIdentifier in the current compensation layer
 					// remove it from the compensation layer tracking
-					this.callRelationTracker.removeCompensationLayerRecord(currentState.callIdentifier)
+					this.callRelationTracker.removeCompensationLayerRecord(
+						currentState.callIdentifier
+					)
 				}
 				if (this.debug?.states) {
-					StateMachineLogger.logState(currentStackFrame.depth + 1, currentStackFrame.node, currentState)
+					StateMachineLogger.logState(
+						currentStackFrame.depth + 1,
+						currentStackFrame.node,
+						currentState
+					)
 				}
 
 				const compensation = currentStackFrame.result.compensation
@@ -180,7 +212,10 @@ export class InsertCPUProfileStateMachine {
 				}
 
 				if (this.debug?.transitions) {
-					StateMachineLogger.logLeaveTransition(currentStackFrame.result.nextState, currentStackFrame.state)
+					StateMachineLogger.logLeaveTransition(
+						currentStackFrame.result.nextState,
+						currentStackFrame.state
+					)
 				}
 				if (currentState.callIdentifier.isAwaiterSourceNode) {
 					this.awaiterStack.pop()
@@ -190,7 +225,11 @@ export class InsertCPUProfileStateMachine {
 
 			// PROCESSING OF THE NODE (first visit)
 			if (this.debug?.states) {
-				StateMachineLogger.logState(currentStackFrame.depth, currentStackFrame.node, currentStackFrame.state)
+				StateMachineLogger.logState(
+					currentStackFrame.depth,
+					currentStackFrame.node,
+					currentStackFrame.state
+				)
 			}
 
 			// determine the transition
@@ -201,7 +240,10 @@ export class InsertCPUProfileStateMachine {
 			)
 
 			// apply the transition
-			currentStackFrame.result = await this.applyTransition(currentStackFrame, transition)
+			currentStackFrame.result = await this.applyTransition(
+				currentStackFrame,
+				transition
+			)
 
 			if (this.debug?.transitions) {
 				StateMachineLogger.logTransition(
@@ -214,17 +256,18 @@ export class InsertCPUProfileStateMachine {
 			}
 
 			// create compensation if necessary
-			currentStackFrame.result.compensation = CompensationHelper.createCompensationIfNecessary(
-				currentStackFrame.node,
-				currentStackFrame.state,
-				currentStackFrame.result,
-				this.debug?.compensations
-					? {
-							depth: currentStackFrame.depth,
-							node: currentStackFrame.node
-						}
-					: undefined
-			)
+			currentStackFrame.result.compensation =
+				CompensationHelper.createCompensationIfNecessary(
+					currentStackFrame.node,
+					currentStackFrame.state,
+					currentStackFrame.result,
+					this.debug?.compensations
+						? {
+								depth: currentStackFrame.depth,
+								node: currentStackFrame.node
+							}
+						: undefined
+				)
 
 			// add children to stack
 			for (const child of currentStackFrame.node.reversedChildren()) {
@@ -279,15 +322,23 @@ export class InsertCPUProfileStateMachine {
 				}
 			}
 		}
-		const { sourceNodeLocation, functionIdentifierPresentInOriginalFile, nodeModule, relativeNodeModulePath } =
-			await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(sourceLocation)
+		const {
+			sourceNodeLocation,
+			functionIdentifierPresentInOriginalFile,
+			nodeModule,
+			relativeNodeModulePath
+		} =
+			await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
+				sourceLocation
+			)
 
 		if (!(relativeNodeModulePath && nodeModule)) {
 			// is project
 			return {
 				transition: 'toProject' as const,
 				options: {
-					createLink: currentState.scope === 'project' && currentState.type === 'intern',
+					createLink:
+						currentState.scope === 'project' && currentState.type === 'intern',
 					headless: false,
 					sourceNodeLocation: sourceNodeLocation,
 					presentInOriginalSourceCode: functionIdentifierPresentInOriginalFile
@@ -315,7 +366,10 @@ export class InsertCPUProfileStateMachine {
 	 * @param transition
 	 * @returns the result of the transition including the next state and accounting info
 	 */
-	async applyTransition(currentStackFrame: StackFrame, transition: Transition): Promise<TransitionResult> {
+	async applyTransition(
+		currentStackFrame: StackFrame,
+		transition: Transition
+	): Promise<TransitionResult> {
 		this.applyHeadless(currentStackFrame, transition)
 		switch (transition.transition) {
 			case 'toLangInternal':
@@ -364,9 +418,10 @@ export class InsertCPUProfileStateMachine {
 							)
 						case 'module':
 							if (
-								currentStackFrame.state.callIdentifier.report instanceof ModuleReport &&
-								currentStackFrame.state.callIdentifier.report.nodeModule.identifier ===
-									transition.options.nodeModule.identifier
+								currentStackFrame.state.callIdentifier.report instanceof
+									ModuleReport &&
+								currentStackFrame.state.callIdentifier.report.nodeModule
+									.identifier === transition.options.nodeModule.identifier
 							) {
 								// transition stays in the same module
 								return await AccountingHelper.accountToIntern(
@@ -401,13 +456,20 @@ export class InsertCPUProfileStateMachine {
 	 */
 	applyHeadless(currentStackFrame: StackFrame, transition: Transition) {
 		// if no intern calls were tracked yet, add the time to the headless cpu time
-		if (currentStackFrame.state.headless && transition.transition !== 'toProject') {
+		if (
+			currentStackFrame.state.headless &&
+			transition.transition !== 'toProject'
+		) {
 			switch (transition.transition) {
 				case 'toModule':
-					this.projectReport.headlessSensorValues.addSelfToExtern(currentStackFrame.node.sensorValues)
+					this.projectReport.headlessSensorValues.addSelfToExtern(
+						currentStackFrame.node.sensorValues
+					)
 					break
 				case 'toLangInternal':
-					this.projectReport.headlessSensorValues.addSelfToLangInternal(currentStackFrame.node.sensorValues)
+					this.projectReport.headlessSensorValues.addSelfToLangInternal(
+						currentStackFrame.node.sensorValues
+					)
 					break
 			}
 		}

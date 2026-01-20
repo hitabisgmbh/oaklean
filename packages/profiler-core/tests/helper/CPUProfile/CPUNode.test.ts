@@ -21,9 +21,15 @@ describe('CPUNode', () => {
 			'CPUProfiles',
 			'example001.cpunode.cpuprofile'
 		).toString()
-		const cpuProfile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
+		const cpuProfile = JSON.parse(
+			fs.readFileSync(cpuProfileFilePath).toString()
+		)
 
-		cpuModel = new CPUModel(ROOT_DIR, cpuProfile, BigInt('2345442642551333') as NanoSeconds_BigInt)
+		cpuModel = new CPUModel(
+			ROOT_DIR,
+			cpuProfile,
+			BigInt('2345442642551333') as NanoSeconds_BigInt
+		)
 		const energyValues: [MilliJoule_number, MilliJoule_number][] = []
 		for (let i = 0; i < cpuModel.INodes.length; i++) {
 			energyValues.push([i as MilliJoule_number, (i + 1) as MilliJoule_number])

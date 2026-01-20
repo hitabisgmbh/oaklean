@@ -1,5 +1,9 @@
 // Types
-import { ProjectIdentifier_string, MicroSeconds_number, IProfilerConfig } from '../types'
+import {
+	ProjectIdentifier_string,
+	MicroSeconds_number,
+	IProfilerConfig
+} from '../types'
 
 export const STATIC_CONFIG_FILENAME = '.oaklean'
 export const STATIC_LOCAL_CONFIG_FILENAME = '.oaklean.local'
@@ -16,7 +20,8 @@ export const DEFAULT_PROFILER_CONFIG: IProfilerConfig = {
 		exportSensorInterfaceData: false
 	},
 	projectOptions: {
-		identifier: '00000000-0000-0000-0000-000000000000' as ProjectIdentifier_string
+		identifier:
+			'00000000-0000-0000-0000-000000000000' as ProjectIdentifier_string
 	},
 	runtimeOptions: {
 		seeds: {},

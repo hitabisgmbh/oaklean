@@ -16,7 +16,10 @@ const EXPECTED_INDEX: ISourceNodeIndex<SourceNodeIndexType.SourceNode> = {
 	id: 2 as SourceNodeID_number
 }
 
-function runInstanceTests(title: string, preDefinedInstance: () => SourceNodeIndex<SourceNodeIndexType.SourceNode>) {
+function runInstanceTests(
+	title: string,
+	preDefinedInstance: () => SourceNodeIndex<SourceNodeIndexType.SourceNode>
+) {
 	let instance: SourceNodeIndex<SourceNodeIndexType.SourceNode>
 
 	beforeEach(() => {
@@ -50,7 +53,9 @@ function runInstanceTests(title: string, preDefinedInstance: () => SourceNodeInd
 	})
 
 	test('globalIdentifier', () => {
-		expect(instance.globalIdentifier().identifier).toBe('node@20.11.1{node:path}{isAbsolute}')
+		expect(instance.globalIdentifier().identifier).toBe(
+			'node@20.11.1{node:path}{isAbsolute}'
+		)
 	})
 }
 describe('SourceNodeIndex', () => {
@@ -58,7 +63,9 @@ describe('SourceNodeIndex', () => {
 		const globalIndex = new GlobalIndex(new NodeModule('node', '20.11.1'))
 		return globalIndex.getSourceNodeIndex(
 			'upsert',
-			GlobalIdentifier.fromIdentifier('{node:path}{isAbsolute}' as GlobalSourceNodeIdentifier_string)
+			GlobalIdentifier.fromIdentifier(
+				'{node:path}{isAbsolute}' as GlobalSourceNodeIdentifier_string
+			)
 		)
 	})
 

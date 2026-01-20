@@ -48,7 +48,10 @@ export class TraverseNodeInfo {
 	}
 
 	shouldResolveTreeWithZeroChildren(): boolean {
-		return this.tree instanceof ProgramStructureTree || this.tree.resolveWithNoChildren === true
+		return (
+			this.tree instanceof ProgramStructureTree ||
+			this.tree.resolveWithNoChildren === true
+		)
 	}
 
 	isTreeResolved(): boolean {

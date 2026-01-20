@@ -17,7 +17,8 @@ export interface IPureCPUTime {
 	aggregatedCPUTime?: MicroSeconds_number
 }
 
-export interface ISensorValues extends IPureCPUTime, IPureCPUEnergyConsumption, IPureRAMEnergyConsumption {
+export interface ISensorValues
+	extends IPureCPUTime, IPureCPUEnergyConsumption, IPureRAMEnergyConsumption {
 	profilerHits?: number
 
 	internCPUTime?: MicroSeconds_number

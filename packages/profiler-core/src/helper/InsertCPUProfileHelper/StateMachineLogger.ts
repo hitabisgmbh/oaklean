@@ -8,7 +8,10 @@ import { SourceNodeMetaData } from '../../model'
 import { SourceNodeMetaDataType_Reference } from '../../types'
 
 export class StateMachineLogger {
-	static formatReference = LoggerHelper.treeStyleKeyValues(['CPU Time', 'CPU Energy', 'RAM Energy'] as const, 29)
+	static formatReference = LoggerHelper.treeStyleKeyValues(
+		['CPU Time', 'CPU Energy', 'RAM Energy'] as const,
+		29
+	)
 
 	static formatState = LoggerHelper.treeStyleKeyValues(
 		[
@@ -49,7 +52,9 @@ export class StateMachineLogger {
 
 		const sourceNodeIndex = currentState.callIdentifier.sourceNode?.getIndex()
 		if (sourceNodeIndex === undefined) {
-			throw new Error('InsertCPUProfileStateMachine.logState: sourceNode has no index')
+			throw new Error(
+				'InsertCPUProfileStateMachine.logState: sourceNode has no index'
+			)
 		}
 
 		const sensorValues = currentState.callIdentifier.sourceNode.sensorValues
@@ -74,7 +79,8 @@ export class StateMachineLogger {
 				})
 		)
 		const iterators = {
-			LANG_INTERNAL: currentState.callIdentifier.sourceNode.lang_internal.values(),
+			LANG_INTERNAL:
+				currentState.callIdentifier.sourceNode.lang_internal.values(),
 			INTERN: currentState.callIdentifier.sourceNode.intern.values(),
 			EXTERN: currentState.callIdentifier.sourceNode.extern.values()
 		}
@@ -90,7 +96,9 @@ export class StateMachineLogger {
 		}
 	}
 
-	static logSourceNodeReference(referenceSourceNode: SourceNodeMetaData<SourceNodeMetaDataType_Reference>) {
+	static logSourceNodeReference(
+		referenceSourceNode: SourceNodeMetaData<SourceNodeMetaDataType_Reference>
+	) {
 		LoggerHelper.log(
 			`SourceNodeID: ${referenceSourceNode.id.toString()}\n` +
 				StateMachineLogger.formatReference({
@@ -102,12 +110,19 @@ export class StateMachineLogger {
 	}
 
 	static logLeaveTransition(currentState: State, nextState: State) {
-		const currentSourceNodeIndex = currentState.callIdentifier.sourceNode?.getIndex()
+		const currentSourceNodeIndex =
+			currentState.callIdentifier.sourceNode?.getIndex()
 
-		const currentSourceNodeName = currentSourceNodeIndex !== undefined ? currentSourceNodeIndex.functionName : '(root)'
+		const currentSourceNodeName =
+			currentSourceNodeIndex !== undefined
+				? currentSourceNodeIndex.functionName
+				: '(root)'
 
 		const nextSourceNodeIndex = nextState.callIdentifier.sourceNode?.getIndex()
-		const nextSourceNodeName = nextSourceNodeIndex !== undefined ? nextSourceNodeIndex.functionName : '(root)'
+		const nextSourceNodeName =
+			nextSourceNodeIndex !== undefined
+				? nextSourceNodeIndex.functionName
+				: '(root)'
 
 		LoggerHelper.log(
 			LoggerHelper.errorString('[LEAVE TRANSITION]'),
@@ -149,11 +164,18 @@ export class StateMachineLogger {
 			├─ Accounted CPU Energy : self=0 mJ | total=0 mJ
 			├─ Accounted RAM Energy : self=0 mJ | total=0 mJ
 		*/
-		const currentSourceNodeIndex = currentState.callIdentifier.sourceNode?.getIndex()
-		const currentSourceNodeName = currentSourceNodeIndex !== undefined ? currentSourceNodeIndex.functionName : '(root)'
+		const currentSourceNodeIndex =
+			currentState.callIdentifier.sourceNode?.getIndex()
+		const currentSourceNodeName =
+			currentSourceNodeIndex !== undefined
+				? currentSourceNodeIndex.functionName
+				: '(root)'
 
 		const nextSourceNodeIndex = nextState.callIdentifier.sourceNode?.getIndex()
-		const nextSourceNodeName = nextSourceNodeIndex !== undefined ? nextSourceNodeIndex.functionName : '(root)'
+		const nextSourceNodeName =
+			nextSourceNodeIndex !== undefined
+				? nextSourceNodeIndex.functionName
+				: '(root)'
 
 		LoggerHelper.log(
 			LoggerHelper.warnString('[TRANSITION]'),
@@ -164,7 +186,8 @@ export class StateMachineLogger {
 					Transition: transition.transition,
 					'Create Link': transition.options.createLink.toString(),
 					AccountingType: accountingInfo.type,
-					FirstTimeVisited: accountingInfo.accountedSourceNode.firstTimeVisited.toString(),
+					FirstTimeVisited:
+						accountingInfo.accountedSourceNode.firstTimeVisited.toString(),
 					'Accounted Hits': `${cpuNode.profilerHits}`,
 					'Accounted CPU Time': `self=${accountingInfo?.accountedSensorValues.selfCPUTime || 0} µs | total=${
 						accountingInfo?.accountedSensorValues.aggregatedCPUTime || 0
@@ -229,7 +252,9 @@ export class StateMachineLogger {
 
 		const sourceNodeIndex = currentState.callIdentifier.sourceNode.getIndex()
 		if (sourceNodeIndex === undefined) {
-			throw new Error('InsertCPUProfileStateMachine.logCompensation: sourceNode has no index')
+			throw new Error(
+				'InsertCPUProfileStateMachine.logCompensation: sourceNode has no index'
+			)
 		}
 
 		const createdComp = compensation.createdComp

@@ -22,15 +22,24 @@ export default async function () {
 	performance.start('jestEnv.setup.resolveConfig')
 	const profilerConfig = ProfilerConfig.autoResolve()
 	performance.stop('jestEnv.setup.resolveConfig')
-	const exportAssetHelper = new ExportAssetHelper(profilerConfig.getOutDir().join('jest'))
+	const exportAssetHelper = new ExportAssetHelper(
+		profilerConfig.getOutDir().join('jest')
+	)
 
-	LoggerHelper.appPrefix.log(`V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
+	LoggerHelper.appPrefix.log(
+		`V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`
+	)
 	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
 	const sensorInterfaceOptions = profilerConfig.getSensorInterfaceOptions()
 	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
 	if (sensorInterfaceOptions !== undefined) {
-		LoggerHelper.appPrefix.log('Using SensorInterface: ', profilerConfig.getSensorInterfaceType())
-		LoggerHelper.appPrefix.log(`SensorInterface Sample Interval: ${sensorInterfaceOptions.sampleInterval}ms`)
+		LoggerHelper.appPrefix.log(
+			'Using SensorInterface: ',
+			profilerConfig.getSensorInterfaceType()
+		)
+		LoggerHelper.appPrefix.log(
+			`SensorInterface Sample Interval: ${sensorInterfaceOptions.sampleInterval}ms`
+		)
 
 		performance.start('jestEnv.setup.Profiler.getSensorInterface')
 		const sensorInterface = Profiler.getSensorInterface(profilerConfig)
@@ -40,20 +49,33 @@ export default async function () {
 			const canBeExecuted = await sensorInterface.canBeExecuted()
 			performance.stop('jestEnv.setup.sensorInterface.canBeExecuted')
 			if (canBeExecuted === false) {
-				LoggerHelper.appPrefix.error('Sensor Interface cannot be executed with these permissions')
+				LoggerHelper.appPrefix.error(
+					'Sensor Interface cannot be executed with these permissions'
+				)
 			} else {
 				if (sensorInterface.type() === SensorInterfaceType.perf) {
-					const availableMeasurementTypes = await (sensorInterface as PerfSensorInterface).availableMeasurementTypes()
-					LoggerHelper.appPrefix.log('Measure CPU Energy: ' + `${availableMeasurementTypes[PerfEvent.ENERGY_CORES]}`)
-					LoggerHelper.appPrefix.log('Measure RAM Energy: ' + `${availableMeasurementTypes[PerfEvent.ENERGY_RAM]}`)
+					const availableMeasurementTypes = await (
+						sensorInterface as PerfSensorInterface
+					).availableMeasurementTypes()
+					LoggerHelper.appPrefix.log(
+						'Measure CPU Energy: ' +
+							`${availableMeasurementTypes[PerfEvent.ENERGY_CORES]}`
+					)
+					LoggerHelper.appPrefix.log(
+						'Measure RAM Energy: ' +
+							`${availableMeasurementTypes[PerfEvent.ENERGY_RAM]}`
+					)
 				}
 			}
 		} else {
-			LoggerHelper.appPrefix.log('Something went wrong loading the SensorInterface')
+			LoggerHelper.appPrefix.log(
+				'Something went wrong loading the SensorInterface'
+			)
 		}
 	} else {
 		LoggerHelper.appPrefix.log(
-			'no SensorInterface configured ' + '(no energy measurements will be collected, only cpu time)'
+			'no SensorInterface configured ' +
+				'(no energy measurements will be collected, only cpu time)'
 		)
 	}
 

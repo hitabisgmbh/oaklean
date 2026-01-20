@@ -10,7 +10,9 @@ import { program } from 'commander'
 
 export default class BackendCommands {
 	constructor() {
-		const parseCommand = program.command('backend').description('commands to interact with the backend')
+		const parseCommand = program
+			.command('backend')
+			.description('commands to interact with the backend')
 
 		parseCommand
 			.command('send')
@@ -33,7 +35,9 @@ export default class BackendCommands {
 		}
 		const projectReport = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (projectReport === undefined) {
-			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`Could not find a profiler report at ${inputPath.toPlatformString()}`
+			)
 			return
 		}
 		await RegistryHelper.uploadToRegistry(projectReport)

@@ -1,4 +1,7 @@
-import { NodeModule, NodeModuleIdentifierRegexString } from '../model/NodeModule'
+import {
+	NodeModule,
+	NodeModuleIdentifierRegexString
+} from '../model/NodeModule'
 import {
 	SourceNodeIdentifierRegexString,
 	LangInternalSourceNodeIdentifierRegexString,
@@ -76,10 +79,14 @@ export class GlobalIdentifier {
 		return path === '' || LangInternalPathRegex.test(path)
 	}
 
-	static fromIdentifier(identifier: GlobalSourceNodeIdentifier_string): GlobalIdentifier {
+	static fromIdentifier(
+		identifier: GlobalSourceNodeIdentifier_string
+	): GlobalIdentifier {
 		const matches = GlobalIdentifier.regex().exec(identifier)
 		if (!matches) {
-			throw new Error('GlobalIdentifier.fromIdentifier: invalid format: ' + identifier)
+			throw new Error(
+				'GlobalIdentifier.fromIdentifier: invalid format: ' + identifier
+			)
 		}
 
 		const nodeModuleIdentifier = matches[1]
@@ -94,12 +101,17 @@ export class GlobalIdentifier {
 		}
 
 		if (nodeModuleIdentifier === '') {
-			return new GlobalIdentifier(preprocessedPath, sourceNodeIdentifier as SourceNodeIdentifier_string)
+			return new GlobalIdentifier(
+				preprocessedPath,
+				sourceNodeIdentifier as SourceNodeIdentifier_string
+			)
 		} else {
 			return new GlobalIdentifier(
 				preprocessedPath,
 				sourceNodeIdentifier as SourceNodeIdentifier_string,
-				NodeModule.fromIdentifier(nodeModuleIdentifier as NodeModuleIdentifier_string)
+				NodeModule.fromIdentifier(
+					nodeModuleIdentifier as NodeModuleIdentifier_string
+				)
 			)
 		}
 	}

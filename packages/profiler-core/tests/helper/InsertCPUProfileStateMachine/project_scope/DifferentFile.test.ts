@@ -20,7 +20,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + DIFFERENT
 	let stateMachine: InsertCPUProfileStateMachine
 
 	beforeEach(() => {
-		projectReport = new ProjectReport(EXAMPLE_EXECUTION_DETAILS, ReportKind.measurement)
+		projectReport = new ProjectReport(
+			EXAMPLE_EXECUTION_DETAILS,
+			ReportKind.measurement
+		)
 		stateMachine = new InsertCPUProfileStateMachine(projectReport)
 	})
 
@@ -33,7 +36,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + DIFFERENT
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
@@ -118,7 +124,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + DIFFERENT
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
@@ -199,7 +208,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + DIFFERENT
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toBeUndefined()
@@ -288,17 +300,30 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + DIFFERENT
 				[
 					[
 						SOURCE_LOCATIONS_DEFAULT['project-fileB-0'],
-						[[SOURCE_LOCATIONS_DEFAULT['project-fileA-0'], [[SOURCE_LOCATIONS_DEFAULT['project-fileB-0'], []]]]]
+						[
+							[
+								SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+								[[SOURCE_LOCATIONS_DEFAULT['project-fileB-0'], []]]
+							]
+						]
 					],
 					[
 						SOURCE_LOCATIONS_DEFAULT['project-fileC-0'],
-						[[SOURCE_LOCATIONS_DEFAULT['project-fileA-0'], [[SOURCE_LOCATIONS_DEFAULT['project-fileC-0'], []]]]]
+						[
+							[
+								SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
+								[[SOURCE_LOCATIONS_DEFAULT['project-fileC-0'], []]]
+							]
+						]
 					]
 				]
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toBeUndefined()

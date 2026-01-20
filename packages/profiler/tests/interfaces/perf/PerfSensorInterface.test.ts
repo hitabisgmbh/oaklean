@@ -1,25 +1,48 @@
 import * as fs from 'fs'
 
-import { MicroSeconds_number, NanoSeconds_BigInt, UnifiedPath } from '@oaklean/profiler-core'
+import {
+	MicroSeconds_number,
+	NanoSeconds_BigInt,
+	UnifiedPath
+} from '@oaklean/profiler-core'
 
-import { PerfEvent, PerfSensorInterface } from '../../../src/interfaces/perf/PerfSensorInterface'
+import {
+	PerfEvent,
+	PerfSensorInterface
+} from '../../../src/interfaces/perf/PerfSensorInterface'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
 const OUTPUT_CONTENT_CORES_RAM = fs
 	.readFileSync(CURRENT_DIR.join('assets', 'cores+ram.txt').toPlatformString())
 	.toString()
-const OUTPUT_CONTENT_CORES = fs.readFileSync(CURRENT_DIR.join('assets', 'cores.txt').toPlatformString()).toString()
-const OUTPUT_CONTENT_RAM = fs.readFileSync(CURRENT_DIR.join('assets', 'ram.txt').toPlatformString()).toString()
+const OUTPUT_CONTENT_CORES = fs
+	.readFileSync(CURRENT_DIR.join('assets', 'cores.txt').toPlatformString())
+	.toString()
+const OUTPUT_CONTENT_RAM = fs
+	.readFileSync(CURRENT_DIR.join('assets', 'ram.txt').toPlatformString())
+	.toString()
 
 const COLLECTION_CORES_RAM = JSON.parse(
-	fs.readFileSync(CURRENT_DIR.join('assets', 'cores+ram.collection.json').toPlatformString()).toString()
+	fs
+		.readFileSync(
+			CURRENT_DIR.join('assets', 'cores+ram.collection.json').toPlatformString()
+		)
+		.toString()
 )
 const COLLECTION_CORES = JSON.parse(
-	fs.readFileSync(CURRENT_DIR.join('assets', 'cores.collection.json').toPlatformString()).toString()
+	fs
+		.readFileSync(
+			CURRENT_DIR.join('assets', 'cores.collection.json').toPlatformString()
+		)
+		.toString()
 )
 const COLLECTION_RAM = JSON.parse(
-	fs.readFileSync(CURRENT_DIR.join('assets', 'ram.collection.json').toPlatformString()).toString()
+	fs
+		.readFileSync(
+			CURRENT_DIR.join('assets', 'ram.collection.json').toPlatformString()
+		)
+		.toString()
 )
 
 function mock_checkEventAvailability(events: PerfEvent[]) {
@@ -45,7 +68,10 @@ describe('PerfSensorInterface', () => {
 		})
 
 		test('perf events energy-cores and energy-ram available', async () => {
-			instance.checkEventAvailability = mock_checkEventAvailability([PerfEvent.ENERGY_CORES, PerfEvent.ENERGY_RAM])
+			instance.checkEventAvailability = mock_checkEventAvailability([
+				PerfEvent.ENERGY_CORES,
+				PerfEvent.ENERGY_RAM
+			])
 
 			expect(await instance.availableMeasurementTypes()).toEqual({
 				[PerfEvent.ENERGY_CORES]: true,
@@ -54,7 +80,9 @@ describe('PerfSensorInterface', () => {
 		})
 
 		test('only perf event energy-cores available', async () => {
-			instance.checkEventAvailability = mock_checkEventAvailability([PerfEvent.ENERGY_CORES])
+			instance.checkEventAvailability = mock_checkEventAvailability([
+				PerfEvent.ENERGY_CORES
+			])
 
 			expect(await instance.availableMeasurementTypes()).toEqual({
 				[PerfEvent.ENERGY_CORES]: true,
@@ -63,7 +91,9 @@ describe('PerfSensorInterface', () => {
 		})
 
 		test('only perf event energy-ram available', async () => {
-			instance.checkEventAvailability = mock_checkEventAvailability([PerfEvent.ENERGY_RAM])
+			instance.checkEventAvailability = mock_checkEventAvailability([
+				PerfEvent.ENERGY_RAM
+			])
 
 			expect(await instance.availableMeasurementTypes()).toEqual({
 				[PerfEvent.ENERGY_CORES]: false,
@@ -88,7 +118,10 @@ describe('PerfSensorInterface', () => {
 		})
 
 		test('perf events energy-cores and energy-ram available', async () => {
-			instance.checkEventAvailability = mock_checkEventAvailability([PerfEvent.ENERGY_CORES, PerfEvent.ENERGY_RAM])
+			instance.checkEventAvailability = mock_checkEventAvailability([
+				PerfEvent.ENERGY_CORES,
+				PerfEvent.ENERGY_RAM
+			])
 
 			expect(await instance.commandLineArgs()).toEqual([
 				'stat',
@@ -106,7 +139,9 @@ describe('PerfSensorInterface', () => {
 		})
 
 		test('only perf event energy-cores available', async () => {
-			instance.checkEventAvailability = mock_checkEventAvailability([PerfEvent.ENERGY_CORES])
+			instance.checkEventAvailability = mock_checkEventAvailability([
+				PerfEvent.ENERGY_CORES
+			])
 
 			expect(await instance.commandLineArgs()).toEqual([
 				'stat',
@@ -122,7 +157,9 @@ describe('PerfSensorInterface', () => {
 		})
 
 		test('only perf event energy-ram available', async () => {
-			instance.checkEventAvailability = mock_checkEventAvailability([PerfEvent.ENERGY_RAM])
+			instance.checkEventAvailability = mock_checkEventAvailability([
+				PerfEvent.ENERGY_RAM
+			])
 
 			expect(await instance.commandLineArgs()).toEqual([
 				'stat',
@@ -154,9 +191,14 @@ describe('PerfSensorInterface', () => {
 		})
 
 		test('perf events energy-cores and energy-ram available', async () => {
-			instance.getOutputContent = jest.fn().mockReturnValue(OUTPUT_CONTENT_CORES_RAM)
+			instance.getOutputContent = jest
+				.fn()
+				.mockReturnValue(OUTPUT_CONTENT_CORES_RAM)
 			instance.isRunning = jest.fn().mockReturnValue(false)
-			instance.checkEventAvailability = mock_checkEventAvailability([PerfEvent.ENERGY_CORES, PerfEvent.ENERGY_RAM])
+			instance.checkEventAvailability = mock_checkEventAvailability([
+				PerfEvent.ENERGY_CORES,
+				PerfEvent.ENERGY_RAM
+			])
 
 			const result = await instance.readSensorValues(0)
 			expect(result).toBeDefined()
@@ -166,9 +208,13 @@ describe('PerfSensorInterface', () => {
 		})
 
 		test('only perf event energy-cores available', async () => {
-			instance.getOutputContent = jest.fn().mockReturnValue(OUTPUT_CONTENT_CORES)
+			instance.getOutputContent = jest
+				.fn()
+				.mockReturnValue(OUTPUT_CONTENT_CORES)
 			instance.isRunning = jest.fn().mockReturnValue(false)
-			instance.checkEventAvailability = mock_checkEventAvailability([PerfEvent.ENERGY_CORES])
+			instance.checkEventAvailability = mock_checkEventAvailability([
+				PerfEvent.ENERGY_CORES
+			])
 			const result = await instance.readSensorValues(0)
 			expect(result).toBeDefined()
 			if (result !== undefined) {
@@ -179,7 +225,9 @@ describe('PerfSensorInterface', () => {
 		test('only perf event energy-ram available', async () => {
 			instance.getOutputContent = jest.fn().mockReturnValue(OUTPUT_CONTENT_RAM)
 			instance.isRunning = jest.fn().mockReturnValue(false)
-			instance.checkEventAvailability = mock_checkEventAvailability([PerfEvent.ENERGY_RAM])
+			instance.checkEventAvailability = mock_checkEventAvailability([
+				PerfEvent.ENERGY_RAM
+			])
 
 			const result = await instance.readSensorValues(0)
 			expect(result).toBeDefined()

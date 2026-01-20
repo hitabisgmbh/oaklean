@@ -16,5 +16,7 @@ export type StackFrame = {
 
 export type AwaiterStack = {
 	awaiter: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> // the last called __awaiter function
-	awaiterParent: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode> | undefined // the last async function that called the __awaiter function
+	awaiterParent:
+		| SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
+		| undefined // the last async function that called the __awaiter function
 }[]

@@ -1,4 +1,8 @@
-import { SourceMapConsumer, RawSourceMap, NullableMappedPosition } from 'source-map'
+import {
+	SourceMapConsumer,
+	RawSourceMap,
+	NullableMappedPosition
+} from 'source-map'
 
 import { BaseModel } from './BaseModel'
 
@@ -34,7 +38,16 @@ export class SourceMap extends BaseModel implements ISourceMap {
 
 	constructor(
 		sourceMapLocation: UnifiedPath,
-		{ version, file, sourceRoot, sources, sourcesContent, names, mappings, ignoreList }: ISourceMap
+		{
+			version,
+			file,
+			sourceRoot,
+			sources,
+			sourcesContent,
+			names,
+			mappings,
+			ignoreList
+		}: ISourceMap
 	) {
 		super()
 		this.sourceMapLocation = sourceMapLocation
@@ -89,7 +102,10 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return new SourceMap(new UnifiedPath(''), data)
 	}
 
-	static fromJsonString(s: string, sourceMapLocation: UnifiedPath): SourceMap | null {
+	static fromJsonString(
+		s: string,
+		sourceMapLocation: UnifiedPath
+	): SourceMap | null {
 		const parsed = JSON.parse(s)
 
 		if (SourceMap.isSourceMap(parsed)) {
@@ -133,7 +149,10 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return null
 	}
 
-	static fromCompiledJSString(filePath: UnifiedPath, sourceCode: string): SourceMap | null | SourceMapRedirect {
+	static fromCompiledJSString(
+		filePath: UnifiedPath,
+		sourceCode: string
+	): SourceMap | null | SourceMapRedirect {
 		const result = SourceMap.base64StringCompiledJSString(sourceCode)
 
 		if (result === null) {
@@ -141,7 +160,10 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		}
 
 		if (result.base64 !== undefined) {
-			const jsonString = result.base64 !== null ? Buffer.from(result.base64, 'base64').toString('utf-8') : '{}'
+			const jsonString =
+				result.base64 !== null
+					? Buffer.from(result.base64, 'base64').toString('utf-8')
+					: '{}'
 			return SourceMap.fromJsonString(jsonString, filePath)
 		} else {
 			// source map file
@@ -181,8 +203,14 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return this._consumer
 	}
 
-	async getOriginalSourceLocation(line: number, column: number): Promise<NullableMappedPosition | undefined> {
-		const originalPosition = (await this.asConsumer()).originalPositionFor({ line, column })
+	async getOriginalSourceLocation(
+		line: number,
+		column: number
+	): Promise<NullableMappedPosition | undefined> {
+		const originalPosition = (await this.asConsumer()).originalPositionFor({
+			line,
+			column
+		})
 
 		if (!originalPosition.source) {
 			return undefined

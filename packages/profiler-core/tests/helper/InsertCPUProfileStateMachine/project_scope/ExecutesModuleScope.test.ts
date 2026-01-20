@@ -7,7 +7,11 @@ import {
 
 // Test Assets
 import { SOURCE_LOCATIONS_DEFAULT } from '../assets/SourceLocations'
-import { mockedCPUModel, createLocationTreeCPUModel, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER } from '../mock'
+import {
+	mockedCPUModel,
+	createLocationTreeCPUModel,
+	MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+} from '../mock'
 import { EXAMPLE_EXECUTION_DETAILS } from '../../../model/assets/ProjectReport/ExecutionDetails'
 
 describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE executes MODULE_SCOPE)', () => {
@@ -15,7 +19,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE executes MO
 	let stateMachine: InsertCPUProfileStateMachine
 
 	beforeEach(() => {
-		projectReport = new ProjectReport(EXAMPLE_EXECUTION_DETAILS, ReportKind.measurement)
+		projectReport = new ProjectReport(
+			EXAMPLE_EXECUTION_DETAILS,
+			ReportKind.measurement
+		)
 		stateMachine = new InsertCPUProfileStateMachine(projectReport)
 	})
 
@@ -36,7 +43,10 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE executes MO
 			])
 		)
 
-		await stateMachine.insertCPUNodes(cpuNode, MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER)
+		await stateMachine.insertCPUNodes(
+			cpuNode,
+			MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER
+		)
 
 		expect(projectReport.headlessSensorValues.toJSON()).toEqual({})
 		expect(projectReport.extern.toJSON()).toEqual({

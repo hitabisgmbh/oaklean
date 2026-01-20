@@ -4,7 +4,11 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import { IdentifierType, ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
+import {
+	IdentifierType,
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../../types'
 
 export class BlockHelper {
 	static syntaxKind = ts.SyntaxKind.Block
@@ -13,7 +17,9 @@ export class BlockHelper {
 		node: ts.Block,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.Block> } | null {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.Block>
+	} | null {
 		if (
 			node.parent.kind === ts.SyntaxKind.SourceFile ||
 			node.parent.kind === ts.SyntaxKind.ModuleBlock ||

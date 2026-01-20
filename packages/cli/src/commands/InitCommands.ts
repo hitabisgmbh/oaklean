@@ -16,7 +16,8 @@ import {
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
-let _inquirerPromptsModule: typeof import('@inquirer/prompts') | undefined = undefined
+let _inquirerPromptsModule: typeof import('@inquirer/prompts') | undefined =
+	undefined
 async function inquirerPromptsModule() {
 	if (!_inquirerPromptsModule) {
 		_inquirerPromptsModule = await import('@inquirer/prompts')
@@ -46,12 +47,17 @@ export default class InitCommands {
 		if ((await this.confirmConfigFileContent()) === false) {
 			return
 		}
-		if (ProfilerConfig.getSensorInterfaceType(localConfig) === SensorInterfaceType.perf) {
+		if (
+			ProfilerConfig.getSensorInterfaceType(localConfig) ===
+			SensorInterfaceType.perf
+		) {
 			LoggerHelper.appPrefix.log(
 				'perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md'
 			)
 		}
-		const localConfigPath = new UnifiedPath(process.cwd()).join(STATIC_LOCAL_CONFIG_FILENAME)
+		const localConfigPath = new UnifiedPath(process.cwd()).join(
+			STATIC_LOCAL_CONFIG_FILENAME
+		)
 		const existMainConfig = this.configAlreadyExists(mainConfig.filePath)
 		const existLocalConfig = this.configAlreadyExists(localConfigPath)
 		if (existMainConfig || existLocalConfig) {
@@ -119,7 +125,8 @@ export default class InitCommands {
 				break
 		}
 
-		config.projectOptions.identifier = (await Crypto.uniqueID()) as ProjectIdentifier_string
+		config.projectOptions.identifier =
+			(await Crypto.uniqueID()) as ProjectIdentifier_string
 		config.registryOptions = undefined as unknown as RegistryOptions
 		// remove runtime options from main config
 		config.runtimeOptions.sensorInterface = undefined
@@ -148,7 +155,9 @@ export default class InitCommands {
 	}
 
 	async selectSensorInterface(): Promise<SensorInterfaceType | undefined> {
-		const sensorInterfacePerPlatform: Partial<Record<NodeJS.Platform, SensorInterfaceType>> = {
+		const sensorInterfacePerPlatform: Partial<
+			Record<NodeJS.Platform, SensorInterfaceType>
+		> = {
 			linux: SensorInterfaceType.perf,
 			darwin: SensorInterfaceType.powermetrics,
 			win32: SensorInterfaceType.windows

@@ -1,7 +1,12 @@
 import { BaseMetricsData } from './BaseMetricsData'
 
 // Types
-import { MilliJoule_number, NanoSeconds_BigInt, IPerfMetricsDataOutputFormat, IPerfMetricsData } from '../../types'
+import {
+	MilliJoule_number,
+	NanoSeconds_BigInt,
+	IPerfMetricsDataOutputFormat,
+	IPerfMetricsData
+} from '../../types'
 
 export class PerfMetricsData extends BaseMetricsData {
 	private _data: IPerfMetricsDataOutputFormat
@@ -23,7 +28,10 @@ export class PerfMetricsData extends BaseMetricsData {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-	static fromJSON(json: string | IPerfMetricsData, ...args: any[]): PerfMetricsData {
+	static fromJSON(
+		json: string | IPerfMetricsData,
+		...args: any[]
+	): PerfMetricsData {
 		let data: IPerfMetricsData
 		if (typeof json === 'string') {
 			data = JSON.parse(json)

@@ -30,7 +30,9 @@ export default class CPUProfileCommands {
 
 		baseCommand
 			.command('toCPUModel')
-			.description('Converts a cpu profile format that is given to a cpu model format')
+			.description(
+				'Converts a cpu profile format that is given to a cpu model format'
+			)
 			.argument('<input>', 'input file path')
 			.argument('<output>', 'output file path')
 			.action(this.convertToCPUModel.bind(this))
@@ -65,7 +67,10 @@ export default class CPUProfileCommands {
 					' to remove all user related paths'
 			)
 			.argument('<input>', 'input file path')
-			.option('-o, --output <output>', 'output file path (default: input file path)')
+			.option(
+				'-o, --output <output>',
+				'output file path (default: input file path)'
+			)
 			.action(this.anonymize.bind(this))
 	}
 
@@ -92,7 +97,11 @@ export default class CPUProfileCommands {
 			)
 			return
 		}
-		const cpuModel = new CPUModel(new UnifiedPath(__dirname).join('..'), cpuProfile, BigInt(0) as NanoSeconds_BigInt)
+		const cpuModel = new CPUModel(
+			new UnifiedPath(__dirname).join('..'),
+			cpuProfile,
+			BigInt(0) as NanoSeconds_BigInt
+		)
 
 		await cpuModel.storeToFile(outputPath)
 	}
@@ -111,7 +120,11 @@ export default class CPUProfileCommands {
 			)
 			return
 		}
-		const cpuModel = new CPUModel(new UnifiedPath(__dirname).join('..'), cpuProfile, BigInt(0) as NanoSeconds_BigInt)
+		const cpuModel = new CPUModel(
+			new UnifiedPath(__dirname).join('..'),
+			cpuProfile,
+			BigInt(0) as NanoSeconds_BigInt
+		)
 
 		const nodeCount = cpuModel.INodes.length
 		const sourceNodeLocationCount = cpuModel.CPUProfileSourceLocations.length
@@ -190,22 +203,36 @@ export default class CPUProfileCommands {
 		if (options.rootDir !== undefined) {
 			rootDir = new UnifiedPath(options.rootDir)
 		} else {
-			const profilerConfig = ProfilerConfig.autoResolveFromPath(inputPath.dirName())
+			const profilerConfig = ProfilerConfig.autoResolveFromPath(
+				inputPath.dirName()
+			)
 			rootDir = profilerConfig.getRootDir()
 		}
 
-		let resolveFunctionIdentifierHelper: ResolveFunctionIdentifierHelper | undefined
+		let resolveFunctionIdentifierHelper:
+			| ResolveFunctionIdentifierHelper
+			| undefined
 		let externalResourceHelper: ExternalResourceHelper | undefined
 		if (externalResourcesInput !== undefined) {
 			let resourcesHelperPath = new UnifiedPath(externalResourcesInput)
 			if (resourcesHelperPath.isRelative()) {
-				resourcesHelperPath = new UnifiedPath(process.cwd()).join(resourcesHelperPath)
+				resourcesHelperPath = new UnifiedPath(process.cwd()).join(
+					resourcesHelperPath
+				)
 			}
-			externalResourceHelper = ExternalResourceHelper.loadFromFile(rootDir, resourcesHelperPath)
+			externalResourceHelper = ExternalResourceHelper.loadFromFile(
+				rootDir,
+				resourcesHelperPath
+			)
 			if (externalResourceHelper === undefined) {
-				LoggerHelper.warn('Failed to load external resources file. Check if the file exists and is valid.')
+				LoggerHelper.warn(
+					'Failed to load external resources file. Check if the file exists and is valid.'
+				)
 			} else {
-				resolveFunctionIdentifierHelper = new ResolveFunctionIdentifierHelper(rootDir, externalResourceHelper)
+				resolveFunctionIdentifierHelper = new ResolveFunctionIdentifierHelper(
+					rootDir,
+					externalResourceHelper
+				)
 			}
 		}
 
@@ -216,24 +243,40 @@ export default class CPUProfileCommands {
 				return cli.xterm(TraceColors.WebAssembly)
 			} else if (cpuNode.sourceLocation.isWebpack) {
 				return cli.xterm(TraceColors.Webpack)
-			} else if (resolvedAsExternal || cpuNode.sourceLocation.relativeUrl.toString().includes('/node_modules/')) {
+			} else if (
+				resolvedAsExternal ||
+				cpuNode.sourceLocation.relativeUrl.toString().includes('/node_modules/')
+			) {
 				return cli.xterm(TraceColors.External)
 			}
 			return (arg: string) => arg
 		}
 
-		const cpuModel = new CPUModel(rootDir, cpuProfile, BigInt(0) as NanoSeconds_BigInt)
+		const cpuModel = new CPUModel(
+			rootDir,
+			cpuProfile,
+			BigInt(0) as NanoSeconds_BigInt
+		)
 
 		async function traverse(
 			cpuNode: CPUNode,
 			parentsPaint: ((arg: string) => string)[] = [],
 			last: boolean[] = [] // specifies wether the parents are the last children
 		) {
-			let selfPaint: bare.Format | ((arg: string) => string) = colorByType(cpuNode, false)
+			let selfPaint: bare.Format | ((arg: string) => string) = colorByType(
+				cpuNode,
+				false
+			)
 			if (cpuNode.index === 0) {
 				const resolvedPrefix =
-					resolveFunctionIdentifierHelper !== undefined ? cli.xterm(TraceColors.LangInternal)('■ ') : ''
-				LoggerHelper.log(resolvedPrefix + cli.xterm(TraceColors.LangInternal)('■ ') + cli.green('({root})'))
+					resolveFunctionIdentifierHelper !== undefined
+						? cli.xterm(TraceColors.LangInternal)('■ ')
+						: ''
+				LoggerHelper.log(
+					resolvedPrefix +
+						cli.xterm(TraceColors.LangInternal)('■ ') +
+						cli.green('({root})')
+				)
 			} else {
 				let indent = ''
 				for (let i = 0; i < last.length - 1; i++) {
@@ -249,12 +292,19 @@ export default class CPUProfileCommands {
 				let relativeFilePath = cpuNode.sourceLocation.relativeUrl.toString()
 				let resolvedFunctionName = ''
 				if (resolveFunctionIdentifierHelper !== undefined) {
-					if (!cpuNode.sourceLocation.isLangInternal && !cpuNode.sourceLocation.isWASM) {
+					if (
+						!cpuNode.sourceLocation.isLangInternal &&
+						!cpuNode.sourceLocation.isWASM
+					) {
 						const { sourceNodeLocation, nodeModule, relativeNodeModulePath } =
-							await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(cpuNode.sourceLocation)
+							await resolveFunctionIdentifierHelper.resolveFunctionIdentifier(
+								cpuNode.sourceLocation
+							)
 						relativeFilePath = sourceNodeLocation.relativeFilePath.toString()
-						const functionIdentifierParts = sourceNodeLocation.functionIdentifier.split('.')
-						resolvedFunctionName = functionIdentifierParts[functionIdentifierParts.length - 1]
+						const functionIdentifierParts =
+							sourceNodeLocation.functionIdentifier.split('.')
+						resolvedFunctionName =
+							functionIdentifierParts[functionIdentifierParts.length - 1]
 						if (relativeNodeModulePath !== null && nodeModule !== null) {
 							// change color to node module
 							selfPaint = colorByType(cpuNode, true)
@@ -263,7 +313,10 @@ export default class CPUProfileCommands {
 					resolvedPrefix = selfPaint('■ ')
 				}
 
-				const lastIndent = parentsPaint[parentsPaint.length - 1](last[last.length - 1] ? '└' : '├') + selfPaint('─ ')
+				const lastIndent =
+					parentsPaint[parentsPaint.length - 1](
+						last[last.length - 1] ? '└' : '├'
+					) + selfPaint('─ ')
 
 				console.log(
 					originalPrefix +
@@ -271,7 +324,9 @@ export default class CPUProfileCommands {
 						indent +
 						lastIndent +
 						relativeFilePath +
-						(resolvedFunctionName !== '' ? cli.green(` ${resolvedFunctionName}`) : '') +
+						(resolvedFunctionName !== ''
+							? cli.green(` ${resolvedFunctionName}`)
+							: '') +
 						cli.green(` (${cpuNode.sourceLocation.rawFunctionName})`) +
 						`[CM_ID: ${cpuNode.index}]`,
 					`[LOC_ID: ${cpuNode.sourceLocation.index}]`,
@@ -282,7 +337,11 @@ export default class CPUProfileCommands {
 
 			const nodes = Array.from(cpuNode.children())
 			for (let i = 0; i < nodes.length; i++) {
-				await traverse(nodes[i], [...parentsPaint, selfPaint], [...last, i === nodes.length - 1])
+				await traverse(
+					nodes[i],
+					[...parentsPaint, selfPaint],
+					[...last, i === nodes.length - 1]
+				)
 			}
 		}
 
@@ -330,8 +389,14 @@ export default class CPUProfileCommands {
 			}
 		}
 
-		const profilerConfig = ProfilerConfig.autoResolveFromPath(inputPath.dirName())
+		const profilerConfig = ProfilerConfig.autoResolveFromPath(
+			inputPath.dirName()
+		)
 
-		await CPUProfileHelper.anonymize(profilerConfig.getRootDir(), inputPath, outputPath)
+		await CPUProfileHelper.anonymize(
+			profilerConfig.getRootDir(),
+			inputPath,
+			outputPath
+		)
 	}
 }

@@ -5,7 +5,10 @@ import { TypescriptHelper } from '../TypescriptHelper'
 import { TraverseNodeInfo } from '../TraverseNodeInfo'
 import { ProgramStructureTree } from '../../../model/ProgramStructureTree'
 // Types
-import { ProgramStructureTreeType, SourceNodeIdentifierPart_string } from '../../../types'
+import {
+	ProgramStructureTreeType,
+	SourceNodeIdentifierPart_string
+} from '../../../types'
 
 export class ObjectLiteralExpressionHelper {
 	static syntaxKind = ts.SyntaxKind.ObjectLiteralExpression
@@ -14,10 +17,16 @@ export class ObjectLiteralExpressionHelper {
 		node: ts.ObjectLiteralExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression> } {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression>
+	} {
 		return {
 			resolve() {
-				const { suffix, identifier, identifierType } = NamingHelper.getName(node.parent, sourceFile, traverseNodeInfo)
+				const { suffix, identifier, identifierType } = NamingHelper.getName(
+					node.parent,
+					sourceFile,
+					traverseNodeInfo
+				)
 
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),

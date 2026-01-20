@@ -24,7 +24,8 @@ export class ZipHelper {
 		zipEntries.forEach((entry) => {
 			// Normalize paths and check if the entry starts with the target directory path
 			const entryPath = new UnifiedPath(entry.entryName).toString()
-			const shouldExtract = entryPath.startsWith(targetDirectory.toString()) && !entry.isDirectory
+			const shouldExtract =
+				entryPath.startsWith(targetDirectory.toString()) && !entry.isDirectory
 			if (!shouldExtract) {
 				return
 			}

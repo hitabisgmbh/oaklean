@@ -33,7 +33,11 @@ describe('CPUProfileSourceLocation', () => {
 			}
 		}
 
-		instance = new CPUProfileSourceLocation(ROOT_DIR, sourceLocation.id, sourceLocation.callFrame)
+		instance = new CPUProfileSourceLocation(
+			ROOT_DIR,
+			sourceLocation.id,
+			sourceLocation.callFrame
+		)
 	})
 
 	it('instance should be an instanceof CPUProfileSourceLocation', () => {
@@ -62,7 +66,9 @@ describe('CPUProfileSourceLocation', () => {
 	})
 
 	test('relativeUrl', () => {
-		expect(instance.relativeUrl.toString()).toBe('./node_modules/v8-profiler-next/dispatch.js')
+		expect(instance.relativeUrl.toString()).toBe(
+			'./node_modules/v8-profiler-next/dispatch.js'
+		)
 	})
 
 	test('sourceNodeIdentifier', () => {

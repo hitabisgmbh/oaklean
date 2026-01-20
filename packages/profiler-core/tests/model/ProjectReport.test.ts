@@ -1,7 +1,10 @@
 import * as fs from 'fs'
 
 // Test assets
-import { EXAMPLE_SYSTEM_INFORMATION, EXAMPLE_EXECUTION_DETAILS } from './assets/ProjectReport/ExecutionDetails'
+import {
+	EXAMPLE_SYSTEM_INFORMATION,
+	EXAMPLE_EXECUTION_DETAILS
+} from './assets/ProjectReport/ExecutionDetails'
 
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { ProjectReport } from '../../src/model/ProjectReport'
@@ -48,7 +51,8 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 	kind: ReportKind.measurement,
 	relativeRootDir: './' as UnifiedPath_string,
 	projectMetaData: {
-		projectID: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
+		projectID:
+			'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
 	},
 	headlessSensorValues: {},
 	executionDetails: EXAMPLE_EXECUTION_DETAILS,
@@ -69,17 +73,20 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 											['{class:Class}' as SourceNodeIdentifierPart_string]: {
 												id: undefined,
 												children: {
-													['{method:method}' as SourceNodeIdentifierPart_string]: {
-														id: undefined,
-														children: {
-															['{functionExpression:0}' as SourceNodeIdentifierPart_string]: {
-																id: 2 as SourceNodeID_number
+													['{method:method}' as SourceNodeIdentifierPart_string]:
+														{
+															id: undefined,
+															children: {
+																['{functionExpression:0}' as SourceNodeIdentifierPart_string]:
+																	{
+																		id: 2 as SourceNodeID_number
+																	}
 															}
+														},
+													['{method:method2}' as SourceNodeIdentifierPart_string]:
+														{
+															id: 6 as SourceNodeID_number
 														}
-													},
-													['{method:method2}' as SourceNodeIdentifierPart_string]: {
-														id: 6 as SourceNodeID_number
-													}
 												}
 											}
 										}
@@ -246,10 +253,14 @@ const EXAMPLE_PROJECT_REPORT: IProjectReport = {
 }
 
 const EXAMPLE_PROJECT_REPORT_BUFFER = fs
-	.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer').toString())
+	.readFileSync(
+		CURRENT_DIR.join('assets', 'ProjectReport', 'instance.buffer').toString()
+	)
 	.toString()
 const EXAMPLE_PROJECT_REPORT_HASH = fs
-	.readFileSync(CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash').toString())
+	.readFileSync(
+		CURRENT_DIR.join('assets', 'ProjectReport', 'instance.hash').toString()
+	)
 	.toString()
 
 const EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001 = CURRENT_DIR.join(
@@ -272,7 +283,10 @@ async function preprocess() {
 		EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001,
 		EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002
 	]) {
-		const externalResourceHelper = ExternalResourceHelper.loadFromFile(ROOT_DIR, externalResourceHelperPath)
+		const externalResourceHelper = ExternalResourceHelper.loadFromFile(
+			ROOT_DIR,
+			externalResourceHelperPath
+		)
 
 		if (externalResourceHelper === undefined) {
 			console.error('Failed to load ExternalResourceHelper')
@@ -281,7 +295,10 @@ async function preprocess() {
 
 		for (const scriptId of externalResourceHelper.scriptIDs) {
 			const sourceMap = (
-				await externalResourceHelper.sourceMapFromScriptID(scriptId, externalResourceHelperPath)
+				await externalResourceHelper.sourceMapFromScriptID(
+					scriptId,
+					externalResourceHelperPath
+				)
 			)?.copy()
 
 			if (sourceMap !== undefined && sourceMap !== null) {
@@ -298,7 +315,9 @@ async function preprocess() {
 
 		for (const loadedFilePath of externalResourceHelper.loadedFilePaths) {
 			const filePath = new UnifiedPath(loadedFilePath)
-			const sourceMap = (await externalResourceHelper.sourceMapFromPath(filePath, filePath))?.copy()
+			const sourceMap = (
+				await externalResourceHelper.sourceMapFromPath(filePath, filePath)
+			)?.copy()
 
 			if (sourceMap !== undefined && sourceMap !== null) {
 				const newSources = sourceMap.sources.map((source) => {
@@ -312,12 +331,18 @@ async function preprocess() {
 			}
 		}
 
-		externalResourceHelper.storeToFile(externalResourceHelperPath, 'pretty-json')
+		externalResourceHelper.storeToFile(
+			externalResourceHelperPath,
+			'pretty-json'
+		)
 	}
 }
 
 preprocess()
-function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport) {
+function runInstanceTests(
+	title: string,
+	preDefinedInstance: () => ProjectReport
+) {
 	describe(title, () => {
 		let instance: ProjectReport
 
@@ -386,12 +411,18 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				selfRAMEnergyConsumption: 444 as MilliJoule_number,
 				aggregatedRAMEnergyConsumption: 444 as MilliJoule_number
 			})
-			const moduleID = instance.globalIndex.getModuleIndex('get', nodeModule.identifier)?.id as ModuleID_number
+			const moduleID = instance.globalIndex.getModuleIndex(
+				'get',
+				nodeModule.identifier
+			)?.id as ModuleID_number
 
 			expect(
 				instance.extern
 					.get(moduleID)
-					?.getMetaDataFromFile(new UnifiedPath('./report.oak'), new UnifiedPath('./file'))
+					?.getMetaDataFromFile(
+						new UnifiedPath('./report.oak'),
+						new UnifiedPath('./file')
+					)
 					?.functions.toJSON()
 			).toEqual({
 				13: {
@@ -415,7 +446,10 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			test('should return the getCPUTimeFromFile correctly', () => {
 				expect(
 					instance
-						.getMetaDataFromFile(new UnifiedPath('./report.oak'), new UnifiedPath('./dist/test.js'))
+						.getMetaDataFromFile(
+							new UnifiedPath('./report.oak'),
+							new UnifiedPath('./dist/test.js')
+						)
 						?.functions.toJSON()
 				).toEqual({
 					2: {
@@ -502,7 +536,10 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				instance.relativeRootDir = undefined
 				expect(
 					instance
-						.getMetaDataFromFile(new UnifiedPath('./report.oak'), new UnifiedPath('/abs/path/to/file'))
+						.getMetaDataFromFile(
+							new UnifiedPath('./report.oak'),
+							new UnifiedPath('/abs/path/to/file')
+						)
 						?.functions.toJSON()
 				).toEqual({
 					12: {
@@ -579,16 +616,26 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 
 		describe('trackUncommittedFiles', () => {
 			test('no git repository', () => {
-				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue(null)
-				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper(ROOT_DIR))
+				const uncommittedFiles_mock = jest
+					.spyOn(GitHelper, 'uncommittedFiles')
+					.mockReturnValue(null)
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(undefined)
 
 				uncommittedFiles_mock.mockRestore()
 			})
 
 			test('no uncommitted changes exist', () => {
-				const uncommittedFiles_mock = jest.spyOn(GitHelper, 'uncommittedFiles').mockReturnValue([])
-				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper(ROOT_DIR))
+				const uncommittedFiles_mock = jest
+					.spyOn(GitHelper, 'uncommittedFiles')
+					.mockReturnValue([])
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
 				uncommittedFiles_mock.mockRestore()
@@ -598,11 +645,16 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 				const uncommittedFiles_mock = jest
 					.spyOn(GitHelper, 'uncommittedFiles')
 					.mockReturnValue([new UnifiedPath('./dist/test.js')])
-				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper(ROOT_DIR))
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(true)
 				// check if the uncommitted changes are correctly tracked
 				expect(
-					instance.globalIndex.getModuleIndex('get')?.getFilePathIndex('get', './dist/test.js' as UnifiedPath_string)
+					instance.globalIndex
+						.getModuleIndex('get')
+						?.getFilePathIndex('get', './dist/test.js' as UnifiedPath_string)
 						?.containsUncommittedChanges
 				).toBe(true)
 
@@ -612,8 +664,13 @@ function runInstanceTests(title: string, preDefinedInstance: () => ProjectReport
 			test('uncommitted changes exist in node modules has no effect', () => {
 				const uncommittedFiles_mock = jest
 					.spyOn(GitHelper, 'uncommittedFiles')
-					.mockReturnValue([new UnifiedPath('./node_modules/@oaklean/profiler-core/test.js')])
-				instance.trackUncommittedFiles(new UnifiedPath('./'), new ExternalResourceHelper(ROOT_DIR))
+					.mockReturnValue([
+						new UnifiedPath('./node_modules/@oaklean/profiler-core/test.js')
+					])
+				instance.trackUncommittedFiles(
+					new UnifiedPath('./'),
+					new ExternalResourceHelper(ROOT_DIR)
+				)
 				expect(instance.executionDetails.uncommittedChanges).toBe(false)
 
 				uncommittedFiles_mock.mockRestore()
@@ -629,7 +686,8 @@ describe('ProjectReport', () => {
 		const instance = new ProjectReport(
 			{
 				origin: ProjectReportOrigin.pure,
-				commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+				commitHash:
+					'9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
 				commitTimestamp: 1687845481077,
 				timestamp: 1687845481077,
 				highResolutionBeginTime: '887518894424000',
@@ -660,7 +718,8 @@ describe('ProjectReport', () => {
 			},
 			ReportKind.measurement,
 			{
-				projectID: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
+				projectID:
+					'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' as ProjectIdentifier_string
 			}
 		)
 		instance.relativeRootDir = new UnifiedPath('./')
@@ -684,7 +743,10 @@ describe('ProjectReport', () => {
 		})
 
 		firstNode.addSensorValuesToLangInternal(
-			new GlobalIdentifier('' as UnifiedPath_string, '{root}' as SourceNodeIdentifier_string),
+			new GlobalIdentifier(
+				'' as UnifiedPath_string,
+				'{root}' as SourceNodeIdentifier_string
+			),
 			{
 				// cpu time
 				selfCPUTime: 0 as MicroSeconds_number,
@@ -718,7 +780,10 @@ describe('ProjectReport', () => {
 		})
 
 		secondNode.addSensorValuesToLangInternal(
-			new GlobalIdentifier('' as UnifiedPath_string, '{root}' as SourceNodeIdentifier_string),
+			new GlobalIdentifier(
+				'' as UnifiedPath_string,
+				'{root}' as SourceNodeIdentifier_string
+			),
 			{
 				// cpu time
 				selfCPUTime: 0 as MicroSeconds_number,
@@ -775,7 +840,9 @@ describe('ProjectReport', () => {
 
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
-			const reportFromString = ProjectReport.fromJSON(JSON.stringify(EXAMPLE_PROJECT_REPORT))
+			const reportFromString = ProjectReport.fromJSON(
+				JSON.stringify(EXAMPLE_PROJECT_REPORT)
+			)
 			expect(reportFromString.toJSON()).toEqual(EXAMPLE_PROJECT_REPORT)
 		})
 
@@ -785,7 +852,9 @@ describe('ProjectReport', () => {
 		})
 
 		runInstanceTests('deserialized instance related', () => {
-			const reportFromString = ProjectReport.fromJSON(JSON.stringify(EXAMPLE_PROJECT_REPORT))
+			const reportFromString = ProjectReport.fromJSON(
+				JSON.stringify(EXAMPLE_PROJECT_REPORT)
+			)
 			return reportFromString
 		})
 	})
@@ -794,7 +863,8 @@ describe('ProjectReport', () => {
 		const buffer = Buffer.from(EXAMPLE_PROJECT_REPORT_BUFFER, 'hex')
 
 		test('consume from buffer', () => {
-			const { instance, remainingBuffer } = ProjectReport.consumeFromBuffer(buffer)
+			const { instance, remainingBuffer } =
+				ProjectReport.consumeFromBuffer(buffer)
 			expect(instance.toJSON()).toEqual(EXAMPLE_PROJECT_REPORT)
 			expect(remainingBuffer.byteLength).toBe(0)
 		})
@@ -807,11 +877,19 @@ describe('ProjectReport', () => {
 
 	describe('loading from File', () => {
 		test('loadFromFile: existing path', () => {
-			const filePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
+			const filePathJson = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example001.oak.json'
+			)
 			const projectReportJson = ProjectReport.loadFromFile(filePathJson, 'json')
 			expect(projectReportJson).toBeDefined()
 
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
+			const filePathBin = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example001.oak.bin'
+			)
 			const projectReportBin = ProjectReport.loadFromFile(filePathBin, 'bin')
 			expect(projectReportBin).toBeDefined()
 
@@ -831,35 +909,59 @@ describe('ProjectReport', () => {
 
 	describe('versionFromBinFile', () => {
 		test('version is correct without fully loading the report', () => {
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
+			const filePathBin = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example001.oak.bin'
+			)
 			const projectReportBin = ProjectReport.loadFromFile(filePathBin, 'bin')
 
-			expect(ProjectReport.versionFromBinFile(filePathBin)).toEqual(projectReportBin?.reportVersion)
+			expect(ProjectReport.versionFromBinFile(filePathBin)).toEqual(
+				projectReportBin?.reportVersion
+			)
 		})
 
 		test('version is undefined if file does not exist', () => {
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'exampleX.bin.oak')
+			const filePathBin = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'exampleX.bin.oak'
+			)
 			expect(ProjectReport.versionFromBinFile(filePathBin)).toBe(undefined)
 		})
 	})
 
 	describe('hashFromBinFile', () => {
 		test('hash is correct without loading the report', () => {
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
+			const filePathBin = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example001.oak.bin'
+			)
 			const projectReportBin = ProjectReport.loadFromFile(filePathBin, 'bin')
 
-			expect(ProjectReport.hashFromBinFile(filePathBin)).toEqual(projectReportBin?.hash())
+			expect(ProjectReport.hashFromBinFile(filePathBin)).toEqual(
+				projectReportBin?.hash()
+			)
 		})
 
 		test('hash is undefined if file does not exist', () => {
-			const filePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'exampleX.bin.oak')
+			const filePathBin = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'exampleX.bin.oak'
+			)
 			expect(ProjectReport.hashFromBinFile(filePathBin)).toBe(undefined)
 		})
 	})
 
 	describe('insertCPUProfile', () => {
 		test('test case example001', async () => {
-			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
+			const cpuProfileFilePath = CURRENT_DIR.join(
+				'assets',
+				'CPUProfiles',
+				'example001.cpuprofile'
+			).toString()
 			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
 				ROOT_DIR,
 				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001
@@ -869,7 +971,8 @@ describe('ProjectReport', () => {
 			const projectReport = new ProjectReport(
 				{
 					origin: ProjectReportOrigin.pure,
-					commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
+					commitHash:
+						'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
 					commitTimestamp: 1706554909143,
 					timestamp: 1706554909143,
 					uncommittedChanges: true,
@@ -900,28 +1003,53 @@ describe('ProjectReport', () => {
 				},
 				ReportKind.measurement
 			)
-			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
+			await projectReport.insertCPUProfile(
+				ROOT_DIR,
+				profile,
+				externalResourceHelper
+			)
 			projectReport.normalize()
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
 
-			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.json')
-			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example001.oak.bin')
+			const expectedProjectReportFilePathJson = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example001.oak.json'
+			)
+			const expectedProjectReportFilePathBin = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example001.oak.bin'
+			)
 			if (UPDATE_TEST_REPORTS) {
-				projectReport.storeToFile(expectedProjectReportFilePathJson, 'pretty-json')
+				projectReport.storeToFile(
+					expectedProjectReportFilePathJson,
+					'pretty-json'
+				)
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
 			}
 
-			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
+			const expectedJson = ProjectReport.loadFromFile(
+				expectedProjectReportFilePathJson,
+				'json'
+			)
 
 			expect(projectReport.toJSON()).toEqual(expectedJson?.toJSON())
 
-			const expectedBin = ProjectReport.loadFromFile(expectedProjectReportFilePathBin, 'bin')
+			const expectedBin = ProjectReport.loadFromFile(
+				expectedProjectReportFilePathBin,
+				'bin'
+			)
 
 			expect(projectReport.toJSON()).toEqual(expectedBin?.toJSON())
 		})
 
 		test('test case example002', async () => {
-			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example002.cpuprofile').toString()
+			const cpuProfileFilePath = CURRENT_DIR.join(
+				'assets',
+				'CPUProfiles',
+				'example002.cpuprofile'
+			).toString()
 			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
 				ROOT_DIR,
 				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE002
@@ -931,7 +1059,8 @@ describe('ProjectReport', () => {
 			const projectReport = new ProjectReport(
 				{
 					origin: ProjectReportOrigin.pure,
-					commitHash: 'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
+					commitHash:
+						'fbf6d5e68ab540636f6929b8cb90b9b1d280efb1' as GitHash_string,
 					commitTimestamp: 1706556938476,
 					timestamp: 1706556938476,
 					uncommittedChanges: true,
@@ -962,27 +1091,52 @@ describe('ProjectReport', () => {
 				},
 				ReportKind.measurement
 			)
-			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
+			await projectReport.insertCPUProfile(
+				ROOT_DIR,
+				profile,
+				externalResourceHelper
+			)
 			projectReport.relativeRootDir = new UnifiedPath('../../../../../../')
 			projectReport.normalize()
-			const expectedProjectReportFilePathJson = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.json')
-			const expectedProjectReportFilePathBin = CURRENT_DIR.join('assets', 'ProjectReport', 'example002.oak.bin')
+			const expectedProjectReportFilePathJson = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example002.oak.json'
+			)
+			const expectedProjectReportFilePathBin = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'example002.oak.bin'
+			)
 			if (UPDATE_TEST_REPORTS) {
-				projectReport.storeToFile(expectedProjectReportFilePathJson, 'pretty-json')
+				projectReport.storeToFile(
+					expectedProjectReportFilePathJson,
+					'pretty-json'
+				)
 				projectReport.storeToFile(expectedProjectReportFilePathBin, 'bin')
 			}
 
-			const expectedJson = ProjectReport.loadFromFile(expectedProjectReportFilePathJson, 'json')
+			const expectedJson = ProjectReport.loadFromFile(
+				expectedProjectReportFilePathJson,
+				'json'
+			)
 
 			expect(projectReport.toJSON()).toEqual(expectedJson?.toJSON())
 
-			const expectedBin = ProjectReport.loadFromFile(expectedProjectReportFilePathBin, 'bin')
+			const expectedBin = ProjectReport.loadFromFile(
+				expectedProjectReportFilePathBin,
+				'bin'
+			)
 
 			expect(projectReport.toJSON()).toEqual(expectedBin?.toJSON())
 		})
 
 		test('not existing Sourcefile', async () => {
-			const cpuProfileFilePath = CURRENT_DIR.join('assets', 'CPUProfiles', 'example001.cpuprofile').toString()
+			const cpuProfileFilePath = CURRENT_DIR.join(
+				'assets',
+				'CPUProfiles',
+				'example001.cpuprofile'
+			).toString()
 			const externalResourceHelper = ExternalResourceHelper.loadFromFile(
 				ROOT_DIR,
 				EXTERNAL_RESOURCE_HELPER_FILE_PATH_EXAMPLE001
@@ -992,7 +1146,8 @@ describe('ProjectReport', () => {
 			const projectReport = new ProjectReport(
 				{
 					origin: ProjectReportOrigin.pure,
-					commitHash: '9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
+					commitHash:
+						'9828760b10d33c0fd06ed12cd6b6edf9fc4d6db0' as GitHash_string,
 					commitTimestamp: 1687845481077,
 					timestamp: 1687845481077,
 					uncommittedChanges: false,
@@ -1026,10 +1181,15 @@ describe('ProjectReport', () => {
 
 			// change the source file path to a not existing one
 			profile['nodes'][3]['callFrame']['url'] = 'not/found/sourcefile.ts'
-			await projectReport.insertCPUProfile(ROOT_DIR, profile, externalResourceHelper)
+			await projectReport.insertCPUProfile(
+				ROOT_DIR,
+				profile,
+				externalResourceHelper
+			)
 
 			// a not existing source file should still be added to the project report
-			const notFoundModuleIndex = projectReport.globalIndex.getModuleIndex('get')
+			const notFoundModuleIndex =
+				projectReport.globalIndex.getModuleIndex('get')
 			const missingFilePathIndex = notFoundModuleIndex?.getFilePathIndex(
 				'get',
 				'./not/found/sourcefile.ts' as UnifiedPath_string
@@ -1038,7 +1198,9 @@ describe('ProjectReport', () => {
 			expect(notFoundModuleIndex).toBeDefined()
 			expect(missingFilePathIndex).toBeDefined()
 
-			const sourceFileMetaData = projectReport.intern.get(missingFilePathIndex?.id as PathID_number)
+			const sourceFileMetaData = projectReport.intern.get(
+				missingFilePathIndex?.id as PathID_number
+			)
 
 			expect(sourceFileMetaData).toBeDefined()
 		})
@@ -1059,7 +1221,9 @@ describe('ProjectReport', () => {
 			)
 
 			if (first === undefined || second === undefined) {
-				throw new Error('ProjectReport.test.merging: not all instances are defined')
+				throw new Error(
+					'ProjectReport.test.merging: not all instances are defined'
+				)
 			}
 
 			instancesToMerge = [first, second]
@@ -1085,27 +1249,43 @@ describe('ProjectReport', () => {
 				ProjectReport.merge(moduleIndex, ...instancesToMerge)
 			}
 
-			expect(t).toThrow('ProjectReport.merge: Project reports versions are not compatible')
+			expect(t).toThrow(
+				'ProjectReport.merge: Project reports versions are not compatible'
+			)
 		})
 
 		test('wrong commit hashes', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
-			instancesToMerge[0].executionDetails.commitHash = '2ce504157fbf340c78a1ea93412773f45b73f516' as GitHash_string
+			instancesToMerge[0].executionDetails.commitHash =
+				'2ce504157fbf340c78a1ea93412773f45b73f516' as GitHash_string
 
 			const t = () => {
 				ProjectReport.merge(moduleIndex, ...instancesToMerge)
 			}
 
-			expect(t).toThrow('ProjectReport.merge: Project reports commit hashs are not the same')
+			expect(t).toThrow(
+				'ProjectReport.merge: Project reports commit hashs are not the same'
+			)
 		})
 
 		test('merges correctly', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
-			const expectedPathJson = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
-			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.bin')
-			const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+			const expectedPathJson = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'001&002.merged.oak.json'
+			)
+			const expectedPathBin = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'001&002.merged.oak.bin'
+			)
+			const mergedProjectReport = ProjectReport.merge(
+				moduleIndex,
+				...instancesToMerge
+			)
 			mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
 			if (UPDATE_TEST_REPORTS) {
@@ -1113,24 +1293,47 @@ describe('ProjectReport', () => {
 				mergedProjectReport.storeToFile(expectedPathBin, 'bin')
 			}
 
-			const expectedProjectReportJson = ProjectReport.loadFromFile(expectedPathJson, 'json')
-			const expectedProjectReportBin = ProjectReport.loadFromFile(expectedPathBin, 'bin')
+			const expectedProjectReportJson = ProjectReport.loadFromFile(
+				expectedPathJson,
+				'json'
+			)
+			const expectedProjectReportBin = ProjectReport.loadFromFile(
+				expectedPathBin,
+				'bin'
+			)
 
-			expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReportJson?.toJSON())
+			expect(mergedProjectReport.toJSON()).toEqual(
+				expectedProjectReportJson?.toJSON()
+			)
 
-			expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReportBin?.toJSON())
+			expect(mergedProjectReport.toJSON()).toEqual(
+				expectedProjectReportBin?.toJSON()
+			)
 		})
 
 		test('merges correctly with cucc changes', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
-			const expectedPathJson = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
-			const expectedPathBin = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.bin')
+			const expectedPathJson = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'001&002.merged.oak.json'
+			)
+			const expectedPathBin = CURRENT_DIR.join(
+				'assets',
+				'ProjectReport',
+				'001&002.merged.oak.bin'
+			)
 
 			// add cucc changes
 			const sourceFileIndex_001 = instancesToMerge[0].globalIndex
 				.getModuleIndex('get')
-				?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
+				?.getFilePathIndex(
+					'get',
+					new UnifiedPath(
+						'./packages/profiler/examples/example001.ts'
+					).toString()
+				)
 			expect(sourceFileIndex_001).toBeDefined()
 			if (sourceFileIndex_001) {
 				sourceFileIndex_001.containsUncommittedChanges = true
@@ -1139,18 +1342,32 @@ describe('ProjectReport', () => {
 			// add cucc changes
 			const sourceFileIndex_002 = instancesToMerge[1].globalIndex
 				.getModuleIndex('get')
-				?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
+				?.getFilePathIndex(
+					'get',
+					new UnifiedPath(
+						'./packages/profiler/examples/example002.ts'
+					).toString()
+				)
 			expect(sourceFileIndex_002).toBeDefined()
 			if (sourceFileIndex_002) {
 				sourceFileIndex_002.containsUncommittedChanges = true
 			}
 
-			const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+			const mergedProjectReport = ProjectReport.merge(
+				moduleIndex,
+				...instancesToMerge
+			)
 
 			mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
-			const expectedProjectReportJson = ProjectReport.loadFromFile(expectedPathJson, 'json')
-			const expectedProjectReportBin = ProjectReport.loadFromFile(expectedPathBin, 'bin')
+			const expectedProjectReportJson = ProjectReport.loadFromFile(
+				expectedPathJson,
+				'json'
+			)
+			const expectedProjectReportBin = ProjectReport.loadFromFile(
+				expectedPathBin,
+				'bin'
+			)
 
 			expect(expectedProjectReportJson).toBeDefined()
 			expect(expectedProjectReportBin).toBeDefined()
@@ -1158,14 +1375,24 @@ describe('ProjectReport', () => {
 				// add cucc changes to expected json report
 				const sourceFileIndex_001_Json = expectedProjectReportJson.globalIndex
 					.getModuleIndex('get')
-					?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
+					?.getFilePathIndex(
+						'get',
+						new UnifiedPath(
+							'./packages/profiler/examples/example001.ts'
+						).toString()
+					)
 				expect(sourceFileIndex_001_Json).toBeDefined()
 				if (sourceFileIndex_001_Json) {
 					sourceFileIndex_001_Json.containsUncommittedChanges = true
 				}
 				const sourceFileIndex_002_Json = expectedProjectReportJson.globalIndex
 					.getModuleIndex('get')
-					?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
+					?.getFilePathIndex(
+						'get',
+						new UnifiedPath(
+							'./packages/profiler/examples/example002.ts'
+						).toString()
+					)
 				expect(sourceFileIndex_002_Json).toBeDefined()
 				if (sourceFileIndex_002_Json) {
 					sourceFileIndex_002_Json.containsUncommittedChanges = true
@@ -1174,68 +1401,113 @@ describe('ProjectReport', () => {
 				// add cucc changes to expected bin report
 				const sourceFileIndex_001_Bin = expectedProjectReportBin.globalIndex
 					.getModuleIndex('get')
-					?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example001.ts').toString())
+					?.getFilePathIndex(
+						'get',
+						new UnifiedPath(
+							'./packages/profiler/examples/example001.ts'
+						).toString()
+					)
 				expect(sourceFileIndex_001_Bin).toBeDefined()
 				if (sourceFileIndex_001_Bin) {
 					sourceFileIndex_001_Bin.containsUncommittedChanges = true
 				}
 				const sourceFileIndex_002_Bin = expectedProjectReportBin.globalIndex
 					.getModuleIndex('get')
-					?.getFilePathIndex('get', new UnifiedPath('./packages/profiler/examples/example002.ts').toString())
+					?.getFilePathIndex(
+						'get',
+						new UnifiedPath(
+							'./packages/profiler/examples/example002.ts'
+						).toString()
+					)
 				expect(sourceFileIndex_002_Bin).toBeDefined()
 				if (sourceFileIndex_002_Bin) {
 					sourceFileIndex_002_Bin.containsUncommittedChanges = true
 				}
 			}
 
-			expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReportJson?.toJSON())
+			expect(mergedProjectReport.toJSON()).toEqual(
+				expectedProjectReportJson?.toJSON()
+			)
 
-			expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReportBin?.toJSON())
+			expect(mergedProjectReport.toJSON()).toEqual(
+				expectedProjectReportBin?.toJSON()
+			)
 		})
 
 		describe('merges correctly with noisy systemInformation', () => {
 			test('first report is different', () => {
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 				const moduleIndex = globalIndex.getModuleIndex('upsert')
-				const expectedPath = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
-				const expectedProjectReport = ProjectReport.loadFromFile(expectedPath, 'json')
+				const expectedPath = CURRENT_DIR.join(
+					'assets',
+					'ProjectReport',
+					'001&002.merged.oak.json'
+				)
+				const expectedProjectReport = ProjectReport.loadFromFile(
+					expectedPath,
+					'json'
+				)
 				instancesToMerge[0].executionDetails.systemInformation.memory.free = 0
 
 				if (expectedProjectReport) {
 					expectedProjectReport.executionDetails.systemInformation.memory.free = 0
 				}
 
-				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+				const mergedProjectReport = ProjectReport.merge(
+					moduleIndex,
+					...instancesToMerge
+				)
 				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
-				expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReport?.toJSON())
+				expect(mergedProjectReport.toJSON()).toEqual(
+					expectedProjectReport?.toJSON()
+				)
 			})
 			test('seconds report is different', () => {
 				const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 				const moduleIndex = globalIndex.getModuleIndex('upsert')
-				const expectedPath = CURRENT_DIR.join('assets', 'ProjectReport', '001&002.merged.oak.json')
-				const expectedProjectReport = ProjectReport.loadFromFile(expectedPath, 'json')
+				const expectedPath = CURRENT_DIR.join(
+					'assets',
+					'ProjectReport',
+					'001&002.merged.oak.json'
+				)
+				const expectedProjectReport = ProjectReport.loadFromFile(
+					expectedPath,
+					'json'
+				)
 				instancesToMerge[1].executionDetails.systemInformation.memory.free = 0
 
-				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+				const mergedProjectReport = ProjectReport.merge(
+					moduleIndex,
+					...instancesToMerge
+				)
 				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
-				expect(mergedProjectReport.toJSON()).toEqual(expectedProjectReport?.toJSON())
+				expect(mergedProjectReport.toJSON()).toEqual(
+					expectedProjectReport?.toJSON()
+				)
 			})
 		})
 
 		test('does not merge with different systems', () => {
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			const moduleIndex = globalIndex.getModuleIndex('upsert')
-			const consoleError = jest.spyOn(LoggerHelper, 'error').mockImplementation(() => undefined)
-			instancesToMerge[0].executionDetails.systemInformation.cpu.manufacturer = 'abc'
+			const consoleError = jest
+				.spyOn(LoggerHelper, 'error')
+				.mockImplementation(() => undefined)
+			instancesToMerge[0].executionDetails.systemInformation.cpu.manufacturer =
+				'abc'
 
 			const t = () => {
 				ProjectReport.merge(moduleIndex, ...instancesToMerge)
 			}
-			expect(t).toThrow('ProjectReport.merge: cannot merge ProjectReports from different systems')
+			expect(t).toThrow(
+				'ProjectReport.merge: cannot merge ProjectReports from different systems'
+			)
 
-			expect(consoleError).toHaveBeenCalledWith('SystemInformation.isSame: detected different cpus')
+			expect(consoleError).toHaveBeenCalledWith(
+				'SystemInformation.isSame: detected different cpus'
+			)
 			consoleError.mockRestore()
 		})
 
@@ -1246,10 +1518,15 @@ describe('ProjectReport', () => {
 				instancesToMerge[0].executionDetails.uncommittedChanges = false
 				instancesToMerge[1].executionDetails.uncommittedChanges = false
 
-				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+				const mergedProjectReport = ProjectReport.merge(
+					moduleIndex,
+					...instancesToMerge
+				)
 				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
-				expect(mergedProjectReport.executionDetails.uncommittedChanges).toEqual(false)
+				expect(mergedProjectReport.executionDetails.uncommittedChanges).toEqual(
+					false
+				)
 			})
 
 			test('first report has uncommitted changes', () => {
@@ -1257,10 +1534,15 @@ describe('ProjectReport', () => {
 				const moduleIndex = globalIndex.getModuleIndex('upsert')
 				instancesToMerge[0].executionDetails.uncommittedChanges = true
 
-				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+				const mergedProjectReport = ProjectReport.merge(
+					moduleIndex,
+					...instancesToMerge
+				)
 				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
-				expect(mergedProjectReport.executionDetails.uncommittedChanges).toEqual(true)
+				expect(mergedProjectReport.executionDetails.uncommittedChanges).toEqual(
+					true
+				)
 			})
 
 			test('second report has uncommitted changes', () => {
@@ -1268,10 +1550,15 @@ describe('ProjectReport', () => {
 				const moduleIndex = globalIndex.getModuleIndex('upsert')
 				instancesToMerge[1].executionDetails.uncommittedChanges = true
 
-				const mergedProjectReport = ProjectReport.merge(moduleIndex, ...instancesToMerge)
+				const mergedProjectReport = ProjectReport.merge(
+					moduleIndex,
+					...instancesToMerge
+				)
 				mergedProjectReport.relativeRootDir = new UnifiedPath('../../../..')
 
-				expect(mergedProjectReport.executionDetails.uncommittedChanges).toEqual(true)
+				expect(mergedProjectReport.executionDetails.uncommittedChanges).toEqual(
+					true
+				)
 			})
 		})
 	})

@@ -1,6 +1,8 @@
 import { State } from '../../../../src/helper/InsertCPUProfileHelper/types/state'
 
-type StateIdentifier<T extends State = State> = T extends State ? `${T['scope']}:${T['type']}:${T['headless']}` : never
+type StateIdentifier<T extends State = State> = T extends State
+	? `${T['scope']}:${T['type']}:${T['headless']}`
+	: never
 
 export const STATES: Record<StateIdentifier<State>, State> = {
 	'project:lang_internal:false': {

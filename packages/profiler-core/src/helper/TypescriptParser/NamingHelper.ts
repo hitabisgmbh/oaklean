@@ -9,7 +9,11 @@ import { LoggerHelper } from '../LoggerHelper'
 import { IdentifierType } from '../../types'
 
 export class NamingHelper {
-	static getName(node: ts.Node, sourceFile: ts.SourceFile, traverseNodeInfo: TraverseNodeInfo) {
+	static getName(
+		node: ts.Node,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	) {
 		const getNameFunction = GET_NAME_FUNCTIONS[node.kind]
 		if (getNameFunction !== undefined) {
 			return getNameFunction(node, sourceFile, traverseNodeInfo)
@@ -17,7 +21,11 @@ export class NamingHelper {
 		return NamingHelper.getAnonymousName(node, sourceFile, traverseNodeInfo)
 	}
 
-	static getAnonymousName(node: ts.Node, sourceFile: ts.SourceFile, traverseNodeInfo: TraverseNodeInfo) {
+	static getAnonymousName(
+		node: ts.Node,
+		sourceFile: ts.SourceFile,
+		traverseNodeInfo: TraverseNodeInfo
+	) {
 		return {
 			suffix: '',
 			identifier: `(anonymous:${traverseNodeInfo.counters.anonymousFunctionCounter++})`,
@@ -35,14 +43,18 @@ export class NamingHelper {
 			return getNameFunction(node.name, sourceFile, traverseNodeInfo)
 		}
 		LoggerHelper.error(
-			'NamingHelper (getPropertyAssignmentName): unhandled case: node.name.kind === ' + node.name.kind,
+			'NamingHelper (getPropertyAssignmentName): unhandled case: node.name.kind === ' +
+				node.name.kind,
 			{
 				filePath: traverseNodeInfo.filePath,
 				kind: node.name.kind,
 				pos: TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
 			}
 		)
-		throw new Error('NamingHelper (getPropertyAssignmentName): unhandled case: node.name.kind === ' + node.name.kind)
+		throw new Error(
+			'NamingHelper (getPropertyAssignmentName): unhandled case: node.name.kind === ' +
+				node.name.kind
+		)
 	}
 
 	static getPropertyDeclarationName(
@@ -50,7 +62,9 @@ export class NamingHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
-		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
+		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node)
+			? '@static'
+			: ''
 		const getNameFunction = GET_NAME_FUNCTIONS[node.name.kind]
 		if (getNameFunction !== undefined) {
 			const result = getNameFunction(node.name, sourceFile, traverseNodeInfo)
@@ -60,14 +74,18 @@ export class NamingHelper {
 			}
 		}
 		LoggerHelper.error(
-			'NamingHelper (getPropertyDeclarationName): unhandled case: node.name.kind === ' + node.name.kind,
+			'NamingHelper (getPropertyDeclarationName): unhandled case: node.name.kind === ' +
+				node.name.kind,
 			{
 				filePath: traverseNodeInfo.filePath,
 				kind: node.name.kind,
 				pos: TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
 			}
 		)
-		throw new Error('NamingHelper (getPropertyDeclarationName): unhandled case: node.name.kind === ' + node.name.kind)
+		throw new Error(
+			'NamingHelper (getPropertyDeclarationName): unhandled case: node.name.kind === ' +
+				node.name.kind
+		)
 	}
 
 	static getVariableName(
@@ -79,12 +97,19 @@ export class NamingHelper {
 		if (getNameFunction !== undefined) {
 			return getNameFunction(node.name, sourceFile, traverseNodeInfo)
 		}
-		LoggerHelper.error('NamingHelper (getVariableName): unhandled case: node.name.kind  === ' + node.name.kind, {
-			filePath: traverseNodeInfo.filePath,
-			kind: node.name.kind,
-			pos: TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
-		})
-		throw new Error('NamingHelper (getVariableName): unhandled case: node.name.kind  === ' + node.name.kind)
+		LoggerHelper.error(
+			'NamingHelper (getVariableName): unhandled case: node.name.kind  === ' +
+				node.name.kind,
+			{
+				filePath: traverseNodeInfo.filePath,
+				kind: node.name.kind,
+				pos: TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
+			}
+		)
+		throw new Error(
+			'NamingHelper (getVariableName): unhandled case: node.name.kind  === ' +
+				node.name.kind
+		)
 	}
 
 	static getIdentifierName(
@@ -122,7 +147,10 @@ export class NamingHelper {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
-		const expressionHash = ExpressionHelper.hashExpression(node.expression, sourceFile)
+		const expressionHash = ExpressionHelper.hashExpression(
+			node.expression,
+			sourceFile
+		)
 		return {
 			suffix: '',
 			identifier: `(expression:${expressionHash})`,

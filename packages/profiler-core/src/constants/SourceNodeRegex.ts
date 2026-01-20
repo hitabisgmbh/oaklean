@@ -51,35 +51,81 @@ export const LangInternalPathRegexString = 'node:(?:[^\\/{}]*)(?:\\/[^\\/{}]*)*'
 
 // Source Node Identifier-Part Regex
 export const RootRegex = new RegExp(`^${RootRegexString}$`)
-export const ConstructorDeclarationRegex = new RegExp(`^${ConstructorDeclarationRegexString}$`)
-export const ClassDeclarationRegex = new RegExp(`^${ClassDeclarationRegexString}$`)
-export const MethodDefinitionRegex = new RegExp(`^${MethodDefinitionRegexString}$`)
-export const GetAccessorDeclarationRegex = new RegExp(`^${GetAccessorDeclarationRegexString}$`)
-export const SetAccessorDeclarationRegex = new RegExp(`^${SetAccessorDeclarationRegexString}$`)
-export const FunctionDeclarationRegex = new RegExp(`^${FunctionDeclarationRegexString}$`)
-export const FunctionExpressionRegex = new RegExp(`^${FunctionExpressionRegexString}$`)
-export const ClassExpressionRegex = new RegExp(`^${ClassExpressionRegexString}$`)
-export const ObjectLiteralExpressionRegex = new RegExp(`^${ObjectLiteralExpressionRegexString}$`)
-export const ModuleDeclarationRegex = new RegExp(`^${ModuleDeclarationRegexString}$`)
+export const ConstructorDeclarationRegex = new RegExp(
+	`^${ConstructorDeclarationRegexString}$`
+)
+export const ClassDeclarationRegex = new RegExp(
+	`^${ClassDeclarationRegexString}$`
+)
+export const MethodDefinitionRegex = new RegExp(
+	`^${MethodDefinitionRegexString}$`
+)
+export const GetAccessorDeclarationRegex = new RegExp(
+	`^${GetAccessorDeclarationRegexString}$`
+)
+export const SetAccessorDeclarationRegex = new RegExp(
+	`^${SetAccessorDeclarationRegexString}$`
+)
+export const FunctionDeclarationRegex = new RegExp(
+	`^${FunctionDeclarationRegexString}$`
+)
+export const FunctionExpressionRegex = new RegExp(
+	`^${FunctionExpressionRegexString}$`
+)
+export const ClassExpressionRegex = new RegExp(
+	`^${ClassExpressionRegexString}$`
+)
+export const ObjectLiteralExpressionRegex = new RegExp(
+	`^${ObjectLiteralExpressionRegexString}$`
+)
+export const ModuleDeclarationRegex = new RegExp(
+	`^${ModuleDeclarationRegexString}$`
+)
 export const IfStatementRegex = new RegExp(`^${IfStatementRegexString}$`)
-export const IfThenStatementRegex = new RegExp(`^${IfThenStatementRegexString}$`)
-export const IfElseStatementRegex = new RegExp(`^${IfElseStatementRegexString}$`)
+export const IfThenStatementRegex = new RegExp(
+	`^${IfThenStatementRegexString}$`
+)
+export const IfElseStatementRegex = new RegExp(
+	`^${IfElseStatementRegexString}$`
+)
 export const ForStatementRegex = new RegExp(`^${ForStatementRegexString}$`)
 export const WhileStatementRegex = new RegExp(`^${WhileStatementRegexString}$`)
 export const TryStatementRegex = new RegExp(`^${TryStatementRegexString}$`)
-export const TryBlockStatementRegex = new RegExp(`^${TryBlockStatementRegexString}$`)
-export const CatchClauseStatementRegex = new RegExp(`^${CatchClauseStatementRegexString}$`)
-export const FinallyBlockStatementRegex = new RegExp(`^${FinallyBlockStatementRegexString}$`)
+export const TryBlockStatementRegex = new RegExp(
+	`^${TryBlockStatementRegexString}$`
+)
+export const CatchClauseStatementRegex = new RegExp(
+	`^${CatchClauseStatementRegexString}$`
+)
+export const FinallyBlockStatementRegex = new RegExp(
+	`^${FinallyBlockStatementRegexString}$`
+)
 export const BlockStatementRegex = new RegExp(`^${BlockStatementRegexString}$`)
-export const ClassStaticBlockDeclarationRegex = new RegExp(`^${ClassStaticBlockDeclarationRegexString}$`)
-export const SwitchStatementRegex = new RegExp(`^${SwitchStatementRegexString}$`)
-export const SwitchCaseClauseRegex = new RegExp(`^${SwitchCaseClauseRegexString}$`)
+export const ClassStaticBlockDeclarationRegex = new RegExp(
+	`^${ClassStaticBlockDeclarationRegexString}$`
+)
+export const SwitchStatementRegex = new RegExp(
+	`^${SwitchStatementRegexString}$`
+)
+export const SwitchCaseClauseRegex = new RegExp(
+	`^${SwitchCaseClauseRegexString}$`
+)
 export const ScopeRegex = new RegExp(`^${ScopeRegexString}$`)
 
-export const LangInternalSourceNodeRegExpRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
+export const LangInternalSourceNodeRegExpRegex = new RegExp(
+	`^${LangInternalSourceNodeRegExpRegexString}$`
+)
 
 // Source Node Identifier Regex
-export const LangInternalSourceNodeIdentifierRegex = new RegExp(`^${LangInternalSourceNodeIdentifierRegexString}$`)
-export const SourceNodeIdentifierPartRegex = new RegExp(`^${SourceNodeIdentifierPartRegexString}$`)
-export const SourceNodeIdentifierRegex = new RegExp(`^${SourceNodeIdentifierRegexString}$`)
-export const LangInternalPathRegex = new RegExp(`^${LangInternalPathRegexString}$`)
+export const LangInternalSourceNodeIdentifierRegex = new RegExp(
+	`^${LangInternalSourceNodeIdentifierRegexString}$`
+)
+export const SourceNodeIdentifierPartRegex = new RegExp(
+	`^${SourceNodeIdentifierPartRegexString}$`
+)
+export const SourceNodeIdentifierRegex = new RegExp(
+	`^${SourceNodeIdentifierRegexString}$`
+)
+export const LangInternalPathRegex = new RegExp(
+	`^${LangInternalPathRegexString}$`
+)

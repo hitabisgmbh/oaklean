@@ -13,7 +13,8 @@ import {
 
 import InitCommands from '../../src/commands/InitCommands'
 
-const DEMO_PROJECT_ID = '7cc8cf7f-3cc9-49f8-8f06-3c3929aa004d' as ProjectIdentifier_string
+const DEMO_PROJECT_ID =
+	'7cc8cf7f-3cc9-49f8-8f06-3c3929aa004d' as ProjectIdentifier_string
 
 const GENERATED_NONE_CONFIG_JSON = {
 	...DEFAULT_PROFILER_CONFIG,
@@ -75,7 +76,10 @@ describe('InitCommands', () => {
 			let uniqueID_spy: jest.SpyInstance
 
 			beforeEach(() => {
-				selectSensorInterface_spy = jest.spyOn(initCommands, 'selectSensorInterface')
+				selectSensorInterface_spy = jest.spyOn(
+					initCommands,
+					'selectSensorInterface'
+				)
 				uniqueID_spy = jest.spyOn(Crypto, 'uniqueID')
 				uniqueID_spy.mockReturnValue(DEMO_PROJECT_ID)
 			})
@@ -90,7 +94,9 @@ describe('InitCommands', () => {
 
 				const { mainConfig, localConfig } = await initCommands.configureConfig()
 
-				expect(mainConfig.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
+				expect(mainConfig.filePath.toString()).toBe(
+					new UnifiedPath(process.cwd()).join('.oaklean').toString()
+				)
 
 				expect(mainConfig.toJSON()).toEqual({
 					...GENERATED_NONE_CONFIG_JSON,
@@ -102,7 +108,8 @@ describe('InitCommands', () => {
 
 				expect(localConfig).toEqual({
 					runtimeOptions: {
-						sensorInterface: GENERATED_NONE_CONFIG_JSON.runtimeOptions.sensorInterface
+						sensorInterface:
+							GENERATED_NONE_CONFIG_JSON.runtimeOptions.sensorInterface
 					}
 				})
 			})
@@ -112,7 +119,9 @@ describe('InitCommands', () => {
 
 				const { mainConfig, localConfig } = await initCommands.configureConfig()
 
-				expect(mainConfig.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
+				expect(mainConfig.filePath.toString()).toBe(
+					new UnifiedPath(process.cwd()).join('.oaklean').toString()
+				)
 
 				expect(mainConfig.toJSON()).toEqual({
 					...GENERATED_PERF_CONFIG_JSON,
@@ -124,17 +133,22 @@ describe('InitCommands', () => {
 
 				expect(localConfig).toEqual({
 					runtimeOptions: {
-						sensorInterface: GENERATED_PERF_CONFIG_JSON.runtimeOptions.sensorInterface
+						sensorInterface:
+							GENERATED_PERF_CONFIG_JSON.runtimeOptions.sensorInterface
 					}
 				})
 			})
 
 			test('with powermetrics', async () => {
-				selectSensorInterface_spy.mockResolvedValue(SensorInterfaceType.powermetrics)
+				selectSensorInterface_spy.mockResolvedValue(
+					SensorInterfaceType.powermetrics
+				)
 
 				const { mainConfig, localConfig } = await initCommands.configureConfig()
 
-				expect(mainConfig.filePath.toString()).toBe(new UnifiedPath(process.cwd()).join('.oaklean').toString())
+				expect(mainConfig.filePath.toString()).toBe(
+					new UnifiedPath(process.cwd()).join('.oaklean').toString()
+				)
 
 				expect(mainConfig.toJSON()).toEqual({
 					...GENERATED_POWERMETRICS_CONFIG_JSON,
@@ -146,7 +160,8 @@ describe('InitCommands', () => {
 
 				expect(localConfig).toEqual({
 					runtimeOptions: {
-						sensorInterface: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions.sensorInterface
+						sensorInterface:
+							GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions.sensorInterface
 					}
 				})
 			})
@@ -164,12 +179,27 @@ describe('InitCommands', () => {
 			let consoleWarnLog_spy: jest.SpyInstance
 
 			beforeEach(() => {
-				confirmConfigFileContent_spy = jest.spyOn(initCommands, 'confirmConfigFileContent')
-				confirmOverwriteContent_spy = jest.spyOn(initCommands, 'confirmOverwriteContent')
-				configAlreadyExists_spy = jest.spyOn(initCommands, 'configAlreadyExists')
-				configStoreToFile_spy = jest.spyOn(ProfilerConfig.prototype, 'storeToFile')
+				confirmConfigFileContent_spy = jest.spyOn(
+					initCommands,
+					'confirmConfigFileContent'
+				)
+				confirmOverwriteContent_spy = jest.spyOn(
+					initCommands,
+					'confirmOverwriteContent'
+				)
+				configAlreadyExists_spy = jest.spyOn(
+					initCommands,
+					'configAlreadyExists'
+				)
+				configStoreToFile_spy = jest.spyOn(
+					ProfilerConfig.prototype,
+					'storeToFile'
+				)
 				configStoreToFile_spy.mockImplementation(() => undefined)
-				intermediateConfigStoreToFile_spy = jest.spyOn(ProfilerConfig, 'storeIntermediateToFile')
+				intermediateConfigStoreToFile_spy = jest.spyOn(
+					ProfilerConfig,
+					'storeIntermediateToFile'
+				)
 				intermediateConfigStoreToFile_spy.mockImplementation(() => undefined)
 				configureConfig_spy = jest.spyOn(initCommands, 'configureConfig')
 				consoleLog_spy = jest.spyOn(LoggerHelper, 'log')
@@ -191,7 +221,9 @@ describe('InitCommands', () => {
 			test('returns true with perf', async () => {
 				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
-					ProfilerConfig.intermediateFromJSON(GENERATED_PERF_CONFIG_JSON) as IProfilerConfig
+					ProfilerConfig.intermediateFromJSON(
+						GENERATED_PERF_CONFIG_JSON
+					) as IProfilerConfig
 				)
 				const localConfig = {
 					runtimeOptions: GENERATED_PERF_CONFIG_JSON.runtimeOptions
@@ -206,9 +238,13 @@ describe('InitCommands', () => {
 				await initCommands.initCommand()
 
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
-				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(mainConfig, null, 2))
+				expect(consoleLog_spy).toHaveBeenCalledWith(
+					JSON.stringify(mainConfig, null, 2)
+				)
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
-				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
+				expect(consoleLog_spy).toHaveBeenCalledWith(
+					JSON.stringify(localConfig, null, 2)
+				)
 				expect(consoleLog_spy).toHaveBeenCalledWith(
 					'[Oaklean] perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md'
 				)
@@ -222,7 +258,9 @@ describe('InitCommands', () => {
 			test('returns true with powermetrics', async () => {
 				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
-					ProfilerConfig.intermediateFromJSON(GENERATED_POWERMETRICS_CONFIG_JSON) as IProfilerConfig
+					ProfilerConfig.intermediateFromJSON(
+						GENERATED_POWERMETRICS_CONFIG_JSON
+					) as IProfilerConfig
 				)
 				const localConfig = {
 					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
@@ -237,9 +275,13 @@ describe('InitCommands', () => {
 				await initCommands.initCommand()
 
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
-				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(mainConfig, null, 2))
+				expect(consoleLog_spy).toHaveBeenCalledWith(
+					JSON.stringify(mainConfig, null, 2)
+				)
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
-				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
+				expect(consoleLog_spy).toHaveBeenCalledWith(
+					JSON.stringify(localConfig, null, 2)
+				)
 				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
 				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
 					new UnifiedPath(process.cwd()).join('.oaklean.local'),
@@ -250,7 +292,9 @@ describe('InitCommands', () => {
 			test('returns true with none', async () => {
 				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
-					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
+					ProfilerConfig.intermediateFromJSON(
+						GENERATED_NONE_CONFIG_JSON
+					) as IProfilerConfig
 				)
 				const localConfig = {
 					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
@@ -265,9 +309,13 @@ describe('InitCommands', () => {
 				await initCommands.initCommand()
 
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
-				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(mainConfig, null, 2))
+				expect(consoleLog_spy).toHaveBeenCalledWith(
+					JSON.stringify(mainConfig, null, 2)
+				)
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
-				expect(consoleLog_spy).toHaveBeenCalledWith(JSON.stringify(localConfig, null, 2))
+				expect(consoleLog_spy).toHaveBeenCalledWith(
+					JSON.stringify(localConfig, null, 2)
+				)
 				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
 				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
 					new UnifiedPath(process.cwd()).join('.oaklean.local'),
@@ -279,7 +327,9 @@ describe('InitCommands', () => {
 				configAlreadyExists_spy.mockReturnValue(true)
 				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
-					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
+					ProfilerConfig.intermediateFromJSON(
+						GENERATED_NONE_CONFIG_JSON
+					) as IProfilerConfig
 				)
 				const localConfig = {
 					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
@@ -302,7 +352,9 @@ describe('InitCommands', () => {
 				configAlreadyExists_spy.mockReturnValue(true)
 				const mainConfig = new ProfilerConfig(
 					new UnifiedPath(process.cwd()).join('.oaklean'),
-					ProfilerConfig.intermediateFromJSON(GENERATED_NONE_CONFIG_JSON) as IProfilerConfig
+					ProfilerConfig.intermediateFromJSON(
+						GENERATED_NONE_CONFIG_JSON
+					) as IProfilerConfig
 				)
 				const localConfig = {
 					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions

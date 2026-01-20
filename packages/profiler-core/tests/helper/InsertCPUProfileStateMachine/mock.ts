@@ -13,7 +13,10 @@ export type MockedCPUModel = {
 	children?: MockedCPUModel[]
 }
 
-export function mockedCPUModel(mocked: MockedCPUModel, idx: number = 0): CPUNode {
+export function mockedCPUModel(
+	mocked: MockedCPUModel,
+	idx: number = 0
+): CPUNode {
 	return {
 		index: idx++,
 		sourceLocation: mocked.location,
@@ -44,11 +47,14 @@ export function mockedCPUModel(mocked: MockedCPUModel, idx: number = 0): CPUNode
  *  - B: profilerHits = 2, selfCPUTime = 20, aggregatedCPUTime = 30
  * 	  - C: profilerHits = 1, selfCPUTime = 10, aggregatedCPUTime = 10
  */
-export function createLocationChainCPUModel(locations: CPUProfileSourceLocation[]) {
+export function createLocationChainCPUModel(
+	locations: CPUProfileSourceLocation[]
+) {
 	let aggregatedCPUTime: MicroSeconds_number = 0 as MicroSeconds_number
 	let currentRoot: MockedCPUModel | undefined = undefined
 	for (let i = 0; i < locations.length; i++) {
-		aggregatedCPUTime = (aggregatedCPUTime + (i + 1) * 10) as MicroSeconds_number
+		aggregatedCPUTime = (aggregatedCPUTime +
+			(i + 1) * 10) as MicroSeconds_number
 
 		currentRoot = {
 			location: locations[locations.length - 1 - i],
@@ -79,7 +85,10 @@ type LocationTreeNode = [CPUProfileSourceLocation, LocationTreeNode[]]
  * 		- C: profilerHits = 3, selfCPUTime = 30, aggregatedCPUTime = 30
  *  - B: profilerHits = 2, selfCPUTime = 20, aggregatedCPUTime = 20
  */
-export function createLocationTreeCPUModel(node: LocationTreeNode, currentLevel: number = 1) {
+export function createLocationTreeCPUModel(
+	node: LocationTreeNode,
+	currentLevel: number = 1
+) {
 	const result: MockedCPUModel = {
 		location: node[0],
 		profilerHits: currentLevel,
@@ -90,10 +99,14 @@ export function createLocationTreeCPUModel(node: LocationTreeNode, currentLevel:
 	}
 	const children = []
 	for (let i = 0; i < node[1].length; i++) {
-		const childCPUNode = createLocationTreeCPUModel(node[1][i], currentLevel + 1)
+		const childCPUNode = createLocationTreeCPUModel(
+			node[1][i],
+			currentLevel + 1
+		)
 
 		children.push(childCPUNode)
-		result.sensorValues.aggregatedCPUTime = ((result.sensorValues.aggregatedCPUTime || 0) +
+		result.sensorValues.aggregatedCPUTime = ((result.sensorValues
+			.aggregatedCPUTime || 0) +
 			(childCPUNode.sensorValues.aggregatedCPUTime || 0)) as MicroSeconds_number
 	}
 	result.children = children
@@ -105,7 +118,9 @@ export const MOCKED_RESOLVE_FUNCTION_IDENTIFIER_HELPER = {
 	resolveFunctionIdentifier(sourceLocation: CPUProfileSourceLocation) {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		if ((sourceLocation as any).resolved === undefined) {
-			throw new Error('Mocked ResolveFunctionIdentifierHelper: sourceLocation has no resolved property')
+			throw new Error(
+				'Mocked ResolveFunctionIdentifierHelper: sourceLocation has no resolved property'
+			)
 		}
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		return (sourceLocation as any).resolved

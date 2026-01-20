@@ -24,7 +24,10 @@ export class PathUtils {
 
 	static isAbsolute(pathString: string) {
 		return (
-			path.isAbsolute(pathString) || /^(?:[a-zA-Z]:)?\\?\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*$/.test(pathString)
+			path.isAbsolute(pathString) ||
+			/^(?:[a-zA-Z]:)?\\?\\(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*$/.test(
+				pathString
+			)
 		)
 	}
 
@@ -62,7 +65,10 @@ export class PathUtils {
 			} catch (e) {
 				break
 			}
-			if (list.includes(filename) && fs.statSync(path.join(tmpDir, filename)).isFile()) {
+			if (
+				list.includes(filename) &&
+				fs.statSync(path.join(tmpDir, filename)).isFile()
+			) {
 				// found
 				return path.join(tmpDir, filename)
 			} else {
