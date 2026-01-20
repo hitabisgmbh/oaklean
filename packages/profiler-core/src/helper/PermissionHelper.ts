@@ -128,9 +128,10 @@ export class PermissionHelper {
 			if (platform !== 'win32') {
 				resolve(false)
 			}
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 			ChildProcess.exec(
 				'fsutil dirty query ' + SYSTEM_DRIVE,
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				function (err, stdout, stderr) {
 					if (err) {
 						resolve(false)

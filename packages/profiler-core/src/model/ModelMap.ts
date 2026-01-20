@@ -60,9 +60,10 @@ export class ModelMap<
 	>(
 		json: string | object,
 		keyType: 'string' | 'number',
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 		fromJSON: TVALUE extends BaseModel
-			? (json: string | any, ...args: any[]) => TVALUE
+			? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(json: string | any, ...args: any[]) => TVALUE
 			: 'string' | 'number'
 	): ModelMap<TKEY, TVALUE> {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -131,9 +132,9 @@ export class ModelMap<
 		buffer: Buffer,
 		keyType: 'string' | 'number',
 		consumeFromBuffer: TVALUE extends BaseModel
-			? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-				(
+			? (
 					buffer: Buffer,
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					...args: any[]
 				) => { instance: TVALUE; remainingBuffer: Buffer }
 			: 'string' | 'number'

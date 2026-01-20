@@ -34,9 +34,9 @@ export class PowerMetricsData extends BaseMetricsData {
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 	static fromJSON(
 		json: string | IPowerMetricsData,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
 		...args: any[]
 	): PowerMetricsData {
 		let data: IPowerMetricsData

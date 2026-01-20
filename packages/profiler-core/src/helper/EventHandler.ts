@@ -49,9 +49,10 @@ type Listener<
 interface EventEmitterEventMap {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	newListener: [eventName: string | symbol, listener: (...args: any[]) => void]
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 	removeListener: [
 		eventName: string | symbol,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		listener: (...args: any[]) => void
 	]
 }

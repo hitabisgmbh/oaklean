@@ -71,9 +71,9 @@ export class MetricsDataCollection extends BaseModel {
 		PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(this))
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 	static fromJSON(
 		json: string | IMetricsDataCollection,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
 		...args: any[]
 	): MetricsDataCollection {
 		let data: IMetricsDataCollection

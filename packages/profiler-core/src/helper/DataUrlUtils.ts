@@ -1,6 +1,5 @@
-// eslint-disable-next-line no-useless-escape
 const VALID_DATA_URL_REGEX =
-	/^(data:)([\w\/\+-]*)((?:;charset=[\w-]+)?;base64){0,1},(.*)$/i
+	/^(data:)([\w/+-]*)((?:;charset=[\w-]+)?;base64){0,1},(.*)$/i
 
 export class DataUrlUtils {
 	static isDataUrl(s: string): boolean {

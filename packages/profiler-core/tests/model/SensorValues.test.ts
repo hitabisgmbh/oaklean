@@ -41,9 +41,9 @@ function roundSensorValues(
 	for (const sensorValueName of Object.keys(SENSOR_VALUES_BYTE_SIZE_MAP)) {
 		const value = sensorValues[sensorValueName as keyof ISensorValues]
 		if (value !== undefined) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			sensorValues[sensorValueName as keyof ISensorValues] = parseFloat(
 				value.toFixed(precision)
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			) as any
 		}
 	}
