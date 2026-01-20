@@ -58,8 +58,8 @@ export class PathUtils {
 			let list: string[]
 			try {
 				list = fs.readdirSync(tmpDir)
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			} catch (e) {
-				// eslint-disable-line @typescript-eslint/no-unused-vars
 				break
 			}
 			if (list.includes(filename) && fs.statSync(path.join(tmpDir, filename)).isFile()) {

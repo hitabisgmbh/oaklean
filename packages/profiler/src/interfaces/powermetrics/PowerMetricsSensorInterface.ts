@@ -129,8 +129,8 @@ export class PowerMetricsSensorInterface extends BaseSensorInterface {
 		try {
 			const result = execSync('pgrep -ix powermetrics', { encoding: 'utf-8' })
 			return result.trim().split('\n')
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (error) {
-			// eslint-disable-line @typescript-eslint/no-unused-vars
 			return []
 		}
 	}

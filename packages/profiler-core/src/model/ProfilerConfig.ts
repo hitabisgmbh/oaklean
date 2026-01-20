@@ -333,8 +333,8 @@ export class ProfilerConfig implements IProfilerConfig {
 				if (ProfilerConfig.verifyConfig(config)) {
 					return new ProfilerConfig(config.filePath, config)
 				}
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} catch (err: any) {
-				// eslint-disable-line @typescript-eslint/no-explicit-any
 				if (err.name === 'ZodError') {
 					ProfilerConfig.printZodError(err)
 					throw new Error(`ProfilerConfig: Invalid ${STATIC_CONFIG_FILENAME} config file`)

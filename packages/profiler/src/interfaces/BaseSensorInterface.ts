@@ -47,8 +47,8 @@ export class BaseSensorInterface {
 		try {
 			process.kill(pid, 0)
 			return true
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (e) {
-			// eslint-disable-line @typescript-eslint/no-unused-vars
 			return false
 		}
 	}

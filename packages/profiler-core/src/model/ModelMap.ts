@@ -104,9 +104,9 @@ export class ModelMap<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKey
 	static consumeFromBuffer<TKEY extends ModelMapKeyType, TVALUE extends ModelValueKeyType>(
 		buffer: Buffer,
 		keyType: 'string' | 'number',
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		consumeFromBuffer: TVALUE extends BaseModel
-			? (buffer: Buffer, ...args: any[]) => { instance: TVALUE; remainingBuffer: Buffer }
+			? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(buffer: Buffer, ...args: any[]) => { instance: TVALUE; remainingBuffer: Buffer }
 			: 'string' | 'number'
 	): { instance: ModelMap<TKEY, TVALUE>; remainingBuffer: Buffer } {
 		let remainingBuffer = buffer

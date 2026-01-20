@@ -122,9 +122,9 @@ export class ModelSet<TVALUE extends ModelSetValueType> extends BaseModel {
 
 	static consumeFromBuffer<TVALUE extends ModelSetValueType>(
 		buffer: Buffer,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		fromBuffer: TVALUE extends BaseModel
-			? (buffer: Buffer, ...args: any[]) => { instance: TVALUE; remainingBuffer: Buffer }
+			? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(buffer: Buffer, ...args: any[]) => { instance: TVALUE; remainingBuffer: Buffer }
 			: 'string' | 'number'
 	): {
 		instance: ModelSet<TVALUE>

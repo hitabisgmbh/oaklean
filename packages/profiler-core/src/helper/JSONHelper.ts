@@ -32,8 +32,8 @@ export class JSONHelper {
 		)
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static async loadBigJSON(inputPath: UnifiedPath): Promise<any> {
-		// eslint-disable-line @typescript-eslint/no-explicit-any
 		return new Promise((resolve, reject) => {
 			const fileStream = fs.createReadStream(inputPath.toPlatformString())
 
