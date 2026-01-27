@@ -28,6 +28,7 @@ setup_environment:
     default: false
   script:
     - |
+      $nodeVersion = "24.13.0"
       # Check if NVM is installed
       if (-Not (Get-Command nvm -ErrorAction SilentlyContinue)) {
         Write-Host "NVM not found. Installing..."
@@ -74,13 +75,12 @@ setup_environment:
         Set-Content -Path "$env:NVM_HOME\settings.txt" -Value "root: $env:NVM_HOME`npath: $env:NVM_SYMLINK"
         Write-Host "NVM installed successfully!"
 
-        $nodeVersion = "20.17.0"
-        # Ensure Node.js v20 is installed
+        # Ensure Node.js v24 is installed
         $installedVersions = nvm list | Select-String "$nodeVersion" | Out-String
         if ($installedVersions -match "$nodeVersion") {
           Write-Host "Node.js v$nodeVersion is already installed."
         } else {
-          Write-Host "Installing Node.js v20..."
+          Write-Host "Installing Node.js v24.13.0..."
           nvm install $nodeVersion
         }
         # this might fail since its asking for admin rights
@@ -88,6 +88,7 @@ setup_environment:
       } else {
         Write-Host "NVM is already installed."
       }
+      nvm use $nodeVersion
 
 lint:
   stage: build
