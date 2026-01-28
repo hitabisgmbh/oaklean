@@ -17,10 +17,10 @@ cache:
 
 .common_setup:
   before_script:
-    - nvm use $NODE_VERSION
     - $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     - $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
     - $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
+    - nvm use $NODE_VERSION
     - npm config set cache ../.npm
     - npm ci --prefer-offline --ignore-scripts
 
