@@ -14,8 +14,14 @@ export class SkipHelper {
 		}
 		// skip awaiter
 		if (node.parent.kind === ts.SyntaxKind.CallExpression) {
-			if ((node.parent as ts.CallExpression).expression.kind === ts.SyntaxKind.Identifier) {
-				if (((node.parent as ts.CallExpression).expression as ts.Identifier).escapedText === '___awaiter') {
+			if (
+				(node.parent as ts.CallExpression).expression.kind ===
+				ts.SyntaxKind.Identifier
+			) {
+				if (
+					((node.parent as ts.CallExpression).expression as ts.Identifier)
+						.escapedText === '___awaiter'
+				) {
 					/**
 					 * the actual function is wrapped into an generated ___awaiter call like this:
 					 * async function test() { console.log('') }
@@ -68,18 +74,17 @@ export class SkipHelper {
 				const parent = node.parent as ts.FunctionExpression
 				if (parent.parameters.length === 6) {
 					if (
-						(parent.parameters[0].name as ts.Identifier)
-							.escapedText === 'module' &&
-						(parent.parameters[1].name as ts.Identifier)
-							.escapedText === 'exports' &&
-						(parent.parameters[2].name as ts.Identifier)
-							.escapedText === 'require' &&
-						(parent.parameters[3].name as ts.Identifier)
-							.escapedText === '___dirname' &&
-						(parent.parameters[4].name as ts.Identifier)
-							.escapedText === '___filename' &&
-						(parent.parameters[5].name as ts.Identifier)
-							.escapedText === 'jest'
+						(parent.parameters[0].name as ts.Identifier).escapedText ===
+							'module' &&
+						(parent.parameters[1].name as ts.Identifier).escapedText ===
+							'exports' &&
+						(parent.parameters[2].name as ts.Identifier).escapedText ===
+							'require' &&
+						(parent.parameters[3].name as ts.Identifier).escapedText ===
+							'___dirname' &&
+						(parent.parameters[4].name as ts.Identifier).escapedText ===
+							'___filename' &&
+						(parent.parameters[5].name as ts.Identifier).escapedText === 'jest'
 					) {
 						/**
 						 * This is how jest wraps modules.

@@ -71,7 +71,6 @@ for (const [kind, example] of Object.entries(examples)) {
 	})
 }
 
-
 describe('ts.SyntaxKind.WhileStatement in condition', () => {
 	const code = `
 		function a {}

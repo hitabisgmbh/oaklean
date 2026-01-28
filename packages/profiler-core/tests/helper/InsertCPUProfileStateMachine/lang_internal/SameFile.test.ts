@@ -245,16 +245,24 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + SAME FILE
 			createLocationTreeCPUModel([
 				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
 				[
-					[SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'], [
-						[SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'], [
-							[SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'], []],
-						]],
-					]],
-					[SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'], [
-						[SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'], [
-							[SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'], []],
-						]],
-					]],
+					[
+						SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'],
+						[
+							[
+								SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+								[[SOURCE_LOCATIONS_LANG_INTERNAL['libA-1'], []]]
+							]
+						]
+					],
+					[
+						SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'],
+						[
+							[
+								SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+								[[SOURCE_LOCATIONS_LANG_INTERNAL['libA-2'], []]]
+							]
+						]
+					]
 				]
 			])
 		)

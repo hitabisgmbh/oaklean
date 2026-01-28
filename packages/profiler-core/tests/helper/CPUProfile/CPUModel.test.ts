@@ -11,8 +11,17 @@ describe('CPUModel', () => {
 	let instance: CPUModel
 
 	beforeEach(() => {
-		const cpuProfileFilePath = CURRENT_DIR.join('..', '..', 'model', 'assets', 'CPUProfiles', 'example001.cpuprofile').toString()
-		const cpuProfile = JSON.parse(fs.readFileSync(cpuProfileFilePath).toString())
+		const cpuProfileFilePath = CURRENT_DIR.join(
+			'..',
+			'..',
+			'model',
+			'assets',
+			'CPUProfiles',
+			'example001.cpuprofile'
+		).toString()
+		const cpuProfile = JSON.parse(
+			fs.readFileSync(cpuProfileFilePath).toString()
+		)
 
 		instance = new CPUModel(
 			ROOT_DIR,

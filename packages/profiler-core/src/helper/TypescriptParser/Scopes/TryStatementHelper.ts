@@ -17,7 +17,9 @@ export class TryStatementHelper {
 		node: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.TryStatement> } {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.TryStatement>
+	} {
 		return {
 			resolve() {
 				const statementName = `(try:${traverseNodeInfo.counters.tryStatementCounter++})`
@@ -39,9 +41,15 @@ export class TryStatementHelper {
 		parent: ts.TryStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<
-		ProgramStructureTreeType.TryBlock | ProgramStructureTreeType.CatchClause | ProgramStructureTreeType.FinallyBlock
-		> } | undefined
+	):
+		| {
+				resolve(): ProgramStructureTree<
+					| ProgramStructureTreeType.TryBlock
+					| ProgramStructureTreeType.CatchClause
+					| ProgramStructureTreeType.FinallyBlock
+				>
+		  }
+		| undefined
 		| undefined {
 		if (parent.tryBlock === node) {
 			return {

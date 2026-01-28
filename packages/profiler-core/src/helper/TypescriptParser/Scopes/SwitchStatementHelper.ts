@@ -18,10 +18,12 @@ export class SwitchStatementHelper {
 		node: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.SwitchStatement> } {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.SwitchStatement>
+	} {
 		return {
 			resolve() {
-				const statementName =`(switch:${traverseNodeInfo.counters.switchCounter++})`
+				const statementName = `(switch:${traverseNodeInfo.counters.switchCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
 					traverseNodeInfo.nextId(),
@@ -29,7 +31,7 @@ export class SwitchStatementHelper {
 					IdentifierType.Statement,
 					`{scope:${statementName}}` as SourceNodeIdentifierPart_string,
 					TypescriptHelper.posToLoc(sourceFile, node.getStart()),
-					TypescriptHelper.posToLoc(sourceFile, node.getEnd()),
+					TypescriptHelper.posToLoc(sourceFile, node.getEnd())
 				)
 			}
 		}
@@ -40,7 +42,11 @@ export class SwitchStatementHelper {
 		parent: ts.CaseBlock,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.SwitchCaseClause> } | undefined {
+	):
+		| {
+				resolve(): ProgramStructureTree<ProgramStructureTreeType.SwitchCaseClause>
+		  }
+		| undefined {
 		if (node.kind === ts.SyntaxKind.DefaultClause) {
 			return {
 				resolve() {

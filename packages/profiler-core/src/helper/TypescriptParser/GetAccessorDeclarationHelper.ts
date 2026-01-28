@@ -21,9 +21,9 @@ export class GetAccessorDeclarationHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.GetAccessorDeclaration>
-			resolveWithNoChildren: true
-		} | null {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.GetAccessorDeclaration>
+		resolveWithNoChildren: true
+	} | null {
 		if (node.body === undefined) {
 			return null
 		}

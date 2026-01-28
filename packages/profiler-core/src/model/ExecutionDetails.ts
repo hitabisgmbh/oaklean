@@ -25,13 +25,18 @@ export class ExecutionDetails {
 		if (timestamp === undefined) {
 			throw new Error(
 				'ProjectReport.resolveExecutionDetails: Could not resolve execution details.' +
-				JSON.stringify({
-					commitHash: commitHash,
-					timestamp: timestamp
-				}, undefined, 2)
+					JSON.stringify(
+						{
+							commitHash: commitHash,
+							timestamp: timestamp
+						},
+						undefined,
+						2
+					)
 			)
 		}
-		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
+		const usedConfig =
+			config !== undefined ? config : ProfilerConfig.autoResolve()
 
 		const engineModule = NodeModule.currentEngineModule()
 
@@ -50,7 +55,9 @@ export class ExecutionDetails {
 		}
 	}
 
-	static loadFromFile(filePath: UnifiedPath): IProjectReportExecutionDetailsDuringMeasurement | undefined{
+	static loadFromFile(
+		filePath: UnifiedPath
+	): IProjectReportExecutionDetailsDuringMeasurement | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}

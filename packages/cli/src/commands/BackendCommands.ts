@@ -18,7 +18,7 @@ export default class BackendCommands {
 			.command('send')
 			.description(
 				`Sends a given ${REPORT_FILE_EXTENSION} ` +
-				`report to a backend specified in the ${STATIC_CONFIG_FILENAME} config`
+					`report to a backend specified in the ${STATIC_CONFIG_FILENAME} config`
 			)
 			.argument('<input>', 'input file path')
 			.action(this.sendReportToBackend.bind(this))
@@ -35,7 +35,9 @@ export default class BackendCommands {
 		}
 		const projectReport = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (projectReport === undefined) {
-			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`Could not find a profiler report at ${inputPath.toPlatformString()}`
+			)
 			return
 		}
 		await RegistryHelper.uploadToRegistry(projectReport)

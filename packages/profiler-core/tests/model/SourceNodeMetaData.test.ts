@@ -1,8 +1,6 @@
 import { NodeModule } from '../../src/model/NodeModule'
 import { SensorValues } from '../../src/model/SensorValues'
-import {
-	SourceNodeMetaData
-} from '../../src/model/SourceNodeMetaData'
+import { SourceNodeMetaData } from '../../src/model/SourceNodeMetaData'
 import { GlobalIndex } from '../../src/model/indices/GlobalIndex'
 import { GlobalIdentifier } from '../../src/system/GlobalIdentifier'
 // Types
@@ -31,7 +29,7 @@ const EXAMPLE_SOURCE_NODE_META_DATA = {
 
 		langInternalRAMEnergyConsumption: 19398 as MilliJoule_number,
 		internRAMEnergyConsumption: 2490 as MilliJoule_number,
-		externRAMEnergyConsumption: 199842 as MilliJoule_number,
+		externRAMEnergyConsumption: 199842 as MilliJoule_number
 	},
 	lang_internal: {
 		8: {
@@ -125,7 +123,8 @@ const EXAMPLE_SOURCE_NODE_META_DATA = {
 	}
 } as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
 
-const EXAMPLE_SOURCE_NODE_META_DATA_BUFFER = '020000000000000038e7dd04000051860100e3250000000000000074a34000000000106508410000000080f1d240000000000074a340000000001065084101000000000080f1d2400200000008000000020800000002000000c618c8010000150300000000000000808c400000000000a898400000000000808c400000000000a898400a000000020a00000002000000c61837020000ce2200000000000000b89140000000000067d1400000000000b89140000000000067d1400200000004000000020400000003000000c618ea000000370200000000000000407d400000000000b891400000000000407d400000000000b8914005000000020500000003000000c61859010000a60200000000000000908540000000000030954000000000009085400000000000309540020000000d000000020d00000004000000c61837020000ce2200000000000000b89140000000000067d1400000000000b89140000000000067d14010000000021000000004000000c618a6020000836301000000000000309540000000003038064100000000003095400000000030380641'
+const EXAMPLE_SOURCE_NODE_META_DATA_BUFFER =
+	'020000000000000038e7dd04000051860100e3250000000000000074a34000000000106508410000000080f1d240000000000074a340000000001065084101000000000080f1d2400200000008000000020800000002000000c618c8010000150300000000000000808c400000000000a898400000000000808c400000000000a898400a000000020a00000002000000c61837020000ce2200000000000000b89140000000000067d1400000000000b89140000000000067d1400200000004000000020400000003000000c618ea000000370200000000000000407d400000000000b891400000000000407d400000000000b8914005000000020500000003000000c61859010000a60200000000000000908540000000000030954000000000009085400000000000309540020000000d000000020d00000004000000c61837020000ce2200000000000000b89140000000000067d1400000000000b89140000000000067d14010000000021000000004000000c618a6020000836301000000000000309540000000003038064100000000003095400000000030380641'
 
 function runInstanceTests(
 	title: string,
@@ -134,7 +133,6 @@ function runInstanceTests(
 	let instance: SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
 
 	describe(title, () => {
-
 		beforeEach(() => {
 			instance = preDefinedInstance()
 		})
@@ -160,7 +158,9 @@ function runInstanceTests(
 		})
 
 		test('toBuffer', () => {
-			expect(instance.toBuffer().toString('hex')).toEqual(EXAMPLE_SOURCE_NODE_META_DATA_BUFFER)
+			expect(instance.toBuffer().toString('hex')).toEqual(
+				EXAMPLE_SOURCE_NODE_META_DATA_BUFFER
+			)
 		})
 
 		test('presentInOriginalSourceCode', () => {
@@ -198,7 +198,7 @@ describe('SourceNodeMetaData', () => {
 				// cpu time
 				selfCPUTime: 234 as MicroSeconds_number,
 				aggregatedCPUTime: 567 as MicroSeconds_number,
-				
+
 				// cpu energy
 				selfCPUEnergyConsumption: 468 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 1134 as MilliJoule_number,
@@ -217,11 +217,11 @@ describe('SourceNodeMetaData', () => {
 				// cpu time
 				selfCPUTime: 345 as MicroSeconds_number,
 				aggregatedCPUTime: 678 as MicroSeconds_number,
-				
+
 				// cpu energy
 				selfCPUEnergyConsumption: 690 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 1356 as MilliJoule_number,
-				
+
 				// ram energy
 				selfRAMEnergyConsumption: 690 as MilliJoule_number,
 				aggregatedRAMEnergyConsumption: 1356 as MilliJoule_number
@@ -237,11 +237,11 @@ describe('SourceNodeMetaData', () => {
 				// cpu time
 				selfCPUTime: 456 as MicroSeconds_number,
 				aggregatedCPUTime: 789 as MicroSeconds_number,
-				
+
 				// cpu energy
 				selfCPUEnergyConsumption: 912 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 1578 as MilliJoule_number,
-				
+
 				// ram energy
 				selfRAMEnergyConsumption: 912 as MilliJoule_number,
 				aggregatedRAMEnergyConsumption: 1578 as MilliJoule_number
@@ -256,11 +256,11 @@ describe('SourceNodeMetaData', () => {
 				// cpu time
 				selfCPUTime: 567 as MicroSeconds_number,
 				aggregatedCPUTime: 8910 as MicroSeconds_number,
-				
+
 				// cpu energy
 				selfCPUEnergyConsumption: 1134 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 17820 as MilliJoule_number,
-				
+
 				// ram energy
 				selfRAMEnergyConsumption: 1134 as MilliJoule_number,
 				aggregatedRAMEnergyConsumption: 17820 as MilliJoule_number
@@ -271,16 +271,13 @@ describe('SourceNodeMetaData', () => {
 			new GlobalIdentifier(
 				'./src/htmlminifier.js' as UnifiedPath_string,
 				'{root}' as SourceNodeIdentifier_string,
-				new NodeModule(
-					'html-minifier',
-					'4.0.0'
-				)
+				new NodeModule('html-minifier', '4.0.0')
 			),
 			{
 				// cpu time
 				selfCPUTime: 567 as MicroSeconds_number,
 				aggregatedCPUTime: 8910 as MicroSeconds_number,
-				
+
 				// cpu energy
 				selfCPUEnergyConsumption: 1134 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 17820 as MilliJoule_number,
@@ -294,20 +291,17 @@ describe('SourceNodeMetaData', () => {
 			new GlobalIdentifier(
 				'./lib/clean.js' as UnifiedPath_string,
 				'{root}' as SourceNodeIdentifier_string,
-				new NodeModule(
-					'clean-css',
-					'4.2.4'
-				)
+				new NodeModule('clean-css', '4.2.4')
 			),
 			{
 				// cpu time
 				selfCPUTime: 678 as MicroSeconds_number,
 				aggregatedCPUTime: 91011 as MicroSeconds_number,
-				
+
 				// cpu energy
 				selfCPUEnergyConsumption: 1356 as MilliJoule_number,
 				aggregatedCPUEnergyConsumption: 182022 as MilliJoule_number,
-				
+
 				// ram energy
 				selfRAMEnergyConsumption: 1356 as MilliJoule_number,
 				aggregatedRAMEnergyConsumption: 182022 as MilliJoule_number
@@ -325,43 +319,65 @@ describe('SourceNodeMetaData', () => {
 			)
 		)
 		globalIndex.getModuleIndex('upsert')
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
-		))
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+			)
+		)
 
 		test('deserialization from string', () => {
 			const instanceFromString = SourceNodeMetaData.fromJSON(
-				JSON.stringify(EXAMPLE_SOURCE_NODE_META_DATA), globalIndex
+				JSON.stringify(EXAMPLE_SOURCE_NODE_META_DATA),
+				globalIndex
 			)
 			expect(instanceFromString.toJSON()).toEqual(EXAMPLE_SOURCE_NODE_META_DATA)
 		})
 
 		test('deserialization from object', () => {
 			const instanceFromObject = SourceNodeMetaData.fromJSON(
-				EXAMPLE_SOURCE_NODE_META_DATA, globalIndex
+				EXAMPLE_SOURCE_NODE_META_DATA,
+				globalIndex
 			)
 			expect(instanceFromObject.toJSON()).toEqual(EXAMPLE_SOURCE_NODE_META_DATA)
 		})
 
 		runInstanceTests('deserialized instance related', () => {
-			const instanceFromString = SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.SourceNode>(
-				JSON.stringify(EXAMPLE_SOURCE_NODE_META_DATA), globalIndex
-			)
+			const instanceFromString =
+				SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.SourceNode>(
+					JSON.stringify(EXAMPLE_SOURCE_NODE_META_DATA),
+					globalIndex
+				)
 			return instanceFromString
 		})
 	})
@@ -370,36 +386,61 @@ describe('SourceNodeMetaData', () => {
 		const buffer = Buffer.from(EXAMPLE_SOURCE_NODE_META_DATA_BUFFER, 'hex')
 		const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 		globalIndex.getModuleIndex('upsert')
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'{./dist/index.js}{root}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
-		))
-		globalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-			'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
-		))
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'{./dist/index.js}{root}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+			)
+		)
+		globalIndex.getSourceNodeIndex(
+			'upsert',
+			GlobalIdentifier.fromIdentifier(
+				'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+			)
+		)
 
 		test('consume from buffer', () => {
-			const { instance, remainingBuffer } = SourceNodeMetaData.consumeFromBuffer(buffer, globalIndex)
+			const { instance, remainingBuffer } =
+				SourceNodeMetaData.consumeFromBuffer(buffer, globalIndex)
 			expect(instance.toJSON()).toEqual(EXAMPLE_SOURCE_NODE_META_DATA)
 			expect(remainingBuffer.byteLength).toBe(0)
 		})
 
 		runInstanceTests('consume from buffer instance related', () => {
-			const { instance } = SourceNodeMetaData.consumeFromBuffer(buffer, globalIndex)
+			const { instance } = SourceNodeMetaData.consumeFromBuffer(
+				buffer,
+				globalIndex
+			)
 			return instance as SourceNodeMetaData<SourceNodeMetaDataType.SourceNode>
 		})
 	})
@@ -432,7 +473,7 @@ describe('SourceNodeMetaData', () => {
 					aggregatedRAMEnergyConsumption: 6 as MilliJoule_number,
 					internRAMEnergyConsumption: 8 as MilliJoule_number,
 					externRAMEnergyConsumption: 10 as MilliJoule_number,
-					langInternalRAMEnergyConsumption: 12 as MilliJoule_number,
+					langInternalRAMEnergyConsumption: 12 as MilliJoule_number
 				}),
 				undefined
 			)
@@ -458,7 +499,7 @@ describe('SourceNodeMetaData', () => {
 					aggregatedRAMEnergyConsumption: 18 as MilliJoule_number,
 					internRAMEnergyConsumption: 20 as MilliJoule_number,
 					externRAMEnergyConsumption: 22 as MilliJoule_number,
-					langInternalRAMEnergyConsumption: 24 as MilliJoule_number,
+					langInternalRAMEnergyConsumption: 24 as MilliJoule_number
 				}),
 				undefined
 			)
@@ -484,7 +525,7 @@ describe('SourceNodeMetaData', () => {
 					aggregatedRAMEnergyConsumption: 30 as MilliJoule_number,
 					internRAMEnergyConsumption: 32 as MilliJoule_number,
 					externRAMEnergyConsumption: 34 as MilliJoule_number,
-					langInternalRAMEnergyConsumption: 36 as MilliJoule_number,
+					langInternalRAMEnergyConsumption: 36 as MilliJoule_number
 				}),
 				undefined
 			)
@@ -525,142 +566,202 @@ describe('SourceNodeMetaData', () => {
 				)
 			)
 
-			const first = SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.SourceNode>({
-				id: firstSourceNodeIndex.id,
-				type: SourceNodeMetaDataType.SourceNode,
-				sensorValues: {
-					langInternalCPUTime: 9699,
-					internCPUTime: 1245,
-					externCPUTime: 17820,
-
-					langInternalCPUEnergyConsumption: 19398,
-					internCPUEnergyConsumption: 2490,
-					externCPUEnergyConsumption: 35640,
-
-					langInternalRAMEnergyConsumption: 19398,
-					internRAMEnergyConsumption: 2490,
-					externRAMEnergyConsumption: 35640
-				},
-				lang_internal: {
-					[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+			const first =
+				SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.SourceNode>(
+					{
+						id: firstSourceNodeIndex.id,
+						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 1,
+							langInternalCPUTime: 9699,
+							internCPUTime: 1245,
+							externCPUTime: 17820,
 
-							selfCPUTime: 456,
-							aggregatedCPUTime: 789,
+							langInternalCPUEnergyConsumption: 19398,
+							internCPUEnergyConsumption: 2490,
+							externCPUEnergyConsumption: 35640,
 
-							selfCPUEnergyConsumption: 912,
-							aggregatedCPUEnergyConsumption: 1578,
+							langInternalRAMEnergyConsumption: 19398,
+							internRAMEnergyConsumption: 2490,
+							externRAMEnergyConsumption: 35640
+						},
+						lang_internal: {
+							[firstGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 912,
-							aggregatedRAMEnergyConsumption: 1578
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-					[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfCPUTime: 456,
+									aggregatedCPUTime: 789,
 
-							selfCPUTime: 567,
-							aggregatedCPUTime: 8910,
+									selfCPUEnergyConsumption: 912,
+									aggregatedCPUEnergyConsumption: 1578,
 
-							selfCPUEnergyConsumption: 1134,
-							aggregatedCPUEnergyConsumption: 17820,
+									selfRAMEnergyConsumption: 912,
+									aggregatedRAMEnergyConsumption: 1578
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
+							[firstGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 1134,
-							aggregatedRAMEnergyConsumption: 17820
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-				} as Record<GlobalSourceNodeIdentifier_string,
-				ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>,
-				intern: {
-					[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.InternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfCPUTime: 567,
+									aggregatedCPUTime: 8910,
 
-							selfCPUTime: 234,
-							aggregatedCPUTime: 567,
+									selfCPUEnergyConsumption: 1134,
+									aggregatedCPUEnergyConsumption: 17820,
 
-							selfCPUEnergyConsumption: 468,
-							aggregatedCPUEnergyConsumption: 1134,
+									selfRAMEnergyConsumption: 1134,
+									aggregatedRAMEnergyConsumption: 17820
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+						} as Record<
+							GlobalSourceNodeIdentifier_string,
+							ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+						>,
+						intern: {
+							[firstGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.InternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 468,
-							aggregatedRAMEnergyConsumption: 1134,
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
-					[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.InternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfCPUTime: 234,
+									aggregatedCPUTime: 567,
 
-							selfCPUTime: 345,
-							aggregatedCPUTime: 678,
-							
-							selfCPUEnergyConsumption: 690,
-							aggregatedCPUEnergyConsumption: 1356,
+									selfCPUEnergyConsumption: 468,
+									aggregatedCPUEnergyConsumption: 1134,
 
-							selfRAMEnergyConsumption: 690,
-							aggregatedRAMEnergyConsumption: 1356
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
-				} as Record<GlobalSourceNodeIdentifier_string,
-				ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>,
-				extern: {
-					[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.ExternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfRAMEnergyConsumption: 468,
+									aggregatedRAMEnergyConsumption: 1134
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
+							[firstGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.InternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfCPUTime: 567,
-							aggregatedCPUTime: 8910,
+									selfCPUTime: 345,
+									aggregatedCPUTime: 678,
 
-							selfCPUEnergyConsumption: 1134,
-							aggregatedCPUEnergyConsumption: 17820,
+									selfCPUEnergyConsumption: 690,
+									aggregatedCPUEnergyConsumption: 1356,
 
-							selfRAMEnergyConsumption: 1134,
-							aggregatedRAMEnergyConsumption: 17820,
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
-					[firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: firstGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.ExternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfRAMEnergyConsumption: 690,
+									aggregatedRAMEnergyConsumption: 1356
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+						} as Record<
+							GlobalSourceNodeIdentifier_string,
+							ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+						>,
+						extern: {
+							[firstGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfCPUTime: 567,
-							aggregatedCPUTime: 8910,
+									selfCPUTime: 567,
+									aggregatedCPUTime: 8910,
 
-							selfCPUEnergyConsumption: 1134,
-							aggregatedCPUEnergyConsumption: 17820,
+									selfCPUEnergyConsumption: 1134,
+									aggregatedCPUEnergyConsumption: 17820,
 
-							selfRAMEnergyConsumption: 1134,
-							aggregatedRAMEnergyConsumption: 17820
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
-				} as Record<GlobalSourceNodeIdentifier_string,
-				ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
-			} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, firstGlobalIndex)
+									selfRAMEnergyConsumption: 1134,
+									aggregatedRAMEnergyConsumption: 17820
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
+							[firstGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: firstGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-			const secondGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
+									selfCPUTime: 567,
+									aggregatedCPUTime: 8910,
+
+									selfCPUEnergyConsumption: 1134,
+									aggregatedCPUEnergyConsumption: 17820,
+
+									selfRAMEnergyConsumption: 1134,
+									aggregatedRAMEnergyConsumption: 17820
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+						} as Record<
+							GlobalSourceNodeIdentifier_string,
+							ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+						>
+					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+					firstGlobalIndex
+				)
+
+			const secondGlobalIndex = new GlobalIndex(
+				NodeModule.currentEngineModule()
+			)
 			secondGlobalIndex.getModuleIndex('upsert')
 			const secondSourceNodeIndex = secondGlobalIndex.getSourceNodeIndex(
 				'upsert',
@@ -669,140 +770,198 @@ describe('SourceNodeMetaData', () => {
 				)
 			)
 
-			const second = SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.SourceNode>({
-				id: secondSourceNodeIndex.id,
-				type: SourceNodeMetaDataType.SourceNode,
-				sensorValues: {
-					langInternalCPUTime: 91800,
-					internCPUTime: 1356,
-					externCPUTime: 99921,
-
-					langInternalCPUEnergyConsumption: 183600 as MilliJoule_number,
-					internCPUEnergyConsumption: 2712 as MilliJoule_number,
-					externCPUEnergyConsumption: 199842 as MilliJoule_number,
-
-					langInternalRAMEnergyConsumption: 183600 as MilliJoule_number,
-					internRAMEnergyConsumption: 2712 as MilliJoule_number,
-					externRAMEnergyConsumption: 199842 as MilliJoule_number,
-				},
-				lang_internal: {
-					[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{node:timers}{setTimeout2}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{node:timers}{setTimeout2}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+			const second =
+				SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.SourceNode>(
+					{
+						id: secondSourceNodeIndex.id,
+						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 1,
+							langInternalCPUTime: 91800,
+							internCPUTime: 1356,
+							externCPUTime: 99921,
 
-							selfCPUTime: 456,
-							aggregatedCPUTime: 789,
+							langInternalCPUEnergyConsumption: 183600 as MilliJoule_number,
+							internCPUEnergyConsumption: 2712 as MilliJoule_number,
+							externCPUEnergyConsumption: 199842 as MilliJoule_number,
 
-							selfCPUEnergyConsumption: 912,
-							aggregatedCPUEnergyConsumption: 1578,
+							langInternalRAMEnergyConsumption: 183600 as MilliJoule_number,
+							internRAMEnergyConsumption: 2712 as MilliJoule_number,
+							externRAMEnergyConsumption: 199842 as MilliJoule_number
+						},
+						lang_internal: {
+							[secondGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{node:timers}{setTimeout2}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{node:timers}{setTimeout2}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 912,
-							aggregatedRAMEnergyConsumption: 1578
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-					[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfCPUTime: 456,
+									aggregatedCPUTime: 789,
 
-							selfCPUTime: 678,
-							aggregatedCPUTime: 91011,
-							
-							selfCPUEnergyConsumption: 1356,
-							aggregatedCPUEnergyConsumption: 182022,
+									selfCPUEnergyConsumption: 912,
+									aggregatedCPUEnergyConsumption: 1578,
 
-							selfRAMEnergyConsumption: 1356,
-							aggregatedRAMEnergyConsumption: 182022
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
-				} as Record<GlobalSourceNodeIdentifier_string,
-				ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>,
-				intern: {
-					[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.InternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfRAMEnergyConsumption: 912,
+									aggregatedRAMEnergyConsumption: 1578
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
+							[secondGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfCPUTime: 345,
-							aggregatedCPUTime: 678,
+									selfCPUTime: 678,
+									aggregatedCPUTime: 91011,
 
-							selfCPUEnergyConsumption: 690,
-							aggregatedCPUEnergyConsumption: 1356,
+									selfCPUEnergyConsumption: 1356,
+									aggregatedCPUEnergyConsumption: 182022,
 
-							selfRAMEnergyConsumption: 690,
-							aggregatedRAMEnergyConsumption: 1356
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
-					[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example001.js}{root}.{function:logMessage2}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('{./dist/examples/example001.js}{root}.{function:logMessage2}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.InternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfRAMEnergyConsumption: 1356,
+									aggregatedRAMEnergyConsumption: 182022
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+						} as Record<
+							GlobalSourceNodeIdentifier_string,
+							ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+						>,
+						intern: {
+							[secondGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.InternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfCPUTime: 345,
-							aggregatedCPUTime: 678,
+									selfCPUTime: 345,
+									aggregatedCPUTime: 678,
 
-							selfCPUEnergyConsumption: 690,
-							aggregatedCPUEnergyConsumption: 1356,
+									selfCPUEnergyConsumption: 690,
+									aggregatedCPUEnergyConsumption: 1356,
 
-							selfRAMEnergyConsumption: 690,
-							aggregatedRAMEnergyConsumption: 1356
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
-				} as Record<GlobalSourceNodeIdentifier_string,
-				ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>,
-				extern: {
-					[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'html-minifier@4.0.0{./src/htmlminifier2.js}{root}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier2.js}{root}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.ExternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfRAMEnergyConsumption: 690,
+									aggregatedRAMEnergyConsumption: 1356
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
+							[secondGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/examples/example001.js}{root}.{function:logMessage2}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/examples/example001.js}{root}.{function:logMessage2}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.InternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfCPUTime: 567,
-							aggregatedCPUTime: 8910,
+									selfCPUTime: 345,
+									aggregatedCPUTime: 678,
 
-							selfCPUEnergyConsumption: 1134,
-							aggregatedCPUEnergyConsumption: 17820,
+									selfCPUEnergyConsumption: 690,
+									aggregatedCPUEnergyConsumption: 1356,
 
-							selfRAMEnergyConsumption: 1134,
-							aggregatedRAMEnergyConsumption: 17820
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
-					[secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: secondGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier('clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string)).id,
-						type: SourceNodeMetaDataType.ExternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfRAMEnergyConsumption: 690,
+									aggregatedRAMEnergyConsumption: 1356
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+						} as Record<
+							GlobalSourceNodeIdentifier_string,
+							ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+						>,
+						extern: {
+							[secondGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'html-minifier@4.0.0{./src/htmlminifier2.js}{root}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'html-minifier@4.0.0{./src/htmlminifier2.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfCPUTime: 678,
-							aggregatedCPUTime: 91011,
+									selfCPUTime: 567,
+									aggregatedCPUTime: 8910,
 
-							selfCPUEnergyConsumption: 1356,
-							aggregatedCPUEnergyConsumption: 182022,
+									selfCPUEnergyConsumption: 1134,
+									aggregatedCPUEnergyConsumption: 17820,
 
-							selfRAMEnergyConsumption: 1356,
-							aggregatedRAMEnergyConsumption: 182022
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
-				} as Record<GlobalSourceNodeIdentifier_string,
-				ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
-			} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, secondGlobalIndex)
+									selfRAMEnergyConsumption: 1134,
+									aggregatedRAMEnergyConsumption: 17820
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
+							[secondGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: secondGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
+
+									selfCPUTime: 678,
+									aggregatedCPUTime: 91011,
+
+									selfCPUEnergyConsumption: 1356,
+									aggregatedCPUEnergyConsumption: 182022,
+
+									selfRAMEnergyConsumption: 1356,
+									aggregatedRAMEnergyConsumption: 182022
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+						} as Record<
+							GlobalSourceNodeIdentifier_string,
+							ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+						>
+					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+					secondGlobalIndex
+				)
 
 			const thirdGlobalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			thirdGlobalIndex.getModuleIndex('upsert')
@@ -813,158 +972,200 @@ describe('SourceNodeMetaData', () => {
 				)
 			)
 
-			const third = SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.SourceNode>({
-				id: thirdSourceNodeIndex.id,
-				type: SourceNodeMetaDataType.SourceNode,
-				sensorValues: {
-					langInternalCPUTime: 9699,
-					internCPUTime: 1245,
-					externCPUTime: 17820,
-
-					langInternalCPUEnergyConsumption: 19398 as MilliJoule_number,
-					internCPUEnergyConsumption: 2490 as MilliJoule_number,
-					externCPUEnergyConsumption: 35640 as MilliJoule_number,
-
-					langInternalRAMEnergyConsumption: 19398 as MilliJoule_number,
-					internRAMEnergyConsumption: 2490 as MilliJoule_number,
-					externRAMEnergyConsumption: 35640 as MilliJoule_number,
-				},
-				lang_internal: {
-					[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{node:timers}{anotherSetTimeout}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-							'{node:timers}{anotherSetTimeout}' as GlobalSourceNodeIdentifier_string
-						)).id,
-						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+			const third =
+				SourceNodeMetaData.fromJSON<SourceNodeMetaDataType.SourceNode>(
+					{
+						id: thirdSourceNodeIndex.id,
+						type: SourceNodeMetaDataType.SourceNode,
 						sensorValues: {
-							profilerHits: 1,
+							langInternalCPUTime: 9699,
+							internCPUTime: 1245,
+							externCPUTime: 17820,
 
-							selfCPUTime: 456,
-							aggregatedCPUTime: 789,
+							langInternalCPUEnergyConsumption: 19398 as MilliJoule_number,
+							internCPUEnergyConsumption: 2490 as MilliJoule_number,
+							externCPUEnergyConsumption: 35640 as MilliJoule_number,
 
-							selfCPUEnergyConsumption: 912,
-							aggregatedCPUEnergyConsumption: 1578,
+							langInternalRAMEnergyConsumption: 19398 as MilliJoule_number,
+							internRAMEnergyConsumption: 2490 as MilliJoule_number,
+							externRAMEnergyConsumption: 35640 as MilliJoule_number
+						},
+						lang_internal: {
+							[thirdGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{node:timers}{anotherSetTimeout}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{node:timers}{anotherSetTimeout}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 912,
-							aggregatedRAMEnergyConsumption: 1578
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-					[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{}{anotherConsoleCall}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-							'{}{anotherConsoleCall}' as GlobalSourceNodeIdentifier_string
-						)).id,
-						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfCPUTime: 456,
+									aggregatedCPUTime: 789,
 
-							selfCPUTime: 567,
-							aggregatedCPUTime: 8910,
+									selfCPUEnergyConsumption: 912,
+									aggregatedCPUEnergyConsumption: 1578,
 
-							selfCPUEnergyConsumption: 1134,
-							aggregatedCPUEnergyConsumption: 17820,
+									selfRAMEnergyConsumption: 912,
+									aggregatedRAMEnergyConsumption: 1578
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
+							[thirdGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{}{anotherConsoleCall}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{}{anotherConsoleCall}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 1134,
-							aggregatedRAMEnergyConsumption: 17820
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
-				} as Record<GlobalSourceNodeIdentifier_string,
-				ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>>,
-				intern: {
-					[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example002.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-							'{./dist/examples/example002.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
-						)).id,
-						type: SourceNodeMetaDataType.InternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfCPUTime: 567,
+									aggregatedCPUTime: 8910,
 
-							selfCPUTime: 234,
-							aggregatedCPUTime: 567,
+									selfCPUEnergyConsumption: 1134,
+									aggregatedCPUEnergyConsumption: 17820,
 
-							selfCPUEnergyConsumption: 468,
-							aggregatedCPUEnergyConsumption: 1134,
+									selfRAMEnergyConsumption: 1134,
+									aggregatedRAMEnergyConsumption: 17820
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+						} as Record<
+							GlobalSourceNodeIdentifier_string,
+							ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
+						>,
+						intern: {
+							[thirdGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/examples/example002.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/examples/example002.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.InternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 468,
-							aggregatedRAMEnergyConsumption: 1134
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
-					[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example002.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-							'{./dist/examples/example002.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
-						)).id,
-						type: SourceNodeMetaDataType.InternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfCPUTime: 234,
+									aggregatedCPUTime: 567,
 
-							selfCPUTime: 345,
-							aggregatedCPUTime: 678,
+									selfCPUEnergyConsumption: 468,
+									aggregatedCPUEnergyConsumption: 1134,
 
-							selfCPUEnergyConsumption: 690,
-							aggregatedCPUEnergyConsumption: 1356,
+									selfRAMEnergyConsumption: 468,
+									aggregatedRAMEnergyConsumption: 1134
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
+							[thirdGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'{./dist/examples/example002.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'{./dist/examples/example002.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.InternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 690,
-							aggregatedRAMEnergyConsumption: 1356,
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
-				} as Record<GlobalSourceNodeIdentifier_string,
-				ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>>,
-				extern: {
-					[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'html-minifier2@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-							'html-minifier2@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
-						)).id,
-						type: SourceNodeMetaDataType.ExternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfCPUTime: 345,
+									aggregatedCPUTime: 678,
 
-							selfCPUTime: 567,
-							aggregatedCPUTime: 8910,
+									selfCPUEnergyConsumption: 690,
+									aggregatedCPUEnergyConsumption: 1356,
 
-							selfCPUEnergyConsumption: 1134,
-							aggregatedCPUEnergyConsumption: 17820,
+									selfRAMEnergyConsumption: 690,
+									aggregatedRAMEnergyConsumption: 1356
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+						} as Record<
+							GlobalSourceNodeIdentifier_string,
+							ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
+						>,
+						extern: {
+							[thirdGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'html-minifier2@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'html-minifier2@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 1134,
-							aggregatedRAMEnergyConsumption: 17820
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
-					[thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-						'clean-css2@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
-					)).id]: {
-						id: thirdGlobalIndex.getSourceNodeIndex('upsert', GlobalIdentifier.fromIdentifier(
-							'clean-css2@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
-						)).id,
-						type: SourceNodeMetaDataType.ExternSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
+									selfCPUTime: 567,
+									aggregatedCPUTime: 8910,
 
-							selfCPUTime: 567,
-							aggregatedCPUTime: 8910,
+									selfCPUEnergyConsumption: 1134,
+									aggregatedCPUEnergyConsumption: 17820,
 
-							selfCPUEnergyConsumption: 1134,
-							aggregatedCPUEnergyConsumption: 17820,
+									selfRAMEnergyConsumption: 1134,
+									aggregatedRAMEnergyConsumption: 17820
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
+							[thirdGlobalIndex.getSourceNodeIndex(
+								'upsert',
+								GlobalIdentifier.fromIdentifier(
+									'clean-css2@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+								)
+							).id]: {
+								id: thirdGlobalIndex.getSourceNodeIndex(
+									'upsert',
+									GlobalIdentifier.fromIdentifier(
+										'clean-css2@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+									)
+								).id,
+								type: SourceNodeMetaDataType.ExternSourceNodeReference,
+								sensorValues: {
+									profilerHits: 1,
 
-							selfRAMEnergyConsumption: 1134,
-							aggregatedRAMEnergyConsumption: 17820
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
-				} as Record<GlobalSourceNodeIdentifier_string,
-				ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>>
-			} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>, thirdGlobalIndex)
+									selfCPUTime: 567,
+									aggregatedCPUTime: 8910,
 
-			instancesToMerge = [
-				first,
-				second,
-				third
-			]
+									selfCPUEnergyConsumption: 1134,
+									aggregatedCPUEnergyConsumption: 17820,
+
+									selfRAMEnergyConsumption: 1134,
+									aggregatedRAMEnergyConsumption: 17820
+								}
+							} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+						} as Record<
+							GlobalSourceNodeIdentifier_string,
+							ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>
+						>
+					} as ISourceNodeMetaData<SourceNodeMetaDataType.SourceNode>,
+					thirdGlobalIndex
+				)
+
+			instancesToMerge = [first, second, third]
 		})
 
 		test('empty arguments', () => {
@@ -976,19 +1177,18 @@ describe('SourceNodeMetaData', () => {
 				)
 			)
 			const t = () => {
-				SourceNodeMetaData.merge(
-					sourceNodeIndex.id,
-					sourceNodeIndex,
-					...[]
-				)
+				SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex, ...[])
 			}
 
-			expect(t).toThrow('SourceNodeMetaData.merge: no SourceNodeMetaData were given')
+			expect(t).toThrow(
+				'SourceNodeMetaData.merge: no SourceNodeMetaData were given'
+			)
 		})
 
 		test('wrong types', () => {
-			(instancesToMerge[0] as unknown as SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>).type =
-			SourceNodeMetaDataType.Aggregate
+			;(
+				instancesToMerge[0] as unknown as SourceNodeMetaData<SourceNodeMetaDataType.Aggregate>
+			).type = SourceNodeMetaDataType.Aggregate
 
 			const globalIndex = new GlobalIndex(NodeModule.currentEngineModule())
 			globalIndex.getModuleIndex('upsert')
@@ -999,10 +1199,16 @@ describe('SourceNodeMetaData', () => {
 				)
 			)
 			const t = () => {
-				SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex,...instancesToMerge)
+				SourceNodeMetaData.merge(
+					sourceNodeIndex.id,
+					sourceNodeIndex,
+					...instancesToMerge
+				)
 			}
 
-			expect(t).toThrow('SourceNodeMetaData.merge: all SourceNodeMetaDatas should be from the same type.')
+			expect(t).toThrow(
+				'SourceNodeMetaData.merge: all SourceNodeMetaDatas should be from the same type.'
+			)
 		})
 
 		test('merges correctly', () => {
@@ -1015,7 +1221,11 @@ describe('SourceNodeMetaData', () => {
 				)
 			)
 
-			const mergeResult = SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex, ...instancesToMerge)
+			const mergeResult = SourceNodeMetaData.merge(
+				sourceNodeIndex.id,
+				sourceNodeIndex,
+				...instancesToMerge
+			)
 
 			expect(mergeResult.toJSON()).toEqual({
 				id: sourceNodeIndex.id,
@@ -1034,46 +1244,18 @@ describe('SourceNodeMetaData', () => {
 					externRAMEnergyConsumption: 271122 as MilliJoule_number
 				},
 				lang_internal: {
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string))!.id,
-						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-						sensorValues: {
-							profilerHits: 1,
-
-							selfCPUTime: 456,
-							aggregatedCPUTime: 789,
-
-							selfCPUEnergyConsumption: 912,
-							aggregatedCPUEnergyConsumption: 1578,
-
-							selfRAMEnergyConsumption: 912,
-							aggregatedRAMEnergyConsumption: 1578,
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{consoleCall}' as GlobalSourceNodeIdentifier_string))!.id,
-						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
-						sensorValues: {
-							profilerHits: 2,
-
-							selfCPUTime: 1245,
-							aggregatedCPUTime: 99921,
-
-							selfCPUEnergyConsumption: 2490,
-							aggregatedCPUEnergyConsumption: 199842,
-
-							selfRAMEnergyConsumption: 2490,
-							aggregatedRAMEnergyConsumption: 199842,
-						}
-					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{node:timers}{setTimeout2}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{node:timers}{setTimeout2}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{node:timers}{setTimeout}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1088,10 +1270,44 @@ describe('SourceNodeMetaData', () => {
 							aggregatedRAMEnergyConsumption: 1578
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{node:timers}{anotherSetTimeout}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{node:timers}{anotherSetTimeout}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{}{consoleCall}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
+						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+						sensorValues: {
+							profilerHits: 2,
+
+							selfCPUTime: 1245,
+							aggregatedCPUTime: 99921,
+
+							selfCPUEnergyConsumption: 2490,
+							aggregatedCPUEnergyConsumption: 199842,
+
+							selfRAMEnergyConsumption: 2490,
+							aggregatedRAMEnergyConsumption: 199842
+						}
+					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{node:timers}{setTimeout2}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{node:timers}{setTimeout2}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1103,13 +1319,47 @@ describe('SourceNodeMetaData', () => {
 							aggregatedCPUEnergyConsumption: 1578,
 
 							selfRAMEnergyConsumption: 912,
-							aggregatedRAMEnergyConsumption: 1578,
+							aggregatedRAMEnergyConsumption: 1578
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{}{anotherConsoleCall}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{}{anotherConsoleCall}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{node:timers}{anotherSetTimeout}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{node:timers}{anotherSetTimeout}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
+						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
+						sensorValues: {
+							profilerHits: 1,
+
+							selfCPUTime: 456,
+							aggregatedCPUTime: 789,
+
+							selfCPUEnergyConsumption: 912,
+							aggregatedCPUEnergyConsumption: 1578,
+
+							selfRAMEnergyConsumption: 912,
+							aggregatedRAMEnergyConsumption: 1578
+						}
+					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{}{anotherConsoleCall}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{}{anotherConsoleCall}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.LangInternalSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1121,15 +1371,23 @@ describe('SourceNodeMetaData', () => {
 							aggregatedCPUEnergyConsumption: 17820,
 
 							selfRAMEnergyConsumption: 1134,
-							aggregatedRAMEnergyConsumption: 17820,
+							aggregatedRAMEnergyConsumption: 17820
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.LangInternalSourceNodeReference>
 				},
 				intern: {
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{./dist/examples/example001.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.InternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 2,
@@ -1141,13 +1399,21 @@ describe('SourceNodeMetaData', () => {
 							aggregatedCPUEnergyConsumption: 2490,
 
 							selfRAMEnergyConsumption: 1158,
-							aggregatedRAMEnergyConsumption: 2490,
+							aggregatedRAMEnergyConsumption: 2490
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{./dist/examples/example001.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.InternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1162,10 +1428,18 @@ describe('SourceNodeMetaData', () => {
 							aggregatedRAMEnergyConsumption: 1356
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example001.js}{root}.{function:logMessage2}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/examples/example001.js}{root}.{function:logMessage2}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{./dist/examples/example001.js}{root}.{function:logMessage2}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{./dist/examples/example001.js}{root}.{function:logMessage2}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.InternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1180,10 +1454,18 @@ describe('SourceNodeMetaData', () => {
 							aggregatedRAMEnergyConsumption: 1356
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example002.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/examples/example002.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{./dist/examples/example002.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{./dist/examples/example002.js}{root}.{function:main}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.InternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1195,13 +1477,21 @@ describe('SourceNodeMetaData', () => {
 							aggregatedCPUEnergyConsumption: 1134,
 
 							selfRAMEnergyConsumption: 468,
-							aggregatedRAMEnergyConsumption: 1134,
+							aggregatedRAMEnergyConsumption: 1134
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'{./dist/examples/example002.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('{./dist/examples/example002.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'{./dist/examples/example002.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'{./dist/examples/example002.js}{root}.{function:logMessage}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.InternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1218,10 +1508,18 @@ describe('SourceNodeMetaData', () => {
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.InternSourceNodeReference>
 				},
 				extern: {
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'html-minifier@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.ExternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1236,10 +1534,18 @@ describe('SourceNodeMetaData', () => {
 							aggregatedRAMEnergyConsumption: 17820
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'clean-css@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.ExternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 2,
@@ -1251,13 +1557,21 @@ describe('SourceNodeMetaData', () => {
 							aggregatedCPUEnergyConsumption: 199842,
 
 							selfRAMEnergyConsumption: 2490,
-							aggregatedRAMEnergyConsumption: 199842,
+							aggregatedRAMEnergyConsumption: 199842
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'html-minifier@4.0.0{./src/htmlminifier2.js}{root}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('html-minifier@4.0.0{./src/htmlminifier2.js}{root}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'html-minifier@4.0.0{./src/htmlminifier2.js}{root}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'html-minifier@4.0.0{./src/htmlminifier2.js}{root}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.ExternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1272,10 +1586,18 @@ describe('SourceNodeMetaData', () => {
 							aggregatedRAMEnergyConsumption: 17820
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'html-minifier2@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('html-minifier2@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'html-minifier2@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'html-minifier2@4.0.0{./src/htmlminifier.js}{root}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.ExternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1290,10 +1612,18 @@ describe('SourceNodeMetaData', () => {
 							aggregatedRAMEnergyConsumption: 17820
 						}
 					} as ISourceNodeMetaData<SourceNodeMetaDataType.ExternSourceNodeReference>,
-					[globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier(
-						'clean-css2@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
-					))!.id]: {
-						id: globalIndex.getSourceNodeIndex('get', GlobalIdentifier.fromIdentifier('clean-css2@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string))!.id,
+					[globalIndex.getSourceNodeIndex(
+						'get',
+						GlobalIdentifier.fromIdentifier(
+							'clean-css2@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+						)
+					)!.id]: {
+						id: globalIndex.getSourceNodeIndex(
+							'get',
+							GlobalIdentifier.fromIdentifier(
+								'clean-css2@4.2.4{./lib/clean.js}{root}' as GlobalSourceNodeIdentifier_string
+							)
+						)!.id,
 						type: SourceNodeMetaDataType.ExternSourceNodeReference,
 						sensorValues: {
 							profilerHits: 1,
@@ -1327,7 +1657,11 @@ describe('SourceNodeMetaData', () => {
 					)
 				)
 
-				const mergeResult = SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex, ...instancesToMerge)
+				const mergeResult = SourceNodeMetaData.merge(
+					sourceNodeIndex.id,
+					sourceNodeIndex,
+					...instancesToMerge
+				)
 
 				expect(mergeResult.presentInOriginalSourceCode).toBe(false)
 			})
@@ -1346,7 +1680,11 @@ describe('SourceNodeMetaData', () => {
 					)
 				)
 
-				const mergeResult = SourceNodeMetaData.merge(sourceNodeIndex.id, sourceNodeIndex, ...instancesToMerge)
+				const mergeResult = SourceNodeMetaData.merge(
+					sourceNodeIndex.id,
+					sourceNodeIndex,
+					...instancesToMerge
+				)
 
 				expect(mergeResult.presentInOriginalSourceCode).toBe(true)
 			})

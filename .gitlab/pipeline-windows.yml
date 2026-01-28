@@ -1,3 +1,6 @@
+variables:
+  NODE_VERSION: 24.13.0
+
 stages:
   - setup
   - lint
@@ -17,6 +20,7 @@ cache:
     - $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     - $env:NVM_HOME = [System.Environment]::GetEnvironmentVariable("NVM_HOME", [System.EnvironmentVariableTarget]::User)
     - $env:NVM_SYMLINK = [System.Environment]::GetEnvironmentVariable("NVM_SYMLINK", [System.EnvironmentVariableTarget]::User)
+    - nvm use $NODE_VERSION
     - npm config set cache ../.npm
     - npm ci --prefer-offline --ignore-scripts
 
@@ -74,17 +78,16 @@ setup_environment:
         Set-Content -Path "$env:NVM_HOME\settings.txt" -Value "root: $env:NVM_HOME`npath: $env:NVM_SYMLINK"
         Write-Host "NVM installed successfully!"
 
-        $nodeVersion = "20.17.0"
-        # Ensure Node.js v20 is installed
-        $installedVersions = nvm list | Select-String "$nodeVersion" | Out-String
-        if ($installedVersions -match "$nodeVersion") {
-          Write-Host "Node.js v$nodeVersion is already installed."
+        # Ensure Node.js is installed
+        $installedVersions = nvm list | Select-String "$NODE_VERSION" | Out-String
+        if ($installedVersions -match "$NODE_VERSION") {
+          Write-Host "Node.js v$NODE_VERSION is already installed."
         } else {
-          Write-Host "Installing Node.js v20..."
-          nvm install $nodeVersion
+          Write-Host "Installing Node.js v$NODE_VERSION..."
+          nvm install $NODE_VERSION
         }
         # this might fail since its asking for admin rights
-        nvm use $nodeVersion
+        nvm use $NODE_VERSION
       } else {
         Write-Host "NVM is already installed."
       }

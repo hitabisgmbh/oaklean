@@ -23,10 +23,14 @@ const testFiles = [
 describe('ProjectReportTransformer', () => {
 	test('test if it transforms correctly', () => {
 		for (const { origin, target } of testFiles) {
-			const data = JSON.parse(fs.readFileSync(origin.toString()).toString('utf-8'))
+			const data = JSON.parse(
+				fs.readFileSync(origin.toString()).toString('utf-8')
+			)
 			const result = ProjectReportTransformer.transform_projectReport(data)
 
-			const expectedReport = JSON.parse(fs.readFileSync(target.toString()).toString('utf-8'))
+			const expectedReport = JSON.parse(
+				fs.readFileSync(target.toString()).toString('utf-8')
+			)
 			expect(result).toEqual(expectedReport)
 		}
 	})

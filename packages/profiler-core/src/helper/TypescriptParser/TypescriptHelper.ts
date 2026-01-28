@@ -62,13 +62,19 @@ export class TypescriptHelper {
 			varDeclaration !== undefined &&
 			varDeclaration.kind === ts.SyntaxKind.VariableDeclaration
 		) {
-			if ((varDeclaration as ts.VariableDeclaration).name.kind === ts.SyntaxKind.Identifier) {
+			if (
+				(varDeclaration as ts.VariableDeclaration).name.kind ===
+				ts.SyntaxKind.Identifier
+			) {
 				if (
 					EmitHelperNameStrings.includes(
-						((varDeclaration as ts.VariableDeclaration).name as ts.Identifier).text as EmitHelperNames
+						((varDeclaration as ts.VariableDeclaration).name as ts.Identifier)
+							.text as EmitHelperNames
 					)
 				) {
-					return ((varDeclaration as ts.VariableDeclaration).name as ts.Identifier).text as EmitHelperNames
+					return (
+						(varDeclaration as ts.VariableDeclaration).name as ts.Identifier
+					).text as EmitHelperNames
 				}
 			}
 		}
@@ -78,10 +84,15 @@ export class TypescriptHelper {
 			varDeclarationExtends !== undefined &&
 			varDeclarationExtends.kind === ts.SyntaxKind.VariableDeclaration
 		) {
-			if ((varDeclarationExtends as ts.VariableDeclaration).name.kind === ts.SyntaxKind.Identifier) {
+			if (
+				(varDeclarationExtends as ts.VariableDeclaration).name.kind ===
+				ts.SyntaxKind.Identifier
+			) {
 				if (
-					((varDeclarationExtends as ts.VariableDeclaration).name as ts.Identifier)
-						.text === EmitHelperNames.extends
+					(
+						(varDeclarationExtends as ts.VariableDeclaration)
+							.name as ts.Identifier
+					).text === EmitHelperNames.extends
 				) {
 					return EmitHelperNames.extends
 				}
@@ -110,11 +121,11 @@ export class TypescriptHelper {
 
 	static hasStaticKeywordModifier(
 		node:
-		| ts.MethodDeclaration
-		| ts.PropertyDeclaration
-		| ts.SetAccessorDeclaration
-		| ts.GetAccessorDeclaration
-		| ts.ConstructorDeclaration
+			| ts.MethodDeclaration
+			| ts.PropertyDeclaration
+			| ts.SetAccessorDeclaration
+			| ts.GetAccessorDeclaration
+			| ts.ConstructorDeclaration
 	): boolean {
 		if (node.modifiers === undefined || node.modifiers.length === 0) {
 			return false

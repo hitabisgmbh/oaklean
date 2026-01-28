@@ -21,9 +21,9 @@ export class ClassDeclarationHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassDeclaration>
-			resolveWithNoChildren: true
-		} {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassDeclaration>
+		resolveWithNoChildren: true
+	} {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {

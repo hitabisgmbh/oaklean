@@ -11,7 +11,9 @@ import {
 	CPUProfileSourceLocationType
 } from '../../types'
 
-export const RegExpTestRegex = new RegExp(`^${LangInternalSourceNodeRegExpRegexString}$`)
+export const RegExpTestRegex = new RegExp(
+	`^${LangInternalSourceNodeRegExpRegexString}$`
+)
 
 export class CPUProfileSourceLocation {
 	private _index: number
@@ -56,9 +58,9 @@ export class CPUProfileSourceLocation {
 			this._type = CPUProfileSourceLocationType.WEBPACK
 		} else {
 			this._type = CPUProfileSourceLocationType.DEFAULT
-			this._isEmpty = (this.callFrame.url === '')
+			this._isEmpty = this.callFrame.url === ''
 		}
-		
+
 		// determine the script id
 		this._scriptID = this.callFrame.scriptId.toString() as ScriptID_string
 
@@ -117,20 +119,18 @@ export class CPUProfileSourceLocation {
 	get absoluteUrl() {
 		if (this._absoluteUrl === undefined) {
 			let url: UnifiedPath
-			if (
-				this.rawUrl.startsWith('file://')
-			) {
+			if (this.rawUrl.startsWith('file://')) {
 				// remove the 'file://' prefix
 				url = new UnifiedPath(this.rawUrl.slice(7))
-			} else if (
-				this.isWebpack
-			) {
+			} else if (this.isWebpack) {
 				// extract the file path from a webpack-internal url
 				const result = UrlProtocolHelper.parseWebpackSourceUrl(this.rawUrl)
 				if (result !== null) {
 					url = new UnifiedPath(result.filePath)
 				} else {
-					throw new Error('Could not parse webpack-internal url: ' + this.rawUrl)
+					throw new Error(
+						'Could not parse webpack-internal url: ' + this.rawUrl
+					)
 				}
 			} else {
 				url = new UnifiedPath(this.rawUrl)
@@ -154,11 +154,13 @@ export class CPUProfileSourceLocation {
 	get sourceNodeIdentifier() {
 		if (this._sourceNodeIdentifier === undefined) {
 			if (RegExpTestRegex.test(this.rawFunctionName)) {
-				this._sourceNodeIdentifier = this.rawFunctionName as SourceNodeIdentifier_string
+				this._sourceNodeIdentifier = this
+					.rawFunctionName as SourceNodeIdentifier_string
 			} else {
-				this._sourceNodeIdentifier = SourceNodeIdentifierHelper.functionNameToSourceNodeIdentifier(
-					this.rawFunctionName
-				)
+				this._sourceNodeIdentifier =
+					SourceNodeIdentifierHelper.functionNameToSourceNodeIdentifier(
+						this.rawFunctionName
+					)
 			}
 		}
 		return this._sourceNodeIdentifier

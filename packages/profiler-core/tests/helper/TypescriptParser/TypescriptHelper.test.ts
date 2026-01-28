@@ -10,7 +10,7 @@ describe('TypescriptHelper', () => {
 	describe('posToLoc', () => {
 		const sourceFile = ts.createSourceFile(
 			'index.ts',
-			'const who = \'World\'\n\nconsole.log(\'Hello\')\nconsole.log(who)',
+			"const who = 'World'\n\nconsole.log('Hello')\nconsole.log(who)",
 			ts.ScriptTarget.Latest,
 			true /*setParentNodes */
 		)

@@ -19,9 +19,9 @@ export class ClassExpressionHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassExpression>
-			resolveWithNoChildren: true
-		} {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassExpression>
+		resolveWithNoChildren: true
+	} {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {

@@ -58,9 +58,7 @@ export class ExportAssetHelper {
 		return this.outputDir().join(ACCUMULATED_REPORT_FILE_NAME)
 	}
 
-	titleFromReportFilePath(
-		reportFilePath: UnifiedPath
-	): string {
+	titleFromReportFilePath(reportFilePath: UnifiedPath): string {
 		const titlePath = this.outputDir().pathTo(reportFilePath).toString()
 		if (titlePath.endsWith(REPORT_FILE_EXTENSION)) {
 			return titlePath.slice(0, -REPORT_FILE_EXTENSION.length)

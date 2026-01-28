@@ -1,8 +1,5 @@
 // Types
-import {
-	NanoSeconds_BigInt,
-	MilliSeconds_number
-} from '../types'
+import { NanoSeconds_BigInt, MilliSeconds_number } from '../types'
 
 const loadNs = process.hrtime.bigint()
 const loadMs = Date.now()
@@ -24,11 +21,13 @@ export class TimeHelper {
 		timestamp: MilliSeconds_number,
 		timeDelta?: NanoSeconds_BigInt
 	) {
-		return BigInt(timestamp) * BigInt(1e6) -
-		(timeDelta !== undefined ? timeDelta : loadNanoDiff) as NanoSeconds_BigInt
+		return (BigInt(timestamp) * BigInt(1e6) -
+			(timeDelta !== undefined
+				? timeDelta
+				: loadNanoDiff)) as NanoSeconds_BigInt
 	}
 
 	static async sleep(millis: number) {
-		return new Promise(resolve => setTimeout(resolve, millis))
+		return new Promise((resolve) => setTimeout(resolve, millis))
 	}
 }

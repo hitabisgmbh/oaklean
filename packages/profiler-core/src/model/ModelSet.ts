@@ -50,8 +50,11 @@ export class ModelSet<TVALUE extends ModelSetValueType> extends BaseModel {
 		return this._set.entries()
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	forEach(callback: (value: TVALUE, value2: TVALUE, set: Set<TVALUE>) => void, thisArg?: any): void {
+	forEach(
+		callback: (value: TVALUE, value2: TVALUE, set: Set<TVALUE>) => void,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		thisArg?: any
+	): void {
 		this._set.forEach(callback, thisArg)
 	}
 
@@ -72,11 +75,14 @@ export class ModelSet<TVALUE extends ModelSetValueType> extends BaseModel {
 
 	static fromJSON<TVALUE extends ModelSetValueType>(
 		json: string | object,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		fromJSON: TVALUE extends BaseModel ? (json: string | any, ...args: any[]) =>
-		TVALUE : 'string' | 'number'
+
+		fromJSON: TVALUE extends BaseModel
+			? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(json: string | any, ...args: any[]) => TVALUE
+			: 'string' | 'number'
 	): ModelSet<TVALUE> {
-		let data: any // eslint-disable-line @typescript-eslint/no-explicit-any
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		let data: any
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
 		} else {
@@ -116,60 +122,63 @@ export class ModelSet<TVALUE extends ModelSetValueType> extends BaseModel {
 					buffers.push(BufferHelper.UInt8ToBuffer(ModelSetValueTypeEnum.object))
 					buffers.push((value as BaseModel).toBuffer())
 			}
-		}	
+		}
 		return Buffer.concat(buffers)
 	}
 
 	static consumeFromBuffer<TVALUE extends ModelSetValueType>(
 		buffer: Buffer,
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		fromBuffer: TVALUE extends BaseModel ? (buffer: Buffer, ...args: any[]) =>
-		{ instance: TVALUE, remainingBuffer: Buffer } : 'string' | 'number'
+		fromBuffer: TVALUE extends BaseModel
+			? (
+					buffer: Buffer,
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					...args: any[]
+				) => { instance: TVALUE; remainingBuffer: Buffer }
+			: 'string' | 'number'
 	): {
-		instance: ModelSet<TVALUE>,
+		instance: ModelSet<TVALUE>
 		remainingBuffer: Buffer
 	} {
 		let remainingBuffer = buffer
-		const {instance: size, remainingBuffer: newRemainingBuffer1 } = BufferHelper.UIntFromBuffer(buffer)
+		const { instance: size, remainingBuffer: newRemainingBuffer1 } =
+			BufferHelper.UIntFromBuffer(buffer)
 		const result = new ModelSet<TVALUE>()
 		remainingBuffer = newRemainingBuffer1
-		
+
 		for (let i = 0; i < size; i++) {
 			// determine value type
-			const {
-				instance: valueType,
-				remainingBuffer: newRemainingBuffer2
-			} = BufferHelper.UInt8FromBuffer(remainingBuffer)
+			const { instance: valueType, remainingBuffer: newRemainingBuffer2 } =
+				BufferHelper.UInt8FromBuffer(remainingBuffer)
 			remainingBuffer = newRemainingBuffer2
 
 			// decode value based on type
 			switch (valueType) {
-				case ModelSetValueTypeEnum.string: {
-					const {
-						instance,
-						remainingBuffer: newRemainingBuffer
-					} = BufferHelper.String2LFromBuffer(remainingBuffer)
-					result.add(instance as TVALUE)
-					remainingBuffer = newRemainingBuffer
-				} break
-				case ModelSetValueTypeEnum.number: {
-					const {
-						instance,
-						remainingBuffer: newRemainingBuffer
-					} = BufferHelper.UIntFromBuffer(remainingBuffer)
-					result.add(instance as TVALUE)
-					remainingBuffer = newRemainingBuffer
-				}	break
-				case ModelSetValueTypeEnum.object: {
-					if (fromBuffer !== 'string' && fromBuffer !== 'number') {
-						const {
-							instance,
-							remainingBuffer: newRemainingBuffer
-						} = fromBuffer(remainingBuffer)
+				case ModelSetValueTypeEnum.string:
+					{
+						const { instance, remainingBuffer: newRemainingBuffer } =
+							BufferHelper.String2LFromBuffer(remainingBuffer)
 						result.add(instance as TVALUE)
 						remainingBuffer = newRemainingBuffer
 					}
-				} break
+					break
+				case ModelSetValueTypeEnum.number:
+					{
+						const { instance, remainingBuffer: newRemainingBuffer } =
+							BufferHelper.UIntFromBuffer(remainingBuffer)
+						result.add(instance as TVALUE)
+						remainingBuffer = newRemainingBuffer
+					}
+					break
+				case ModelSetValueTypeEnum.object:
+					{
+						if (fromBuffer !== 'string' && fromBuffer !== 'number') {
+							const { instance, remainingBuffer: newRemainingBuffer } =
+								fromBuffer(remainingBuffer)
+							result.add(instance as TVALUE)
+							remainingBuffer = newRemainingBuffer
+						}
+					}
+					break
 				default:
 					throw new Error(`Unknown ModelSetValueTypeEnum: ${valueType}`)
 			}

@@ -1,6 +1,4 @@
-import {
-	SourceNodeIdentifierPart_string
-} from '../SourceNodeIdentifiers'
+import { SourceNodeIdentifierPart_string } from '../SourceNodeIdentifiers'
 
 export enum IdentifierType {
 	Name = 'Name',
@@ -9,7 +7,7 @@ export enum IdentifierType {
 	Anonymous = 'Anonymous',
 	KeyWord = 'Keyword',
 	Statement = 'Statement',
-	Hash = 'Hash',
+	Hash = 'Hash'
 }
 
 export enum ProgramStructureTreeType {
@@ -36,29 +34,29 @@ export enum ProgramStructureTreeType {
 	ClassStaticBlockDeclaration = 'ClassStaticBlockDeclaration',
 	SwitchStatement = 'SwitchStatement',
 	SwitchCaseClause = 'SwitchCaseClause',
-	ModuleDeclaration = 'ModuleDeclaration',
+	ModuleDeclaration = 'ModuleDeclaration'
 }
 
-export type ProgramStructureTreeTypeIntermediateScope = 
-	ProgramStructureTreeType.IfThenStatement |
-	ProgramStructureTreeType.IfElseStatement |
-	ProgramStructureTreeType.SwitchCaseClause |
-	ProgramStructureTreeType.TryBlock |
-	ProgramStructureTreeType.CatchClause |
-	ProgramStructureTreeType.FinallyBlock
+export type ProgramStructureTreeTypeIntermediateScope =
+	| ProgramStructureTreeType.IfThenStatement
+	| ProgramStructureTreeType.IfElseStatement
+	| ProgramStructureTreeType.SwitchCaseClause
+	| ProgramStructureTreeType.TryBlock
+	| ProgramStructureTreeType.CatchClause
+	| ProgramStructureTreeType.FinallyBlock
 
 export type PSTIdentifierHierarchy = {
-	type: ProgramStructureTreeType,
+	type: ProgramStructureTreeType
 	children?: Record<SourceNodeIdentifierPart_string, PSTIdentifierHierarchy>
 }
 
 export type NodeLocation = {
-	line: number,
-	column: number,
+	line: number
+	column: number
 }
 
 export type NodeLocationRange = {
-	beginLoc: NodeLocation,
+	beginLoc: NodeLocation
 	endLoc: NodeLocation
 }
 

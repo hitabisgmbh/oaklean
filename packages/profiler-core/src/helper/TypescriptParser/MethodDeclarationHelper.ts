@@ -21,9 +21,9 @@ export class MethodDeclarationHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.MethodDefinition>
-			resolveWithNoChildren: true
-		} | null {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.MethodDefinition>
+		resolveWithNoChildren: true
+	} | null {
 		if (node.body === undefined) {
 			return null
 		}

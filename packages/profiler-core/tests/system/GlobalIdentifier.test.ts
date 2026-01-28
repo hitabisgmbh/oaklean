@@ -12,14 +12,11 @@ describe('GlobalIdentifier', () => {
 		let externInstance: GlobalIdentifier
 
 		beforeEach(() => {
-			const nodeModule = new NodeModule(
-				'@scope/package',
-				'1.0.1'
-			)
+			const nodeModule = new NodeModule('@scope/package', '1.0.1')
 
 			internInstance = new GlobalIdentifier(
 				new UnifiedPath('./path/to/file.js').toString(),
-				'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}' as SourceNodeIdentifier_string,
+				'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}' as SourceNodeIdentifier_string
 			)
 
 			externInstance = new GlobalIdentifier(
@@ -53,7 +50,8 @@ describe('GlobalIdentifier', () => {
 		test('serialization', () => {
 			expect(internInstance.toJSON()).toEqual({
 				path: './path/to/file.js',
-				sourceNodeIdentifier: '{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
+				sourceNodeIdentifier:
+					'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
 			})
 
 			expect(externInstance.toJSON()).toEqual({
@@ -62,7 +60,8 @@ describe('GlobalIdentifier', () => {
 					version: '1.0.1'
 				},
 				path: './path/to/file.js',
-				sourceNodeIdentifier: '{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
+				sourceNodeIdentifier:
+					'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
 			})
 		})
 	})
@@ -75,7 +74,9 @@ describe('GlobalIdentifier', () => {
 				)
 			}
 
-			expect(a).toThrow('GlobalIdentifier.fromIdentifier: invalid format: {root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}')
+			expect(a).toThrow(
+				'GlobalIdentifier.fromIdentifier: invalid format: {root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
+			)
 
 			const b = () => {
 				GlobalIdentifier.fromIdentifier(
@@ -83,7 +84,9 @@ describe('GlobalIdentifier', () => {
 				)
 			}
 
-			expect(b).toThrow('GlobalIdentifier.fromIdentifier: invalid format: ./path/to/file.js')
+			expect(b).toThrow(
+				'GlobalIdentifier.fromIdentifier: invalid format: ./path/to/file.js'
+			)
 		})
 
 		describe('valid format', () => {
@@ -98,7 +101,8 @@ describe('GlobalIdentifier', () => {
 						version: '1.0.1'
 					},
 					path: './path/to/file.js',
-					sourceNodeIdentifier: '{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
+					sourceNodeIdentifier:
+						'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
 				})
 			})
 			test('with non scoped node module', () => {
@@ -112,7 +116,8 @@ describe('GlobalIdentifier', () => {
 						version: '1.0.1'
 					},
 					path: './path/to/file.js',
-					sourceNodeIdentifier: '{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
+					sourceNodeIdentifier:
+						'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
 				})
 			})
 			test('without node module', () => {
@@ -122,7 +127,8 @@ describe('GlobalIdentifier', () => {
 					).toJSON()
 				).toEqual({
 					path: './path/to/file.js',
-					sourceNodeIdentifier: '{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
+					sourceNodeIdentifier:
+						'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
 				})
 			})
 			test('without upwards path', () => {
@@ -132,7 +138,8 @@ describe('GlobalIdentifier', () => {
 					).toJSON()
 				).toEqual({
 					path: '../path/to/file.js',
-					sourceNodeIdentifier: '{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
+					sourceNodeIdentifier:
+						'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
 				})
 			})
 			test('without empty path', () => {
@@ -142,7 +149,8 @@ describe('GlobalIdentifier', () => {
 					).toJSON()
 				).toEqual({
 					path: '',
-					sourceNodeIdentifier: '{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
+					sourceNodeIdentifier:
+						'{root}.{class:Parent}.{constructor:constructor}.{functionExpression:(anonymous:0)}'
 				})
 			})
 			test('with lang internal identifier case 1', () => {
@@ -162,7 +170,8 @@ describe('GlobalIdentifier', () => {
 					).toJSON()
 				).toEqual({
 					path: '',
-					sourceNodeIdentifier: 'RegExp: ^(?:[a-zA-Z]:)?\\\\?\\\\(?:[^\\\\/:*?"<>|\\r\\n]+\\\\)*[^\\\\/:*?"<>|\\r\\n]*$'
+					sourceNodeIdentifier:
+						'RegExp: ^(?:[a-zA-Z]:)?\\\\?\\\\(?:[^\\\\/:*?"<>|\\r\\n]+\\\\)*[^\\\\/:*?"<>|\\r\\n]*$'
 				})
 			})
 			test('with lang internal identifier case 3', () => {

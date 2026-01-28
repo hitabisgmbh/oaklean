@@ -7,12 +7,12 @@ const ProgramStructureTypes_DIR = CURRENT_DIR.join('ProgramStructureTypes')
 
 type TestCase = {
 	source: {
-		path: UnifiedPath,
+		path: UnifiedPath
 		content: string
 	}
 	expected: {
-		path: UnifiedPath,
-		content: string,
+		path: UnifiedPath
+		content: string
 		object: object
 	}
 }
@@ -21,7 +21,9 @@ function loadTestCase(
 	sourcePath: UnifiedPath,
 	expectedPath: UnifiedPath
 ): TestCase {
-	const expectedContent = fs.readFileSync(expectedPath.toPlatformString()).toString()
+	const expectedContent = fs
+		.readFileSync(expectedPath.toPlatformString())
+		.toString()
 
 	return {
 		source: {

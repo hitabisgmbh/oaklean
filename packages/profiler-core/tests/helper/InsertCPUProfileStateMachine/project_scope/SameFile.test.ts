@@ -497,7 +497,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 								[[SOURCE_LOCATIONS_DEFAULT['project-fileA-0'], []]]
 							]
 						]
-					],
+					]
 				]
 			])
 		)
@@ -573,7 +573,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE + SAME FILE
 								[[SOURCE_LOCATIONS_DEFAULT['project-fileA-1'], []]]
 							]
 						]
-					],
+					]
 				]
 			])
 		)

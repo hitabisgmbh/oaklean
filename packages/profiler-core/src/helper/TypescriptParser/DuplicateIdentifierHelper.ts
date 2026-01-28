@@ -17,7 +17,7 @@ export class DuplicateIdentifierHelper {
 		if (!currentIdentifier.endsWith('}')) {
 			throw new Error(
 				'DuplicateIdentifierHelper (handleDuplicateIdentifier): invalid identifier format: ' +
-				currentIdentifier
+					currentIdentifier
 			)
 		}
 
@@ -28,7 +28,8 @@ export class DuplicateIdentifierHelper {
 					ts.SyntaxKind.VariableDeclarationList
 				) {
 					const flags = (
-						(node.parent as ts.VariableDeclaration).parent as ts.VariableDeclarationList
+						(node.parent as ts.VariableDeclaration)
+							.parent as ts.VariableDeclarationList
 					).flags
 					if (flags & ts.NodeFlags.Let) {
 						return false
@@ -43,17 +44,15 @@ export class DuplicateIdentifierHelper {
 
 		let duplicatesAreExpected = true
 		if (
-			(
-				tree.type === ProgramStructureTreeType.FunctionExpression ||
+			(tree.type === ProgramStructureTreeType.FunctionExpression ||
 				tree.type === ProgramStructureTreeType.ClassExpression ||
-				tree.type === ProgramStructureTreeType.ObjectLiteralExpression
-			) &&
-			(tree.parent === null || (
-				tree.parent.type !== ProgramStructureTreeType.ObjectLiteralExpression &&
-				tree.parent.type !== ProgramStructureTreeType.ClassExpression &&
-				tree.parent.type !== ProgramStructureTreeType.ClassDeclaration &&
-				!isDeclaredViaVar(node)
-			))
+				tree.type === ProgramStructureTreeType.ObjectLiteralExpression) &&
+			(tree.parent === null ||
+				(tree.parent.type !==
+					ProgramStructureTreeType.ObjectLiteralExpression &&
+					tree.parent.type !== ProgramStructureTreeType.ClassExpression &&
+					tree.parent.type !== ProgramStructureTreeType.ClassDeclaration &&
+					!isDeclaredViaVar(node)))
 		) {
 			// they should only have duplicate occurrences inside:
 			// object literals, classes or when declared via var
@@ -67,29 +66,41 @@ export class DuplicateIdentifierHelper {
 			if (!currentIdentifier.endsWith(')}')) {
 				throw new Error(
 					'DuplicateIdentifierHelper (handleDuplicateIdentifier): invalid identifier format: ' +
-					currentIdentifier
+						currentIdentifier
 				)
 			}
 
-			const baseIdentifier = currentIdentifier.substring(0, currentIdentifier.length - 2)
+			const baseIdentifier = currentIdentifier.substring(
+				0,
+				currentIdentifier.length - 2
+			)
 			let counter = 1
 			while (
 				tree.parent !== null &&
-				tree.parent.hasChildren(`${baseIdentifier}:${counter})}` as SourceNodeIdentifierPart_string)
+				tree.parent.hasChildren(
+					`${baseIdentifier}:${counter})}` as SourceNodeIdentifierPart_string
+				)
 			) {
 				counter++
 			}
-			tree.identifier = `${baseIdentifier}:${counter})}` as SourceNodeIdentifierPart_string
+			tree.identifier =
+				`${baseIdentifier}:${counter})}` as SourceNodeIdentifierPart_string
 		} else {
-			const baseIdentifier = currentIdentifier.substring(0, currentIdentifier.length - 1)
+			const baseIdentifier = currentIdentifier.substring(
+				0,
+				currentIdentifier.length - 1
+			)
 			let counter = 1
 			while (
 				tree.parent !== null &&
-				tree.parent.hasChildren(`${baseIdentifier}:${counter}}` as SourceNodeIdentifierPart_string)
+				tree.parent.hasChildren(
+					`${baseIdentifier}:${counter}}` as SourceNodeIdentifierPart_string
+				)
 			) {
 				counter++
 			}
-			tree.identifier = `${baseIdentifier}:${counter}}` as SourceNodeIdentifierPart_string
+			tree.identifier =
+				`${baseIdentifier}:${counter}}` as SourceNodeIdentifierPart_string
 		}
 
 		return duplicatesAreExpected

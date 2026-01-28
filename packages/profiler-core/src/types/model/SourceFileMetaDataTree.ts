@@ -2,20 +2,11 @@ import type {
 	ISourceFileMetaData,
 	IAggregatedSourceNodeMetaData
 } from './SourceFileMetaData'
-import {
-	ISensorValues
-} from './SensorValues'
-import type {
-	INodeModule,
-	NodeModuleIdentifier_string
-} from './NodeModule'
-import type {
-	IGlobalIndex
-} from './indices/GlobalIndex'
+import { ISensorValues } from './SensorValues'
+import type { INodeModule, NodeModuleIdentifier_string } from './NodeModule'
+import type { IGlobalIndex } from './indices/GlobalIndex'
 
-import type {
-	LangInternalPath_string
-} from '../SourceNodeIdentifiers'
+import type { LangInternalPath_string } from '../SourceNodeIdentifiers'
 import type {
 	UnifiedPath_string,
 	UnifiedPathPart_string
@@ -28,16 +19,20 @@ export enum SourceFileMetaDataTreeType {
 	Module = 'Module'
 }
 
-export type UnifiedPath_stringOnlyForPathNode<T> =
-	T extends SourceFileMetaDataTreeType.File |
-	SourceFileMetaDataTreeType.Directory |
-	SourceFileMetaDataTreeType.Module ? UnifiedPath_string : undefined
+export type UnifiedPath_stringOnlyForPathNode<T> = T extends
+	| SourceFileMetaDataTreeType.File
+	| SourceFileMetaDataTreeType.Directory
+	| SourceFileMetaDataTreeType.Module
+	? UnifiedPath_string
+	: undefined
 
-export type IGlobalIndexOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? IGlobalIndex : undefined
-export type IEngineModuleOnlyForRootNode<T> = T extends SourceFileMetaDataTreeType.Root ? INodeModule : undefined
+export type IGlobalIndexOnlyForRootNode<T> =
+	T extends SourceFileMetaDataTreeType.Root ? IGlobalIndex : undefined
+export type IEngineModuleOnlyForRootNode<T> =
+	T extends SourceFileMetaDataTreeType.Root ? INodeModule : undefined
 
 export type ILinkedMetaData = {
-	internReportID: number,
+	internReportID: number
 	sourceFileMetaData: ISourceFileMetaData
 }
 
@@ -49,12 +44,19 @@ export interface ISourceFileMetaDataTree<T extends SourceFileMetaDataTreeType> {
 	type: T
 	filePath: UnifiedPath_stringOnlyForPathNode<T>
 	langInternalChildren?: Record<
-	LangInternalPath_string,
-	ISourceFileMetaDataTree<SourceFileMetaDataTreeType.File>>
+		LangInternalPath_string,
+		ISourceFileMetaDataTree<SourceFileMetaDataTreeType.File>
+	>
 	internChildren?: Record<
-	UnifiedPathPart_string,
-	ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Directory | SourceFileMetaDataTreeType.File>>
-	externChildren?: Record<NodeModuleIdentifier_string, ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Module>>
+		UnifiedPathPart_string,
+		ISourceFileMetaDataTree<
+			SourceFileMetaDataTreeType.Directory | SourceFileMetaDataTreeType.File
+		>
+	>
+	externChildren?: Record<
+		NodeModuleIdentifier_string,
+		ISourceFileMetaDataTree<SourceFileMetaDataTreeType.Module>
+	>
 	linkedMetaData?: ILinkedMetaData
 	globalIndex: IGlobalIndexOnlyForRootNode<T>
 	engineModule: IEngineModuleOnlyForRootNode<T>

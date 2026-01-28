@@ -11,7 +11,10 @@ describe('exports', () => {
 			`
 
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 
@@ -19,7 +22,7 @@ describe('exports', () => {
 					type: ProgramStructureTreeType.Root,
 					children: {
 						'{function:default}': {
-							type: ProgramStructureTreeType.FunctionDeclaration,
+							type: ProgramStructureTreeType.FunctionDeclaration
 						}
 					}
 				})
@@ -32,7 +35,10 @@ describe('exports', () => {
 			`
 
 			test('expected identifier', () => {
-				const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)
+				const pst = TypescriptParser.parseSource(
+					new UnifiedPath('test.ts'),
+					code
+				)
 
 				const hierarchy = pst.identifierHierarchy()
 
@@ -40,7 +46,7 @@ describe('exports', () => {
 					type: ProgramStructureTreeType.Root,
 					children: {
 						'{function:DefaultKeyword}': {
-							type: ProgramStructureTreeType.FunctionDeclaration,
+							type: ProgramStructureTreeType.FunctionDeclaration
 						}
 					}
 				})
@@ -63,7 +69,7 @@ describe('ts.SyntaxKind.FunctionDeclaration', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{function:FunctionDeclaration}': {
-					type: ProgramStructureTreeType.FunctionDeclaration,
+					type: ProgramStructureTreeType.FunctionDeclaration
 				}
 			}
 		})
@@ -87,7 +93,7 @@ describe('ts.SyntaxKind.AsteriskToken', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{function:FunctionDeclaration}': {
-					type: ProgramStructureTreeType.FunctionDeclaration,
+					type: ProgramStructureTreeType.FunctionDeclaration
 				}
 			}
 		})
@@ -123,7 +129,7 @@ describe('ts.SyntaxKind.FunctionDeclaration with signature', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{function:FunctionDeclarationSignature}': {
-					type: ProgramStructureTreeType.FunctionDeclaration,
+					type: ProgramStructureTreeType.FunctionDeclaration
 				}
 			}
 		})
@@ -144,7 +150,7 @@ describe('ts.SyntaxKind.FunctionDeclaration with signature', () => {
 			type: ProgramStructureTreeType.Root,
 			children: {
 				'{function:FunctionDeclarationSignature}': {
-					type: ProgramStructureTreeType.FunctionDeclaration,
+					type: ProgramStructureTreeType.FunctionDeclaration
 				}
 			}
 		})
@@ -192,7 +198,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.FunctionDeclaration,
 							children: {
 								'{function:f}': {
-									type: ProgramStructureTreeType.FunctionDeclaration,
+									type: ProgramStructureTreeType.FunctionDeclaration
 								}
 							}
 						},
@@ -200,7 +206,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.FunctionDeclaration,
 							children: {
 								'{function:f}': {
-									type: ProgramStructureTreeType.FunctionDeclaration,
+									type: ProgramStructureTreeType.FunctionDeclaration
 								}
 							}
 						}
@@ -213,10 +219,10 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.FunctionDeclaration,
 							children: {
 								'{function:f}': {
-									type: ProgramStructureTreeType.FunctionDeclaration,
+									type: ProgramStructureTreeType.FunctionDeclaration
 								},
 								'{function:a}': {
-									type: ProgramStructureTreeType.FunctionDeclaration,
+									type: ProgramStructureTreeType.FunctionDeclaration
 								}
 							}
 						},
@@ -224,10 +230,10 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.FunctionDeclaration,
 							children: {
 								'{function:f}': {
-									type: ProgramStructureTreeType.FunctionDeclaration,
+									type: ProgramStructureTreeType.FunctionDeclaration
 								},
 								'{function:a}': {
-									type: ProgramStructureTreeType.FunctionDeclaration,
+									type: ProgramStructureTreeType.FunctionDeclaration
 								}
 							}
 						},
@@ -235,7 +241,7 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.FunctionDeclaration,
 							children: {
 								'{function:a}': {
-									type: ProgramStructureTreeType.FunctionDeclaration,
+									type: ProgramStructureTreeType.FunctionDeclaration
 								}
 							}
 						}

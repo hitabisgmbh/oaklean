@@ -10,6 +10,6 @@ export class SetHelper {
 	}
 
 	static union<T>(...sets: Set<T>[]): Set<T> {
-		return new Set<T>(sets.flatMap(set => [...set]))
+		return new Set<T>(sets.flatMap((set) => [...set]))
 	}
 }

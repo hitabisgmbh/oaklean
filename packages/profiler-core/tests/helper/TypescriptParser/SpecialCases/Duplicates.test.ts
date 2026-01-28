@@ -23,8 +23,6 @@ export function duplicatesExist(code: string, scriptKind: 'TS' | 'TSX' = 'TS') {
 	}
 }
 
-
-
 test('static method', () => {
 	const code = `
 		class A {

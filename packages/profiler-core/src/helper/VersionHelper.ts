@@ -1,7 +1,7 @@
 export class VersionHelper {
 	/**
 	 * Compare two version strings.
-	 * 
+	 *
 	 * @param version - The version to compare.
 	 * @param to - The version to compare to.
 	 * @returns The comparison

@@ -16,7 +16,6 @@ export const SOURCE_MAP_REQUIRED_ATTRIBUTE_NAMES = [
 	'mappings'
 ] as const
 
-
 export const SOURCE_MAP_ALL_ATTRIBUTE_NAMES = [
 	'version',
 	'file',

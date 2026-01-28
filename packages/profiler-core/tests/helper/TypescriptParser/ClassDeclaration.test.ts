@@ -23,7 +23,7 @@ describe('exports', () => {
 						type: ProgramStructureTreeType.ClassDeclaration,
 						children: {
 							'{constructor:constructor}': {
-								type: ProgramStructureTreeType.ConstructorDeclaration,
+								type: ProgramStructureTreeType.ConstructorDeclaration
 							}
 						}
 					}
@@ -59,13 +59,13 @@ describe('ts.SyntaxKind.ClassDeclaration', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						},
 						'{static:0}': {
 							type: ProgramStructureTreeType.ClassStaticBlockDeclaration,
 							children: {
 								'{function:foo}': {
-									type: ProgramStructureTreeType.FunctionDeclaration,
+									type: ProgramStructureTreeType.FunctionDeclaration
 								}
 							}
 						},
@@ -74,7 +74,7 @@ describe('ts.SyntaxKind.ClassDeclaration', () => {
 						},
 						'{method@static:foo}': {
 							type: ProgramStructureTreeType.MethodDefinition
-						},
+						}
 					}
 				}
 			}

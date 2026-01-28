@@ -28,7 +28,7 @@ export class GlobalIdentifier {
 	constructor(
 		path: UnifiedPath_string | LangInternalPath_string,
 		sourceNodeIdentifier: SourceNodeIdentifier_string,
-		nodeModule?: NodeModule,
+		nodeModule?: NodeModule
 	) {
 		this.path = path
 		this.sourceNodeIdentifier = sourceNodeIdentifier
@@ -36,13 +36,15 @@ export class GlobalIdentifier {
 	}
 
 	static regexString(): string {
-		return `^(${NodeModuleIdentifierRegexString}|)` +
-			`{(${UnifiedPathRegexString}|${LangInternalPathRegexString}|)}`
-			+`(${SourceNodeIdentifierRegexString}|${LangInternalSourceNodeIdentifierRegexString})$`
+		return (
+			`^(${NodeModuleIdentifierRegexString}|)` +
+			`{(${UnifiedPathRegexString}|${LangInternalPathRegexString}|)}` +
+			`(${SourceNodeIdentifierRegexString}|${LangInternalSourceNodeIdentifierRegexString})$`
+		)
 	}
 
 	static regex(): RegExp {
-		return new RegExp(GlobalIdentifier.regexString()) 
+		return new RegExp(GlobalIdentifier.regexString())
 	}
 
 	toJSON(): IGlobalIdentifier {
@@ -57,7 +59,7 @@ export class GlobalIdentifier {
 				path: this.path,
 				sourceNodeIdentifier: this.sourceNodeIdentifier
 			}
-		}	
+		}
 	}
 
 	get identifier(): GlobalSourceNodeIdentifier_string {
@@ -65,9 +67,7 @@ export class GlobalIdentifier {
 		if (!this.nodeModule) {
 			return `{${path}}${this.sourceNodeIdentifier}` as GlobalSourceNodeIdentifier_string
 		} else {
-			return (
-				`${this.nodeModule.identifier}{${path}}${this.sourceNodeIdentifier}`
-			) as GlobalSourceNodeIdentifier_string
+			return `${this.nodeModule.identifier}{${path}}${this.sourceNodeIdentifier}` as GlobalSourceNodeIdentifier_string
 		}
 	}
 
@@ -81,10 +81,12 @@ export class GlobalIdentifier {
 
 	static fromIdentifier(
 		identifier: GlobalSourceNodeIdentifier_string
-	) : GlobalIdentifier {
+	): GlobalIdentifier {
 		const matches = GlobalIdentifier.regex().exec(identifier)
 		if (!matches) {
-			throw new Error('GlobalIdentifier.fromIdentifier: invalid format: ' + identifier)
+			throw new Error(
+				'GlobalIdentifier.fromIdentifier: invalid format: ' + identifier
+			)
 		}
 
 		const nodeModuleIdentifier = matches[1]
@@ -101,13 +103,15 @@ export class GlobalIdentifier {
 		if (nodeModuleIdentifier === '') {
 			return new GlobalIdentifier(
 				preprocessedPath,
-				sourceNodeIdentifier as SourceNodeIdentifier_string,
+				sourceNodeIdentifier as SourceNodeIdentifier_string
 			)
 		} else {
 			return new GlobalIdentifier(
 				preprocessedPath,
 				sourceNodeIdentifier as SourceNodeIdentifier_string,
-				NodeModule.fromIdentifier(nodeModuleIdentifier as NodeModuleIdentifier_string)
+				NodeModule.fromIdentifier(
+					nodeModuleIdentifier as NodeModuleIdentifier_string
+				)
 			)
 		}
 	}

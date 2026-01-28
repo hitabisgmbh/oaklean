@@ -576,7 +576,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 										}
 									}
 								}
-							},
+							}
 						}
 					},
 					'6': {
@@ -602,7 +602,7 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (MODULE_SCOPE + SAME MODUL
 										}
 									}
 								}
-							},
+							}
 						}
 					}
 				}

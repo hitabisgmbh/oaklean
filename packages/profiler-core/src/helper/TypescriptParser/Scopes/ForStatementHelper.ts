@@ -11,17 +11,22 @@ import {
 } from '../../../types'
 
 export class ForStatementHelper {
-	static syntaxKind = [ts.SyntaxKind.ForStatement, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement]
+	static syntaxKind = [
+		ts.SyntaxKind.ForStatement,
+		ts.SyntaxKind.ForInStatement,
+		ts.SyntaxKind.ForOfStatement
+	]
 
 	static parseNode(
 		node: ts.ForStatement | ts.ForInStatement | ts.ForOfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.ForStatement> } {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ForStatement>
+	} {
 		return {
 			resolve() {
-				const statementName = `(for:${traverseNodeInfo.counters
-					.forStatementCounter++})`
+				const statementName = `(for:${traverseNodeInfo.counters.forStatementCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
 					traverseNodeInfo.nextId(),

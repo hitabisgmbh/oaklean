@@ -15,47 +15,40 @@ export class CPUProfileHelper {
 	/**
 	 * This function is used to convert all paths in the CPU profile to relative paths.
 	 * (relative to the rootDir)
-	 * 
+	 *
 	 * The CPU profile is then written to the given output path.
 	 * This creates anonymized CPU profiles that can be shared with others
 	 * while still preserving the structure of the profile
 	 * so it can be used in the InsertCPUProfileHelper.insertCPUProfile function.
-	 * 
+	 *
 	 * @param rootDir path to the root directory of the project
-	 * 
+	 *
 	 * @param cpuProfilePath path to the CPU profile that should be anonymized
 	 * @param outPath path to the output file
 	 */
 	static async anonymize(
 		rootDir: UnifiedPath,
 		cpuProfilePath: UnifiedPath,
-		outPath: UnifiedPath,
+		outPath: UnifiedPath
 	) {
 		const cpuProfile = await CPUProfileHelper.loadFromFile(cpuProfilePath)
 
 		if (cpuProfile === undefined) {
 			LoggerHelper.error(
 				`CPU profile could not be loaded from ${cpuProfilePath.toPlatformString()}. ` +
-				'Please make sure the file exists and is a valid CPU profile.'
+					'Please make sure the file exists and is a valid CPU profile.'
 			)
 			return
 		}
 
 		const nodes = cpuProfile.nodes as Cdp.Profiler.ProfileNode[]
 		for (const node of nodes) {
-			const location = new CPUProfileSourceLocation(
-				rootDir,
-				0,
-				node.callFrame
-			)
+			const location = new CPUProfileSourceLocation(rootDir, 0, node.callFrame)
 			if (!location.isLangInternal && !location.isWASM) {
 				node.callFrame.url = location.relativeUrl.toString()
 			}
 		}
-		await CPUProfileHelper.storeToFile(
-			cpuProfile,
-			outPath
-		)
+		await CPUProfileHelper.storeToFile(cpuProfile, outPath)
 	}
 
 	static async loadFromFile(
@@ -102,7 +95,7 @@ export class CPUProfileHelper {
 			sourceNodeLocationCount,
 			sampleCount,
 			totalHits,
-			totalCPUTime,
+			totalCPUTime
 		}
 	}
 
@@ -110,9 +103,6 @@ export class CPUProfileHelper {
 		cpuProfile: Cdp.Profiler.Profile,
 		cpuProfilePath: UnifiedPath
 	): Promise<void> {
-		await JSONHelper.storeBigJSON(
-			cpuProfilePath,
-			cpuProfile
-		)
+		await JSONHelper.storeBigJSON(cpuProfilePath, cpuProfile)
 	}
 }

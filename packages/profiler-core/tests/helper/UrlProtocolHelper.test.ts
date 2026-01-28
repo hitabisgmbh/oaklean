@@ -5,7 +5,9 @@ import { LoggerHelper } from '../../src/helper/LoggerHelper'
 describe('UrlProtocolHelper', () => {
 	describe('extractProtocol', () => {
 		test('unknown protocol', () => {
-			const loggerWarnSpy = jest.spyOn(LoggerHelper, 'warn').mockImplementation(() => undefined)
+			const loggerWarnSpy = jest
+				.spyOn(LoggerHelper, 'warn')
+				.mockImplementation(() => undefined)
 			expect(UrlProtocolHelper.extractProtocol('unknown://')).toBe('unknown')
 			expect(loggerWarnSpy).toHaveBeenCalledTimes(1)
 			loggerWarnSpy.mockRestore()
@@ -14,8 +16,16 @@ describe('UrlProtocolHelper', () => {
 		test('known protocols', () => {
 			const loggerWarnSpy = jest.spyOn(LoggerHelper, 'warn')
 			expect(UrlProtocolHelper.extractProtocol('file://')).toBe('file')
-			expect(UrlProtocolHelper.extractProtocol('webpack://next/dist/compiled/react-dom/cjs/react-dom-server.edge.development.js')).toBe('webpack')
-			expect(UrlProtocolHelper.extractProtocol('webpack-internal:///(rsc)/./src/app/layout.tsx')).toBe('webpack-internal')
+			expect(
+				UrlProtocolHelper.extractProtocol(
+					'webpack://next/dist/compiled/react-dom/cjs/react-dom-server.edge.development.js'
+				)
+			).toBe('webpack')
+			expect(
+				UrlProtocolHelper.extractProtocol(
+					'webpack-internal:///(rsc)/./src/app/layout.tsx'
+				)
+			).toBe('webpack-internal')
 			expect(loggerWarnSpy).not.toHaveBeenCalled()
 			loggerWarnSpy.mockRestore()
 		})
@@ -36,27 +46,31 @@ describe('UrlProtocolHelper', () => {
 		})
 
 		test('webpack', () => {
-			const url = 'webpack://next/dist/compiled/react-dom/cjs/react-dom-server.edge.development.js'
+			const url =
+				'webpack://next/dist/compiled/react-dom/cjs/react-dom-server.edge.development.js'
 
 			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
 				protocol: 'webpack',
 				namespace: 'next',
-				filePath: 'dist/compiled/react-dom/cjs/react-dom-server.edge.development.js',
+				filePath:
+					'dist/compiled/react-dom/cjs/react-dom-server.edge.development.js',
 				options: ''
 			})
 		})
 
 		test('webpack external', () => {
-			const url = 'webpack://next/external commonjs "next/dist/client/components/action-async-storage.external.js"'
+			const url =
+				'webpack://next/external commonjs "next/dist/client/components/action-async-storage.external.js"'
 
 			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
 			expect(result).toEqual({
 				protocol: 'webpack',
 				namespace: 'next',
-				filePath: 'external commonjs "next/dist/client/components/action-async-storage.external.js"',
+				filePath:
+					'external commonjs "next/dist/client/components/action-async-storage.external.js"',
 				options: ''
 			})
 		})
@@ -88,7 +102,8 @@ describe('UrlProtocolHelper', () => {
 		})
 
 		test('webpack-internal with options', () => {
-			const url = 'webpack://_N_E/node_modules/next/dist/esm/server/web/adapter.js?4fab'
+			const url =
+				'webpack://_N_E/node_modules/next/dist/esm/server/web/adapter.js?4fab'
 
 			const result = UrlProtocolHelper.parseWebpackSourceUrl(url)
 
@@ -107,42 +122,59 @@ describe('UrlProtocolHelper', () => {
 
 			expect(result).toBeNull()
 		})
-		
 	})
 
 	describe('webpackSourceMapUrlToOriginalUrl', () => {
-		test('with node module path', () =>{
+		test('with node module path', () => {
 			const rootDir = new UnifiedPath('/Users/user/project')
-			const originalSource = 'webpack://_N_E/node_modules/next/dist/esm/server/web/adapter.js?4fab'
+			const originalSource =
+				'webpack://_N_E/node_modules/next/dist/esm/server/web/adapter.js?4fab'
 
-			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
+			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(
+				rootDir,
+				originalSource
+			)
 
 			expect(result).toEqual({
-				url: new UnifiedPath('/Users/user/project/node_modules/next/dist/esm/server/web/adapter.js'),
+				url: new UnifiedPath(
+					'/Users/user/project/node_modules/next/dist/esm/server/web/adapter.js'
+				),
 				protocol: 'webpack'
 			})
 		})
 
 		test('with relative path', () => {
 			const rootDir = new UnifiedPath('/Users/user/project')
-			const originalSource = 'webpack://_N_E/../src/shared/lib/router/utils/app-paths.ts?4fab'
+			const originalSource =
+				'webpack://_N_E/../src/shared/lib/router/utils/app-paths.ts?4fab'
 
-			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
+			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(
+				rootDir,
+				originalSource
+			)
 
 			expect(result).toEqual({
-				url: new UnifiedPath('/Users/user/src/shared/lib/router/utils/app-paths.ts'),
+				url: new UnifiedPath(
+					'/Users/user/src/shared/lib/router/utils/app-paths.ts'
+				),
 				protocol: 'webpack'
 			})
 		})
 
 		test('with external', () => {
 			const rootDir = new UnifiedPath('/Users/user/project')
-			const originalSource = 'webpack://next/external commonjs "next/dist/client/components/action-async-storage.external.js"'
+			const originalSource =
+				'webpack://next/external commonjs "next/dist/client/components/action-async-storage.external.js"'
 
-			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(rootDir, originalSource)
+			const result = UrlProtocolHelper.webpackSourceMapUrlToOriginalUrl(
+				rootDir,
+				originalSource
+			)
 
 			expect(result).toEqual({
-				url: new UnifiedPath('/Users/user/project/external commonjs "next/dist/client/components/action-async-storage.external.js"'),
+				url: new UnifiedPath(
+					'/Users/user/project/external commonjs "next/dist/client/components/action-async-storage.external.js"'
+				),
 				protocol: 'webpack'
 			})
 		})

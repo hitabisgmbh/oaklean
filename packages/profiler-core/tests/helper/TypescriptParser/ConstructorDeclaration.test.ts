@@ -21,7 +21,7 @@ describe('ts.SyntaxKind.Constructor', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -71,7 +71,7 @@ describe('ts.SyntaxKind.Constructor with signatures', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -99,7 +99,7 @@ describe('ts.SyntaxKind.Constructor with signatures', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -127,10 +127,10 @@ describe('static ', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						},
 						'{method@static:constructor}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						}
 					}
 				}

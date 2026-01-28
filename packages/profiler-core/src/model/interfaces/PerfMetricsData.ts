@@ -27,8 +27,11 @@ export class PerfMetricsData extends BaseMetricsData {
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-	static fromJSON(json: string | IPerfMetricsData, ...args: any[]): PerfMetricsData {
+	static fromJSON(
+		json: string | IPerfMetricsData,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
+		...args: any[]
+	): PerfMetricsData {
 		let data: IPerfMetricsData
 		if (typeof json === 'string') {
 			data = JSON.parse(json)

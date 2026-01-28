@@ -23,7 +23,7 @@ describe('ts.SyntaxKind.PrivateIdentifier', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{method:#private}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						},
 						'{method@static:#private}': {
 							type: ProgramStructureTreeType.MethodDefinition
@@ -55,10 +55,10 @@ describe('ts.SyntaxKind.Identifier', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{method:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						},
 						'{method@static:method}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						}
 					}
 				}
@@ -87,10 +87,10 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{method:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						},
 						'{method@static:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						}
 					}
 				}
@@ -119,10 +119,10 @@ describe('ts.SyntaxKind.BigIntLiteral', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{method:(literal:40a3fd3b)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						},
 						'{method@static:(literal:40a3fd3b)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						}
 					}
 				}
@@ -151,10 +151,10 @@ describe('ts.SyntaxKind.FunctionExpression', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{method:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						},
 						'{method@static:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						}
 					}
 				}
@@ -184,10 +184,10 @@ describe('ts.SyntaxKind.ComputedPropertyName', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{method:(expression:34832631)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						},
 						'{method@static:(expression:34832631)}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						}
 					}
 				}
@@ -263,7 +263,7 @@ describe('ts.SyntaxKind.MethodDeclaration with signature', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{method:MethodDeclaration}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						}
 					}
 				}
@@ -291,7 +291,7 @@ describe('ts.SyntaxKind.MethodDeclaration with signature', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{method:MethodDeclaration}': {
-							type: ProgramStructureTreeType.MethodDefinition,
+							type: ProgramStructureTreeType.MethodDefinition
 						}
 					}
 				}

@@ -11,7 +11,9 @@ export default class MetricsDataCommands {
 		const baseCommand = program
 			.command('metrics-data')
 			.alias('md')
-			.description('commands to convert or inspect the metrics data collection format')
+			.description(
+				'commands to convert or inspect the metrics data collection format'
+			)
 
 		baseCommand
 			.command('show')
@@ -28,7 +30,7 @@ export default class MetricsDataCommands {
 	async show(
 		input: string,
 		options: {
-			csv?: string,
+			csv?: string
 		}
 	) {
 		let inputPath = new UnifiedPath(input)
@@ -38,28 +40,23 @@ export default class MetricsDataCommands {
 
 		const outputAsCSV = options.csv !== undefined
 
-		const data = MetricsDataCollection.loadFromFile(
-			inputPath
-		)
-		
+		const data = MetricsDataCollection.loadFromFile(inputPath)
+
 		if (data) {
 			const pid = data.pid
 			const values: {
-				processEnergy: string,
-				systemEnergy: string,
-				energyPortionOfProcess: string,
+				processEnergy: string
+				systemEnergy: string
+				energyPortionOfProcess: string
 				duration: NanoSeconds_BigInt
 			}[] = []
 
 			if (outputAsCSV) {
-				LoggerHelper.log([
-					'process (mJ)',
-					'system (mJ)',
-					'portion',
-					'duration (ns)'
-				].join(','))
+				LoggerHelper.log(
+					['process (mJ)', 'system (mJ)', 'portion', 'duration (ns)'].join(',')
+				)
 			}
-		
+
 			for (const item of data.items) {
 				if (item.processIsPresent(pid)) {
 					const energyPortionOfProcess = item.energyPortionOfProcess(pid)
@@ -76,30 +73,31 @@ export default class MetricsDataCommands {
 					values.push(data)
 
 					if (outputAsCSV) {
-						LoggerHelper.log([
-							data.processEnergy,
-							data.systemEnergy,
-							data.energyPortionOfProcess,
-							data.duration
-						].join(','))
+						LoggerHelper.log(
+							[
+								data.processEnergy,
+								data.systemEnergy,
+								data.energyPortionOfProcess,
+								data.duration
+							].join(',')
+						)
 					}
 				}
 			}
-		
+
 			if (!outputAsCSV) {
 				LoggerHelper.table(
 					values.map((value) => {
 						return {
 							'process (mJ)': value.processEnergy,
 							'system (mJ)': value.systemEnergy,
-							'portion': value.energyPortionOfProcess,
+							portion: value.energyPortionOfProcess,
 							'duration (ns)': value.duration
 						}
 					}),
-					['process (mJ)', 'system (mJ)', 'portion', 'duration (ns)'],
+					['process (mJ)', 'system (mJ)', 'portion', 'duration (ns)']
 				)
 			}
 		}
-		
 	}
 }

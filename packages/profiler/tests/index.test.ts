@@ -21,29 +21,62 @@ const fibonacci = (n: number): number => {
 }
 
 describe('testing index file', () => {
-	test('profile should be created', async () => {
-		const uploadMethod = jest.spyOn(RegistryHelper, 'uploadToRegistry').mockResolvedValue(undefined)
-		
-		const profile = new Profiler('test-profile')
-		await profile.start('latest')
-		fibonacci(20)
-		await profile.finish('latest')
-		expect(uploadMethod).toHaveBeenCalledTimes(1)
+	test(
+		'profile should be created',
+		async () => {
+			const uploadMethod = jest
+				.spyOn(RegistryHelper, 'uploadToRegistry')
+				.mockResolvedValue(undefined)
 
-		const expectedPath = CURRENT_DIR.join('..', '..', '..', 'profiles', 'test-profile', 'latest.oak')
-		expect(fs.existsSync(expectedPath.toPlatformString())).toBeTruthy()
+			const profile = new Profiler('test-profile')
+			await profile.start('latest')
+			fibonacci(20)
+			await profile.finish('latest')
+			expect(uploadMethod).toHaveBeenCalledTimes(1)
 
-		const expectedCPUProfilePath = CURRENT_DIR.join('..', '..', '..', 'profiles', 'test-profile', 'latest.cpuprofile')
-		expect(fs.existsSync(expectedCPUProfilePath.toPlatformString())).toBeTruthy()
+			const expectedPath = CURRENT_DIR.join(
+				'..',
+				'..',
+				'..',
+				'profiles',
+				'test-profile',
+				'latest.oak'
+			)
+			expect(fs.existsSync(expectedPath.toPlatformString())).toBeTruthy()
 
-		const cpuProfile = JSON.parse(fs.readFileSync(expectedCPUProfilePath.toPlatformString()).toString())
+			const expectedCPUProfilePath = CURRENT_DIR.join(
+				'..',
+				'..',
+				'..',
+				'profiles',
+				'test-profile',
+				'latest.cpuprofile'
+			)
+			expect(
+				fs.existsSync(expectedCPUProfilePath.toPlatformString())
+			).toBeTruthy()
 
-		const t = () => {
-			buildModel(cpuProfile)
-		}
-		expect(t).not.toThrow()
-		fs.rmSync(CURRENT_DIR.join('..', '..', '..', 'profiles', 'test-profile').toPlatformString(), { recursive: true })
+			const cpuProfile = JSON.parse(
+				fs.readFileSync(expectedCPUProfilePath.toPlatformString()).toString()
+			)
 
-		uploadMethod.mockRestore()
-	}, 1000 * 60 * 5) // timout after 5 minutes
+			const t = () => {
+				buildModel(cpuProfile)
+			}
+			expect(t).not.toThrow()
+			fs.rmSync(
+				CURRENT_DIR.join(
+					'..',
+					'..',
+					'..',
+					'profiles',
+					'test-profile'
+				).toPlatformString(),
+				{ recursive: true }
+			)
+
+			uploadMethod.mockRestore()
+		},
+		1000 * 60 * 5
+	) // timout after 5 minutes
 })

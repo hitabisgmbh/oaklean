@@ -1,16 +1,8 @@
-import {
-	IPowerMetricsData
-} from './PowerMetricsData'
-import {
-	IPerfMetricsData
-} from './PerfMetricsData'
-import {
-	IWindowsSensorInterfaceMetricsData
-} from './WindowsSensorInterfaceMetricsData'
+import { IPowerMetricsData } from './PowerMetricsData'
+import { IPerfMetricsData } from './PerfMetricsData'
+import { IWindowsSensorInterfaceMetricsData } from './WindowsSensorInterfaceMetricsData'
 
-import {
-	NanoSeconds_BigInt
-} from '../helper/TimeHelper'
+import { NanoSeconds_BigInt } from '../helper/TimeHelper'
 
 export enum MetricsDataCollectionType {
 	PowerMetricsPerProcess = 'PowerMetricsPerProcess',
@@ -19,18 +11,22 @@ export enum MetricsDataCollectionType {
 }
 
 export type TimeInfo = {
-	startTime: NanoSeconds_BigInt,
+	startTime: NanoSeconds_BigInt
 	stopTime: NanoSeconds_BigInt
 }
 
 export type ITimeInfo = {
-	startTime: string,
+	startTime: string
 	stopTime: string
 }
 
 export interface IMetricsDataCollection {
-	type: MetricsDataCollectionType,
-	pid: number,
-	items: (IPowerMetricsData | IPerfMetricsData | IWindowsSensorInterfaceMetricsData)[]
+	type: MetricsDataCollectionType
+	pid: number
+	items: (
+		| IPowerMetricsData
+		| IPerfMetricsData
+		| IWindowsSensorInterfaceMetricsData
+	)[]
 	timeInfo: ITimeInfo
 }

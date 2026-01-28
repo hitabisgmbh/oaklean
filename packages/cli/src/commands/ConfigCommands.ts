@@ -15,7 +15,9 @@ export default class ConfigCommands {
 
 		parseCommand
 			.command('resolve')
-			.description('Resolves the given config file and outputs the resolved config (including all default values and overrides)')
+			.description(
+				'Resolves the given config file and outputs the resolved config (including all default values and overrides)'
+			)
 			.argument('<input>', 'input file path')
 			.action(this.resolve.bind(this))
 	}
@@ -24,14 +26,15 @@ export default class ConfigCommands {
 		return new ConfigCommands()
 	}
 
-
 	async resolve(input: string) {
 		let inputPath = new UnifiedPath(input)
 		if (inputPath.isRelative()) {
 			inputPath = new UnifiedPath(process.cwd()).join(inputPath)
 		}
 		if (!fs.existsSync(inputPath.toPlatformString())) {
-			LoggerHelper.error(`The file ${inputPath.toPlatformString()} does not exist`)
+			LoggerHelper.error(
+				`The file ${inputPath.toPlatformString()} does not exist`
+			)
 			return
 		}
 

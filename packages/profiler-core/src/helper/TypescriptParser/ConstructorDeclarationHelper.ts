@@ -19,12 +19,12 @@ export class ConstructorDeclarationHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<
-			ProgramStructureTreeType.ConstructorDeclaration |
-			ProgramStructureTreeType.MethodDefinition
-			>,
-			resolveWithNoChildren: true
-		} | null {
+		resolve(): ProgramStructureTree<
+			| ProgramStructureTreeType.ConstructorDeclaration
+			| ProgramStructureTreeType.MethodDefinition
+		>
+		resolveWithNoChildren: true
+	} | null {
 		if (node.body === undefined) {
 			return null
 		}

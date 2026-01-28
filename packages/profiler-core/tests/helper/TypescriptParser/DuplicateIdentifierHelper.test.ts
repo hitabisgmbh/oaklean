@@ -11,11 +11,11 @@ import {
 } from '../../../src/types'
 
 const identifiers: Record<
-keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
-{
-	input: SourceNodeIdentifierPart_string
-	duplicateFormat: SourceNodeIdentifierPart_string
-}[]
+	keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
+	{
+		input: SourceNodeIdentifierPart_string
+		duplicateFormat: SourceNodeIdentifierPart_string
+	}[]
 > = {
 	[ProgramStructureTreeType.FunctionDeclaration]: [
 		{
@@ -31,7 +31,8 @@ keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
 		},
 		{
 			input: '{method@static:m}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{method@static:m:{counter}}' as SourceNodeIdentifierPart_string
+			duplicateFormat:
+				'{method@static:m:{counter}}' as SourceNodeIdentifierPart_string
 		}
 	],
 	[ProgramStructureTreeType.GetAccessorDeclaration]: [
@@ -41,7 +42,8 @@ keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
 		},
 		{
 			input: '{get@static:g}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{get@static:g:{counter}}' as SourceNodeIdentifierPart_string
+			duplicateFormat:
+				'{get@static:g:{counter}}' as SourceNodeIdentifierPart_string
 		}
 	],
 	[ProgramStructureTreeType.SetAccessorDeclaration]: [
@@ -51,48 +53,59 @@ keyof typeof HANDLE_DUPLICATE_IDENTIFIERS,
 		},
 		{
 			input: '{set@static:s}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{set@static:s:{counter}}' as SourceNodeIdentifierPart_string
+			duplicateFormat:
+				'{set@static:s:{counter}}' as SourceNodeIdentifierPart_string
 		}
 	],
 	[ProgramStructureTreeType.FunctionExpression]: [
 		{
 			input: '{functionExpression:fe}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{functionExpression:fe:{counter}}' as SourceNodeIdentifierPart_string
+			duplicateFormat:
+				'{functionExpression:fe:{counter}}' as SourceNodeIdentifierPart_string
 		},
 		{
-			input: '{functionExpression@static:fe}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{functionExpression@static:fe:{counter}}' as SourceNodeIdentifierPart_string
-		},
+			input:
+				'{functionExpression@static:fe}' as SourceNodeIdentifierPart_string,
+			duplicateFormat:
+				'{functionExpression@static:fe:{counter}}' as SourceNodeIdentifierPart_string
+		}
 	],
 	[ProgramStructureTreeType.ClassExpression]: [
 		{
 			input: '{classExpression:ce}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{classExpression:ce:{counter}}' as SourceNodeIdentifierPart_string
+			duplicateFormat:
+				'{classExpression:ce:{counter}}' as SourceNodeIdentifierPart_string
 		},
 		{
 			input: '{classExpression@static:ce}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{classExpression@static:ce:{counter}}' as SourceNodeIdentifierPart_string
-		},
+			duplicateFormat:
+				'{classExpression@static:ce:{counter}}' as SourceNodeIdentifierPart_string
+		}
 	],
 	[ProgramStructureTreeType.ObjectLiteralExpression]: [
 		{
 			input: '{scope:(obj:obj)}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{scope:(obj:obj:{counter})}' as SourceNodeIdentifierPart_string
+			duplicateFormat:
+				'{scope:(obj:obj:{counter})}' as SourceNodeIdentifierPart_string
 		},
 		{
-			input: '{scope:(obj@static:(expression:34832631))}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{scope:(obj@static:(expression:34832631):{counter})}' as SourceNodeIdentifierPart_string
-		},
+			input:
+				'{scope:(obj@static:(expression:34832631))}' as SourceNodeIdentifierPart_string,
+			duplicateFormat:
+				'{scope:(obj@static:(expression:34832631):{counter})}' as SourceNodeIdentifierPart_string
+		}
 	],
 	[ProgramStructureTreeType.SwitchCaseClause]: [
 		{
 			input: '{scope:(case:default)}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{scope:(case:default:{counter})}' as SourceNodeIdentifierPart_string
+			duplicateFormat:
+				'{scope:(case:default:{counter})}' as SourceNodeIdentifierPart_string
 		},
 		{
 			input: '{scope:(case:34832631)}' as SourceNodeIdentifierPart_string,
-			duplicateFormat: '{scope:(case:34832631:{counter})}' as SourceNodeIdentifierPart_string
-		},
+			duplicateFormat:
+				'{scope:(case:34832631:{counter})}' as SourceNodeIdentifierPart_string
+		}
 	]
 }
 

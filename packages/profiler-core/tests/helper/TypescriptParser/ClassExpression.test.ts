@@ -3,7 +3,7 @@ import { UnifiedPath } from '../../../src/system/UnifiedPath'
 // Types
 import { ProgramStructureTreeType } from '../../../src/types'
 
-describe ('exports', () => {
+describe('exports', () => {
 	/*
 		export = class {}
 		transpiled to:
@@ -23,7 +23,7 @@ describe ('exports', () => {
 		so both cases will have the same identifiers
 	*/
 
-	describe ('module.exports', () => {
+	describe('module.exports', () => {
 		const code = `
 			module.exports = class ClassExpression {
 				constructor(args: any) {}
@@ -99,7 +99,7 @@ describe('ts.SyntaxKind.VariableDeclaration', () => {
 					type: ProgramStructureTreeType.ClassExpression,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -137,7 +137,7 @@ describe('ts.SyntaxKind.ReturnStatement', () => {
 									type: ProgramStructureTreeType.ClassExpression,
 									children: {
 										'{constructor:constructor}': {
-											type: ProgramStructureTreeType.ConstructorDeclaration,
+											type: ProgramStructureTreeType.ConstructorDeclaration
 										}
 									}
 								}
@@ -169,7 +169,7 @@ describe('ts.SyntaxKind.PropertyAccessExpression', () => {
 					type: ProgramStructureTreeType.ClassExpression,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -197,7 +197,7 @@ describe('ts.SyntaxKind.NewExpression', () => {
 					type: ProgramStructureTreeType.ClassExpression,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -229,7 +229,7 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 						type: ProgramStructureTreeType.ClassExpression,
 						children: {
 							'{constructor:constructor}': {
-								type: ProgramStructureTreeType.ConstructorDeclaration,
+								type: ProgramStructureTreeType.ConstructorDeclaration
 							}
 						}
 					},
@@ -237,7 +237,7 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 						type: ProgramStructureTreeType.ClassExpression,
 						children: {
 							'{constructor:constructor}': {
-								type: ProgramStructureTreeType.ConstructorDeclaration,
+								type: ProgramStructureTreeType.ConstructorDeclaration
 							}
 						}
 					}
@@ -268,7 +268,7 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 						type: ProgramStructureTreeType.ClassExpression,
 						children: {
 							'{constructor:constructor}': {
-								type: ProgramStructureTreeType.ConstructorDeclaration,
+								type: ProgramStructureTreeType.ConstructorDeclaration
 							}
 						}
 					},
@@ -276,7 +276,7 @@ describe('ts.SyntaxKind.ParenthesizedExpression', () => {
 						type: ProgramStructureTreeType.ClassExpression,
 						children: {
 							'{constructor:constructor}': {
-								type: ProgramStructureTreeType.ConstructorDeclaration,
+								type: ProgramStructureTreeType.ConstructorDeclaration
 							}
 						}
 					}
@@ -305,7 +305,7 @@ describe('ts.SyntaxKind.CallExpression', () => {
 					type: ProgramStructureTreeType.ClassExpression,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -338,7 +338,7 @@ describe('ts.SyntaxKind.PropertyAssignment', () => {
 							type: ProgramStructureTreeType.ClassExpression,
 							children: {
 								'{constructor:constructor}': {
-									type: ProgramStructureTreeType.ConstructorDeclaration,
+									type: ProgramStructureTreeType.ConstructorDeclaration
 								}
 							}
 						}
@@ -368,7 +368,7 @@ describe('ts.SyntaxKind.ArrayLiteralExpression', () => {
 					type: ProgramStructureTreeType.ClassExpression,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -399,7 +399,7 @@ describe('ts.SyntaxKind.ArrowFunction', () => {
 							type: ProgramStructureTreeType.ClassExpression,
 							children: {
 								'{constructor:constructor}': {
-									type: ProgramStructureTreeType.ConstructorDeclaration,
+									type: ProgramStructureTreeType.ConstructorDeclaration
 								}
 							}
 						}
@@ -431,7 +431,7 @@ describe('ts.SyntaxKind.ConditionalExpression', () => {
 					type: ProgramStructureTreeType.ClassExpression,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				},
@@ -439,7 +439,7 @@ describe('ts.SyntaxKind.ConditionalExpression', () => {
 					type: ProgramStructureTreeType.ClassExpression,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -454,7 +454,11 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 	`
 
 	test('expected identifier', () => {
-		const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code, 'TSX')
+		const pst = TypescriptParser.parseSource(
+			new UnifiedPath('test.ts'),
+			code,
+			'TSX'
+		)
 
 		const hierarchy = pst.identifierHierarchy()
 
@@ -465,7 +469,7 @@ describe('ts.SyntaxKind.JsxExpression', () => {
 					type: ProgramStructureTreeType.ClassExpression,
 					children: {
 						'{constructor:constructor}': {
-							type: ProgramStructureTreeType.ConstructorDeclaration,
+							type: ProgramStructureTreeType.ConstructorDeclaration
 						}
 					}
 				}
@@ -792,22 +796,22 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression:(expression:34832631)}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression@static:(expression:34832631)}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression@static:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression@static:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression:#private:1}': {
 							type: ProgramStructureTreeType.ClassExpression
@@ -819,23 +823,23 @@ describe('duplicates in code', () => {
 							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression:(expression:34832631):1}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression@static:(expression:34832631):1}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression:(literal:7e2b9fea):1}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression@static:(literal:7e2b9fea):1}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression:(literal:92cfceb3):1}': {
-							type: ProgramStructureTreeType.ClassExpression,
+							type: ProgramStructureTreeType.ClassExpression
 						},
 						'{classExpression@static:(literal:92cfceb3):1}': {
-							type: ProgramStructureTreeType.ClassExpression,
-						},
+							type: ProgramStructureTreeType.ClassExpression
+						}
 					}
 				}
 			}

@@ -4,12 +4,7 @@ import { GlobalIndex } from './indices/GlobalIndex'
 import { ModuleIndex } from './indices/ModuleIndex'
 
 // Types
-import {
-	IModuleReport,
-	ReportType,
-	ReportKind
-} from '../types'
-
+import { IModuleReport, ReportType, ReportKind } from '../types'
 
 export class ModuleReport extends Report {
 	nodeModule: NodeModule
@@ -34,10 +29,12 @@ export class ModuleReport extends Report {
 
 		for (const moduleReport of args) {
 			if (nodeModule.identifier !== moduleReport.nodeModule.identifier) {
-				throw new Error('ModuleReport.merge: all ModuleReports should be from the same module.')
+				throw new Error(
+					'ModuleReport.merge: all ModuleReports should be from the same module.'
+				)
 			}
 		}
-		
+
 		const result = Object.assign(
 			new ModuleReport(
 				moduleIndex,
@@ -86,38 +83,37 @@ export class ModuleReport extends Report {
 		const reportBuffer = super.toBuffer(ReportType.ModuleReport)
 
 		return Buffer.concat([nodeModuleBuffer, reportBuffer])
-	} 
+	}
 
 	static consumeFromBuffer(
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		buffer: Buffer,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		moduleIndex: ModuleIndex
-	): { instance: Report, type: ReportType, remainingBuffer: Buffer } {
-		throw new Error('ModuleReport.consumeFromBuffer: use consumeFromBuffer_ModuleReport instead')
+	): { instance: Report; type: ReportType; remainingBuffer: Buffer } {
+		throw new Error(
+			'ModuleReport.consumeFromBuffer: use consumeFromBuffer_ModuleReport instead'
+		)
 	}
 
 	static consumeFromBuffer_ModuleReport(
 		buffer: Buffer,
 		globalIndex: GlobalIndex
-	): { instance: ModuleReport, remainingBuffer: Buffer } {
-		const { instance: nodeModule, remainingBuffer } = NodeModule.consumeFromBuffer(buffer)
+	): { instance: ModuleReport; remainingBuffer: Buffer } {
+		const { instance: nodeModule, remainingBuffer } =
+			NodeModule.consumeFromBuffer(buffer)
 		const moduleIndex = globalIndex.getModuleIndex('get', nodeModule.identifier)
 
 		if (moduleIndex === undefined) {
-			throw new Error('ModuleReport.consumeFromBuffer: could not resolve module index')
+			throw new Error(
+				'ModuleReport.consumeFromBuffer: could not resolve module index'
+			)
 		}
-		const {
-			instance: report,
-			remainingBuffer: newRemainingBuffer
-		} = Report.consumeFromBufferReport(remainingBuffer, moduleIndex)
+		const { instance: report, remainingBuffer: newRemainingBuffer } =
+			Report.consumeFromBufferReport(remainingBuffer, moduleIndex)
 
 		const result = Object.assign(
-			new ModuleReport(
-				moduleIndex,
-				nodeModule,
-				report.kind
-			),
+			new ModuleReport(moduleIndex, nodeModule, report.kind),
 			report
 		)
 

@@ -1,7 +1,7 @@
 import { EventHandler } from '../../src/helper/EventHandler'
 
 type EventMap = {
-	event1: [string],
+	event1: [string]
 	event2: [number]
 }
 
@@ -66,7 +66,7 @@ describe('EventHandler', () => {
 		await new Promise(process.nextTick)
 		expect(promiseResolved).toHaveBeenCalled()
 		expect(secondPromiseResolved).toHaveBeenCalledTimes(1)
-		
+
 		expect(instance.eventCount('event1')).toBe(2)
 	})
 

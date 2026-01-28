@@ -45,37 +45,47 @@ import {
 type OnDuplicateIdentifierCallback = (
 	filePath: UnifiedPath | UnifiedPath_string,
 	node:
-	ts.FunctionDeclaration |
-	ts.FunctionExpression |
-	ts.ArrowFunction | ts.MethodDeclaration | ts.ClassDeclaration | ts.ConstructorDeclaration,
+		| ts.FunctionDeclaration
+		| ts.FunctionExpression
+		| ts.ArrowFunction
+		| ts.MethodDeclaration
+		| ts.ClassDeclaration
+		| ts.ConstructorDeclaration,
 	identifier: string,
 	loc: {
-		begin: NodeLocation,
+		begin: NodeLocation
 		end: NodeLocation
 	},
 	duplicateLoc: {
-		begin: NodeLocation,
+		begin: NodeLocation
 		end: NodeLocation
 	}
 ) => void
 
-const PARSE_NODE_FUNCTIONS: Record<number, (
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	...args: any
-) => {
-	resolve(): ProgramStructureTree,
-	resolveWithNoChildren?: true
-} | null> = {
+const PARSE_NODE_FUNCTIONS: Record<
+	number,
+	(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		...args: any
+	) => {
+		resolve(): ProgramStructureTree
+		resolveWithNoChildren?: true
+	} | null
+> = {
 	[ClassDeclarationHelper.syntaxKind]: ClassDeclarationHelper.parseNode,
 	[ClassExpressionHelper.syntaxKind]: ClassExpressionHelper.parseNode,
-	[ConstructorDeclarationHelper.syntaxKind]: ConstructorDeclarationHelper.parseNode,
+	[ConstructorDeclarationHelper.syntaxKind]:
+		ConstructorDeclarationHelper.parseNode,
 	[FunctionDeclarationHelper.syntaxKind]: FunctionDeclarationHelper.parseNode,
 	[FunctionExpressionHelper.syntaxKind]: FunctionExpressionHelper.parseNode,
 	[MethodDeclarationHelper.syntaxKind]: MethodDeclarationHelper.parseNode,
-	[GetAccessorDeclarationHelper.syntaxKind]: GetAccessorDeclarationHelper.parseNode,
-	[SetAccessorDeclarationHelper.syntaxKind]: SetAccessorDeclarationHelper.parseNode,
+	[GetAccessorDeclarationHelper.syntaxKind]:
+		GetAccessorDeclarationHelper.parseNode,
+	[SetAccessorDeclarationHelper.syntaxKind]:
+		SetAccessorDeclarationHelper.parseNode,
 	[ArrowFunctionHelper.syntaxKind]: ArrowFunctionHelper.parseNode,
-	[ObjectLiteralExpressionHelper.syntaxKind]: ObjectLiteralExpressionHelper.parseNode,
+	[ObjectLiteralExpressionHelper.syntaxKind]:
+		ObjectLiteralExpressionHelper.parseNode,
 	[IfStatementHelper.syntaxKind]: IfStatementHelper.parseNode,
 	[ForStatementHelper.syntaxKind[0]]: ForStatementHelper.parseNode,
 	[ForStatementHelper.syntaxKind[1]]: ForStatementHelper.parseNode,
@@ -84,58 +94,69 @@ const PARSE_NODE_FUNCTIONS: Record<number, (
 	[WhileStatementHelper.syntaxKind[1]]: WhileStatementHelper.parseNode,
 	[TryStatementHelper.syntaxKind]: TryStatementHelper.parseNode,
 	[BlockHelper.syntaxKind]: BlockHelper.parseNode,
-	[ClassStaticBlockDeclarationHelper.syntaxKind]: ClassStaticBlockDeclarationHelper.parseNode,
+	[ClassStaticBlockDeclarationHelper.syntaxKind]:
+		ClassStaticBlockDeclarationHelper.parseNode,
 	[SwitchStatementHelper.syntaxKind]: SwitchStatementHelper.parseNode,
 	[ModuleDeclarationHelper.syntaxKind]: ModuleDeclarationHelper.parseNode
 }
 
-export const HANDLE_DUPLICATE_IDENTIFIERS: Record<string, (
-	tree: ProgramStructureTree,
-	node: ts.Node
-) => boolean> = {
-	[ProgramStructureTreeType.FunctionDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
-	[ProgramStructureTreeType.MethodDefinition]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
-	[ProgramStructureTreeType.GetAccessorDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
-	[ProgramStructureTreeType.SetAccessorDeclaration]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
-	[ProgramStructureTreeType.FunctionExpression]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
-	[ProgramStructureTreeType.ClassExpression]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
-	[ProgramStructureTreeType.ObjectLiteralExpression]: DuplicateIdentifierHelper.handleDuplicateIdentifier,
-	[ProgramStructureTreeType.SwitchCaseClause]: DuplicateIdentifierHelper.handleDuplicateIdentifier
+export const HANDLE_DUPLICATE_IDENTIFIERS: Record<
+	string,
+	(tree: ProgramStructureTree, node: ts.Node) => boolean
+> = {
+	[ProgramStructureTreeType.FunctionDeclaration]:
+		DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.MethodDefinition]:
+		DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.GetAccessorDeclaration]:
+		DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.SetAccessorDeclaration]:
+		DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.FunctionExpression]:
+		DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.ClassExpression]:
+		DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.ObjectLiteralExpression]:
+		DuplicateIdentifierHelper.handleDuplicateIdentifier,
+	[ProgramStructureTreeType.SwitchCaseClause]:
+		DuplicateIdentifierHelper.handleDuplicateIdentifier
 }
 
 export class TypescriptParser {
 	/**
 	 * Method to transpile a file
 	 * it determines the tsconfig to use and transpiles the given file with the compiler options of its tsconfig
-	 * 
+	 *
 	 * @param filePath source file to transpile
 	 * @param sourceCode source code of the file to transpile
 	 * @returns transpiled source code of the given file
 	 */
 
 	static transpileCode(filePath: UnifiedPath, sourceCode: string): string {
-		const tsconfigFilePath = TypescriptParser.tsConfigFilePathFromFile(filePath.toPlatformString())
+		const tsconfigFilePath = TypescriptParser.tsConfigFilePathFromFile(
+			filePath.toPlatformString()
+		)
 
 		if (!tsconfigFilePath) {
 			throw new Error(
 				'TypescriptParser.transpileCode: Could not find a tsconfig for: ' +
-				filePath.toPlatformString()
+					filePath.toPlatformString()
 			)
 		}
 
 		const tsconfig = TypescriptParser.readConfigFile(tsconfigFilePath)
 
 		if (!tsconfig) {
-			throw new Error('TypescriptParser.transpileCode: Could not parse tje tsconfig: ' + tsconfigFilePath)
+			throw new Error(
+				'TypescriptParser.transpileCode: Could not parse tje tsconfig: ' +
+					tsconfigFilePath
+			)
 		}
 
-		const transpiledCode = ts.transpileModule(
-			sourceCode,
-			{
-				fileName: filePath.toString(),
-				compilerOptions: tsconfig.options
-			}
-		)
+		const transpiledCode = ts.transpileModule(sourceCode, {
+			fileName: filePath.toString(),
+			compilerOptions: tsconfig.options
+		})
 		return transpiledCode.outputText
 	}
 
@@ -189,7 +210,7 @@ export class TypescriptParser {
 		const addSubTree = (
 			node: ts.Node,
 			currentTraverseNodeInfo: TraverseNodeInfo,
-			parentTraverseNodeInfo: TraverseNodeInfo,
+			parentTraverseNodeInfo: TraverseNodeInfo
 		) => {
 			const subTree = currentTraverseNodeInfo.resolvedTree()
 			if (subTree.parent === null) {
@@ -203,12 +224,13 @@ export class TypescriptParser {
 					HANDLE_DUPLICATE_IDENTIFIERS[subTree.type] !== undefined &&
 					HANDLE_DUPLICATE_IDENTIFIERS[subTree.type](subTree, node)
 
-				if (!duplicatesAreExpected && onDuplicateIdentifier !== undefined){
-					const identifier = subTree.parent.identifierPath() + '.' + subTree.identifier
+				if (!duplicatesAreExpected && onDuplicateIdentifier !== undefined) {
+					const identifier =
+						subTree.parent.identifierPath() + '.' + subTree.identifier
 					onDuplicateIdentifier(
 						filePath,
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						(node as any),
+						node as any,
 						identifier,
 						{
 							begin: subTree.beginLoc,
@@ -244,7 +266,11 @@ export class TypescriptParser {
 				return revertToTraverseNodeInfo
 			}
 
-			const intermediateNode = ScopeHelper.parseIntermediateNode(node, sourceFile, currentTraverseNodeInfo)
+			const intermediateNode = ScopeHelper.parseIntermediateNode(
+				node,
+				sourceFile,
+				currentTraverseNodeInfo
+			)
 			if (intermediateNode !== undefined) {
 				currentTraverseNodeInfo = new TraverseNodeInfo(
 					currentTraverseNodeInfo, // store last visited node
@@ -276,13 +302,19 @@ export class TypescriptParser {
 			} else {
 				LoggerHelper.error(
 					'TypescriptParser.parseFile: subTree is undefined, unexpected behaviour',
-					JSON.stringify({
-						filePath,
-						node: ts.SyntaxKind[node.kind],
-						code: node.getText(sourceFile)
-					}, undefined, 2)
+					JSON.stringify(
+						{
+							filePath,
+							node: ts.SyntaxKind[node.kind],
+							code: node.getText(sourceFile)
+						},
+						undefined,
+						2
+					)
 				)
-				throw new Error('TypescriptParser.parseFile: subTree is undefined, unexpected behaviour')
+				throw new Error(
+					'TypescriptParser.parseFile: subTree is undefined, unexpected behaviour'
+				)
 			}
 			return currentTraverseNodeInfo
 		}
@@ -301,11 +333,7 @@ export class TypescriptParser {
 					traverseNodeInfo.counters.childrenCounter !== 0 ||
 					traverseNodeInfo.shouldResolveTreeWithZeroChildren()
 				) {
-					addSubTree(
-						node,
-						traverseNodeInfo,
-						traverseNodeInfo.parent
-					)
+					addSubTree(node, traverseNodeInfo, traverseNodeInfo.parent)
 				}
 				traverseNodeInfo = traverseNodeInfo.parent
 			}
@@ -324,13 +352,13 @@ export class TypescriptParser {
 		)
 
 		type StackFrame = {
-			depth: number,
-			node: ts.Node,
+			depth: number
+			node: ts.Node
 			visited: boolean
 		}
 
 		const stack: StackFrame[] = [{ depth: 0, node: sourceFile, visited: false }]
-		while ( stack.length > 0) {
+		while (stack.length > 0) {
 			const currentStackFrame = stack[stack.length - 1]
 
 			if (!currentStackFrame.visited) {
@@ -342,10 +370,17 @@ export class TypescriptParser {
 				currentStackFrame.visited = true
 				const insertPos = stack.length
 				ts.forEachChild(currentStackFrame.node, (child) => {
-					stack.splice(insertPos, 0, { depth: currentStackFrame.depth + 1, node: child, visited: false })
+					stack.splice(insertPos, 0, {
+						depth: currentStackFrame.depth + 1,
+						node: child,
+						visited: false
+					})
 				})
 			} else {
-				currentTraverseNodeInfo = leaveNode(currentTraverseNodeInfo, currentStackFrame.node)
+				currentTraverseNodeInfo = leaveNode(
+					currentTraverseNodeInfo,
+					currentStackFrame.node
+				)
 				stack.pop()
 			}
 		}
@@ -357,10 +392,13 @@ export class TypescriptParser {
 		node: ts.Node,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): ProgramStructureTree | {
-			resolve(): ProgramStructureTree,
-			resolveWithNoChildren?: true
-		} | null {
+	):
+		| ProgramStructureTree
+		| {
+				resolve(): ProgramStructureTree
+				resolveWithNoChildren?: true
+		  }
+		| null {
 		const parseNodeFunction = PARSE_NODE_FUNCTIONS[node.kind]
 		if (parseNodeFunction !== undefined) {
 			return parseNodeFunction(
@@ -376,11 +414,13 @@ export class TypescriptParser {
 
 	/**
 	 * Parses a given tsconfig file
-	 * 
+	 *
 	 * @param configFileName Path to the tsconfig to parser
 	 * @returns Parsed Config
 	 */
-	static readConfigFile(configFileName: string): ts.ParsedCommandLine | undefined {
+	static readConfigFile(
+		configFileName: string
+	): ts.ParsedCommandLine | undefined {
 		// Read config file
 		const configFileText = fs.readFileSync(configFileName).toString()
 
@@ -395,7 +435,11 @@ export class TypescriptParser {
 		}
 
 		// Extract config information
-		const configParseResult = ts.parseJsonConfigFileContent(configObject, ts.sys, path.dirname(configFileName))
+		const configParseResult = ts.parseJsonConfigFileContent(
+			configObject,
+			ts.sys,
+			path.dirname(configFileName)
+		)
 		if (configParseResult.errors.length > 0) {
 			LoggerHelper.error(
 				`TypescriptParser.readConfigFile errors while parsing the config file: ${configFileName}`,
@@ -408,7 +452,7 @@ export class TypescriptParser {
 
 	/**
 	 * Resolves the tsconfig for a given file
-	 * 
+	 *
 	 * @param path Path of the file to compile
 	 * @returns The parsed typescript config that is used to compile the given file
 	 */
@@ -426,4 +470,3 @@ export class TypescriptParser {
 		return configPath
 	}
 }
-

@@ -9,7 +9,8 @@ describe('JestScope', () => {
 	 * This case is important because we need to detect this to correct the scope.
 	 */
 	describe('empty module', () => {
-		const code = '({"Object.<anonymous>":function(module,exports,require,__dirname,__filename,jest) {}})'
+		const code =
+			'({"Object.<anonymous>":function(module,exports,require,__dirname,__filename,jest) {}})'
 
 		test('expected identifier', () => {
 			const pst = TypescriptParser.parseSource(new UnifiedPath('test.ts'), code)

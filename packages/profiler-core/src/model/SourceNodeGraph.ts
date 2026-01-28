@@ -59,7 +59,7 @@ export class SourceNodeGraph {
 	get outgoingEdges() {
 		return this._outgoingEdges
 	}
-	
+
 	get incomingEdges() {
 		return this._incomingEdges
 	}
@@ -71,9 +71,7 @@ export class SourceNodeGraph {
 			if (incomingEdges === undefined) {
 				return undefined
 			}
-			result = SourceNodeMetaData.sum(
-				...incomingEdges.values()
-			)
+			result = SourceNodeMetaData.sum(...incomingEdges.values())
 			this._outgoingSum.set(nodeID, result)
 		}
 		return result
@@ -86,9 +84,7 @@ export class SourceNodeGraph {
 			if (incomingEdges === undefined) {
 				return undefined
 			}
-			result = SourceNodeMetaData.sum(
-				...incomingEdges.values()
-			)
+			result = SourceNodeMetaData.sum(...incomingEdges.values())
 			this._incomingSum.set(nodeID, result)
 		}
 		return result
@@ -175,29 +171,17 @@ export class SourceNodeGraph {
 
 		for (const sourceFileMetaData of report.lang_internal.values()) {
 			for (const sourceNodeMetaData of sourceFileMetaData.functions.values()) {
-				graphToInsert.insertSourceNode(
-					report,
-					globalIndex,
-					sourceNodeMetaData
-				)
+				graphToInsert.insertSourceNode(report, globalIndex, sourceNodeMetaData)
 			}
 		}
 		for (const sourceFileMetaData of report.intern.values()) {
 			for (const sourceNodeMetaData of sourceFileMetaData.functions.values()) {
-				graphToInsert.insertSourceNode(
-					report,
-					globalIndex,
-					sourceNodeMetaData
-				)
+				graphToInsert.insertSourceNode(report, globalIndex, sourceNodeMetaData)
 			}
 		}
 
 		for (const externModuleReport of report.extern.values()) {
-			SourceNodeGraph.fromReport(
-				externModuleReport,
-				globalIndex,
-				graphToInsert
-			)
+			SourceNodeGraph.fromReport(externModuleReport, globalIndex, graphToInsert)
 		}
 		return graphToInsert
 	}

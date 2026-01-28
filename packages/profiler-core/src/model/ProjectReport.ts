@@ -10,11 +10,7 @@ import { ModuleIndex } from './indices/ModuleIndex'
 import { SourceNodeGraph } from './SourceNodeGraph'
 
 import type { ICpuProfileRaw } from '../../lib/vscode-js-profile-core/src/cpu/types'
-import {
-	REPORT_FILE_EXTENSION,
-	NODE_ENV,
-	BIN_FILE_MAGIC
-} from '../constants'
+import { REPORT_FILE_EXTENSION, NODE_ENV, BIN_FILE_MAGIC } from '../constants'
 import { UnifiedPath } from '../system/UnifiedPath'
 import { Crypto } from '../system/Crypto'
 import { BufferHelper } from '../helper/BufferHelper'
@@ -47,15 +43,18 @@ export class ProjectReport extends Report {
 	) {
 		let index = globalIndex
 		if (index === undefined) {
-			index = new GlobalIndex(new NodeModule(
-				executionDetails.languageInformation.name,
-				executionDetails.languageInformation.version
-			))
+			index = new GlobalIndex(
+				new NodeModule(
+					executionDetails.languageInformation.name,
+					executionDetails.languageInformation.version
+				)
+			)
 		}
 		super(index.getModuleIndex('upsert'), kind)
 		this.globalIndex = index
-	
-		const usedConfig = config !== undefined ? config : ProfilerConfig.autoResolve()
+
+		const usedConfig =
+			config !== undefined ? config : ProfilerConfig.autoResolve()
 
 		this.executionDetails = executionDetails
 
@@ -71,7 +70,7 @@ export class ProjectReport extends Report {
 		}
 	}
 
-	asSourceNodeGraph() : SourceNodeGraph {
+	asSourceNodeGraph(): SourceNodeGraph {
 		if (this._sourceNodeGraph === undefined) {
 			const graph = SourceNodeGraph.fromProjectReport(this)
 			this._sourceNodeGraph = graph
@@ -85,7 +84,7 @@ export class ProjectReport extends Report {
 		this.globalIndex = newGlobalIndex
 	}
 
-	public get engineModule() : NodeModule {
+	public get engineModule(): NodeModule {
 		return this.globalIndex.engineModule
 	}
 
@@ -114,33 +113,51 @@ export class ProjectReport extends Report {
 			return 0
 		})
 
-
-		const systemInformationList = sortedReports.map((x) => x.executionDetails.systemInformation)
+		const systemInformationList = sortedReports.map(
+			(x) => x.executionDetails.systemInformation
+		)
 
 		if (!SystemInformation.sameSystem(...systemInformationList)) {
-			throw new Error('ProjectReport.merge: cannot merge ProjectReports from different systems')
+			throw new Error(
+				'ProjectReport.merge: cannot merge ProjectReports from different systems'
+			)
 		}
 		const executionDetails = sortedReports[0].executionDetails
-		
+
 		for (const currentProjectReport of sortedReports) {
 			if (
-				currentProjectReport.executionDetails.commitHash !== executionDetails.commitHash
+				currentProjectReport.executionDetails.commitHash !==
+				executionDetails.commitHash
 			) {
-				throw new Error('ProjectReport.merge: Project reports commit hashs are not the same')
+				throw new Error(
+					'ProjectReport.merge: Project reports commit hashs are not the same'
+				)
 			}
-			if (currentProjectReport.executionDetails.origin !== executionDetails.origin) {
-				throw new Error('ProjectReport.merge: Project reports have different origins')
+			if (
+				currentProjectReport.executionDetails.origin !== executionDetails.origin
+			) {
+				throw new Error(
+					'ProjectReport.merge: Project reports have different origins'
+				)
 			}
-			if (executionDetails.uncommittedChanges || currentProjectReport.executionDetails.uncommittedChanges) {
+			if (
+				executionDetails.uncommittedChanges ||
+				currentProjectReport.executionDetails.uncommittedChanges
+			) {
 				executionDetails.uncommittedChanges = true
 			}
-			if (currentProjectReport.executionDetails.timestamp < executionDetails.timestamp) {
+			if (
+				currentProjectReport.executionDetails.timestamp <
+				executionDetails.timestamp
+			) {
 				// set execution timestamp to the earliest
 				// if e.g. multiple test reports are merged, the first report marks the first test execution
-				executionDetails.timestamp = currentProjectReport.executionDetails.timestamp
+				executionDetails.timestamp =
+					currentProjectReport.executionDetails.timestamp
 
 				// only keep the system information of the first report
-				executionDetails.systemInformation = currentProjectReport.executionDetails.systemInformation
+				executionDetails.systemInformation =
+					currentProjectReport.executionDetails.systemInformation
 			}
 		}
 
@@ -166,9 +183,7 @@ export class ProjectReport extends Report {
 		return Object.assign(result, reportJSON)
 	}
 
-	static fromJSON(
-		json: string | IProjectReport
-	): ProjectReport {
+	static fromJSON(json: string | IProjectReport): ProjectReport {
 		let data: IProjectReport
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -180,10 +195,13 @@ export class ProjectReport extends Report {
 			data.executionDetails,
 			data.kind,
 			data.projectMetaData,
-			GlobalIndex.fromJSON(data.globalIndex, new NodeModule(
-				data.executionDetails.languageInformation.name,
-				data.executionDetails.languageInformation.version
-			)),
+			GlobalIndex.fromJSON(
+				data.globalIndex,
+				new NodeModule(
+					data.executionDetails.languageInformation.name,
+					data.executionDetails.languageInformation.version
+				)
+			),
 			null
 		)
 
@@ -216,7 +234,6 @@ export class ProjectReport extends Report {
 			default:
 				break
 		}
-		
 	}
 
 	trackUncommittedFiles(
@@ -225,10 +242,8 @@ export class ProjectReport extends Report {
 	) {
 		// if git is not available, set default value of uncommitted changes to undefined
 		this.executionDetails.uncommittedChanges = undefined
-		const containsUncommittedChanges = externalResourceHelper.trackUncommittedFiles(
-			rootDir,
-			this.globalIndex
-		)
+		const containsUncommittedChanges =
+			externalResourceHelper.trackUncommittedFiles(rootDir, this.globalIndex)
 
 		if (containsUncommittedChanges === null) {
 			// git is not available
@@ -280,32 +295,37 @@ export class ProjectReport extends Report {
 	async shouldBeStoredInRegistry() {
 		// every accumulated report should be stored in the registry
 		// and every report that was not created in the jest environment should be stored in the registry
-		return this.executionDetails.origin !== ProjectReportOrigin.jestEnv || this.kind === ReportKind.accumulated
+		return (
+			this.executionDetails.origin !== ProjectReportOrigin.jestEnv ||
+			this.kind === ReportKind.accumulated
+		)
 	}
 
 	static versionFromBinFile(filePath: UnifiedPath) {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}
-		return ProjectReport.versionFromBuffer(fs.readFileSync(filePath.toPlatformString()))
+		return ProjectReport.versionFromBuffer(
+			fs.readFileSync(filePath.toPlatformString())
+		)
 	}
 
-	static versionFromBuffer(
-		buffer: Buffer
-	) {
+	static versionFromBuffer(buffer: Buffer) {
 		let remainingBuffer = buffer
 		if (buffer.byteLength < 2) {
-			throw new Error('ProjectReport.consumeFromBuffer: not enough bytes remaining')
+			throw new Error(
+				'ProjectReport.consumeFromBuffer: not enough bytes remaining'
+			)
 		}
 		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
 		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
-			throw new Error(`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`)
+			throw new Error(
+				`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`
+			)
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
-		const {
-			instance: reportVersion,
-			remainingBuffer: newRemainingBuffer0
-		} = BufferHelper.String2LFromBuffer(remainingBuffer)
+		const { instance: reportVersion, remainingBuffer: newRemainingBuffer0 } =
+			BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer0
 
 		return reportVersion
@@ -318,15 +338,20 @@ export class ProjectReport extends Report {
 	) {
 		let remainingBuffer = buffer
 		if (buffer.byteLength < 2) {
-			throw new Error('ProjectReport.consumeFromBuffer: not enough bytes remaining')
+			throw new Error(
+				'ProjectReport.consumeFromBuffer: not enough bytes remaining'
+			)
 		}
 		const magic = buffer.subarray(0, BIN_FILE_MAGIC.length)
 		if (magic.compare(BIN_FILE_MAGIC) !== 0) {
-			throw new Error(`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`)
+			throw new Error(
+				`ProjectReport.consumeFromBuffer: not a binary ${REPORT_FILE_EXTENSION} format`
+			)
 		}
 		remainingBuffer = buffer.subarray(BIN_FILE_MAGIC.length)
 		const {
-			instance: reportVersion, // eslint-disable-line @typescript-eslint/no-unused-vars
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			instance: reportVersion,
 			remainingBuffer: newRemainingBuffer0
 		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer0
@@ -336,14 +361,18 @@ export class ProjectReport extends Report {
 			remainingBuffer: newRemainingBuffer1
 		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
-		const executionDetails = JSON.parse(executionDetails_JSON_string) as IProjectReportExecutionDetails
+		const executionDetails = JSON.parse(
+			executionDetails_JSON_string
+		) as IProjectReportExecutionDetails
 
 		const {
 			instance: projectMetaData_JSON_string,
 			remainingBuffer: newRemainingBuffer2
 		} = BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer2
-		const projectMetaData = JSON.parse(projectMetaData_JSON_string) as IProjectMetaData
+		const projectMetaData = JSON.parse(
+			projectMetaData_JSON_string
+		) as IProjectMetaData
 
 		const {
 			instance: globalIndex_JSON_string,
@@ -362,7 +391,10 @@ export class ProjectReport extends Report {
 			instance: report,
 			type: reportType,
 			remainingBuffer: newRemainingBuffer4
-		} = Report.consumeFromBufferReport(remainingBuffer, globalIndex.getModuleIndex('get'))
+		} = Report.consumeFromBufferReport(
+			remainingBuffer,
+			globalIndex.getModuleIndex('get')
+		)
 		remainingBuffer = newRemainingBuffer4
 
 		const result = Object.assign(
@@ -387,9 +419,7 @@ export class ProjectReport extends Report {
 		return Crypto.hash(this.toBuffer())
 	}
 
-	static hashFromBinFile(
-		filePath: UnifiedPath
-	): string | undefined {
+	static hashFromBinFile(filePath: UnifiedPath): string | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}

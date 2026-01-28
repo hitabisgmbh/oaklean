@@ -35,7 +35,7 @@ lint:
   stage: lint
   extends: .node-image-matrix
   script:
-    - npm run lint
+    - npm run lint && [[ -z "$(git status -s)" ]]
 
 build:
   stage: build

@@ -34,15 +34,13 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (PROJECT_SCOPE executes MO
 		*/
 
 		const cpuNode = mockedCPUModel(
-			createLocationTreeCPUModel(
+			createLocationTreeCPUModel([
+				SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
 				[
-					 SOURCE_LOCATIONS_DEFAULT['project-fileA-0'],
-					[
-						[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], []],
-						[SOURCE_LOCATIONS_DEFAULT['moduleB-fileA-0'], []]
-					]
+					[SOURCE_LOCATIONS_DEFAULT['moduleA-fileA-0'], []],
+					[SOURCE_LOCATIONS_DEFAULT['moduleB-fileA-0'], []]
 				]
-			)
+			])
 		)
 
 		await stateMachine.insertCPUNodes(

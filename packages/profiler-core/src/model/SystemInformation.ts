@@ -49,7 +49,9 @@ export class SystemInformation extends BaseModel {
 
 	static sameSystem(...args: ISystemInformation[]): boolean {
 		if (args.length === 0) {
-			throw new Error('SystemInformation.merge: no SystemInformation were given')
+			throw new Error(
+				'SystemInformation.merge: no SystemInformation were given'
+			)
 		}
 		const firstSystemInformation = args[0]
 		const firstSystem = firstSystemInformation.system
@@ -62,7 +64,6 @@ export class SystemInformation extends BaseModel {
 		const firstOs = firstSystemInformation.os
 
 		for (const currentSystemInformation of args) {
-	
 			const currentSystem = currentSystemInformation.system
 
 			const systemIsTheSame =
@@ -72,7 +73,9 @@ export class SystemInformation extends BaseModel {
 				firstSystem.virtual === currentSystem.virtual
 
 			if (!systemIsTheSame) {
-				LoggerHelper.error('SystemInformation.isSame: detected different systems')
+				LoggerHelper.error(
+					'SystemInformation.isSame: detected different systems'
+				)
 				return false
 			}
 
@@ -85,7 +88,9 @@ export class SystemInformation extends BaseModel {
 				firstBaseBoard.memMax === currentBaseBoard.memMax &&
 				firstBaseBoard.memSlots === currentBaseBoard.memSlots
 			if (!baseBoardIsTheSame) {
-				LoggerHelper.error('SystemInformation.isSame: detected different baseboards')
+				LoggerHelper.error(
+					'SystemInformation.isSame: detected different baseboards'
+				)
 				return false
 			}
 
@@ -99,7 +104,9 @@ export class SystemInformation extends BaseModel {
 				firstChassi.assetTag === currentChassis.assetTag &&
 				firstChassi.sku === currentChassis.sku
 			if (!chassisIsTheSame) {
-				LoggerHelper.error('SystemInformation.isSame: detected different chassis')
+				LoggerHelper.error(
+					'SystemInformation.isSame: detected different chassis'
+				)
 				return false
 			}
 
@@ -132,17 +139,20 @@ export class SystemInformation extends BaseModel {
 
 			const currentMemory = currentSystemInformation.memory
 
-			const memoryIsTheSame =
-				firstMemory.total === currentMemory.total
+			const memoryIsTheSame = firstMemory.total === currentMemory.total
 			if (!memoryIsTheSame) {
-				LoggerHelper.error('SystemInformation.isSame: detected different memory')
+				LoggerHelper.error(
+					'SystemInformation.isSame: detected different memory'
+				)
 				return false
 			}
 
 			const currentMemoryLayout = currentSystemInformation.memoryLayout
 
 			if (firstMemoryLayout.length !== currentMemoryLayout.length) {
-				LoggerHelper.error('SystemInformation.isSame: detected different memoryLayout')
+				LoggerHelper.error(
+					'SystemInformation.isSame: detected different memoryLayout'
+				)
 				return false
 			}
 
@@ -150,12 +160,16 @@ export class SystemInformation extends BaseModel {
 				const memoryLayoutIsTheSame =
 					firstMemoryLayout[i].size === currentMemoryLayout[i].size &&
 					firstMemoryLayout[i].type === currentMemoryLayout[i].type &&
-					firstMemoryLayout[i].manufacturer === currentMemoryLayout[i].manufacturer &&
-					firstMemoryLayout[i].voltageMin === currentMemoryLayout[i].voltageMin &&
+					firstMemoryLayout[i].manufacturer ===
+						currentMemoryLayout[i].manufacturer &&
+					firstMemoryLayout[i].voltageMin ===
+						currentMemoryLayout[i].voltageMin &&
 					firstMemoryLayout[i].voltageMax === currentMemoryLayout[i].voltageMax
 
 				if (!memoryLayoutIsTheSame) {
-					LoggerHelper.error('SystemInformation.isSame: detected different memoryLayout')
+					LoggerHelper.error(
+						'SystemInformation.isSame: detected different memoryLayout'
+					)
 					return false
 				}
 			}
@@ -167,7 +181,9 @@ export class SystemInformation extends BaseModel {
 				firstBattery.model === currentBattery.model &&
 				firstBattery.manufacturer === currentBattery.manufacturer
 			if (!batteryIsTheSame) {
-				LoggerHelper.error('SystemInformation.isSame: detected different battery')
+				LoggerHelper.error(
+					'SystemInformation.isSame: detected different battery'
+				)
 				return false
 			}
 
@@ -191,7 +207,7 @@ export class SystemInformation extends BaseModel {
 				return false
 			}
 		}
-		
+
 		return true
 	}
 
@@ -241,14 +257,8 @@ export class SystemInformation extends BaseModel {
 	}
 
 	static async baseBoardInfo(): Promise<ISystemInformation_Baseboard> {
-		const {
-			manufacturer,
-			model,
-			version,
-			assetTag,
-			memMax,
-			memSlots,
-		} = await si.baseboard()
+		const { manufacturer, model, version, assetTag, memMax, memSlots } =
+			await si.baseboard()
 
 		return {
 			manufacturer,
@@ -256,19 +266,13 @@ export class SystemInformation extends BaseModel {
 			version,
 			assetTag,
 			memMax,
-			memSlots,
+			memSlots
 		}
 	}
 
 	static async chassisInfo(): Promise<ISystemInformation_Chassis> {
-		const {
-			manufacturer,
-			model,
-			type,
-			version,
-			assetTag,
-			sku
-		} = await si.chassis()
+		const { manufacturer, model, type, version, assetTag, sku } =
+			await si.chassis()
 
 		return {
 			manufacturer,
@@ -302,12 +306,7 @@ export class SystemInformation extends BaseModel {
 			socket,
 			flags,
 			virtualization,
-			cache: {
-				l1d,
-				l1i,
-				l2,
-				l3,
-			}
+			cache: { l1d, l1i, l2, l3 }
 		} = await si.cpu()
 
 		return {
@@ -335,7 +334,7 @@ export class SystemInformation extends BaseModel {
 				l1d,
 				l1i,
 				l2,
-				l3,
+				l3
 			}
 		}
 	}
@@ -379,8 +378,8 @@ export class SystemInformation extends BaseModel {
 	}
 
 	static async memoryLayoutInfo(): Promise<ISystemInformation_MemoryLayout[]> {
-		return (await si.memLayout()).map((
-			{
+		return (await si.memLayout()).map(
+			({
 				size,
 				bank,
 				type,
@@ -392,26 +391,28 @@ export class SystemInformation extends BaseModel {
 				voltageConfigured,
 				voltageMin,
 				voltageMax
+			}) => {
+				return {
+					size,
+					bank,
+					type,
+					ecc,
+					clockSpeed,
+					formFactor,
+					manufacturer,
+					partNum,
+					voltageConfigured,
+					voltageMin,
+					voltageMax
+				}
 			}
-		) => {
-			return {
-				size,
-				bank,
-				type,
-				ecc,
-				clockSpeed,
-				formFactor,
-				manufacturer,
-				partNum,
-				voltageConfigured,
-				voltageMin,
-				voltageMax
-			}
-		})
+		)
 	}
 
 	static async batteryInfo(): Promise<ISystemInformation_Battery> {
-		function convert(data: Systeminformation.BatteryData): ISystemInformation_Battery {
+		function convert(
+			data: Systeminformation.BatteryData
+		): ISystemInformation_Battery {
 			const {
 				hasBattery,
 				cycleCount,

@@ -1,18 +1,49 @@
 import * as fs from 'fs'
 
-import { MicroSeconds_number, NanoSeconds_BigInt, UnifiedPath } from '@oaklean/profiler-core'
+import {
+	MicroSeconds_number,
+	NanoSeconds_BigInt,
+	UnifiedPath
+} from '@oaklean/profiler-core'
 
-import { PerfEvent, PerfSensorInterface } from '../../../src/interfaces/perf/PerfSensorInterface'
+import {
+	PerfEvent,
+	PerfSensorInterface
+} from '../../../src/interfaces/perf/PerfSensorInterface'
 
 const CURRENT_DIR = new UnifiedPath(__dirname)
 
-const OUTPUT_CONTENT_CORES_RAM = fs.readFileSync(CURRENT_DIR.join('assets', 'cores+ram.txt').toPlatformString()).toString()
-const OUTPUT_CONTENT_CORES = fs.readFileSync(CURRENT_DIR.join('assets', 'cores.txt').toPlatformString()).toString()
-const OUTPUT_CONTENT_RAM = fs.readFileSync(CURRENT_DIR.join('assets', 'ram.txt').toPlatformString()).toString()
+const OUTPUT_CONTENT_CORES_RAM = fs
+	.readFileSync(CURRENT_DIR.join('assets', 'cores+ram.txt').toPlatformString())
+	.toString()
+const OUTPUT_CONTENT_CORES = fs
+	.readFileSync(CURRENT_DIR.join('assets', 'cores.txt').toPlatformString())
+	.toString()
+const OUTPUT_CONTENT_RAM = fs
+	.readFileSync(CURRENT_DIR.join('assets', 'ram.txt').toPlatformString())
+	.toString()
 
-const COLLECTION_CORES_RAM = JSON.parse(fs.readFileSync(CURRENT_DIR.join('assets', 'cores+ram.collection.json').toPlatformString()).toString())
-const COLLECTION_CORES = JSON.parse(fs.readFileSync(CURRENT_DIR.join('assets', 'cores.collection.json').toPlatformString()).toString())
-const COLLECTION_RAM = JSON.parse(fs.readFileSync(CURRENT_DIR.join('assets', 'ram.collection.json').toPlatformString()).toString())
+const COLLECTION_CORES_RAM = JSON.parse(
+	fs
+		.readFileSync(
+			CURRENT_DIR.join('assets', 'cores+ram.collection.json').toPlatformString()
+		)
+		.toString()
+)
+const COLLECTION_CORES = JSON.parse(
+	fs
+		.readFileSync(
+			CURRENT_DIR.join('assets', 'cores.collection.json').toPlatformString()
+		)
+		.toString()
+)
+const COLLECTION_RAM = JSON.parse(
+	fs
+		.readFileSync(
+			CURRENT_DIR.join('assets', 'ram.collection.json').toPlatformString()
+		)
+		.toString()
+)
 
 function mock_checkEventAvailability(events: PerfEvent[]) {
 	return jest.fn().mockImplementation((eventName: PerfEvent) => {
@@ -24,17 +55,19 @@ describe('PerfSensorInterface', () => {
 	describe('availableMeasurementTypes', () => {
 		let instance: PerfSensorInterface
 		beforeEach(() => {
-			instance = new PerfSensorInterface({
-				outputFilePath: '',
-				sampleInterval: 0 as MicroSeconds_number
-			}, {
-				startTime: BigInt(0) as NanoSeconds_BigInt,
-				stopTime: BigInt(0) as NanoSeconds_BigInt
-			})
+			instance = new PerfSensorInterface(
+				{
+					outputFilePath: '',
+					sampleInterval: 0 as MicroSeconds_number
+				},
+				{
+					startTime: BigInt(0) as NanoSeconds_BigInt,
+					stopTime: BigInt(0) as NanoSeconds_BigInt
+				}
+			)
 		})
 
 		test('perf events energy-cores and energy-ram available', async () => {
-			
 			instance.checkEventAvailability = mock_checkEventAvailability([
 				PerfEvent.ENERGY_CORES,
 				PerfEvent.ENERGY_RAM
@@ -72,13 +105,16 @@ describe('PerfSensorInterface', () => {
 	describe('commandLineArgs', () => {
 		let instance: PerfSensorInterface
 		beforeEach(() => {
-			instance = new PerfSensorInterface({
-				outputFilePath: '',
-				sampleInterval: 0 as MicroSeconds_number
-			}, {
-				startTime: BigInt(0) as NanoSeconds_BigInt,
-				stopTime: BigInt(0) as NanoSeconds_BigInt
-			})
+			instance = new PerfSensorInterface(
+				{
+					outputFilePath: '',
+					sampleInterval: 0 as MicroSeconds_number
+				},
+				{
+					startTime: BigInt(0) as NanoSeconds_BigInt,
+					stopTime: BigInt(0) as NanoSeconds_BigInt
+				}
+			)
 		})
 
 		test('perf events energy-cores and energy-ram available', async () => {
@@ -89,11 +125,16 @@ describe('PerfSensorInterface', () => {
 
 			expect(await instance.commandLineArgs()).toEqual([
 				'stat',
-				'-e', 'power/energy-cores/',
-				'-e', 'power/energy-ram/',
-				'-x', '\'|\'',
-				'-I', '0',
-				'-o', ''
+				'-e',
+				'power/energy-cores/',
+				'-e',
+				'power/energy-ram/',
+				'-x',
+				"'|'",
+				'-I',
+				'0',
+				'-o',
+				''
 			])
 		})
 
@@ -104,10 +145,14 @@ describe('PerfSensorInterface', () => {
 
 			expect(await instance.commandLineArgs()).toEqual([
 				'stat',
-				'-e', 'power/energy-cores/',
-				'-x', '\'|\'',
-				'-I', '0',
-				'-o', ''
+				'-e',
+				'power/energy-cores/',
+				'-x',
+				"'|'",
+				'-I',
+				'0',
+				'-o',
+				''
 			])
 		})
 
@@ -118,10 +163,14 @@ describe('PerfSensorInterface', () => {
 
 			expect(await instance.commandLineArgs()).toEqual([
 				'stat',
-				'-e', 'power/energy-ram/',
-				'-x', '\'|\'',
-				'-I', '0',
-				'-o', ''
+				'-e',
+				'power/energy-ram/',
+				'-x',
+				"'|'",
+				'-I',
+				'0',
+				'-o',
+				''
 			])
 		})
 	})
@@ -129,17 +178,22 @@ describe('PerfSensorInterface', () => {
 	describe('readSensorValues', () => {
 		let instance: PerfSensorInterface
 		beforeEach(() => {
-			instance = new PerfSensorInterface({
-				outputFilePath: '',
-				sampleInterval: 0 as MicroSeconds_number
-			}, {
-				startTime: BigInt(0) as NanoSeconds_BigInt,
-				stopTime: BigInt(0) as NanoSeconds_BigInt
-			})
+			instance = new PerfSensorInterface(
+				{
+					outputFilePath: '',
+					sampleInterval: 0 as MicroSeconds_number
+				},
+				{
+					startTime: BigInt(0) as NanoSeconds_BigInt,
+					stopTime: BigInt(0) as NanoSeconds_BigInt
+				}
+			)
 		})
 
 		test('perf events energy-cores and energy-ram available', async () => {
-			instance.getOutputContent = jest.fn().mockReturnValue(OUTPUT_CONTENT_CORES_RAM)
+			instance.getOutputContent = jest
+				.fn()
+				.mockReturnValue(OUTPUT_CONTENT_CORES_RAM)
 			instance.isRunning = jest.fn().mockReturnValue(false)
 			instance.checkEventAvailability = mock_checkEventAvailability([
 				PerfEvent.ENERGY_CORES,
@@ -154,7 +208,9 @@ describe('PerfSensorInterface', () => {
 		})
 
 		test('only perf event energy-cores available', async () => {
-			instance.getOutputContent = jest.fn().mockReturnValue(OUTPUT_CONTENT_CORES)
+			instance.getOutputContent = jest
+				.fn()
+				.mockReturnValue(OUTPUT_CONTENT_CORES)
 			instance.isRunning = jest.fn().mockReturnValue(false)
 			instance.checkEventAvailability = mock_checkEventAvailability([
 				PerfEvent.ENERGY_CORES

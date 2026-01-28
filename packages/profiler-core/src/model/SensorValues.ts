@@ -33,7 +33,7 @@ export const SENSOR_VALUES_BYTE_SIZE_MAP: SensorValueToDataTypeMap = {
 	aggregatedRAMEnergyConsumption: PrimitiveBufferTypes.Double,
 	internRAMEnergyConsumption: PrimitiveBufferTypes.Double,
 	externRAMEnergyConsumption: PrimitiveBufferTypes.Double,
-	langInternalRAMEnergyConsumption: PrimitiveBufferTypes.Double,
+	langInternalRAMEnergyConsumption: PrimitiveBufferTypes.Double
 }
 
 export const AGGREGATED_SENSOR_VALUE_NAMES: (keyof ISensorValues)[] = [
@@ -80,30 +80,27 @@ export class SensorValues extends BaseModel {
 	private _externRAMEnergyConsumption?: MilliJoule_number
 	private _langInternalRAMEnergyConsumption?: MilliJoule_number
 
+	constructor({
+		profilerHits,
 
-	constructor(
-		{
-			profilerHits,
+		selfCPUTime,
+		aggregatedCPUTime,
+		internCPUTime,
+		externCPUTime,
+		langInternalCPUTime,
 
-			selfCPUTime,
-			aggregatedCPUTime,
-			internCPUTime,
-			externCPUTime,
-			langInternalCPUTime,
+		selfCPUEnergyConsumption,
+		aggregatedCPUEnergyConsumption,
+		internCPUEnergyConsumption,
+		externCPUEnergyConsumption,
+		langInternalCPUEnergyConsumption,
 
-			selfCPUEnergyConsumption,
-			aggregatedCPUEnergyConsumption,
-			internCPUEnergyConsumption,
-			externCPUEnergyConsumption,
-			langInternalCPUEnergyConsumption,
-
-			selfRAMEnergyConsumption,
-			aggregatedRAMEnergyConsumption,
-			internRAMEnergyConsumption,
-			externRAMEnergyConsumption,
-			langInternalRAMEnergyConsumption
-		}: ISensorValues
-	) {
+		selfRAMEnergyConsumption,
+		aggregatedRAMEnergyConsumption,
+		internRAMEnergyConsumption,
+		externRAMEnergyConsumption,
+		langInternalRAMEnergyConsumption
+	}: ISensorValues) {
 		super()
 		this._profilerHits = profilerHits
 
@@ -125,7 +122,7 @@ export class SensorValues extends BaseModel {
 		this._externRAMEnergyConsumption = externRAMEnergyConsumption
 		this._langInternalRAMEnergyConsumption = langInternalRAMEnergyConsumption
 	}
-	public set profilerHits(v : number) {
+	public set profilerHits(v: number) {
 		this._profilerHits = v
 	}
 	public get profilerHits(): number {
@@ -137,67 +134,67 @@ export class SensorValues extends BaseModel {
 		this._selfCPUTime = v
 	}
 	public get selfCPUTime(): MicroSeconds_number {
-		return this._selfCPUTime || 0 as MicroSeconds_number
+		return this._selfCPUTime || (0 as MicroSeconds_number)
 	}
 	public set aggregatedCPUTime(v: MicroSeconds_number) {
 		this._aggregatedCPUTime = v
 	}
 	public get aggregatedCPUTime(): MicroSeconds_number {
-		return this._aggregatedCPUTime || 0 as MicroSeconds_number
+		return this._aggregatedCPUTime || (0 as MicroSeconds_number)
 	}
 	public set internCPUTime(v: MicroSeconds_number) {
 		this._internCPUTime = v
 	}
 	public get internCPUTime(): MicroSeconds_number {
-		return this._internCPUTime || 0 as MicroSeconds_number
+		return this._internCPUTime || (0 as MicroSeconds_number)
 	}
 	public set externCPUTime(v: MicroSeconds_number) {
 		this._externCPUTime = v
 	}
 	public get externCPUTime(): MicroSeconds_number {
-		return this._externCPUTime || 0 as MicroSeconds_number
+		return this._externCPUTime || (0 as MicroSeconds_number)
 	}
 	public set langInternalCPUTime(v: MicroSeconds_number) {
 		this._langInternalCPUTime = v
 	}
 	public get langInternalCPUTime(): MicroSeconds_number {
-		return this._langInternalCPUTime || 0 as MicroSeconds_number
-	}	
+		return this._langInternalCPUTime || (0 as MicroSeconds_number)
+	}
 
 	// CPU Energy
 	public set selfCPUEnergyConsumption(v: MilliJoule_number) {
 		this._selfCPUEnergyConsumption = v
 	}
 	public get selfCPUEnergyConsumption(): MilliJoule_number {
-		return this._selfCPUEnergyConsumption || 0 as MilliJoule_number
+		return this._selfCPUEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	public set aggregatedCPUEnergyConsumption(v: MilliJoule_number) {
 		this._aggregatedCPUEnergyConsumption = v
 	}
 	public get aggregatedCPUEnergyConsumption(): MilliJoule_number {
-		return this._aggregatedCPUEnergyConsumption || 0 as MilliJoule_number
+		return this._aggregatedCPUEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	public set internCPUEnergyConsumption(v: MilliJoule_number) {
 		this._internCPUEnergyConsumption = v
 	}
 	public get internCPUEnergyConsumption(): MilliJoule_number {
-		return this._internCPUEnergyConsumption || 0 as MilliJoule_number
+		return this._internCPUEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	public set externCPUEnergyConsumption(v: MilliJoule_number) {
 		this._externCPUEnergyConsumption = v
 	}
 	public get externCPUEnergyConsumption(): MilliJoule_number {
-		return this._externCPUEnergyConsumption || 0 as MilliJoule_number
+		return this._externCPUEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	public set langInternalCPUEnergyConsumption(v: MilliJoule_number) {
 		this._langInternalCPUEnergyConsumption = v
 	}
 	public get langInternalCPUEnergyConsumption(): MilliJoule_number {
-		return this._langInternalCPUEnergyConsumption || 0 as MilliJoule_number
+		return this._langInternalCPUEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	// RAM Energy
@@ -205,67 +202,65 @@ export class SensorValues extends BaseModel {
 		this._selfRAMEnergyConsumption = v
 	}
 	public get selfRAMEnergyConsumption(): MilliJoule_number {
-		return this._selfRAMEnergyConsumption || 0 as MilliJoule_number
+		return this._selfRAMEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	public set aggregatedRAMEnergyConsumption(v: MilliJoule_number) {
 		this._aggregatedRAMEnergyConsumption = v
 	}
 	public get aggregatedRAMEnergyConsumption(): MilliJoule_number {
-		return this._aggregatedRAMEnergyConsumption || 0 as MilliJoule_number
+		return this._aggregatedRAMEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	public set internRAMEnergyConsumption(v: MilliJoule_number) {
 		this._internRAMEnergyConsumption = v
 	}
 	public get internRAMEnergyConsumption(): MilliJoule_number {
-		return this._internRAMEnergyConsumption || 0 as MilliJoule_number
+		return this._internRAMEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	public set externRAMEnergyConsumption(v: MilliJoule_number) {
 		this._externRAMEnergyConsumption = v
 	}
 	public get externRAMEnergyConsumption(): MilliJoule_number {
-		return this._externRAMEnergyConsumption || 0 as MilliJoule_number
+		return this._externRAMEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	public set langInternalRAMEnergyConsumption(v: MilliJoule_number) {
 		this._langInternalRAMEnergyConsumption = v
 	}
 	public get langInternalRAMEnergyConsumption(): MilliJoule_number {
-		return this._langInternalRAMEnergyConsumption || 0 as MilliJoule_number
+		return this._langInternalRAMEnergyConsumption || (0 as MilliJoule_number)
 	}
 
 	public validate(
 		path: UnifiedPath_string | LangInternalPath_string,
 		identifier: SourceNodeIdentifier_string
 	) {
-		const valid = (
-			this.profilerHits >= 0 &&
-
-			this.selfCPUTime >= 0 &&
-			this.aggregatedCPUTime >= 0 &&
-			this.internCPUTime >= 0 &&
-			this.externCPUTime >= 0 &&
-			this.langInternalCPUTime >= 0 &&
-
-			this.selfCPUEnergyConsumption >= 0 &&
-			this.aggregatedCPUEnergyConsumption >= 0 &&
-			this.internCPUEnergyConsumption >= 0 &&
-			this.externCPUEnergyConsumption >= 0 &&
-			this.langInternalCPUEnergyConsumption >= 0,
-
+		const valid =
+			(this.profilerHits >= 0 &&
+				this.selfCPUTime >= 0 &&
+				this.aggregatedCPUTime >= 0 &&
+				this.internCPUTime >= 0 &&
+				this.externCPUTime >= 0 &&
+				this.langInternalCPUTime >= 0 &&
+				this.selfCPUEnergyConsumption >= 0 &&
+				this.aggregatedCPUEnergyConsumption >= 0 &&
+				this.internCPUEnergyConsumption >= 0 &&
+				this.externCPUEnergyConsumption >= 0 &&
+				this.langInternalCPUEnergyConsumption >= 0,
 			this.selfRAMEnergyConsumption >= 0 &&
-			this.aggregatedRAMEnergyConsumption >= 0 &&
-			this.internRAMEnergyConsumption >= 0 &&
-			this.externRAMEnergyConsumption >= 0 &&
-			this.langInternalRAMEnergyConsumption >= 0
-		)
+				this.aggregatedRAMEnergyConsumption >= 0 &&
+				this.internRAMEnergyConsumption >= 0 &&
+				this.externRAMEnergyConsumption >= 0 &&
+				this.langInternalRAMEnergyConsumption >= 0)
 
 		if (!valid) {
 			throw new Error(
 				`SourceNodeMetaData.validate: Assertion error (SourceNode validation) ${path}:${identifier} \n` +
-				JSON.stringify(this, null, 2) + '\n')
+					JSON.stringify(this, null, 2) +
+					'\n'
+			)
 		}
 	}
 
@@ -276,36 +271,42 @@ export class SensorValues extends BaseModel {
 		for (const sensorValues of args) {
 			result.profilerHits += sensorValues.profilerHits
 
-			result.selfCPUTime = result.selfCPUTime + sensorValues.selfCPUTime as MicroSeconds_number
-			result.aggregatedCPUTime = result.aggregatedCPUTime + sensorValues.aggregatedCPUTime as MicroSeconds_number
-			result.internCPUTime = result.internCPUTime + sensorValues.internCPUTime as MicroSeconds_number
-			result.externCPUTime = result.externCPUTime + sensorValues.externCPUTime as MicroSeconds_number
-			result.langInternalCPUTime = result.langInternalCPUTime +
-				sensorValues.langInternalCPUTime as MicroSeconds_number
+			result.selfCPUTime = (result.selfCPUTime +
+				sensorValues.selfCPUTime) as MicroSeconds_number
+			result.aggregatedCPUTime = (result.aggregatedCPUTime +
+				sensorValues.aggregatedCPUTime) as MicroSeconds_number
+			result.internCPUTime = (result.internCPUTime +
+				sensorValues.internCPUTime) as MicroSeconds_number
+			result.externCPUTime = (result.externCPUTime +
+				sensorValues.externCPUTime) as MicroSeconds_number
+			result.langInternalCPUTime = (result.langInternalCPUTime +
+				sensorValues.langInternalCPUTime) as MicroSeconds_number
 
-			result.selfCPUEnergyConsumption =
-				result.selfCPUEnergyConsumption + sensorValues.selfCPUEnergyConsumption as MilliJoule_number
+			result.selfCPUEnergyConsumption = (result.selfCPUEnergyConsumption +
+				sensorValues.selfCPUEnergyConsumption) as MilliJoule_number
 			result.aggregatedCPUEnergyConsumption =
-				result.aggregatedCPUEnergyConsumption + sensorValues.aggregatedCPUEnergyConsumption as MilliJoule_number
-			result.internCPUEnergyConsumption =
-				result.internCPUEnergyConsumption + sensorValues.internCPUEnergyConsumption as MilliJoule_number
-			result.externCPUEnergyConsumption =
-				result.externCPUEnergyConsumption + sensorValues.externCPUEnergyConsumption as MilliJoule_number
+				(result.aggregatedCPUEnergyConsumption +
+					sensorValues.aggregatedCPUEnergyConsumption) as MilliJoule_number
+			result.internCPUEnergyConsumption = (result.internCPUEnergyConsumption +
+				sensorValues.internCPUEnergyConsumption) as MilliJoule_number
+			result.externCPUEnergyConsumption = (result.externCPUEnergyConsumption +
+				sensorValues.externCPUEnergyConsumption) as MilliJoule_number
 			result.langInternalCPUEnergyConsumption =
-				result.langInternalCPUEnergyConsumption +
-				sensorValues.langInternalCPUEnergyConsumption as MilliJoule_number
+				(result.langInternalCPUEnergyConsumption +
+					sensorValues.langInternalCPUEnergyConsumption) as MilliJoule_number
 
-			result.selfRAMEnergyConsumption =
-				result.selfRAMEnergyConsumption + sensorValues.selfRAMEnergyConsumption as MilliJoule_number
+			result.selfRAMEnergyConsumption = (result.selfRAMEnergyConsumption +
+				sensorValues.selfRAMEnergyConsumption) as MilliJoule_number
 			result.aggregatedRAMEnergyConsumption =
-				result.aggregatedRAMEnergyConsumption + sensorValues.aggregatedRAMEnergyConsumption as MilliJoule_number
-			result.internRAMEnergyConsumption =
-				result.internRAMEnergyConsumption + sensorValues.internRAMEnergyConsumption as MilliJoule_number
-			result.externRAMEnergyConsumption =
-				result.externRAMEnergyConsumption + sensorValues.externRAMEnergyConsumption as MilliJoule_number
+				(result.aggregatedRAMEnergyConsumption +
+					sensorValues.aggregatedRAMEnergyConsumption) as MilliJoule_number
+			result.internRAMEnergyConsumption = (result.internRAMEnergyConsumption +
+				sensorValues.internRAMEnergyConsumption) as MilliJoule_number
+			result.externRAMEnergyConsumption = (result.externRAMEnergyConsumption +
+				sensorValues.externRAMEnergyConsumption) as MilliJoule_number
 			result.langInternalRAMEnergyConsumption =
-				result.langInternalRAMEnergyConsumption +
-				sensorValues.langInternalRAMEnergyConsumption as MilliJoule_number
+				(result.langInternalRAMEnergyConsumption +
+					sensorValues.langInternalRAMEnergyConsumption) as MilliJoule_number
 		}
 		return result
 	}
@@ -397,24 +398,25 @@ export class SensorValues extends BaseModel {
 			const a = args[i]
 			if (
 				a.profilerHits !== compare.profilerHits ||
-
 				a.selfCPUTime !== compare.selfCPUTime ||
 				a.aggregatedCPUTime !== compare.aggregatedCPUTime ||
 				a.internCPUTime !== compare.internCPUTime ||
 				a.externCPUTime !== compare.externCPUTime ||
 				a.langInternalCPUTime !== compare.langInternalCPUTime ||
-
 				a.selfCPUEnergyConsumption !== compare.selfCPUEnergyConsumption ||
-				a.aggregatedCPUEnergyConsumption !== compare.aggregatedCPUEnergyConsumption ||
+				a.aggregatedCPUEnergyConsumption !==
+					compare.aggregatedCPUEnergyConsumption ||
 				a.internCPUEnergyConsumption !== compare.internCPUEnergyConsumption ||
 				a.externCPUEnergyConsumption !== compare.externCPUEnergyConsumption ||
-				a.langInternalCPUEnergyConsumption !== compare.langInternalCPUEnergyConsumption ||
-
+				a.langInternalCPUEnergyConsumption !==
+					compare.langInternalCPUEnergyConsumption ||
 				a.selfRAMEnergyConsumption !== compare.selfRAMEnergyConsumption ||
-				a.aggregatedRAMEnergyConsumption !== compare.aggregatedRAMEnergyConsumption ||
+				a.aggregatedRAMEnergyConsumption !==
+					compare.aggregatedRAMEnergyConsumption ||
 				a.internRAMEnergyConsumption !== compare.internRAMEnergyConsumption ||
 				a.externRAMEnergyConsumption !== compare.externRAMEnergyConsumption ||
-				a.langInternalRAMEnergyConsumption !== compare.langInternalRAMEnergyConsumption
+				a.langInternalRAMEnergyConsumption !==
+					compare.langInternalRAMEnergyConsumption
 			) {
 				return false
 			}
@@ -433,27 +435,53 @@ export class SensorValues extends BaseModel {
 		return {
 			profilerHits: this.undefinedIfZero(this.profilerHits),
 
-			selfCPUTime: this.undefinedIfZero(this.selfCPUTime) as MicroSeconds_number,
-			aggregatedCPUTime: this.undefinedIfZero(this.aggregatedCPUTime) as MicroSeconds_number,
-			internCPUTime: this.undefinedIfZero(this.internCPUTime) as MicroSeconds_number,
-			externCPUTime: this.undefinedIfZero(this.externCPUTime) as MicroSeconds_number,
-			langInternalCPUTime: this.undefinedIfZero(this.langInternalCPUTime) as MicroSeconds_number,
+			selfCPUTime: this.undefinedIfZero(
+				this.selfCPUTime
+			) as MicroSeconds_number,
+			aggregatedCPUTime: this.undefinedIfZero(
+				this.aggregatedCPUTime
+			) as MicroSeconds_number,
+			internCPUTime: this.undefinedIfZero(
+				this.internCPUTime
+			) as MicroSeconds_number,
+			externCPUTime: this.undefinedIfZero(
+				this.externCPUTime
+			) as MicroSeconds_number,
+			langInternalCPUTime: this.undefinedIfZero(
+				this.langInternalCPUTime
+			) as MicroSeconds_number,
 
-			selfCPUEnergyConsumption: this.undefinedIfZero(this.selfCPUEnergyConsumption) as MilliJoule_number,
-			aggregatedCPUEnergyConsumption:
-				this.undefinedIfZero(this.aggregatedCPUEnergyConsumption) as MilliJoule_number,
-			internCPUEnergyConsumption: this.undefinedIfZero(this.internCPUEnergyConsumption) as MilliJoule_number,
-			externCPUEnergyConsumption: this.undefinedIfZero(this.externCPUEnergyConsumption) as MilliJoule_number,
-			langInternalCPUEnergyConsumption:
-				this.undefinedIfZero(this.langInternalCPUEnergyConsumption) as MilliJoule_number,
+			selfCPUEnergyConsumption: this.undefinedIfZero(
+				this.selfCPUEnergyConsumption
+			) as MilliJoule_number,
+			aggregatedCPUEnergyConsumption: this.undefinedIfZero(
+				this.aggregatedCPUEnergyConsumption
+			) as MilliJoule_number,
+			internCPUEnergyConsumption: this.undefinedIfZero(
+				this.internCPUEnergyConsumption
+			) as MilliJoule_number,
+			externCPUEnergyConsumption: this.undefinedIfZero(
+				this.externCPUEnergyConsumption
+			) as MilliJoule_number,
+			langInternalCPUEnergyConsumption: this.undefinedIfZero(
+				this.langInternalCPUEnergyConsumption
+			) as MilliJoule_number,
 
-			selfRAMEnergyConsumption: this.undefinedIfZero(this.selfRAMEnergyConsumption) as MilliJoule_number,
-			aggregatedRAMEnergyConsumption:
-				this.undefinedIfZero(this.aggregatedRAMEnergyConsumption) as MilliJoule_number,
-			internRAMEnergyConsumption: this.undefinedIfZero(this.internRAMEnergyConsumption) as MilliJoule_number,
-			externRAMEnergyConsumption: this.undefinedIfZero(this.externRAMEnergyConsumption) as MilliJoule_number,
-			langInternalRAMEnergyConsumption:
-				this.undefinedIfZero(this.langInternalRAMEnergyConsumption) as MilliJoule_number,
+			selfRAMEnergyConsumption: this.undefinedIfZero(
+				this.selfRAMEnergyConsumption
+			) as MilliJoule_number,
+			aggregatedRAMEnergyConsumption: this.undefinedIfZero(
+				this.aggregatedRAMEnergyConsumption
+			) as MilliJoule_number,
+			internRAMEnergyConsumption: this.undefinedIfZero(
+				this.internRAMEnergyConsumption
+			) as MilliJoule_number,
+			externRAMEnergyConsumption: this.undefinedIfZero(
+				this.externRAMEnergyConsumption
+			) as MilliJoule_number,
+			langInternalRAMEnergyConsumption: this.undefinedIfZero(
+				this.langInternalRAMEnergyConsumption
+			) as MilliJoule_number
 		}
 	}
 
@@ -464,48 +492,63 @@ export class SensorValues extends BaseModel {
 		} else {
 			data = json
 		}
-		const result = new SensorValues(
-			{
-				profilerHits: data.profilerHits || 0,
+		const result = new SensorValues({
+			profilerHits: data.profilerHits || 0,
 
-				selfCPUTime: data.selfCPUTime || 0 as MicroSeconds_number,
-				aggregatedCPUTime: data.aggregatedCPUTime || 0 as MicroSeconds_number,
-				internCPUTime: data.internCPUTime || 0 as MicroSeconds_number,
-				externCPUTime: data.externCPUTime || 0 as MicroSeconds_number,
-				langInternalCPUTime: data.langInternalCPUTime || 0 as MicroSeconds_number,
+			selfCPUTime: data.selfCPUTime || (0 as MicroSeconds_number),
+			aggregatedCPUTime: data.aggregatedCPUTime || (0 as MicroSeconds_number),
+			internCPUTime: data.internCPUTime || (0 as MicroSeconds_number),
+			externCPUTime: data.externCPUTime || (0 as MicroSeconds_number),
+			langInternalCPUTime:
+				data.langInternalCPUTime || (0 as MicroSeconds_number),
 
-				selfCPUEnergyConsumption: data.selfCPUEnergyConsumption || 0 as MilliJoule_number,
-				aggregatedCPUEnergyConsumption: data.aggregatedCPUEnergyConsumption || 0 as MilliJoule_number,
-				internCPUEnergyConsumption: data.internCPUEnergyConsumption || 0 as MilliJoule_number,
-				externCPUEnergyConsumption: data.externCPUEnergyConsumption || 0 as MilliJoule_number,
-				langInternalCPUEnergyConsumption: data.langInternalCPUEnergyConsumption || 0 as MilliJoule_number,
+			selfCPUEnergyConsumption:
+				data.selfCPUEnergyConsumption || (0 as MilliJoule_number),
+			aggregatedCPUEnergyConsumption:
+				data.aggregatedCPUEnergyConsumption || (0 as MilliJoule_number),
+			internCPUEnergyConsumption:
+				data.internCPUEnergyConsumption || (0 as MilliJoule_number),
+			externCPUEnergyConsumption:
+				data.externCPUEnergyConsumption || (0 as MilliJoule_number),
+			langInternalCPUEnergyConsumption:
+				data.langInternalCPUEnergyConsumption || (0 as MilliJoule_number),
 
-				selfRAMEnergyConsumption: data.selfRAMEnergyConsumption || 0 as MilliJoule_number,
-				aggregatedRAMEnergyConsumption: data.aggregatedRAMEnergyConsumption || 0 as MilliJoule_number,
-				internRAMEnergyConsumption: data.internRAMEnergyConsumption || 0 as MilliJoule_number,
-				externRAMEnergyConsumption: data.externRAMEnergyConsumption || 0 as MilliJoule_number,
-				langInternalRAMEnergyConsumption: data.langInternalRAMEnergyConsumption || 0 as MilliJoule_number
-			})
+			selfRAMEnergyConsumption:
+				data.selfRAMEnergyConsumption || (0 as MilliJoule_number),
+			aggregatedRAMEnergyConsumption:
+				data.aggregatedRAMEnergyConsumption || (0 as MilliJoule_number),
+			internRAMEnergyConsumption:
+				data.internRAMEnergyConsumption || (0 as MilliJoule_number),
+			externRAMEnergyConsumption:
+				data.externRAMEnergyConsumption || (0 as MilliJoule_number),
+			langInternalRAMEnergyConsumption:
+				data.langInternalRAMEnergyConsumption || (0 as MilliJoule_number)
+		})
 		return result
 	}
 
-	toBuffer(
-		tag?: string
-	): Buffer {
+	toBuffer(tag?: string): Buffer {
 		return BufferHelper.numberMapToBuffer(
-			SENSOR_VALUES_BYTE_SIZE_MAP as Record<string, PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double>,
-			this as Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+			SENSOR_VALUES_BYTE_SIZE_MAP as Record<
+				string,
+				PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double
+			>,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			this as Record<string, any>,
 			0,
 			tag + '.SensorValues.toBuffer'
 		)
 	}
 
-	static consumeFromBuffer(buffer: Buffer):{
-		instance: SensorValues,
+	static consumeFromBuffer(buffer: Buffer): {
+		instance: SensorValues
 		remainingBuffer: Buffer
 	} {
 		const { instance, remainingBuffer } = BufferHelper.numberMapFromBuffer(
-			SENSOR_VALUES_BYTE_SIZE_MAP as Record<string, PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double>,
+			SENSOR_VALUES_BYTE_SIZE_MAP as Record<
+				string,
+				PrimitiveBufferTypes.UInt | PrimitiveBufferTypes.Double
+			>,
 			buffer
 		)
 
@@ -516,10 +559,7 @@ export class SensorValues extends BaseModel {
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToSelf(
-		other: SensorValues | Partial<ISensorValues>,
-		sign = 1
-	) {
+	addToSelf(other: SensorValues | Partial<ISensorValues>, sign = 1) {
 		this.selfCPUTime = UnitHelper.sumMicroSeconds(
 			this.selfCPUTime,
 			other.selfCPUTime,
@@ -539,10 +579,7 @@ export class SensorValues extends BaseModel {
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToAggregated(
-		other: SensorValues | Partial<ISensorValues>,
-		sign = 1
-	) {
+	addToAggregated(other: SensorValues | Partial<ISensorValues>, sign = 1) {
 		this.aggregatedCPUTime = UnitHelper.sumMicroSeconds(
 			this.aggregatedCPUTime,
 			other.aggregatedCPUTime,
@@ -561,12 +598,8 @@ export class SensorValues extends BaseModel {
 		return this
 	}
 
-
 	// IMPORTANT to change when new measurement type gets added
-	addToIntern(
-		other: SensorValues | Partial<ISensorValues>,
-		sign = 1
-	) {
+	addToIntern(other: SensorValues | Partial<ISensorValues>, sign = 1) {
 		this.internCPUTime = UnitHelper.sumMicroSeconds(
 			this.internCPUTime,
 			other.aggregatedCPUTime,
@@ -586,10 +619,7 @@ export class SensorValues extends BaseModel {
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToExtern(
-		other: SensorValues | Partial<ISensorValues>,
-		sign = 1
-	) {
+	addToExtern(other: SensorValues | Partial<ISensorValues>, sign = 1) {
 		this.externCPUTime = UnitHelper.sumMicroSeconds(
 			this.externCPUTime,
 			other.aggregatedCPUTime,
@@ -609,10 +639,7 @@ export class SensorValues extends BaseModel {
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addSelfToExtern(
-		other: SensorValues | Partial<ISensorValues>,
-		sign = 1
-	) {
+	addSelfToExtern(other: SensorValues | Partial<ISensorValues>, sign = 1) {
 		this.externCPUTime = UnitHelper.sumMicroSeconds(
 			this.externCPUTime,
 			other.selfCPUTime,
@@ -632,10 +659,7 @@ export class SensorValues extends BaseModel {
 	}
 
 	// IMPORTANT to change when new measurement type gets added
-	addToLangInternal(
-		other: SensorValues | Partial<ISensorValues>,
-		sign = 1
-	) {
+	addToLangInternal(other: SensorValues | Partial<ISensorValues>, sign = 1) {
 		this.langInternalCPUTime = UnitHelper.sumMicroSeconds(
 			this.langInternalCPUTime,
 			other.aggregatedCPUTime,
@@ -680,11 +704,11 @@ export class SensorValues extends BaseModel {
 	add({
 		internSensorValues,
 		externSensorValues,
-		langInternalSensorValues,
+		langInternalSensorValues
 	}: {
-		internSensorValues?: SensorValues | Partial<ISensorValues>,
-		externSensorValues?: SensorValues | Partial<ISensorValues>,
-		langInternalSensorValues?: SensorValues | Partial<ISensorValues>,
+		internSensorValues?: SensorValues | Partial<ISensorValues>
+		externSensorValues?: SensorValues | Partial<ISensorValues>
+		langInternalSensorValues?: SensorValues | Partial<ISensorValues>
 	}) {
 		const result = SensorValues.fromJSON(this.toJSON())
 

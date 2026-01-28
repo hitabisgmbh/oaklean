@@ -6,10 +6,10 @@ export interface ISystemInformation_System {
 	virtual: boolean
 	virtualHost?: string
 	raspberry?: {
-		manufacturer: string;
-		processor: string;
-		type: string;
-		revision: string;
+		manufacturer: string
+		processor: string
+		type: string
+		revision: string
 	}
 }
 

@@ -17,11 +17,11 @@ const EXAMPLE_IDENTIFIER_PARTS = [
 ] as SourceNodeIdentifierPart_string[]
 
 const EXAMPLE_IDENTIFIER_PARTS_PER_TYPE: Record<
-ProgramStructureTreeType,
-{
-	input: string
-	expectedName?: string
-}
+	ProgramStructureTreeType,
+	{
+		input: string
+		expectedName?: string
+	}
 > = {
 	[ProgramStructureTreeType.Root]: {
 		input: '{root}',
@@ -214,9 +214,10 @@ describe('SourceNodeIdentifierHelper', () => {
 				EXAMPLE_IDENTIFIER_PARTS_PER_TYPE
 			)) {
 				test(type, () => {
-					const result = SourceNodeIdentifierHelper.parseSourceNodeIdentifierPart(
-						example.input as SourceNodeIdentifierPart_string
-					)
+					const result =
+						SourceNodeIdentifierHelper.parseSourceNodeIdentifierPart(
+							example.input as SourceNodeIdentifierPart_string
+						)
 
 					expect(result).toEqual({
 						type: type as ProgramStructureTreeType,
@@ -227,10 +228,9 @@ describe('SourceNodeIdentifierHelper', () => {
 		})
 
 		test('should return null for an invalid identifier part', () => {
-			const result =
-				SourceNodeIdentifierHelper.parseSourceNodeIdentifierPart(
-					'invalidPart' as SourceNodeIdentifierPart_string
-				)
+			const result = SourceNodeIdentifierHelper.parseSourceNodeIdentifierPart(
+				'invalidPart' as SourceNodeIdentifierPart_string
+			)
 			expect(result).toBeNull()
 		})
 	})

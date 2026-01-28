@@ -21,9 +21,9 @@ export class FunctionDeclarationHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.FunctionDeclaration>
-			resolveWithNoChildren: true
-		} | null {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.FunctionDeclaration>
+		resolveWithNoChildren: true
+	} | null {
 		if (node.body === undefined) {
 			return null
 		}
@@ -60,7 +60,7 @@ export class FunctionDeclarationHelper {
 				}
 				LoggerHelper.error(
 					'FunctionDeclarationHelper (parseNode): unhandled case, ' +
-					'function has no name and is now default export',
+						'function has no name and is now default export',
 					{
 						filePath: traverseNodeInfo.filePath,
 						pos: TypescriptHelper.posToLoc(sourceFile, node.getStart() || 0)
@@ -68,7 +68,7 @@ export class FunctionDeclarationHelper {
 				)
 				throw new Error(
 					'FunctionDeclarationHelper (parseNode): unhandled case, ' +
-					'function has no name and is now default export'
+						'function has no name and is now default export'
 				)
 			}
 		}

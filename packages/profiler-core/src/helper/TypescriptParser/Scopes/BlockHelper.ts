@@ -17,7 +17,9 @@ export class BlockHelper {
 		node: ts.Block,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.Block> } | null {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.Block>
+	} | null {
 		if (
 			node.parent.kind === ts.SyntaxKind.SourceFile ||
 			node.parent.kind === ts.SyntaxKind.ModuleBlock ||

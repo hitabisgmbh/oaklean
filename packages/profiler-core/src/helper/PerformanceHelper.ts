@@ -11,9 +11,7 @@ import {
 	IPerformanceInterval,
 	IPerformanceHelper
 } from '../types/helper/PerformanceHelper'
-import {
-	OAKLEAN_ENABLE_PERFORMANCE_TRACKING
-} from '../constants/env'
+import { OAKLEAN_ENABLE_PERFORMANCE_TRACKING } from '../constants/env'
 
 export class PerformanceHelper {
 	private _measures: Map<string, IPerformanceInterval>
@@ -28,7 +26,9 @@ export class PerformanceHelper {
 
 	static loadFromFile(path: UnifiedPath): IPerformanceHelper {
 		if (fs.existsSync(path.toPlatformString())) {
-			const jsonString = fs.readFileSync(path.toPlatformString(), 'utf8').toString()
+			const jsonString = fs
+				.readFileSync(path.toPlatformString(), 'utf8')
+				.toString()
 			return JSON.parse(jsonString) as IPerformanceHelper
 		}
 		return { measures: {} }
@@ -88,7 +88,7 @@ export class PerformanceHelper {
 		const report: { [key: string]: Record<string, string> } = {}
 		for (const name of Object.keys(loadedReport.measures)) {
 			report[name] = {
-				'Duration': `${(loadedReport.measures[name] / 1e9).toFixed(3)} s`
+				Duration: `${(loadedReport.measures[name] / 1e9).toFixed(3)} s`
 			}
 		}
 
@@ -99,26 +99,32 @@ export class PerformanceHelper {
 		if (!OAKLEAN_ENABLE_PERFORMANCE_TRACKING) {
 			return
 		}
-		const report: { [key: string]: {
-			'Duration': string
-			'Percentage': string
-		} } = {}
+		const report: {
+			[key: string]: {
+				Duration: string
+				Percentage: string
+			}
+		} = {}
 		const total = Number(this._lastMeasure - this._firstMeasure)
 		for (const [name, measure] of this._measures) {
 			if (measure.end) {
 				const diff = Number(measure.end - measure.start)
 				report[name] = {
-					'Duration': `${ (diff / 1e9).toFixed(3) } s`,
-					'Percentage': `${ ((diff / total) * 100).toFixed(2) } %`
+					Duration: `${(diff / 1e9).toFixed(3)} s`,
+					Percentage: `${((diff / total) * 100).toFixed(2)} %`
 				}
 			} else {
 				report[name] = {
-					'Duration': 'N/A',
-					'Percentage': 'N/A'
+					Duration: 'N/A',
+					Percentage: 'N/A'
 				}
 			}
 		}
-		LoggerHelper.log(`Performance report (${title}):`, (total / 1e9).toFixed(3), 's')
+		LoggerHelper.log(
+			`Performance report (${title}):`,
+			(total / 1e9).toFixed(3),
+			's'
+		)
 		LoggerHelper.table(report, ['Duration', 'Percentage'])
 	}
 }

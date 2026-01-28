@@ -8,9 +8,7 @@ let error: ErrorOptions = {
 	execSync: false
 }
 
-export function updateErrorOptions(
-	options: ErrorOptions
-) {
+export function updateErrorOptions(options: ErrorOptions) {
 	error = {
 		...error,
 		...options
@@ -18,8 +16,9 @@ export function updateErrorOptions(
 }
 
 jest.mock('child_process', () => ({
-	execSync: jest.fn().mockImplementation(
-		(command: string, options?: ExecSyncOptions) => {
+	execSync: jest
+		.fn()
+		.mockImplementation((command: string, options?: ExecSyncOptions) => {
 			if (error.execSync) {
 				throw new Error('child_process.execSync error')
 			}

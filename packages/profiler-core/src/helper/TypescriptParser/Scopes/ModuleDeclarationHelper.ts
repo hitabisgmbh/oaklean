@@ -17,7 +17,9 @@ export class ModuleDeclarationHelper {
 		node: ts.ModuleDeclaration,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.ModuleDeclaration> } | null {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ModuleDeclaration>
+	} | null {
 		if (node.name.kind !== ts.SyntaxKind.Identifier) {
 			// module is a ambient module declaration, no implementation is allowed within it
 			// so there cant be any executable code within it
@@ -62,7 +64,8 @@ export class ModuleDeclarationHelper {
 					currentNode = newNode
 				}
 
-				const identifierCounter = traverseNodeInfo.requestModuleIdentificationCounter(identifierChain)
+				const identifierCounter =
+					traverseNodeInfo.requestModuleIdentificationCounter(identifierChain)
 
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
@@ -77,4 +80,3 @@ export class ModuleDeclarationHelper {
 		}
 	}
 }
-

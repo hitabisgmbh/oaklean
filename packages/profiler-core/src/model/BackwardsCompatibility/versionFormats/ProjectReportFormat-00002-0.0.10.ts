@@ -9,17 +9,26 @@ import {
 } from './ProjectReportFormat-00001-0.0.9'
 
 const LangInternalPathSymbol: unique symbol = Symbol('LangInternalPathSymbol')
-export type LangInternalPath_string = string & { [LangInternalPathSymbol]: never }
+export type LangInternalPath_string = string & {
+	[LangInternalPathSymbol]: never
+}
 
-const LangInternalSourceNodeIdentifierSymbol: unique symbol = Symbol('LangInternalSourceNodeIdentifierSymbol')
-export type LangInternalSourceNodeIdentifier_string = string & { [LangInternalSourceNodeIdentifierSymbol]: never }
+const LangInternalSourceNodeIdentifierSymbol: unique symbol = Symbol(
+	'LangInternalSourceNodeIdentifierSymbol'
+)
+export type LangInternalSourceNodeIdentifier_string = string & {
+	[LangInternalSourceNodeIdentifierSymbol]: never
+}
 
-const SourceNodeIdentifierSymbol: unique symbol = Symbol('SourceNodeIdentifierSymbol')
+const SourceNodeIdentifierSymbol: unique symbol = Symbol(
+	'SourceNodeIdentifierSymbol'
+)
 export type SourceNodeIdentifier_string =
-	string & { [SourceNodeIdentifierSymbol]: never } | LangInternalSourceNodeIdentifier_string
+	| (string & { [SourceNodeIdentifierSymbol]: never })
+	| LangInternalSourceNodeIdentifier_string
 
 export interface IReport {
-	reportVersion: string,
+	reportVersion: string
 	relativeRootDir?: UnifiedPath_string
 	internMapping?: Record<UnifiedPath_string, UnifiedPath_string>
 	lang_internal?: Record<LangInternalPath_string, ISourceFileMetaData>
@@ -42,11 +51,11 @@ export enum SourceNodeMetaDataType {
 	LangInternalSourceNodeReference = 'LangInternalSourceNodeReference',
 	InternSourceNodeReference = 'InternSourceNodeReference',
 	ExternSourceNodeReference = 'ExternSourceNodeReference',
-	Aggregate = 'Aggregate',
+	Aggregate = 'Aggregate'
 }
 
 export interface IPureCPUTime {
-	selfCPUTime?: number,
+	selfCPUTime?: number
 	aggregatedCPUTime?: number
 }
 
@@ -66,7 +75,7 @@ export interface ISourceNodeMetaData {
 }
 
 export interface ISourceFileMetaData {
-	path: UnifiedPath_string | LangInternalPath_string,
+	path: UnifiedPath_string | LangInternalPath_string
 	functions?: Record<SourceNodeIdentifier_string, ISourceNodeMetaData>
 }
 export type IProjectMetaData = {
@@ -79,7 +88,7 @@ export type IProjectReportExecutionDetails = {
 }
 
 export interface IReport {
-	reportVersion: string,
+	reportVersion: string
 	relativeRootDir?: UnifiedPath_string
 	internMapping?: Record<UnifiedPath_string, UnifiedPath_string>
 	lang_internal?: Record<LangInternalPath_string, ISourceFileMetaData>
@@ -103,7 +112,7 @@ export interface ISourceFileMetaDataTree {
 	aggregatedExternSourceMetaData?: IAggregatedSourceNodeMetaData
 	type: SourceFileMetaDataTreeType
 	filePath: UnifiedPath_string
-	originalSourceFilePath?: UnifiedPath_string,
+	originalSourceFilePath?: UnifiedPath_string
 	internChildren?: Record<UnifiedPathPart_string, ISourceFileMetaDataTree>
 	externChildren?: Record<NodeModuleIdentifier_string, ISourceFileMetaDataTree>
 	sourceFileMetaData?: ISourceFileMetaData

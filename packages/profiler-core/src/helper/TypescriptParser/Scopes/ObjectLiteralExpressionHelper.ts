@@ -17,7 +17,9 @@ export class ObjectLiteralExpressionHelper {
 		node: ts.ObjectLiteralExpression,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression> } {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ObjectLiteralExpression>
+	} {
 		return {
 			resolve() {
 				const { suffix, identifier, identifierType } = NamingHelper.getName(

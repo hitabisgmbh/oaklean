@@ -1,9 +1,6 @@
 import * as fs from 'fs'
 
-import {
-	Profiler,
-	PerfSensorInterface
-} from '@oaklean/profiler'
+import { Profiler, PerfSensorInterface } from '@oaklean/profiler'
 import {
 	ProfilerConfig,
 	SensorInterfaceType,
@@ -13,9 +10,7 @@ import {
 } from '@oaklean/profiler-core'
 import { PerfEvent } from '@oaklean/profiler/dist/src/interfaces/perf/PerfSensorInterface'
 
-import {
-	ENABLE_MEASUREMENTS
-} from './constants'
+import { ENABLE_MEASUREMENTS } from './constants'
 
 export default async function () {
 	if (!ENABLE_MEASUREMENTS) {
@@ -31,13 +26,20 @@ export default async function () {
 		profilerConfig.getOutDir().join('jest')
 	)
 
-	LoggerHelper.appPrefix.log(`V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`)
+	LoggerHelper.appPrefix.log(
+		`V8 sample rate: ${profilerConfig.getV8CPUSamplingInterval()}ms`
+	)
 	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
 	const sensorInterfaceOptions = profilerConfig.getSensorInterfaceOptions()
 	performance.stop('jestEnv.setup.getSensorInterfaceOptions')
 	if (sensorInterfaceOptions !== undefined) {
-		LoggerHelper.appPrefix.log('Using SensorInterface: ', profilerConfig.getSensorInterfaceType())
-		LoggerHelper.appPrefix.log(`SensorInterface Sample Interval: ${sensorInterfaceOptions.sampleInterval}ms`)
+		LoggerHelper.appPrefix.log(
+			'Using SensorInterface: ',
+			profilerConfig.getSensorInterfaceType()
+		)
+		LoggerHelper.appPrefix.log(
+			`SensorInterface Sample Interval: ${sensorInterfaceOptions.sampleInterval}ms`
+		)
 
 		performance.start('jestEnv.setup.Profiler.getSensorInterface')
 		const sensorInterface = Profiler.getSensorInterface(profilerConfig)
@@ -53,25 +55,27 @@ export default async function () {
 			} else {
 				if (sensorInterface.type() === SensorInterfaceType.perf) {
 					const availableMeasurementTypes = await (
-						sensorInterface as PerfSensorInterface).availableMeasurementTypes()
+						sensorInterface as PerfSensorInterface
+					).availableMeasurementTypes()
 					LoggerHelper.appPrefix.log(
 						'Measure CPU Energy: ' +
-						`${availableMeasurementTypes[PerfEvent.ENERGY_CORES]}`
+							`${availableMeasurementTypes[PerfEvent.ENERGY_CORES]}`
 					)
 					LoggerHelper.appPrefix.log(
 						'Measure RAM Energy: ' +
-						`${availableMeasurementTypes[PerfEvent.ENERGY_RAM]}`
+							`${availableMeasurementTypes[PerfEvent.ENERGY_RAM]}`
 					)
 				}
 			}
 		} else {
-			LoggerHelper.appPrefix.log('Something went wrong loading the SensorInterface')
+			LoggerHelper.appPrefix.log(
+				'Something went wrong loading the SensorInterface'
+			)
 		}
-
 	} else {
 		LoggerHelper.appPrefix.log(
 			'no SensorInterface configured ' +
-			'(no energy measurements will be collected, only cpu time)'
+				'(no energy measurements will be collected, only cpu time)'
 		)
 	}
 

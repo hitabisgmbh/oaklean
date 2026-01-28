@@ -20,9 +20,9 @@ export class FunctionExpressionHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression>
-			resolveWithNoChildren: true
-		} {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.FunctionExpression>
+		resolveWithNoChildren: true
+	} {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {

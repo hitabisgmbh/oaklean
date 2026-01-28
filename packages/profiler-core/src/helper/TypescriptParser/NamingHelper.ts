@@ -62,7 +62,9 @@ export class NamingHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
-		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node) ? '@static' : ''
+		const staticSuffix = TypescriptHelper.hasStaticKeywordModifier(node)
+			? '@static'
+			: ''
 		const getNameFunction = GET_NAME_FUNCTIONS[node.name.kind]
 		if (getNameFunction !== undefined) {
 			const result = getNameFunction(node.name, sourceFile, traverseNodeInfo)
@@ -86,8 +88,6 @@ export class NamingHelper {
 		)
 	}
 
-
-
 	static getVariableName(
 		node: ts.VariableDeclaration,
 		sourceFile: ts.SourceFile,
@@ -98,13 +98,18 @@ export class NamingHelper {
 			return getNameFunction(node.name, sourceFile, traverseNodeInfo)
 		}
 		LoggerHelper.error(
-			'NamingHelper (getVariableName): unhandled case: node.name.kind  === ' + node.name.kind, {
+			'NamingHelper (getVariableName): unhandled case: node.name.kind  === ' +
+				node.name.kind,
+			{
 				filePath: traverseNodeInfo.filePath,
 				kind: node.name.kind,
 				pos: TypescriptHelper.posToLoc(sourceFile, node.name.getStart())
 			}
 		)
-		throw new Error('NamingHelper (getVariableName): unhandled case: node.name.kind  === ' + node.name.kind)
+		throw new Error(
+			'NamingHelper (getVariableName): unhandled case: node.name.kind  === ' +
+				node.name.kind
+		)
 	}
 
 	static getIdentifierName(
@@ -127,10 +132,7 @@ export class NamingHelper {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		traverseNodeInfo: TraverseNodeInfo
 	): ReturnType<GetNameFunction> {
-		const expressionHash = ExpressionHelper.hashExpression(
-			node,
-			sourceFile
-		)
+		const expressionHash = ExpressionHelper.hashExpression(node, sourceFile)
 
 		return {
 			suffix: '',
@@ -163,8 +165,8 @@ type GetNameFunction = (
 	sourceFile: ts.SourceFile,
 	traverseNodeInfo: TraverseNodeInfo
 ) => {
-	suffix: string;
-	identifier: string;
+	suffix: string
+	identifier: string
 	identifierType: IdentifierType
 }
 

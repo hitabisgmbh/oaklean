@@ -23,7 +23,7 @@ describe('ts.SyntaxKind.PrivateIdentifier', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{get:#private}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						},
 						'{get@static:#private}': {
 							type: ProgramStructureTreeType.GetAccessorDeclaration
@@ -55,10 +55,10 @@ describe('ts.SyntaxKind.Identifier', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{get:a}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						},
 						'{get@static:a}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						}
 					}
 				}
@@ -87,10 +87,10 @@ describe('ts.SyntaxKind.FirstLiteralToken', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{get:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						},
 						'{get@static:(literal:92cfceb3)}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						}
 					}
 				}
@@ -119,10 +119,10 @@ describe('ts.SyntaxKind.BigIntLiteral', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{get:(literal:40a3fd3b)}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						},
 						'{get@static:(literal:40a3fd3b)}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						}
 					}
 				}
@@ -151,10 +151,10 @@ describe('ts.SyntaxKind.FunctionExpression', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{get:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						},
 						'{get@static:(literal:7e2b9fea)}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						}
 					}
 				}
@@ -184,10 +184,10 @@ describe('ts.SyntaxKind.ComputedPropertyName', () => {
 					type: ProgramStructureTreeType.ClassDeclaration,
 					children: {
 						'{get:(expression:34832631)}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						},
 						'{get@static:(expression:34832631)}': {
-							type: ProgramStructureTreeType.GetAccessorDeclaration,
+							type: ProgramStructureTreeType.GetAccessorDeclaration
 						}
 					}
 				}

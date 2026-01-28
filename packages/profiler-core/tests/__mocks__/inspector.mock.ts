@@ -4,15 +4,24 @@ import inspector from 'node:inspector'
 export const SCRIPT_SOURCES: Record<string, string> = {
 	'1': fs.readFileSync(__dirname + '/script01.js').toString(),
 	'2': fs.readFileSync(__dirname + '/script02.js').toString(),
-	'3': fs.readFileSync(__dirname + '/script03.js').toString(),
+	'3': fs.readFileSync(__dirname + '/script03.js').toString()
 }
 
-type SessionPostMessage = 'Debugger.enable' | 'Debugger.disable' | 'Debugger.getScriptSource'
+type SessionPostMessage =
+	| 'Debugger.enable'
+	| 'Debugger.disable'
+	| 'Debugger.getScriptSource'
 
 type SessionPostCallbackType = {
-	'Debugger.enable': (err: Error | null, params: inspector.Debugger.EnableReturnType) => void
+	'Debugger.enable': (
+		err: Error | null,
+		params: inspector.Debugger.EnableReturnType
+	) => void
 	'Debugger.disable': (err: Error | null) => void
-	'Debugger.getScriptSource': (err: Error | null, params: inspector.Debugger.GetScriptSourceReturnType) => void
+	'Debugger.getScriptSource': (
+		err: Error | null,
+		params: inspector.Debugger.GetScriptSourceReturnType
+	) => void
 }
 
 class Session {
@@ -24,13 +33,16 @@ class Session {
 		this.debuggerEnabled = false
 	}
 
-	connect () {
+	connect() {
 		this.connected = true
 	}
-	disconnect () {
+	disconnect() {
 		this.connected = false
 	}
-	async on(eventName: 'inspectorNotification', listener: (message: inspector.InspectorNotification<object>) => void) {
+	async on(
+		eventName: 'inspectorNotification',
+		listener: (message: inspector.InspectorNotification<object>) => void
+	) {
 		if (!this.connected) {
 			throw new Error('Session is not connected')
 		}
@@ -74,7 +86,7 @@ class Session {
 			case 'Debugger.enable':
 				this.debuggerEnabled = true
 				if (callback) {
-					(callback as SessionPostCallbackType['Debugger.enable'])(null, {
+					;(callback as SessionPostCallbackType['Debugger.enable'])(null, {
 						debuggerId: '1'
 					})
 				}
@@ -82,14 +94,17 @@ class Session {
 			case 'Debugger.disable':
 				this.debuggerEnabled = false
 				if (callback) {
-					(callback as SessionPostCallbackType['Debugger.disable'])(null)
+					;(callback as SessionPostCallbackType['Debugger.disable'])(null)
 				}
 				break
 			case 'Debugger.getScriptSource':
 				if (callback && this.debuggerEnabled && params) {
-					(callback as SessionPostCallbackType['Debugger.getScriptSource'])(null, {
-						scriptSource: SCRIPT_SOURCES[params.scriptId]
-					})
+					;(callback as SessionPostCallbackType['Debugger.getScriptSource'])(
+						null,
+						{
+							scriptSource: SCRIPT_SOURCES[params.scriptId]
+						}
+					)
 				}
 				break
 			default:

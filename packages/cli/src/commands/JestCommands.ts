@@ -50,7 +50,7 @@ export default class JestCommands {
 				'Inspects all reports and cpu profiles in the jests output directory and verifies their consistency'
 			)
 			.action(this.inspectCPUProfiles.bind(this))
-		
+
 		baseCommand
 			.command('verify-trees')
 			.description(
@@ -127,8 +127,7 @@ export default class JestCommands {
 					exportAssetHelper.outputMetricsDataCollectionPath(title)
 				const externalResourceHelperPath =
 					exportAssetHelper.outputExternalResourceHelperPath(title)
-				const v8CPUProfilePath =
-					exportAssetHelper.outputCPUProfilePath(title)
+				const v8CPUProfilePath = exportAssetHelper.outputCPUProfilePath(title)
 
 				const cpuProfile = await CPUProfileHelper.loadFromFile(v8CPUProfilePath)
 
@@ -266,8 +265,8 @@ export default class JestCommands {
 
 		for (const reportPath of reportPaths) {
 			if (reportPath.toString() === accumulatedProjectReportPath.toString()) {
-					continue // Skip the accumulated report itself
-				}
+				continue // Skip the accumulated report itself
+			}
 
 			const title = exportAssetHelper.titleFromReportFilePath(reportPath)
 			const cpuProfilePath = exportAssetHelper.outputCPUProfilePath(title)
@@ -282,7 +281,7 @@ export default class JestCommands {
 			if (cpuProfile === undefined) {
 				LoggerHelper.error(
 					`CPU profile could not be loaded from ${cpuProfilePath.toPlatformString()}. ` +
-					'Please make sure the file exists and is a valid CPU profile.'
+						'Please make sure the file exists and is a valid CPU profile.'
 				)
 				return
 			}
@@ -294,13 +293,14 @@ export default class JestCommands {
 			totalHits += inspectResult.totalHits
 			totalCPUTime += inspectResult.totalCPUTime
 
-			const reportsTotal = report.totalAndMaxMetaData().total.sensorValues.aggregatedCPUTime
+			const reportsTotal =
+				report.totalAndMaxMetaData().total.sensorValues.aggregatedCPUTime
 
 			if (reportsTotal !== inspectResult.totalCPUTime) {
 				LoggerHelper.warn(
 					`Inconsistent CPU time in report: ${title}.\n` +
-					`Profile CPU Time: ${inspectResult.totalCPUTime}\n` +
-					`Report CPU Time: ${reportsTotal}`
+						`Profile CPU Time: ${inspectResult.totalCPUTime}\n` +
+						`Report CPU Time: ${reportsTotal}`
 				)
 			} else {
 				LoggerHelper.success(
@@ -308,33 +308,36 @@ export default class JestCommands {
 				)
 			}
 		}
-		LoggerHelper.table([
-			{
-				type: 'Files Inspected',
-				value: reportPaths.length
-			},
-			{
-				type: 'Total Node Count',
-				value: totalNodeCount
-			},
-			{
-				type: 'Source Node Location Count',
-				value: totalSourceNodeLocationCount
-			},
-			{
-				type: 'Sample Count',
-				value: totalSampleCount
-			},
-			{
-				type: 'Total Hits',
-				value: totalHits
-			},
-			{
-				type: 'Total CPU Time',
-				value: totalCPUTime,
-				unit: 'µs'
-			}
-		], ['type', 'value', 'unit'])
+		LoggerHelper.table(
+			[
+				{
+					type: 'Files Inspected',
+					value: reportPaths.length
+				},
+				{
+					type: 'Total Node Count',
+					value: totalNodeCount
+				},
+				{
+					type: 'Source Node Location Count',
+					value: totalSourceNodeLocationCount
+				},
+				{
+					type: 'Sample Count',
+					value: totalSampleCount
+				},
+				{
+					type: 'Total Hits',
+					value: totalHits
+				},
+				{
+					type: 'Total CPU Time',
+					value: totalCPUTime,
+					unit: 'µs'
+				}
+			],
+			['type', 'value', 'unit']
+		)
 	}
 
 	async verifyTrees() {
@@ -357,20 +360,24 @@ export default class JestCommands {
 			}
 
 			const sourceFileMetaDataTree = SourceFileMetaDataTree.fromProjectReport(
-        projectReport
-      ).filter(projectReport.asSourceNodeGraph(), undefined, undefined).node
+				projectReport
+			).filter(projectReport.asSourceNodeGraph(), undefined, undefined).node
 
 			if (!sourceFileMetaDataTree) {
-				LoggerHelper.error(`SourceFileMetaDataTree could not be constructed from ProjectReport: ${reportPath}`)
+				LoggerHelper.error(
+					`SourceFileMetaDataTree could not be constructed from ProjectReport: ${reportPath}`
+				)
 				continue
 			}
 
 			const total = projectReport.totalAndMaxMetaData().total
 
-			const treeSum = sourceFileMetaDataTree.aggregatedInternSourceMetaData.total.sensorValues.aggregatedCPUTime +
+			const treeSum =
+				sourceFileMetaDataTree.aggregatedInternSourceMetaData.total.sensorValues
+					.aggregatedCPUTime +
 				sourceFileMetaDataTree.headlessSensorValues.langInternalCPUTime +
 				sourceFileMetaDataTree.headlessSensorValues.externCPUTime
-			
+
 			// const treeSum = sourceFileMetaDataTree.aggregatedInternSourceMetaData.total.sensorValues.selfCPUTime +
 			// 	sourceFileMetaDataTree.aggregatedLangInternalSourceNodeMetaData.total.sensorValues.selfCPUTime +
 			// 	sourceFileMetaDataTree.aggregatedExternSourceMetaData.total.sensorValues.selfCPUTime
@@ -381,7 +388,7 @@ export default class JestCommands {
 			if (diff !== 0) {
 				LoggerHelper.error(
 					`Inconsistent SourceFileMetaDataTree in report: ${reportPath.toPlatformString()}.\n` +
-					'Tree sum does not match total CPU time.\n',
+						'Tree sum does not match total CPU time.\n',
 					`Tree Sum: ${treeSum}`,
 					`Total CPU Time: ${total.sensorValues.aggregatedCPUTime}`,
 					`Difference: ${diff}`

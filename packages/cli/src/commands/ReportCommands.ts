@@ -17,7 +17,7 @@ export default class ReportCommands {
 	constructor() {
 		const baseCommand = program
 			.command('report')
-			.description('commands to convert or inspect the profiler\'s format')
+			.description("commands to convert or inspect the profiler's format")
 
 		baseCommand
 			.command('toHash')
@@ -27,14 +27,18 @@ export default class ReportCommands {
 
 		baseCommand
 			.command('toJSON')
-			.description('Converts a profiler format that is given in binary format to a json version')
+			.description(
+				'Converts a profiler format that is given in binary format to a json version'
+			)
 			.argument('<input>', 'input file path')
 			.argument('<output>', 'output file path')
 			.action(this.convertToJSON.bind(this))
 
 		baseCommand
 			.command('toSourceFileTree')
-			.description('Converts a profiler format that is given in binary format to a SourceFileMetaDataTree')
+			.description(
+				'Converts a profiler format that is given in binary format to a SourceFileMetaDataTree'
+			)
 			.argument('<input>', 'input file path')
 			.argument('<output>', 'output file path')
 			.action(this.convertToSourceFileMetaDataTreeTree.bind(this))
@@ -42,7 +46,11 @@ export default class ReportCommands {
 		baseCommand
 			.command('check')
 			.description('Checks wether all files in the profiler format are present')
-			.option('--sn, --source-nodes', 'Specifies if source nodes should also be checked', false)
+			.option(
+				'--sn, --source-nodes',
+				'Specifies if source nodes should also be checked',
+				false
+			)
 			.argument('<input>', 'input file path')
 			.action(this.check.bind(this))
 
@@ -65,7 +73,9 @@ export default class ReportCommands {
 		}
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
-			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`Could not find a profiler report at ${inputPath.toPlatformString()}`
+			)
 			return
 		}
 		LoggerHelper.log(`Hash: ${report.hash()}`)
@@ -84,7 +94,9 @@ export default class ReportCommands {
 
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
-			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`Could not find a profiler report at ${inputPath.toPlatformString()}`
+			)
 			return
 		}
 		report.storeToFile(outputPath, 'pretty-json')
@@ -103,7 +115,9 @@ export default class ReportCommands {
 
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
-			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`Could not find a profiler report at ${inputPath.toPlatformString()}`
+			)
 			return
 		}
 
@@ -128,10 +142,13 @@ export default class ReportCommands {
 
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
-			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`Could not find a profiler report at ${inputPath.toPlatformString()}`
+			)
 			return
 		}
-		const reversePathMap = report.globalIndex.getModuleIndex('get')?.reversePathMap
+		const reversePathMap =
+			report.globalIndex.getModuleIndex('get')?.reversePathMap
 
 		if (reversePathMap === undefined) {
 			LoggerHelper.error('Could not find reversePathMap')
@@ -139,12 +156,14 @@ export default class ReportCommands {
 		}
 
 		const pstPerFile = new Map<
-		UnifiedPath_string | LangInternalPath_string,
-		ProgramStructureTree
+			UnifiedPath_string | LangInternalPath_string,
+			ProgramStructureTree
 		>()
 
 		for (const pathIndex of reversePathMap.values()) {
-			if (!fs.existsSync(new UnifiedPath(pathIndex.identifier).toPlatformString())) {
+			if (
+				!fs.existsSync(new UnifiedPath(pathIndex.identifier).toPlatformString())
+			) {
 				LoggerHelper.error(`Could not find file ${pathIndex.identifier}`)
 				continue
 			}
@@ -152,7 +171,9 @@ export default class ReportCommands {
 			if (options.sourceNodes) {
 				let pst = pstPerFile.get(pathIndex.identifier)
 				if (pst === undefined) {
-					pst = TypescriptParser.parseFile(new UnifiedPath(pathIndex.identifier))
+					pst = TypescriptParser.parseFile(
+						new UnifiedPath(pathIndex.identifier)
+					)
 					pstPerFile.set(pathIndex.identifier, pst)
 				}
 
@@ -160,21 +181,32 @@ export default class ReportCommands {
 
 				for (const sourceNodeIndex of pathIndex.reverseSourceNodeMap.values()) {
 					if (sourceNodeIndex.presentInOriginalSourceCode) {
-						if (pst.sourceLocationOfIdentifier(sourceNodeIndex.identifier) === null) {
+						if (
+							pst.sourceLocationOfIdentifier(sourceNodeIndex.identifier) ===
+							null
+						) {
 							notFoundSourceNodes.push(sourceNodeIndex.identifier)
 						}
 					}
 				}
 				if (notFoundSourceNodes.length > 0) {
-					LoggerHelper.error(`Could not find source nodes in file ${pathIndex.identifier}`)
+					LoggerHelper.error(
+						`Could not find source nodes in file ${pathIndex.identifier}`
+					)
 					LoggerHelper.table(notFoundSourceNodes)
 				}
 			}
 		}
 
 		const nodeModulePath = new UnifiedPath(process.cwd()).join('node_modules')
-		for (const [nodeModuleIdentifier, moduleIndex] of report.globalIndex.moduleMap.entries()) {
-			if (nodeModuleIdentifier === '{self}' || nodeModuleIdentifier === '{node}') {
+		for (const [
+			nodeModuleIdentifier,
+			moduleIndex
+		] of report.globalIndex.moduleMap.entries()) {
+			if (
+				nodeModuleIdentifier === '{self}' ||
+				nodeModuleIdentifier === '{node}'
+			) {
 				continue
 			}
 			const nodeModule = NodeModule.fromIdentifier(nodeModuleIdentifier)
@@ -183,8 +215,12 @@ export default class ReportCommands {
 			}
 
 			for (const pathIndex of moduleIndex.reversePathMap.values()) {
-				const relativeNodeModulePath = new UnifiedPath(nodeModule.name).join(pathIndex.identifier)
-				const filePath = nodeModulePath.join(relativeNodeModulePath).toPlatformString()
+				const relativeNodeModulePath = new UnifiedPath(nodeModule.name).join(
+					pathIndex.identifier
+				)
+				const filePath = nodeModulePath
+					.join(relativeNodeModulePath)
+					.toPlatformString()
 				if (!fs.existsSync(filePath)) {
 					LoggerHelper.error(`Could not find file ${relativeNodeModulePath}`)
 				}
@@ -200,7 +236,9 @@ export default class ReportCommands {
 
 		const report = ProjectReport.loadFromFile(inputPath, 'bin')
 		if (report === undefined) {
-			LoggerHelper.error(`Could not find a profiler report at ${inputPath.toPlatformString()}`)
+			LoggerHelper.error(
+				`Could not find a profiler report at ${inputPath.toPlatformString()}`
+			)
 			return
 		}
 
@@ -214,51 +252,69 @@ export default class ReportCommands {
 
 		const total = report.totalAndMaxMetaData().total
 
-		LoggerHelper.table([
-			{
-				type: 'Node modules count',
-				value: node_modules.length
-			}
-		],['type', 'value', 'unit'])
+		LoggerHelper.table(
+			[
+				{
+					type: 'Node modules count',
+					value: node_modules.length
+				}
+			],
+			['type', 'value', 'unit']
+		)
 
-		LoggerHelper.table([
-			{
-				'category': 'headless',
-				'description': 'Headless measurements have no parent, so they originate from node internal operations like timers, events, etc.'
-			},
-			{
-				'category': 'non-headless',
-				'description': 'Non-headless measurements have a parent, so they originate from user code.'
-			},
-			{
-				'category': 'total',
-				'description': 'Total measurements are the sum of headless and non-headless measurements, so the total consumption of the process.'
-			}
-		], ['category', 'description'])
+		LoggerHelper.table(
+			[
+				{
+					category: 'headless',
+					description:
+						'Headless measurements have no parent, so they originate from node internal operations like timers, events, etc.'
+				},
+				{
+					category: 'non-headless',
+					description:
+						'Non-headless measurements have a parent, so they originate from user code.'
+				},
+				{
+					category: 'total',
+					description:
+						'Total measurements are the sum of headless and non-headless measurements, so the total consumption of the process.'
+				}
+			],
+			['category', 'description']
+		)
 
-		LoggerHelper.table([
-			{
-				type: 'cpu time',
-				headless: report.headlessSensorValues.selfCPUTime,
-				'non-headless': total.sensorValues.aggregatedCPUTime - report.headlessSensorValues.selfCPUTime,
-				total: total.sensorValues.aggregatedCPUTime,
-				unit: 'µs'
-			},
-			{
-				type: 'cpu energy',
-				headless: report.headlessSensorValues.selfCPUEnergyConsumption,
-				'non-headless': total.sensorValues.aggregatedCPUEnergyConsumption - report.headlessSensorValues.selfCPUEnergyConsumption,
-				total: total.sensorValues.aggregatedCPUEnergyConsumption,
-				unit: 'mJ'
-			},
-			{
-				type: 'ram energy',
-				headless: report.headlessSensorValues.selfRAMEnergyConsumption,
-				'non-headless': total.sensorValues.aggregatedRAMEnergyConsumption - report.headlessSensorValues.selfRAMEnergyConsumption,
-				total: total.sensorValues.aggregatedRAMEnergyConsumption,
-				unit: 'mJ'
-			},
-		], ['type', 'headless', 'non-headless', 'total', 'unit'])
+		LoggerHelper.table(
+			[
+				{
+					type: 'cpu time',
+					headless: report.headlessSensorValues.selfCPUTime,
+					'non-headless':
+						total.sensorValues.aggregatedCPUTime -
+						report.headlessSensorValues.selfCPUTime,
+					total: total.sensorValues.aggregatedCPUTime,
+					unit: 'µs'
+				},
+				{
+					type: 'cpu energy',
+					headless: report.headlessSensorValues.selfCPUEnergyConsumption,
+					'non-headless':
+						total.sensorValues.aggregatedCPUEnergyConsumption -
+						report.headlessSensorValues.selfCPUEnergyConsumption,
+					total: total.sensorValues.aggregatedCPUEnergyConsumption,
+					unit: 'mJ'
+				},
+				{
+					type: 'ram energy',
+					headless: report.headlessSensorValues.selfRAMEnergyConsumption,
+					'non-headless':
+						total.sensorValues.aggregatedRAMEnergyConsumption -
+						report.headlessSensorValues.selfRAMEnergyConsumption,
+					total: total.sensorValues.aggregatedRAMEnergyConsumption,
+					unit: 'mJ'
+				}
+			],
+			['type', 'headless', 'non-headless', 'total', 'unit']
+		)
 
 		if (options.listModules) {
 			LoggerHelper.log('Node modules:')

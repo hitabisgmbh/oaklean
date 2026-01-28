@@ -25,7 +25,8 @@ class SubClass extends BaseModel {
 
 	static fromJSON(
 		json: string | ISubClass,
-		...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+		...args: any[]
 	): SubClass {
 		let data: ISubClass
 		if (typeof json === 'string') {
@@ -53,26 +54,20 @@ class SubClass extends BaseModel {
 	}
 
 	static fromBuffer(buffer: Buffer): {
-		instance: SubClass,
+		instance: SubClass
 		remainingBuffer: Buffer
 	} {
 		let remainingBuffer = buffer
-		const {
-			instance: name,
-			remainingBuffer: newRemainingBuffer1
-		} = BufferHelper.String2LFromBuffer(remainingBuffer)
+		const { instance: name, remainingBuffer: newRemainingBuffer1 } =
+			BufferHelper.String2LFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer1
 		const instance = new SubClass(name)
-		const {
-			instance: nextIsPresent,
-			remainingBuffer: newRemainingBuffer2
-		} = BufferHelper.BooleanFromBuffer(remainingBuffer)
+		const { instance: nextIsPresent, remainingBuffer: newRemainingBuffer2 } =
+			BufferHelper.BooleanFromBuffer(remainingBuffer)
 		remainingBuffer = newRemainingBuffer2
 		if (nextIsPresent) {
-			const {
-				instance: next,
-				remainingBuffer: newRemainingBuffer
-			} = SubClass.fromBuffer(remainingBuffer)
+			const { instance: next, remainingBuffer: newRemainingBuffer } =
+				SubClass.fromBuffer(remainingBuffer)
 			remainingBuffer = newRemainingBuffer
 			instance.next = next
 		}
@@ -103,12 +98,13 @@ const EXAMPLE_MODEL_SET: (number | string | object)[] = [
 	'xyz'
 ]
 
-const EXAMPLE_MODEL_SET_BUFFER = '0400000001020000000201006101010062010100630101006400020900313233342d616263640000030078797a'
+const EXAMPLE_MODEL_SET_BUFFER =
+	'0400000001020000000201006101010062010100630101006400020900313233342d616263640000030078797a'
 
 function runInstanceTests(
 	title: string,
 	preDefinedInstance: () => {
-		instance: ModelSet<SubClass | string | number>,
+		instance: ModelSet<SubClass | string | number>
 		values: (SubClass | string | number)[]
 	}
 ) {
@@ -117,7 +113,7 @@ function runInstanceTests(
 		let values: (SubClass | string | number)[]
 
 		beforeEach(() => {
-			({ instance, values } = preDefinedInstance())
+			;({ instance, values } = preDefinedInstance())
 		})
 
 		it('instance should be an instanceof ModelSet', () => {
@@ -157,12 +153,14 @@ function runInstanceTests(
 		})
 
 		test('Symbol.iterator', () => {
-			expect([...instance].sort()).toEqual([
-				[EXAMPLE_MODEL_SET[0], EXAMPLE_MODEL_SET[0]],
-				[EXAMPLE_MODEL_SET[1], EXAMPLE_MODEL_SET[1]],
-				[EXAMPLE_MODEL_SET[2], EXAMPLE_MODEL_SET[2]],
-				[EXAMPLE_MODEL_SET[3], EXAMPLE_MODEL_SET[3]],
-			].sort())
+			expect([...instance].sort()).toEqual(
+				[
+					[EXAMPLE_MODEL_SET[0], EXAMPLE_MODEL_SET[0]],
+					[EXAMPLE_MODEL_SET[1], EXAMPLE_MODEL_SET[1]],
+					[EXAMPLE_MODEL_SET[2], EXAMPLE_MODEL_SET[2]],
+					[EXAMPLE_MODEL_SET[3], EXAMPLE_MODEL_SET[3]]
+				].sort()
+			)
 		})
 
 		it('should serialize correctly', () => {
@@ -218,9 +216,7 @@ function runInstanceTests(
 
 		test('foreach', () => {
 			const forEachValues: ModelSetValueType[] = []
-			function manipulateItem(
-				value: SubClass | string | number
-			) {
+			function manipulateItem(value: SubClass | string | number) {
 				forEachValues.push(value)
 			}
 			instance.forEach(manipulateItem)
@@ -232,7 +228,9 @@ function runInstanceTests(
 		})
 
 		test('toBuffer', () => {
-			expect(instance.toBuffer().toString('hex')).toEqual(EXAMPLE_MODEL_SET_BUFFER)
+			expect(instance.toBuffer().toString('hex')).toEqual(
+				EXAMPLE_MODEL_SET_BUFFER
+			)
 		})
 	})
 }
@@ -255,26 +253,32 @@ describe('ModelSet', () => {
 		values.push(subClass2)
 		instance.add('xyz')
 		values.push('xyz')
-		
+
 		return { instance, values }
 	})
 
 	describe('deserialization', () => {
 		test('deserialization from string', () => {
-			const instanceFromString = ModelSet.fromJSON<SubClass | string | number>
-			(JSON.stringify(EXAMPLE_MODEL_SET), SubClass.fromJSON)
+			const instanceFromString = ModelSet.fromJSON<SubClass | string | number>(
+				JSON.stringify(EXAMPLE_MODEL_SET),
+				SubClass.fromJSON
+			)
 			expect(instanceFromString.toJSON()).toEqual(EXAMPLE_MODEL_SET)
 		})
 
 		test('deserialization from object', () => {
-			const instanceFromObject = ModelSet.fromJSON<
-			SubClass | string | number>(EXAMPLE_MODEL_SET, SubClass.fromJSON) as ModelSet<SubClass | string | number>
+			const instanceFromObject = ModelSet.fromJSON<SubClass | string | number>(
+				EXAMPLE_MODEL_SET,
+				SubClass.fromJSON
+			) as ModelSet<SubClass | string | number>
 			expect(instanceFromObject.toJSON()).toEqual(EXAMPLE_MODEL_SET)
 		})
 
 		runInstanceTests('deserialized instance related', () => {
-			const instanceFromObject = ModelSet.fromJSON<
-			SubClass | string | number>(EXAMPLE_MODEL_SET, SubClass.fromJSON) as ModelSet<SubClass | string | number>
+			const instanceFromObject = ModelSet.fromJSON<SubClass | string | number>(
+				EXAMPLE_MODEL_SET,
+				SubClass.fromJSON
+			) as ModelSet<SubClass | string | number>
 			return {
 				instance: instanceFromObject,
 				values: Array.from(instanceFromObject.entries())
@@ -286,13 +290,19 @@ describe('ModelSet', () => {
 		const buffer = Buffer.from(EXAMPLE_MODEL_SET_BUFFER, 'hex')
 
 		test('consume from buffer', () => {
-			const { instance, remainingBuffer } = ModelSet.consumeFromBuffer(buffer, SubClass.fromBuffer)
+			const { instance, remainingBuffer } = ModelSet.consumeFromBuffer(
+				buffer,
+				SubClass.fromBuffer
+			)
 			expect(instance.toJSON()).toEqual(EXAMPLE_MODEL_SET)
 			expect(remainingBuffer.byteLength).toBe(0)
 		})
 
 		runInstanceTests('consume from buffer instance related', () => {
-			const { instance } = ModelSet.consumeFromBuffer(buffer, SubClass.fromBuffer)
+			const { instance } = ModelSet.consumeFromBuffer(
+				buffer,
+				SubClass.fromBuffer
+			)
 			return {
 				instance: instance,
 				values: Array.from(instance.entries())

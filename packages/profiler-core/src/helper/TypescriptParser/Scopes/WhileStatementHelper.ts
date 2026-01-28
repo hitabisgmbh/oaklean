@@ -17,11 +17,12 @@ export class WhileStatementHelper {
 		node: ts.WhileStatement | ts.DoStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<ProgramStructureTreeType.WhileStatement> } {
+	): {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.WhileStatement>
+	} {
 		return {
 			resolve() {
-				const statementName = `(while:${traverseNodeInfo.counters
-					.whileStatementCounter++})`
+				const statementName = `(while:${traverseNodeInfo.counters.whileStatementCounter++})`
 				return new ProgramStructureTree(
 					traverseNodeInfo.resolvedTree(),
 					traverseNodeInfo.nextId(),

@@ -16,7 +16,8 @@ import {
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
-let _inquirerPromptsModule: typeof import('@inquirer/prompts') | undefined = undefined
+let _inquirerPromptsModule: typeof import('@inquirer/prompts') | undefined =
+	undefined
 async function inquirerPromptsModule() {
 	if (!_inquirerPromptsModule) {
 		_inquirerPromptsModule = await import('@inquirer/prompts')
@@ -37,22 +38,26 @@ export default class InitCommands {
 	}
 
 	async initCommand() {
-		const {
-			mainConfig,
-			localConfig
-		} = await this.configureConfig()
+		const { mainConfig, localConfig } = await this.configureConfig()
 		LoggerHelper.appPrefix.success('[Main Config]')
 		LoggerHelper.log(JSON.stringify(mainConfig, null, 2))
 		LoggerHelper.appPrefix.success('[Local Config]')
 		LoggerHelper.log(JSON.stringify(localConfig, null, 2))
 
-		if (await this.confirmConfigFileContent() === false) {
+		if ((await this.confirmConfigFileContent()) === false) {
 			return
 		}
-		if (ProfilerConfig.getSensorInterfaceType(localConfig) === SensorInterfaceType.perf) {
-			LoggerHelper.appPrefix.log('perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md')
+		if (
+			ProfilerConfig.getSensorInterfaceType(localConfig) ===
+			SensorInterfaceType.perf
+		) {
+			LoggerHelper.appPrefix.log(
+				'perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md'
+			)
 		}
-		const localConfigPath = new UnifiedPath(process.cwd()).join(STATIC_LOCAL_CONFIG_FILENAME)
+		const localConfigPath = new UnifiedPath(process.cwd()).join(
+			STATIC_LOCAL_CONFIG_FILENAME
+		)
 		const existMainConfig = this.configAlreadyExists(mainConfig.filePath)
 		const existLocalConfig = this.configAlreadyExists(localConfigPath)
 		if (existMainConfig || existLocalConfig) {
@@ -64,15 +69,12 @@ export default class InitCommands {
 				message += ` - ${localConfigPath.toPlatformString()}\n`
 			}
 			LoggerHelper.appPrefix.warn(message)
-			if (await this.confirmOverwriteContent() === false) {
+			if ((await this.confirmOverwriteContent()) === false) {
 				return
 			}
 		}
 		mainConfig.storeToFile(mainConfig.filePath)
-		ProfilerConfig.storeIntermediateToFile(
-			localConfigPath,
-			localConfig
-		)
+		ProfilerConfig.storeIntermediateToFile(localConfigPath, localConfig)
 	}
 
 	configAlreadyExists(path: UnifiedPath): boolean {
@@ -80,7 +82,7 @@ export default class InitCommands {
 	}
 
 	async configureConfig(): Promise<{
-		mainConfig: ProfilerConfig,
+		mainConfig: ProfilerConfig
 		localConfig: IProfilerConfigFileRepresentation
 	}> {
 		const config = ProfilerConfig.getDefaultConfig()
@@ -97,7 +99,7 @@ export default class InitCommands {
 					type: SensorInterfaceType.perf,
 					options: {
 						outputFilePath: 'energy-measurements.txt',
-						sampleInterval: 100 as MicroSeconds_number,
+						sampleInterval: 100 as MicroSeconds_number
 					}
 				}
 				break
@@ -106,7 +108,7 @@ export default class InitCommands {
 					type: SensorInterfaceType.powermetrics,
 					options: {
 						outputFilePath: 'energy-measurements.plist',
-						sampleInterval: 100 as MicroSeconds_number,
+						sampleInterval: 100 as MicroSeconds_number
 					}
 				}
 				break
@@ -115,7 +117,7 @@ export default class InitCommands {
 					type: SensorInterfaceType.windows,
 					options: {
 						outputFilePath: 'energy-measurements.csv',
-						sampleInterval: 100 as MicroSeconds_number,
+						sampleInterval: 100 as MicroSeconds_number
 					}
 				}
 				break
@@ -123,7 +125,8 @@ export default class InitCommands {
 				break
 		}
 
-		config.projectOptions.identifier = await Crypto.uniqueID() as ProjectIdentifier_string
+		config.projectOptions.identifier =
+			(await Crypto.uniqueID()) as ProjectIdentifier_string
 		config.registryOptions = undefined as unknown as RegistryOptions
 		// remove runtime options from main config
 		config.runtimeOptions.sensorInterface = undefined
@@ -134,54 +137,63 @@ export default class InitCommands {
 	}
 
 	async confirmConfigFileContent() {
-		return await (await inquirerPromptsModule()).confirm({
+		return await (
+			await inquirerPromptsModule()
+		).confirm({
 			message: 'Is this OK? (yes)',
 			default: true
 		})
 	}
 
 	async confirmOverwriteContent() {
-		return await (await inquirerPromptsModule()).confirm({
+		return await (
+			await inquirerPromptsModule()
+		).confirm({
 			message: 'Are you sure you want to override the existing files? (yes)',
 			default: true
 		})
 	}
 
 	async selectSensorInterface(): Promise<SensorInterfaceType | undefined> {
-		const sensorInterfacePerPlatform: Partial<Record<NodeJS.Platform, SensorInterfaceType>> = {
-			'linux': SensorInterfaceType.perf,
-			'darwin': SensorInterfaceType.powermetrics,
-			'win32': SensorInterfaceType.windows
+		const sensorInterfacePerPlatform: Partial<
+			Record<NodeJS.Platform, SensorInterfaceType>
+		> = {
+			linux: SensorInterfaceType.perf,
+			darwin: SensorInterfaceType.powermetrics,
+			win32: SensorInterfaceType.windows
 		}
 
 		const recommendedSensorInterface = sensorInterfacePerPlatform[os.platform()]
-		const recommendedSensorInterfaceMessage = recommendedSensorInterface !== undefined ?
-			`recommended for your platform: ${recommendedSensorInterface}` :
-			'No recommended sensor interface for this platform.'
-		return await (await inquirerPromptsModule()).select<SensorInterfaceType | undefined>({
+		const recommendedSensorInterfaceMessage =
+			recommendedSensorInterface !== undefined
+				? `recommended for your platform: ${recommendedSensorInterface}`
+				: 'No recommended sensor interface for this platform.'
+		return await (
+			await inquirerPromptsModule()
+		).select<SensorInterfaceType | undefined>({
 			message: `Select a sensor interface (${recommendedSensorInterfaceMessage})`,
 			choices: [
 				{
 					name: 'None (pure cpu time measurements)',
 					value: undefined,
-					description: 'pure cpu time measurements without energy measurements',
+					description: 'pure cpu time measurements without energy measurements'
 				},
 				{
 					name: 'powermetrics (macOS only)',
 					value: SensorInterfaceType.powermetrics,
-					description: 'energy measurements on macOS',
+					description: 'energy measurements on macOS'
 				},
 				{
 					name: 'perf (Linux only)',
 					value: SensorInterfaceType.perf,
-					description: 'energy measurements on Linux (Intel & AMD CPUs only)',
+					description: 'energy measurements on Linux (Intel & AMD CPUs only)'
 				},
 				{
 					name: 'windows (Windows only)',
 					value: SensorInterfaceType.windows,
-					description: 'energy measurements on Windows (Intel & AMD CPUs only)',
+					description: 'energy measurements on Windows (Intel & AMD CPUs only)'
 				}
-			],
+			]
 		})
 	}
 }

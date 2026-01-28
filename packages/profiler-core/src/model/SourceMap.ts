@@ -1,4 +1,8 @@
-import { SourceMapConsumer, RawSourceMap, NullableMappedPosition } from 'source-map'
+import {
+	SourceMapConsumer,
+	RawSourceMap,
+	NullableMappedPosition
+} from 'source-map'
 
 import { BaseModel } from './BaseModel'
 
@@ -11,11 +15,10 @@ import {
 	SOURCE_MAP_ALL_ATTRIBUTE_NAMES
 } from '../types/model/SourceMap'
 
-
 const SOURCE_MAPPING_URL_REGEX = /^\/\/# sourceMappingURL=(.*)$/m
 
 export type SourceMapRedirect = {
-	type: 'redirect',
+	type: 'redirect'
 	sourceMapLocation: UnifiedPath
 }
 export class SourceMap extends BaseModel implements ISourceMap {
@@ -58,10 +61,10 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		this.ignoreList = ignoreList
 	}
 
-	public async numberOfLinesInCompiledFile() : Promise<number> {
+	public async numberOfLinesInCompiledFile(): Promise<number> {
 		if (this._numberOfLinesInCompiledFile === undefined) {
-			let maxLine = 0;
-			(await this.asConsumer()).eachMapping((mapping) => {
+			let maxLine = 0
+			;(await this.asConsumer()).eachMapping((mapping) => {
 				if (mapping.generatedLine > maxLine) {
 					maxLine = mapping.generatedLine
 				}
@@ -70,7 +73,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		}
 		return this._numberOfLinesInCompiledFile
 	}
-	
+
 	copy(): SourceMap {
 		return SourceMap.fromJSON(this.toJSON())
 	}
@@ -96,10 +99,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 			data = json
 		}
 
-		return new SourceMap(
-			new UnifiedPath(''),
-			data
-		)
+		return new SourceMap(new UnifiedPath(''), data)
 	}
 
 	static fromJsonString(
@@ -109,10 +109,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		const parsed = JSON.parse(s)
 
 		if (SourceMap.isSourceMap(parsed)) {
-			return new SourceMap(
-				sourceMapLocation,
-				parsed
-			)
+			return new SourceMap(sourceMapLocation, parsed)
 		}
 		return null
 	}
@@ -130,7 +127,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 	}
 
 	static base64StringCompiledJSString(sourceCode: string): {
-		base64: string | null | undefined,
+		base64: string | null | undefined
 		sourceMapUrl: string
 	} | null {
 		const match = SOURCE_MAPPING_URL_REGEX.exec(sourceCode)
@@ -155,7 +152,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 	static fromCompiledJSString(
 		filePath: UnifiedPath,
 		sourceCode: string
-	): SourceMap | null | SourceMapRedirect{
+	): SourceMap | null | SourceMapRedirect {
 		const result = SourceMap.base64StringCompiledJSString(sourceCode)
 
 		if (result === null) {
@@ -163,9 +160,10 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		}
 
 		if (result.base64 !== undefined) {
-			const jsonString = result.base64 !== null ?
-				Buffer.from(result.base64, 'base64').toString('utf-8') :
-				'{}'
+			const jsonString =
+				result.base64 !== null
+					? Buffer.from(result.base64, 'base64').toString('utf-8')
+					: '{}'
 			return SourceMap.fromJsonString(jsonString, filePath)
 		} else {
 			// source map file
@@ -181,7 +179,7 @@ export class SourceMap extends BaseModel implements ISourceMap {
 	toBase64String(): string {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const data: any = {}
-		
+
 		for (const attributeName of SOURCE_MAP_ALL_ATTRIBUTE_NAMES) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			data[attributeName] = (this as any)[attributeName]
@@ -205,9 +203,14 @@ export class SourceMap extends BaseModel implements ISourceMap {
 		return this._consumer
 	}
 
-	async getOriginalSourceLocation(line: number, column: number): Promise<NullableMappedPosition | undefined> {
-		const originalPosition = (await this.asConsumer()).originalPositionFor(
-			{ line, column })
+	async getOriginalSourceLocation(
+		line: number,
+		column: number
+	): Promise<NullableMappedPosition | undefined> {
+		const originalPosition = (await this.asConsumer()).originalPositionFor({
+			line,
+			column
+		})
 
 		if (!originalPosition.source) {
 			return undefined

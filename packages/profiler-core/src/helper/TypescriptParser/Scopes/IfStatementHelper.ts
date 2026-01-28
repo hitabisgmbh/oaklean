@@ -39,9 +39,14 @@ export class IfStatementHelper {
 		parent: ts.IfStatement,
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
-	): { resolve(): ProgramStructureTree<
-		ProgramStructureTreeType.IfThenStatement | ProgramStructureTreeType.IfElseStatement
-		> } | undefined
+	):
+		| {
+				resolve(): ProgramStructureTree<
+					| ProgramStructureTreeType.IfThenStatement
+					| ProgramStructureTreeType.IfElseStatement
+				>
+		  }
+		| undefined
 		| undefined {
 		if (parent.thenStatement === node) {
 			return {

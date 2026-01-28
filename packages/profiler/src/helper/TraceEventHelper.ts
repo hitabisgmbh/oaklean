@@ -19,7 +19,6 @@ type TraceEventParams = {
 	tdur: number
 }
 
-
 export class TraceEventHelper {
 	private static _started = false
 	private static _profilerStartTime: MicroSeconds_number | undefined = undefined
@@ -52,7 +51,6 @@ export class TraceEventHelper {
 			})
 		})
 	}
-
 
 	/**
 	 * Handles the 'dataCollected' event from the NodeTracing domain.
@@ -103,9 +101,7 @@ export class TraceEventHelper {
 		let tries = 0
 		while (TraceEventHelper._profilerStartTime === undefined && tries < 10) {
 			LoggerHelper.error(
-				`Cannot capture profiler start time on try: ${
-					tries + 1
-				}, try again after 1 second`
+				`Cannot capture profiler start time on try: ${tries + 1}, try again after 1 second`
 			)
 			tries += 1
 			await TimeHelper.sleep(1000)

@@ -1,7 +1,4 @@
-import {
-	MicroSeconds_number,
-	MilliJoule_number
-} from '../../src/types'
+import { MicroSeconds_number, MilliJoule_number } from '../../src/types'
 import { UnitHelper } from '../../src/helper/UnitHelper'
 
 describe('UnitHelper', () => {

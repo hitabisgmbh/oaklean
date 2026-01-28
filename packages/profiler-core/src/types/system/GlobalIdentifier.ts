@@ -1,15 +1,10 @@
-import {
-	UnifiedPath_string
-} from './UnifiedPath'
+import { UnifiedPath_string } from './UnifiedPath'
 
 import {
 	LangInternalPath_string,
 	SourceNodeIdentifier_string
 } from '../SourceNodeIdentifiers'
-import {
-	INodeModule
-} from '../model/NodeModule'
-
+import { INodeModule } from '../model/NodeModule'
 
 export interface IGlobalIdentifier {
 	nodeModule?: INodeModule

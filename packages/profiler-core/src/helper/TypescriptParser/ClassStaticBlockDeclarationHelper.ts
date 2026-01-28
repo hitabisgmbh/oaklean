@@ -19,9 +19,9 @@ export class ClassStaticBlockDeclarationHelper {
 		sourceFile: ts.SourceFile,
 		traverseNodeInfo: TraverseNodeInfo
 	): {
-			resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassStaticBlockDeclaration>
-			resolveWithNoChildren: true
-		} | null {
+		resolve(): ProgramStructureTree<ProgramStructureTreeType.ClassStaticBlockDeclaration>
+		resolveWithNoChildren: true
+	} | null {
 		return {
 			resolveWithNoChildren: true,
 			resolve() {

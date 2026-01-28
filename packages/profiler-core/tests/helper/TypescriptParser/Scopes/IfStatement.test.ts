@@ -186,7 +186,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
-										type: ProgramStructureTreeType.FunctionExpression,
+										type: ProgramStructureTreeType.FunctionExpression
 									}
 								}
 							},
@@ -200,7 +200,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.FunctionExpression,
+														type: ProgramStructureTreeType.FunctionExpression
 													}
 												}
 											},
@@ -208,7 +208,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.FunctionExpression,
+														type: ProgramStructureTreeType.FunctionExpression
 													}
 												}
 											}
@@ -225,7 +225,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								type: ProgramStructureTreeType.IfThenStatement,
 								children: {
 									'{functionExpression:(anonymous:0)}': {
-										type: ProgramStructureTreeType.FunctionExpression,
+										type: ProgramStructureTreeType.FunctionExpression
 									}
 								}
 							},
@@ -239,7 +239,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfThenStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.FunctionExpression,
+														type: ProgramStructureTreeType.FunctionExpression
 													}
 												}
 											},
@@ -247,7 +247,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 												type: ProgramStructureTreeType.IfElseStatement,
 												children: {
 													'{functionExpression:(anonymous:0)}': {
-														type: ProgramStructureTreeType.FunctionExpression,
+														type: ProgramStructureTreeType.FunctionExpression
 													}
 												}
 											}
@@ -256,7 +256,7 @@ describe('ts.SyntaxKind.IfStatement', () => {
 								}
 							}
 						}
-					},
+					}
 				}
 			})
 		})

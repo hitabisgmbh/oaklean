@@ -4,24 +4,28 @@ import {
 	InspectorSessionHelper
 } from '@oaklean/profiler-core'
 
-import {
-	CPUProfilerCleanUpHelper
-} from './CPUProfileCleanUpHelper'
+import { CPUProfilerCleanUpHelper } from './CPUProfileCleanUpHelper'
 
 export class NodeInspectorProfiler {
 	static async startProfiling(): Promise<void> {
 		return new Promise((resolve, reject) => {
-			InspectorSessionHelper.session.post('Profiler.enable', (err: Error | null) => {
-				if (err) {
-					return reject(err)
-				}
-				InspectorSessionHelper.session.post('Profiler.start', (err: Error | null) => {
+			InspectorSessionHelper.session.post(
+				'Profiler.enable',
+				(err: Error | null) => {
 					if (err) {
 						return reject(err)
 					}
-					resolve()
-				})
-			})
+					InspectorSessionHelper.session.post(
+						'Profiler.start',
+						(err: Error | null) => {
+							if (err) {
+								return reject(err)
+							}
+							resolve()
+						}
+					)
+				}
+			)
 		})
 	}
 
@@ -39,12 +43,16 @@ export class NodeInspectorProfiler {
 
 	static async setSamplingInterval(num: MicroSeconds_number): Promise<void> {
 		return new Promise((resolve, reject) => {
-			InspectorSessionHelper.session.post('Profiler.setSamplingInterval', { interval: num }, (err) => {
-				if (err) {
-					return reject(err)
+			InspectorSessionHelper.session.post(
+				'Profiler.setSamplingInterval',
+				{ interval: num },
+				(err) => {
+					if (err) {
+						return reject(err)
+					}
+					resolve()
 				}
-				resolve()
-			})
+			)
 		})
 	}
 }

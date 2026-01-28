@@ -7,7 +7,7 @@ export class InspectorSessionHelper {
 
 	/*
 	 * Connects the inspector session.
-	*/
+	 */
 	static connect() {
 		if (InspectorSessionHelper._destroyed) {
 			throw new Error('Inspector session has been destroyed')
@@ -26,7 +26,7 @@ export class InspectorSessionHelper {
 		if (InspectorSessionHelper._destroyed) {
 			throw new Error('Inspector session has been destroyed')
 		}
-		if (!InspectorSessionHelper._connected){
+		if (!InspectorSessionHelper._connected) {
 			return
 		}
 

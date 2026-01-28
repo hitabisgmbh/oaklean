@@ -2,7 +2,7 @@ import {
 	ProjectReport,
 	ReportKind,
 	SourceNodeMetaDataType,
-	InsertCPUProfileStateMachine,
+	InsertCPUProfileStateMachine
 } from '@oaklean/profiler-core/src'
 
 // Test Assets
@@ -29,13 +29,11 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + DIFFERENT
 
 	test('LA.0 -> LB.0 -> LC.0', async () => {
 		const cpuNode = mockedCPUModel(
-			createLocationChainCPUModel(
-				[
-					SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
-					SOURCE_LOCATIONS_LANG_INTERNAL['libB-0'],
-					SOURCE_LOCATIONS_LANG_INTERNAL['libC-0'],
-				]
-			)
+			createLocationChainCPUModel([
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libB-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libC-0']
+			])
 		)
 
 		await stateMachine.insertCPUNodes(
@@ -96,14 +94,12 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + DIFFERENT
 
 	test('LA.0 -> LB.0 -> LA.0 -> LB.0', async () => {
 		const cpuNode = mockedCPUModel(
-			createLocationChainCPUModel(
-				[
-					SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
-					SOURCE_LOCATIONS_LANG_INTERNAL['libB-0'],
-					SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
-					SOURCE_LOCATIONS_LANG_INTERNAL['libB-0'],
-				]
-			)
+			createLocationChainCPUModel([
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libB-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+				SOURCE_LOCATIONS_LANG_INTERNAL['libB-0']
+			])
 		)
 
 		await stateMachine.insertCPUNodes(
@@ -239,16 +235,24 @@ describe('InsertCPUProfileStateMachine.insertCPUNodes (LANG_INTERNAL + DIFFERENT
 			createLocationTreeCPUModel([
 				SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
 				[
-					[SOURCE_LOCATIONS_LANG_INTERNAL['libB-0'], [
-						[SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'], [
-							[SOURCE_LOCATIONS_LANG_INTERNAL['libB-0'], []],
-						]],
-					]],
-					[SOURCE_LOCATIONS_LANG_INTERNAL['libC-0'], [
-						[SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'], [
-							[SOURCE_LOCATIONS_LANG_INTERNAL['libC-0'], []],
-						]],
-					]],
+					[
+						SOURCE_LOCATIONS_LANG_INTERNAL['libB-0'],
+						[
+							[
+								SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+								[[SOURCE_LOCATIONS_LANG_INTERNAL['libB-0'], []]]
+							]
+						]
+					],
+					[
+						SOURCE_LOCATIONS_LANG_INTERNAL['libC-0'],
+						[
+							[
+								SOURCE_LOCATIONS_LANG_INTERNAL['libA-0'],
+								[[SOURCE_LOCATIONS_LANG_INTERNAL['libC-0'], []]]
+							]
+						]
+					]
 				]
 			])
 		)

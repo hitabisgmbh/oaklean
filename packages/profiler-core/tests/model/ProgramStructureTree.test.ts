@@ -6,12 +6,10 @@ import {
 
 import { ProgramStructureTree } from '../../src/model/ProgramStructureTree'
 import { TypescriptParser } from '../../src/helper/TypescriptParser'
-import {
-	SourceNodeIdentifier_string
-} from '../../src/types'
+import { SourceNodeIdentifier_string } from '../../src/types'
 
 const testCases = {
-	NESTED_DECLARATIONS_CASE,
+	NESTED_DECLARATIONS_CASE
 }
 
 const UPDATE_TEST_ASSETS = false
@@ -21,7 +19,9 @@ describe('ProgramStructureTree', () => {
 		let instance: ProgramStructureTree
 
 		beforeEach(() => {
-			instance = TypescriptParser.parseFile(NESTED_DECLARATIONS_CASE.source.path)
+			instance = TypescriptParser.parseFile(
+				NESTED_DECLARATIONS_CASE.source.path
+			)
 		})
 
 		it('instance should be an instanceof ProgramStructureTree', () => {
@@ -49,34 +49,46 @@ describe('ProgramStructureTree', () => {
 		})
 
 		it('should serialize correctly', () => {
-			expect(instance.toJSON()).toEqual(NESTED_DECLARATIONS_CASE.expected.object)
+			expect(instance.toJSON()).toEqual(
+				NESTED_DECLARATIONS_CASE.expected.object
+			)
 		})
 
 		test('containsLocation', () => {
-			expect(instance.containsLocation({
-				line: 1,
-				column: -1
-			})).toBe(false)
+			expect(
+				instance.containsLocation({
+					line: 1,
+					column: -1
+				})
+			).toBe(false)
 
-			expect(instance.containsLocation({
-				line: 58,
-				column: 2
-			})).toBe(false)
+			expect(
+				instance.containsLocation({
+					line: 58,
+					column: 2
+				})
+			).toBe(false)
 		})
 
 		describe('identifierBySourceLocation', () => {
 			test('existing identifier', () => {
-				expect(instance.identifierBySourceLocation({
-					line: 8,
-					column: 21
-				})).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}')
+				expect(
+					instance.identifierBySourceLocation({
+						line: 8,
+						column: 21
+					})
+				).toBe(
+					'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}'
+				)
 			})
 
 			test('non existing identifier', () => {
-				expect(instance.identifierBySourceLocation({
-					line: 10000000000,
-					column: 10000000000
-				})).toBe('')
+				expect(
+					instance.identifierBySourceLocation({
+						line: 10000000000,
+						column: 10000000000
+					})
+				).toBe('')
 			})
 		})
 
@@ -86,7 +98,9 @@ describe('ProgramStructureTree', () => {
 				column: 21
 			})
 
-			expect(result?.node.identifierPath()).toEqual('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}')
+			expect(result?.node.identifierPath()).toEqual(
+				'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:d}'
+			)
 		})
 	})
 })
@@ -94,24 +108,29 @@ describe('ProgramStructureTree', () => {
 for (const [testCaseName, testCase] of Object.entries(testCases)) {
 	describe(`testing with ${testCaseName}`, () => {
 		test('testing with typescript file parser', () => {
-			const tree = JSON.parse(JSON.stringify(TypescriptParser.parseFile(
-				testCase.source.path
-			)))
-			const expected = JSON.parse(
-				testCase.expected.content
+			const tree = JSON.parse(
+				JSON.stringify(TypescriptParser.parseFile(testCase.source.path))
 			)
-			updateTestCase({
-				path: testCase.expected.path,
-				object: tree
-			}, UPDATE_TEST_ASSETS)
+			const expected = JSON.parse(testCase.expected.content)
+			updateTestCase(
+				{
+					path: testCase.expected.path,
+					object: tree
+				},
+				UPDATE_TEST_ASSETS
+			)
 			expect(tree).toEqual(expected)
 		})
 
 		test('testing with typescript string parser', () => {
-			const tree = JSON.parse(JSON.stringify(TypescriptParser.parseSource(
-				testCase.source.path,
-				testCase.source.content
-			)))
+			const tree = JSON.parse(
+				JSON.stringify(
+					TypescriptParser.parseSource(
+						testCase.source.path,
+						testCase.source.content
+					)
+				)
+			)
 			const expected = JSON.parse(testCase.expected.content)
 			expect(tree).toEqual(expected)
 		})
@@ -120,33 +139,55 @@ for (const [testCaseName, testCase] of Object.entries(testCases)) {
 
 describe('ProgramStructureTreeType.identifierBySourceLocation', () => {
 	test('test case 1', () => {
-		const tree = TypescriptParser.parseFile(NESTED_DECLARATIONS_CASE.source.path)
+		const tree = TypescriptParser.parseFile(
+			NESTED_DECLARATIONS_CASE.source.path
+		)
 
-		expect(tree.identifierBySourceLocation({ line: 3, column: 1 })).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}')
+		expect(tree.identifierBySourceLocation({ line: 3, column: 1 })).toBe(
+			'{root}.{class:ExampleClass}.{method:memberFunction1}'
+		)
 
-		expect(tree.identifierBySourceLocation({ line: 5, column: 3 })).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}')
-		
-		expect(tree.identifierBySourceLocation({ line: 7, column: 21 })).toBe('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}')
+		expect(tree.identifierBySourceLocation({ line: 5, column: 3 })).toBe(
+			'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}'
+		)
+
+		expect(tree.identifierBySourceLocation({ line: 7, column: 21 })).toBe(
+			'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}'
+		)
 	})
 })
 
 describe('ProgramStructureTreeType.sourceLocationOfIdentifier', () => {
 	test('test case 1', () => {
-		const tree = TypescriptParser.parseFile(NESTED_DECLARATIONS_CASE.source.path)
+		const tree = TypescriptParser.parseFile(
+			NESTED_DECLARATIONS_CASE.source.path
+		)
 
-		expect(tree.sourceLocationOfIdentifier('{root}.{class:ExampleClass}.{method:memberFunction1}' as SourceNodeIdentifier_string)).toEqual({
+		expect(
+			tree.sourceLocationOfIdentifier(
+				'{root}.{class:ExampleClass}.{method:memberFunction1}' as SourceNodeIdentifier_string
+			)
+		).toEqual({
 			beginLoc: { line: 2, column: 1 },
-			endLoc: { line: 11, column: 2 },
+			endLoc: { line: 11, column: 2 }
 		})
 
-		expect(tree.sourceLocationOfIdentifier('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}' as SourceNodeIdentifier_string)).toEqual({
+		expect(
+			tree.sourceLocationOfIdentifier(
+				'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}' as SourceNodeIdentifier_string
+			)
+		).toEqual({
 			beginLoc: { line: 4, column: 25 },
-			endLoc: { line: 9, column: 4 },
+			endLoc: { line: 9, column: 4 }
 		})
 
-		expect(tree.sourceLocationOfIdentifier('{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}' as SourceNodeIdentifier_string)).toEqual({
+		expect(
+			tree.sourceLocationOfIdentifier(
+				'{root}.{class:ExampleClass}.{method:memberFunction1}.{function:nestedFunction}.{functionExpression:arrowFunction}.{functionExpression:c}' as SourceNodeIdentifier_string
+			)
+		).toEqual({
 			beginLoc: { line: 7, column: 14 },
-			endLoc: { line: 7, column: 22 },
+			endLoc: { line: 7, column: 22 }
 		})
 	})
 

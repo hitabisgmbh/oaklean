@@ -63,19 +63,19 @@ export class MetricsDataCollection extends BaseModel {
 			timeInfo: {
 				startTime: this._timeInfo.startTime.toString(),
 				stopTime: this._timeInfo.stopTime.toString()
-			},
+			}
 		}
 	}
 
 	storeToFile(filePath: UnifiedPath) {
-		PermissionHelper.writeFileWithUserPermission(
-			filePath,
-			JSON.stringify(this)
-		)
+		PermissionHelper.writeFileWithUserPermission(filePath, JSON.stringify(this))
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-	static fromJSON(json: string | IMetricsDataCollection, ...args: any[]): MetricsDataCollection {
+	static fromJSON(
+		json: string | IMetricsDataCollection,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
+		...args: any[]
+	): MetricsDataCollection {
 		let data: IMetricsDataCollection
 		if (typeof json === 'string') {
 			data = JSON.parse(json)
@@ -93,7 +93,9 @@ export class MetricsDataCollection extends BaseModel {
 					case MetricsDataCollectionType.PerfTotalSystem:
 						return PerfMetricsData.fromJSON(x as IPerfMetricsData)
 					case MetricsDataCollectionType.WindowsSensorInterfaceTotalSystem:
-						return WindowsSensorInterfaceMetricsData.fromJSON(x as IWindowsSensorInterfaceMetricsData)
+						return WindowsSensorInterfaceMetricsData.fromJSON(
+							x as IWindowsSensorInterfaceMetricsData
+						)
 				}
 			}),
 			{
@@ -102,8 +104,10 @@ export class MetricsDataCollection extends BaseModel {
 			}
 		)
 	}
-	
-	static loadFromFile(filePath: UnifiedPath): MetricsDataCollection | undefined {
+
+	static loadFromFile(
+		filePath: UnifiedPath
+	): MetricsDataCollection | undefined {
 		if (!fs.existsSync(filePath.toPlatformString())) {
 			return undefined
 		}

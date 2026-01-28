@@ -116,7 +116,7 @@ describe('PathUtils', () => {
 				const from = 'C:\\path\\to\\workspace'
 				const expected = 'relative\\within\\the\\workspace'
 				const to = `${from}\\${expected}`
-	
+
 				expect(PathUtils.getPathRelativeTo(from, to)).toBe(expected)
 			} else {
 				const from = '/path/to/workspace'
@@ -125,8 +125,6 @@ describe('PathUtils', () => {
 
 				expect(PathUtils.getPathRelativeTo(from, to)).toBe(expected)
 			}
-
-			
 		})
 
 		it('should return the relative path (outer)', () => {
@@ -136,7 +134,7 @@ describe('PathUtils', () => {
 				const from = 'C:\\path\\to\\workspace'
 				const expected = '..\\out\\of\\workspace'
 				const to = 'C:\\path\\to\\out\\of\\workspace'
-	
+
 				expect(PathUtils.getPathRelativeTo(from, to)).toBe(expected)
 			} else {
 				const from = '/path/to/workspace'
@@ -145,17 +143,20 @@ describe('PathUtils', () => {
 
 				expect(PathUtils.getPathRelativeTo(from, to)).toBe(expected)
 			}
-			
 		})
 	})
 
 	describe('findUp', () => {
 		it('finds an existing target', () => {
-			expect(PathUtils.findUp('README.md', process.cwd())).toBe(path.join(process.cwd(), 'README.md'))
+			expect(PathUtils.findUp('README.md', process.cwd())).toBe(
+				path.join(process.cwd(), 'README.md')
+			)
 		})
 
 		it('returns undefined if there is no target', () => {
-			expect(PathUtils.findUp('8Jv5tMlK2nH7gF3yP0qR6XwD9cZ4vB1NmSjOeUiLpA', '/')).toBeUndefined()
+			expect(
+				PathUtils.findUp('8Jv5tMlK2nH7gF3yP0qR6XwD9cZ4vB1NmSjOeUiLpA', '/')
+			).toBeUndefined()
 		})
 	})
 
@@ -167,7 +168,9 @@ describe('PathUtils', () => {
 
 		test('return correct absolute file path', () => {
 			const filePath = 'path/to/file'
-			expect(PathUtils.makeAbsolute(process.cwd(), filePath)).toBe(path.join(process.cwd(), filePath))
+			expect(PathUtils.makeAbsolute(process.cwd(), filePath)).toBe(
+				path.join(process.cwd(), filePath)
+			)
 		})
 	})
 })

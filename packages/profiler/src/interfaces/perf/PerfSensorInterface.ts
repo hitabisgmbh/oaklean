@@ -19,23 +19,23 @@ import { BaseSensorInterface } from '../BaseSensorInterface'
 /**
  * This SensorInterface uses the data provided by the perf command line tool.
  * This Provider can only be used on Linux with Perf installed and a CPU that supports RAPL
- * 
+ *
  * Man Page to perf:
  * https://linux.die.net/man/1/perf
  */
 
 export enum PerfEvent {
 	ENERGY_CORES = 'power/energy-cores/',
-	ENERGY_RAM = 'power/energy-ram/',
+	ENERGY_RAM = 'power/energy-ram/'
 }
 
 export type MeasurementTypeAvailable = {
-	[PerfEvent.ENERGY_CORES]: boolean,
+	[PerfEvent.ENERGY_CORES]: boolean
 	[PerfEvent.ENERGY_RAM]: boolean
 }
 
-type EventMap = { 
-	measurementCaptured: [];
+type EventMap = {
+	measurementCaptured: []
 }
 
 export class PerfSensorInterface extends BaseSensorInterface {
@@ -56,16 +56,19 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private cleanExit: ((...args: any[]) => void) | undefined
 
-	constructor(options: IPerfSensorInterfaceOptions, debugOptions?: {
-		startTime: NanoSeconds_BigInt,
-		stopTime: NanoSeconds_BigInt,
-		platform?: 'linux'
-	}) {
+	constructor(
+		options: IPerfSensorInterfaceOptions,
+		debugOptions?: {
+			startTime: NanoSeconds_BigInt
+			stopTime: NanoSeconds_BigInt
+			platform?: 'linux'
+		}
+	) {
 		super()
 		this._platform = debugOptions?.platform ?? process.platform
 		this._executable = 'perf'
 		this._options = options
-		
+
 		if (debugOptions !== undefined) {
 			this._startTime = debugOptions.startTime
 			this._stopTime = debugOptions.stopTime
@@ -82,10 +85,16 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		const availableMeasurementTypes = await this.availableMeasurementTypes()
 		return [
 			'stat',
-			...(availableMeasurementTypes[PerfEvent.ENERGY_CORES] ? ['-e', PerfEvent.ENERGY_CORES] : []),
-			...(availableMeasurementTypes[PerfEvent.ENERGY_RAM] ? ['-e', PerfEvent.ENERGY_RAM] : []),
-			'-x', '\'|\'',
-			'-I', this._options.sampleInterval.toString(),
+			...(availableMeasurementTypes[PerfEvent.ENERGY_CORES]
+				? ['-e', PerfEvent.ENERGY_CORES]
+				: []),
+			...(availableMeasurementTypes[PerfEvent.ENERGY_RAM]
+				? ['-e', PerfEvent.ENERGY_RAM]
+				: []),
+			'-x',
+			"'|'",
+			'-I',
+			this._options.sampleInterval.toString(),
 			'-o',
 			this._options.outputFilePath
 		]
@@ -93,26 +102,35 @@ export class PerfSensorInterface extends BaseSensorInterface {
 
 	async canBeExecuted(): Promise<boolean> {
 		if (this._platform !== 'linux') {
-			LoggerHelper.appPrefix.error('PerfSensorInterface: This sensor interface can only be used on Linux. Your platform:', this._platform)
+			LoggerHelper.appPrefix.error(
+				'PerfSensorInterface: This sensor interface can only be used on Linux. Your platform:',
+				this._platform
+			)
 			return false
 		}
 
 		const availableMeasurementTypes = await this.availableMeasurementTypes()
 
-		return availableMeasurementTypes[PerfEvent.ENERGY_CORES] ||
+		return (
+			availableMeasurementTypes[PerfEvent.ENERGY_CORES] ||
 			availableMeasurementTypes[PerfEvent.ENERGY_RAM]
+		)
 	}
-	
+
 	async availableMeasurementTypes(): Promise<MeasurementTypeAvailable> {
 		if (this._availableMeasurementTypes === undefined) {
 			this._availableMeasurementTypes = {
-				[PerfEvent.ENERGY_CORES]: await this.checkEventAvailability(PerfEvent.ENERGY_CORES),
-				[PerfEvent.ENERGY_RAM]: await this.checkEventAvailability(PerfEvent.ENERGY_RAM),
+				[PerfEvent.ENERGY_CORES]: await this.checkEventAvailability(
+					PerfEvent.ENERGY_CORES
+				),
+				[PerfEvent.ENERGY_RAM]: await this.checkEventAvailability(
+					PerfEvent.ENERGY_RAM
+				)
 			}
 		}
 		return this._availableMeasurementTypes
 	}
-	
+
 	checkEventAvailability(eventName: string): Promise<boolean> {
 		return new Promise((resolve) => {
 			try {
@@ -122,7 +140,8 @@ export class PerfSensorInterface extends BaseSensorInterface {
 						detached: false,
 						stdio: 'pipe',
 						shell: true
-					})
+					}
+				)
 				childProcess.on('close', (code: number) => {
 					if (code === 0) {
 						resolve(true)
@@ -137,14 +156,18 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	}
 
 	isRunning(): boolean {
-		return this._childProcess?.pid !== undefined && BaseSensorInterface.pidIsRunning(this._childProcess.pid)
+		return (
+			this._childProcess?.pid !== undefined &&
+			BaseSensorInterface.pidIsRunning(this._childProcess.pid)
+		)
 	}
 
 	static runningInstances(): string[] {
 		try {
 			const result = execSync('pgrep -ix perf', { encoding: 'utf-8' })
 			return result.trim().split('\n')
-		} catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		} catch (error) {
 			return []
 		}
 	}
@@ -157,24 +180,29 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		return fs.readFileSync(this._options.outputFilePath).toString()
 	}
 
-	async readSensorValues(pid: number): Promise<MetricsDataCollection | undefined> {
-		if (!await this.couldBeExecuted()) {
+	async readSensorValues(
+		pid: number
+	): Promise<MetricsDataCollection | undefined> {
+		if (!(await this.couldBeExecuted())) {
 			return undefined
 		}
 		let tries = 0
 		while (this.isRunning() && tries < 10) {
 			LoggerHelper.error(
-				`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`)
+				`Cannot read sensor values, wait for process to exit: ${tries + 1}, try again after 1 second`
+			)
 			tries += 1
 			await TimeHelper.sleep(1000)
 		}
 
 		if (this.startTime === undefined || this.stopTime === undefined) {
-			throw new Error('PerfSensorInterface.readSensorValues: start or stop time could not be determined')
+			throw new Error(
+				'PerfSensorInterface.readSensorValues: start or stop time could not be determined'
+			)
 		}
 
 		const content = this.getOutputContent()
-		if (content === undefined){
+		if (content === undefined) {
 			return new MetricsDataCollection(
 				pid,
 				MetricsDataCollectionType.PerfTotalSystem,
@@ -193,7 +221,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		let ram_energy: MilliJoule_number = 0 as MilliJoule_number
 		const data: PerfMetricsData[] = []
 
-		const availableMeasurementTypes = (await this.availableMeasurementTypes())
+		const availableMeasurementTypes = await this.availableMeasurementTypes()
 
 		const captured = {
 			[PerfEvent.ENERGY_CORES]: false,
@@ -210,20 +238,20 @@ export class PerfSensorInterface extends BaseSensorInterface {
 
 			/**
 			 * power/energy-cores/ and power/ram/ values come alternating like this:
-			 * 
+			 *
 			 * 0.001105752|0,01|Joules|power/energy-cores/|1127122|100,00||
 			 * 0.001105752|0,00|Joules|power/energy-ram/|1127583|100,00||
 			 * 0.002236542|0,01|Joules|power/energy-cores/|1139557|100,00||
 			 * 0.002236542|0,00|Joules|power/energy-ram/|1139006|100,00||
-			 *  
+			 *
 			 */
 			switch (type) {
 				case PerfEvent.ENERGY_CORES:
-					cpu_energy = joules * 1e3 as MilliJoule_number
+					cpu_energy = (joules * 1e3) as MilliJoule_number
 					captured[PerfEvent.ENERGY_CORES] = true
 					break
 				case PerfEvent.ENERGY_RAM:
-					ram_energy = joules * 1e3 as MilliJoule_number
+					ram_energy = (joules * 1e3) as MilliJoule_number
 					captured[PerfEvent.ENERGY_RAM] = true
 					break
 				default:
@@ -231,15 +259,22 @@ export class PerfSensorInterface extends BaseSensorInterface {
 			}
 
 			if (
-				captured[PerfEvent.ENERGY_CORES] === availableMeasurementTypes[PerfEvent.ENERGY_CORES] &&
-				captured[PerfEvent.ENERGY_RAM] === availableMeasurementTypes[PerfEvent.ENERGY_RAM]
+				captured[PerfEvent.ENERGY_CORES] ===
+					availableMeasurementTypes[PerfEvent.ENERGY_CORES] &&
+				captured[PerfEvent.ENERGY_RAM] ===
+					availableMeasurementTypes[PerfEvent.ENERGY_RAM]
 			) {
-				data.push(new PerfMetricsData({
-					elapsed_ns: BigInt(Math.round((duration - lastDuration) * 1e9)) as NanoSeconds_BigInt, // convert into nano seconds
-					timestamp: (this.startTime + BigInt(Math.ceil(duration * 1e9))) as NanoSeconds_BigInt,
-					cpu_energy: cpu_energy,
-					ram_energy: ram_energy,
-				}))
+				data.push(
+					new PerfMetricsData({
+						elapsed_ns: BigInt(
+							Math.round((duration - lastDuration) * 1e9)
+						) as NanoSeconds_BigInt, // convert into nano seconds
+						timestamp: (this.startTime +
+							BigInt(Math.ceil(duration * 1e9))) as NanoSeconds_BigInt,
+						cpu_energy: cpu_energy,
+						ram_energy: ram_energy
+					})
+				)
 				lastDuration = duration
 				captured[PerfEvent.ENERGY_CORES] = false
 				captured[PerfEvent.ENERGY_RAM] = false
@@ -266,7 +301,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	}
 
 	async startProfiling() {
-		if (!await this.couldBeExecuted()) {
+		if (!(await this.couldBeExecuted())) {
 			return
 		}
 		if (fs.existsSync(this._options.outputFilePath)) {
@@ -275,14 +310,18 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		if (PerfSensorInterface.runningInstances().length > 0) {
 			throw new Error(
 				'PerfSensorInterface.startProfiling: ' +
-				'Perf instance already running, close it before taking any measurements'
+					'Perf instance already running, close it before taking any measurements'
 			)
 		}
 
 		this._startTime = TimeHelper.getCurrentHighResolutionTime()
-		this._childProcess = spawn(this._executable, [...await this.commandLineArgs()], {
-			detached: true
-		})
+		this._childProcess = spawn(
+			this._executable,
+			[...(await this.commandLineArgs())],
+			{
+				detached: true
+			}
+		)
 
 		this.cleanExit = () => {
 			if (this._childProcess) {
@@ -290,11 +329,14 @@ export class PerfSensorInterface extends BaseSensorInterface {
 			}
 		}
 
-		this._fileWatcher = fs.watchFile(this._options.outputFilePath, (curr, prev) => {
-			if (curr.size > prev.size) {
-				this._eventHandler.fire('measurementCaptured')
+		this._fileWatcher = fs.watchFile(
+			this._options.outputFilePath,
+			(curr, prev) => {
+				if (curr.size > prev.size) {
+					this._eventHandler.fire('measurementCaptured')
+				}
 			}
-		})
+		)
 
 		process.on('exit', this.cleanExit) // add event listener to close perf if the parent process exits
 
@@ -311,7 +353,7 @@ export class PerfSensorInterface extends BaseSensorInterface {
 	}
 
 	async stopProfiling() {
-		if (!await this.couldBeExecuted()) {
+		if (!(await this.couldBeExecuted())) {
 			return
 		}
 		if (this._childProcess === undefined) {
@@ -329,7 +371,9 @@ export class PerfSensorInterface extends BaseSensorInterface {
 		let seconds = 0
 		while (this.isRunning()) {
 			if (seconds > 10) {
-				throw new Error('Waited 10 seconds for perf to shut down, it is still running')
+				throw new Error(
+					'Waited 10 seconds for perf to shut down, it is still running'
+				)
 			}
 			await TimeHelper.sleep(1000)
 			seconds++

@@ -1,6 +1,4 @@
-import {
-	z as zod
-} from 'zod'
+import { z as zod } from 'zod'
 
 import {
 	IPowerMetricsSensorInterfaceOptions,
@@ -14,9 +12,7 @@ import {
 	IWindowsSensorInterfaceOptions,
 	IWindowsSensorInterfaceOptions_schema
 } from '../interfaces/windows/types'
-import {
-	DeepPartial
-} from '../shared'
+import { DeepPartial } from '../shared'
 
 export enum SensorInterfaceType {
 	powermetrics = 'powermetrics',
@@ -39,16 +35,19 @@ export const SensorInterfaceOptions_schema = zod.union([
 	})
 ])
 
-export type SensorInterfaceOptions = {
-	type: SensorInterfaceType.powermetrics,
-	options: IPowerMetricsSensorInterfaceOptions
-} | {
-	type: SensorInterfaceType.perf,
-	options: IPerfSensorInterfaceOptions
-} | {
-	type: SensorInterfaceType.windows,
-	options: IWindowsSensorInterfaceOptions
-}
+export type SensorInterfaceOptions =
+	| {
+			type: SensorInterfaceType.powermetrics
+			options: IPowerMetricsSensorInterfaceOptions
+	  }
+	| {
+			type: SensorInterfaceType.perf
+			options: IPerfSensorInterfaceOptions
+	  }
+	| {
+			type: SensorInterfaceType.windows
+			options: IWindowsSensorInterfaceOptions
+	  }
 
 export const ExportOptionsSchema = zod.object({
 	outDir: zod.string(),

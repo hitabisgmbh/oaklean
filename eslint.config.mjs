@@ -5,6 +5,8 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 import stylistic from '@stylistic/eslint-plugin'
 import eslintPluginImport from 'eslint-plugin-import'
+import prettierPlugin from 'eslint-plugin-prettier'
+import prettierConfig from 'eslint-config-prettier'
 
 export default defineConfig(
 	eslint.configs.recommended,
@@ -12,23 +14,15 @@ export default defineConfig(
 	{
 		// rules not applied to test files
 		rules: {
-			'@typescript-eslint/no-non-null-assertion': 'error',
-			'max-len': [
-				'error',
-				{
-					code: 120,
-					ignoreTrailingComments: true,
-					ignoreStrings: true,
-					ignoreRegExpLiterals: true
-				}
-			]
+			'@typescript-eslint/no-non-null-assertion': 'error'
 		},
 		ignores: ['**/*.test.ts']
 	},
 	{
 		plugins: {
 			'@stylistic': stylistic,
-			import: eslintPluginImport
+			import: eslintPluginImport,
+			prettier: prettierPlugin
 		},
 		rules: {
 			'@typescript-eslint/switch-exhaustiveness-check': 'error',
@@ -39,15 +33,9 @@ export default defineConfig(
 					format: ['camelCase', 'UPPER_CASE', 'PascalCase']
 				}
 			],
-			'@typescript-eslint/semi': 'off',
 			curly: 'warn',
 			eqeqeq: 'warn',
 			'no-throw-literal': 'warn',
-			// '@stylistic/indent': ['error', 'tab'],
-			'linebreak-style': ['error', 'unix'],
-			quotes: ['error', 'single'],
-			semi: ['error', 'never'],
-			'comma-dangle': ['error', 'only-multiline'],
 			'no-empty': [
 				'error',
 				{
@@ -70,19 +58,12 @@ export default defineConfig(
 					]
 				}
 			],
-			'no-multi-spaces': [
-				'error',
-				{
-					exceptions: {
-						VariableDeclarator: true,
-						ImportDeclaration: true
-					}
-				}
-			],
-			'keyword-spacing': 'error',
-			'brace-style': 'error'
+
+			// Prettier rule
+      'prettier/prettier': 'error'
 		}
 	},
+	prettierConfig, // Must come AFTER other configs to properly disable conflicting rules
 	globalIgnores([
 		'**/*.d.ts',
 		'**/node_modules/**',
