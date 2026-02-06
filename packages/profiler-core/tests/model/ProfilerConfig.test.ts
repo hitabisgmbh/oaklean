@@ -10,11 +10,13 @@ import {
 } from '../../src/model/ProfilerConfig'
 import { UnifiedPath } from '../../src/system/UnifiedPath'
 import { PathUtils } from '../../src/helper/PathUtils'
+import { PermissionHelper } from '../../src/helper/PermissionHelper'
 import {
 	IProfilerConfig,
 	SensorInterfaceType,
 	ProjectIdentifier_string,
-	MicroSeconds_number
+	MicroSeconds_number,
+	IProfilerConfigFileRepresentation
 } from '../../src/types'
 import { LoggerHelper } from '../../src'
 
@@ -802,6 +804,60 @@ describe('ProfilerConfig', () => {
 				}
 			})
 			expect(config.getOutDir().toString()).toBe('/absolute/path/to/profiles')
+		})
+	})
+
+	describe('jsonc-parser comments preservation', () => {
+		test('storeToFile and storeIntermediateToFile preserves comments', async () => {
+			const mainConfig = await ProfilerConfig.createMainConfig({
+				projectOptions: {
+					identifier:
+						'12c89abd-3877-4039-99e8-c36d6dd74ddd' as ProjectIdentifier_string
+				}
+			})
+			mainConfig.extends = '.oaklean.linux'
+
+			const localConfig = ProfilerConfig.createLocalConfig({
+				selectedSensorInterface: SensorInterfaceType.perf,
+				sensorInterfaceSampleInterval: 100 as MicroSeconds_number
+			})
+
+			const mainConfigPath = new UnifiedPath(__dirname).join(
+				'assets',
+				'ProfilerConfig',
+				'jsonc',
+				'.oaklean.extend-linux'
+			)
+			const localConfigPath = new UnifiedPath(__dirname).join(
+				'assets',
+				'ProfilerConfig',
+				'jsonc',
+				'.oaklean.linux'
+			)
+
+			const beforeMain = fs
+				.readFileSync(mainConfigPath.toPlatformString())
+				.toString()
+			const beforeLocal = fs
+				.readFileSync(localConfigPath.toPlatformString())
+				.toString()
+
+			mainConfig.storeToFile(mainConfigPath)
+			ProfilerConfig.storeIntermediateToFile(localConfigPath, localConfig)
+
+			const afterMain = fs
+				.readFileSync(mainConfigPath.toPlatformString())
+				.toString()
+			const afterLocal = fs
+				.readFileSync(localConfigPath.toPlatformString())
+				.toString()
+
+			// reset files
+			PermissionHelper.writeFileWithUserPermission(mainConfigPath, beforeMain)
+			PermissionHelper.writeFileWithUserPermission(localConfigPath, beforeLocal)
+
+			expect(afterMain).toEqual(beforeMain)
+			expect(afterLocal).toEqual(beforeLocal)
 		})
 	})
 })

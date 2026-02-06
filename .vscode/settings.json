@@ -11,4 +11,20 @@
 	"typescript.preferences.quoteStyle": "single",
 	"editor.formatOnPaste": false,
 	"editor.formatOnSave": false,
+	"[javascript]": {
+		"editor.formatOnSave": true,
+		"editor.formatOnPaste": true
+	},
+	"[javascriptreact]": {
+		"editor.formatOnSave": true,
+		"editor.formatOnPaste": true
+	},
+	"[typescript]": {
+		"editor.formatOnSave": true,
+		"editor.formatOnPaste": true
+	},
+	"[typescriptreact]": {
+		"editor.formatOnSave": true,
+		"editor.formatOnPaste": true
+	},
 }

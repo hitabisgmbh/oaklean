@@ -1,0 +1,23 @@
+// Oaklean local config
+{
+	// runtime options to override
+	"runtimeOptions": {
+		// sensorInterface options to override
+		"sensorInterface": {
+			// use perf
+			"type": "perf",
+			// set perf's interface options
+			"options": {
+				// output file
+				"outputFilePath": "energy-measurements.txt",
+				// sample interval in milliseconds
+				"sampleInterval": 100
+				// last comment
+			}
+			// end of perf's interface options
+		}
+		// end of sensorInterface options
+	}
+	// end of runtimeOptions
+}
+// end of file

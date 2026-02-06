@@ -20,7 +20,7 @@ export default defineConfig(
 		'**/assets/**/*.tsx',
 		'**/__mocks__/**/*.js',
 		'**/__mocks__/**/*.ts',
-		'**/dist/**/*.js',
-		'lib/vscode-js-profile-core/**'
+		'**/dist/**/*',
+		'lib/**/*'
 	])
 )
