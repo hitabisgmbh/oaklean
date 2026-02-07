@@ -1,0 +1,44 @@
+// Oaklean config
+{
+	"extends": ".oaklean.linux", // extends from
+	// project info
+	"projectOptions": {
+		// project identifier
+		"identifier": "12c89abd-3877-4039-99e8-c36d6dd74ddd"
+		// in
+	},
+	// export options
+	"exportOptions": {
+		// measurements are stored here
+		"outDir": "./profiles",
+		// a histroy of measurements is stored here
+		"outHistoryDir": "./profiles_history",
+		// root dir of the project
+		"rootDir": "./",
+		// should export the cpu profiles?
+		"exportV8Profile": false,
+		// should export the measurements reports?
+		"exportReport": true,
+		// should export the raw energy data?
+		"exportSensorInterfaceData": false
+		// end of export options
+	},
+	// additonal runtime options
+	"runtimeOptions": {
+		// options for v8
+		"v8": {
+			// cpu profiling options
+			"cpu": {
+				// sample interval of the profiler
+				"sampleInterval": 1
+			}
+			// end of cpu options
+		},
+		// end of v8 options
+		// two comments after another
+		"seeds": {}
+		// end of seed options
+	}
+	// end of runtime options
+}
+// end of file

@@ -1,6 +1,5 @@
 node_modules
 dist
 coverage
-/scripts
 **/__mocks__/**/*.js
 **/assets/**/*.js

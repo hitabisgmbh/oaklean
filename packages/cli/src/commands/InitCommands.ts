@@ -3,16 +3,13 @@ import * as fs from 'fs'
 
 import {
 	ProfilerConfig,
-	Crypto,
-	ProjectIdentifier_string,
 	SensorInterfaceType,
-	MicroSeconds_number,
-	RegistryOptions,
 	LoggerHelper,
 	STATIC_CONFIG_FILENAME,
 	IProfilerConfigFileRepresentation,
 	UnifiedPath,
-	STATIC_LOCAL_CONFIG_FILENAME
+	STATIC_LOCAL_CONFIG_FILENAME,
+	JsoncHelper
 } from '@oaklean/profiler-core'
 import { program } from 'commander'
 
@@ -40,9 +37,21 @@ export default class InitCommands {
 	async initCommand() {
 		const { mainConfig, localConfig } = await this.configureConfig()
 		LoggerHelper.appPrefix.success('[Main Config]')
-		LoggerHelper.log(JSON.stringify(mainConfig, null, 2))
+		LoggerHelper.log(
+			JsoncHelper.highlightJsoncComments(
+				ProfilerConfig.stringifyConfig(mainConfig.toJSON(), {
+					addDefaultComments: true
+				})
+			)
+		)
 		LoggerHelper.appPrefix.success('[Local Config]')
-		LoggerHelper.log(JSON.stringify(localConfig, null, 2))
+		LoggerHelper.log(
+			JsoncHelper.highlightJsoncComments(
+				ProfilerConfig.stringifyConfig(localConfig, {
+					addDefaultComments: true
+				})
+			)
+		)
 
 		if ((await this.confirmConfigFileContent()) === false) {
 			return
@@ -73,8 +82,12 @@ export default class InitCommands {
 				return
 			}
 		}
-		mainConfig.storeToFile(mainConfig.filePath)
-		ProfilerConfig.storeIntermediateToFile(localConfigPath, localConfig)
+		mainConfig.storeToFile(mainConfig.filePath, {
+			addDefaultComments: true
+		})
+		ProfilerConfig.storeIntermediateToFile(localConfigPath, localConfig, {
+			addDefaultComments: true
+		})
 	}
 
 	configAlreadyExists(path: UnifiedPath): boolean {
@@ -85,54 +98,14 @@ export default class InitCommands {
 		mainConfig: ProfilerConfig
 		localConfig: IProfilerConfigFileRepresentation
 	}> {
-		const config = ProfilerConfig.getDefaultConfig()
-		const localConfig: IProfilerConfigFileRepresentation = {}
-		localConfig.runtimeOptions = {}
-		// select sensor interface
-		const selectedSensorInterface = await this.selectSensorInterface()
-		switch (selectedSensorInterface) {
-			case undefined:
-				localConfig.runtimeOptions.sensorInterface = undefined
-				break
-			case SensorInterfaceType.perf:
-				localConfig.runtimeOptions.sensorInterface = {
-					type: SensorInterfaceType.perf,
-					options: {
-						outputFilePath: 'energy-measurements.txt',
-						sampleInterval: 100 as MicroSeconds_number
-					}
-				}
-				break
-			case SensorInterfaceType.powermetrics:
-				localConfig.runtimeOptions.sensorInterface = {
-					type: SensorInterfaceType.powermetrics,
-					options: {
-						outputFilePath: 'energy-measurements.plist',
-						sampleInterval: 100 as MicroSeconds_number
-					}
-				}
-				break
-			case SensorInterfaceType.windows:
-				localConfig.runtimeOptions.sensorInterface = {
-					type: SensorInterfaceType.windows,
-					options: {
-						outputFilePath: 'energy-measurements.csv',
-						sampleInterval: 100 as MicroSeconds_number
-					}
-				}
-				break
-			default:
-				break
-		}
+		const mainConfig = await ProfilerConfig.createMainConfig()
+		const localConfig = await ProfilerConfig.createLocalConfig({
+			selectedSensorInterface: await this.selectSensorInterface()
+		})
 
-		config.projectOptions.identifier =
-			(await Crypto.uniqueID()) as ProjectIdentifier_string
-		config.registryOptions = undefined as unknown as RegistryOptions
-		// remove runtime options from main config
-		config.runtimeOptions.sensorInterface = undefined
 		return {
-			mainConfig: config,
-			localConfig: localConfig
+			mainConfig,
+			localConfig
 		}
 	}
 

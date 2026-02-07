@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 
-import { z as zod } from 'zod'
+import * as jsoncParser from 'jsonc-parser'
+import { json, z as zod } from 'zod'
 
 import {
 	STATIC_CONFIG_FILENAME,
@@ -28,6 +29,8 @@ import {
 	DeepPartial,
 	IProfilerConfig_schema
 } from '../types'
+import { JsoncHelper } from '../helper/JsoncHelper'
+import { ProfilerConfigCommentHelper } from '../helper/ProfilerConfigCommentHelper'
 
 export interface IProfilerConfigIntermediate extends IProfilerConfigFileRepresentation {
 	filePath: UnifiedPath
@@ -333,21 +336,59 @@ export class ProfilerConfig implements IProfilerConfig {
 		}
 	}
 
-	storeToFile(filePath: UnifiedPath) {
-		PermissionHelper.writeFileWithUserPermission(
-			filePath,
-			JSON.stringify(this, null, 2)
-		)
+	static stringifyConfig(
+		config: IProfilerConfigFileRepresentation,
+		options?: {
+			existingFileContent?: string // merges if existing content is provided
+			addDefaultComments?: boolean
+		}
+	) {
+		const jsonc = new JsoncHelper(options?.existingFileContent ?? '{}')
+		jsonc.updateJsoncContent(config)
+		let output = jsonc.toString()
+		if (options?.addDefaultComments) {
+			output =
+				ProfilerConfigCommentHelper.addDefaultCommentsToConfigFileContent(
+					output
+				)
+		}
+		return output
+	}
+
+	storeToFile(
+		filePath: UnifiedPath,
+		options?: {
+			addDefaultComments?: boolean
+		}
+	) {
+		let content = '{}'
+		if (fs.existsSync(filePath.toPlatformString())) {
+			content = fs.readFileSync(filePath.toPlatformString(), 'utf8')
+		}
+		const output = ProfilerConfig.stringifyConfig(this.toJSON(), {
+			existingFileContent: content,
+			addDefaultComments: options?.addDefaultComments
+		})
+
+		PermissionHelper.writeFileWithUserPermission(filePath, output)
 	}
 
 	static storeIntermediateToFile(
 		filePath: UnifiedPath,
-		config: IProfilerConfigFileRepresentation
+		config: IProfilerConfigFileRepresentation,
+		options?: {
+			addDefaultComments?: boolean
+		}
 	) {
-		PermissionHelper.writeFileWithUserPermission(
-			filePath,
-			JSON.stringify(config, null, 2)
-		)
+		let content = '{}'
+		if (fs.existsSync(filePath.toPlatformString())) {
+			content = fs.readFileSync(filePath.toPlatformString(), 'utf8')
+		}
+		const output = ProfilerConfig.stringifyConfig(config, {
+			existingFileContent: content,
+			addDefaultComments: options?.addDefaultComments
+		})
+		PermissionHelper.writeFileWithUserPermission(filePath, output)
 	}
 
 	// loads a config from a given file path and extends it
@@ -359,9 +400,29 @@ export class ProfilerConfig implements IProfilerConfig {
 			return undefined
 		}
 
-		const loadedConfig = ProfilerConfig.intermediateFromJSON(
-			fs.readFileSync(filePath.toPlatformString()).toString()
-		)
+		const content = fs.readFileSync(filePath.toPlatformString()).toString()
+		const errors: jsoncParser.ParseError[] = []
+		const configJSON = jsoncParser.parse(content, errors, {
+			allowTrailingComma: true,
+			allowEmptyContent: true
+		})
+
+		if (errors.length > 0) {
+			const errorMessages = errors
+				.map(
+					(err) =>
+						`Line ${err.offset}: ${jsoncParser.printParseErrorCode(err.error)}`
+				)
+				.join(', ')
+			LoggerHelper.error(
+				`ProfilerConfig.loadFromFile: JSONC parse errors: ${errorMessages}`
+			)
+			throw new Error(
+				`ProfilerConfig: Invalid ${STATIC_CONFIG_FILENAME} config file`
+			)
+		}
+
+		const loadedConfig = ProfilerConfig.intermediateFromJSON(configJSON)
 		loadedConfig.filePath = filePath
 
 		if (loadedConfig.extends) {
@@ -428,5 +489,76 @@ export class ProfilerConfig implements IProfilerConfig {
 	static autoResolve(): ProfilerConfig {
 		// Searches from the processes execution path upwards until it finds the config file
 		return this.autoResolveFromPath(new UnifiedPath(process.cwd()))
+	}
+
+	static async createMainConfig(options?: {
+		projectOptions?: {
+			identifier: ProjectIdentifier_string
+		}
+	}): Promise<ProfilerConfig> {
+		const mainConfig = ProfilerConfig.getDefaultConfig()
+
+		mainConfig.projectOptions.identifier =
+			options?.projectOptions?.identifier ??
+			((await Crypto.uniqueID()) as ProjectIdentifier_string)
+		mainConfig.registryOptions = undefined as unknown as RegistryOptions
+		// remove runtime options from main config
+		mainConfig.runtimeOptions.sensorInterface = undefined
+		return mainConfig
+	}
+
+	/**
+	 * Function to initialize a local config file that extends the main config file
+	 *
+	 * @param options
+	 * @returns
+	 */
+	static createLocalConfig(options: {
+		selectedSensorInterface?: SensorInterfaceType
+		sensorInterfaceSampleInterval?: MicroSeconds_number
+	}): IProfilerConfigFileRepresentation {
+		const localConfig: IProfilerConfigFileRepresentation = {}
+		localConfig.runtimeOptions = {}
+		switch (options.selectedSensorInterface) {
+			case undefined:
+				localConfig.runtimeOptions.sensorInterface = undefined
+				break
+			case SensorInterfaceType.perf:
+				localConfig.runtimeOptions.sensorInterface = {
+					type: SensorInterfaceType.perf,
+					options: {
+						outputFilePath: 'energy-measurements.txt',
+						sampleInterval:
+							options.sensorInterfaceSampleInterval ??
+							(100 as MicroSeconds_number)
+					}
+				}
+				break
+			case SensorInterfaceType.powermetrics:
+				localConfig.runtimeOptions.sensorInterface = {
+					type: SensorInterfaceType.powermetrics,
+					options: {
+						outputFilePath: 'energy-measurements.plist',
+						sampleInterval:
+							options.sensorInterfaceSampleInterval ??
+							(100 as MicroSeconds_number)
+					}
+				}
+				break
+			case SensorInterfaceType.windows:
+				localConfig.runtimeOptions.sensorInterface = {
+					type: SensorInterfaceType.windows,
+					options: {
+						outputFilePath: 'energy-measurements.csv',
+						sampleInterval:
+							options.sensorInterfaceSampleInterval ??
+							(100 as MicroSeconds_number)
+					}
+				}
+				break
+			default:
+				break
+		}
+		return localConfig
 	}
 }

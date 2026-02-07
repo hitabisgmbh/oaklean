@@ -1,3 +1,5 @@
+import * as fs from 'fs'
+
 import {
 	SensorInterfaceType,
 	ProjectIdentifier_string,
@@ -8,7 +10,8 @@ import {
 	Crypto,
 	RegistryOptions,
 	IProfilerConfig,
-	LoggerHelper
+	LoggerHelper,
+	JsoncHelper
 } from '@oaklean/profiler-core'
 
 import InitCommands from '../../src/commands/InitCommands'
@@ -66,6 +69,43 @@ const GENERATED_POWERMETRICS_CONFIG_JSON = {
 	},
 	registryOptions: undefined as unknown as RegistryOptions
 } satisfies IProfilerConfig
+
+const DEFAULT_OAKLEAN_CONFIG_PATH = new UnifiedPath(__dirname)
+	.join('assets', 'InitCommands', 'default.oaklean.config')
+	.toPlatformString()
+const DEFAULT_OAKLEAN_CONFIG = fs
+	.readFileSync(DEFAULT_OAKLEAN_CONFIG_PATH, 'utf-8')
+	.toString()
+
+const DEFAULT_OAKLEAN_LOCAL_PERF_CONFIG_PATH = new UnifiedPath(__dirname)
+	.join('assets', 'InitCommands', 'default.oaklean.local.perf.config')
+	.toPlatformString()
+const DEFAULT_OAKLEAN_LOCAL_PERF_CONFIG = fs
+	.readFileSync(DEFAULT_OAKLEAN_LOCAL_PERF_CONFIG_PATH, 'utf-8')
+	.toString()
+
+const DEFAULT_OAKLEAN_LOCAL_POWER_METRICS_CONFIG_PATH = new UnifiedPath(
+	__dirname
+)
+	.join('assets', 'InitCommands', 'default.oaklean.local.powermetrics.config')
+	.toPlatformString()
+const DEFAULT_OAKLEAN_LOCAL_POWER_METRICS_CONFIG = fs
+	.readFileSync(DEFAULT_OAKLEAN_LOCAL_POWER_METRICS_CONFIG_PATH, 'utf-8')
+	.toString()
+
+const DEFAULT_OAKLEAN_LOCAL_NONE_CONFIG_PATH = new UnifiedPath(__dirname)
+	.join('assets', 'InitCommands', 'default.oaklean.local.none.config')
+	.toPlatformString()
+const DEFAULT_OAKLEAN_LOCAL_NONE_CONFIG = fs
+	.readFileSync(DEFAULT_OAKLEAN_LOCAL_NONE_CONFIG_PATH, 'utf-8')
+	.toString()
+
+const DEFAULT_OAKLEAN_LOCAL_WINDOWS_CONFIG_PATH = new UnifiedPath(__dirname)
+	.join('assets', 'InitCommands', 'default.oaklean.local.windows.config')
+	.toPlatformString()
+const DEFAULT_OAKLEAN_LOCAL_WINDOWS_CONFIG = fs
+	.readFileSync(DEFAULT_OAKLEAN_LOCAL_WINDOWS_CONFIG_PATH, 'utf-8')
+	.toString()
 
 describe('InitCommands', () => {
 	const initCommands = InitCommands.init()
@@ -211,6 +251,10 @@ describe('InitCommands', () => {
 			})
 
 			afterEach(() => {
+				configureConfig_spy.mockRestore()
+				consoleLog_spy.mockRestore()
+				consoleSuccessLog_spy.mockRestore()
+				consoleWarnLog_spy.mockRestore()
 				confirmConfigFileContent_spy.mockRestore()
 				confirmOverwriteContent_spy.mockRestore()
 				configStoreToFile_spy.mockRestore()
@@ -219,15 +263,16 @@ describe('InitCommands', () => {
 			})
 
 			test('returns true with perf', async () => {
-				const mainConfig = new ProfilerConfig(
-					new UnifiedPath(process.cwd()).join('.oaklean'),
-					ProfilerConfig.intermediateFromJSON(
-						GENERATED_PERF_CONFIG_JSON
-					) as IProfilerConfig
-				)
-				const localConfig = {
-					runtimeOptions: GENERATED_PERF_CONFIG_JSON.runtimeOptions
-				}
+				const mainConfig = await ProfilerConfig.createMainConfig({
+					projectOptions: {
+						identifier: DEMO_PROJECT_ID
+					}
+				})
+				const localConfig = ProfilerConfig.createLocalConfig({
+					selectedSensorInterface: SensorInterfaceType.perf,
+					sensorInterfaceSampleInterval: 100 as MicroSeconds_number
+				})
+
 				configureConfig_spy.mockResolvedValue({
 					mainConfig: mainConfig,
 					localConfig: localConfig
@@ -239,32 +284,40 @@ describe('InitCommands', () => {
 
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
 				expect(consoleLog_spy).toHaveBeenCalledWith(
-					JSON.stringify(mainConfig, null, 2)
+					JsoncHelper.highlightJsoncComments(DEFAULT_OAKLEAN_CONFIG)
 				)
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
 				expect(consoleLog_spy).toHaveBeenCalledWith(
-					JSON.stringify(localConfig, null, 2)
+					JsoncHelper.highlightJsoncComments(DEFAULT_OAKLEAN_LOCAL_PERF_CONFIG)
 				)
 				expect(consoleLog_spy).toHaveBeenCalledWith(
 					'[Oaklean] perf sensor interface selected, for more information how to setup perf see https://github.com/hitabisgmbh/oaklean/blob/main/docs/SensorInterfaces.md'
 				)
-				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
+				expect(configStoreToFile_spy).toHaveBeenCalledWith(
+					mainConfig.filePath,
+					{
+						addDefaultComments: true
+					}
+				)
 				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
 					new UnifiedPath(process.cwd()).join('.oaklean.local'),
-					localConfig
+					localConfig,
+					{
+						addDefaultComments: true
+					}
 				)
 			})
 
 			test('returns true with powermetrics', async () => {
-				const mainConfig = new ProfilerConfig(
-					new UnifiedPath(process.cwd()).join('.oaklean'),
-					ProfilerConfig.intermediateFromJSON(
-						GENERATED_POWERMETRICS_CONFIG_JSON
-					) as IProfilerConfig
-				)
-				const localConfig = {
-					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
-				}
+				const mainConfig = await ProfilerConfig.createMainConfig({
+					projectOptions: {
+						identifier: DEMO_PROJECT_ID
+					}
+				})
+				const localConfig = ProfilerConfig.createLocalConfig({
+					selectedSensorInterface: SensorInterfaceType.powermetrics,
+					sensorInterfaceSampleInterval: 100 as MicroSeconds_number
+				})
 				configureConfig_spy.mockResolvedValue({
 					mainConfig: mainConfig,
 					localConfig: localConfig
@@ -276,29 +329,83 @@ describe('InitCommands', () => {
 
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
 				expect(consoleLog_spy).toHaveBeenCalledWith(
-					JSON.stringify(mainConfig, null, 2)
+					JsoncHelper.highlightJsoncComments(DEFAULT_OAKLEAN_CONFIG)
 				)
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
 				expect(consoleLog_spy).toHaveBeenCalledWith(
-					JSON.stringify(localConfig, null, 2)
+					JsoncHelper.highlightJsoncComments(
+						DEFAULT_OAKLEAN_LOCAL_POWER_METRICS_CONFIG
+					)
 				)
-				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
+				expect(configStoreToFile_spy).toHaveBeenCalledWith(
+					mainConfig.filePath,
+					{
+						addDefaultComments: true
+					}
+				)
 				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
 					new UnifiedPath(process.cwd()).join('.oaklean.local'),
-					localConfig
+					localConfig,
+					{
+						addDefaultComments: true
+					}
+				)
+			})
+
+			test('returns true with windows', async () => {
+				const mainConfig = await ProfilerConfig.createMainConfig({
+					projectOptions: {
+						identifier: DEMO_PROJECT_ID
+					}
+				})
+				const localConfig = ProfilerConfig.createLocalConfig({
+					selectedSensorInterface: SensorInterfaceType.windows,
+					sensorInterfaceSampleInterval: 100 as MicroSeconds_number
+				})
+				configureConfig_spy.mockResolvedValue({
+					mainConfig: mainConfig,
+					localConfig: localConfig
+				})
+				confirmConfigFileContent_spy.mockResolvedValue(true)
+				confirmOverwriteContent_spy.mockResolvedValue(true)
+
+				await initCommands.initCommand()
+
+				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
+				expect(consoleLog_spy).toHaveBeenCalledWith(
+					JsoncHelper.highlightJsoncComments(DEFAULT_OAKLEAN_CONFIG)
+				)
+				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
+				expect(consoleLog_spy).toHaveBeenCalledWith(
+					JsoncHelper.highlightJsoncComments(
+						DEFAULT_OAKLEAN_LOCAL_WINDOWS_CONFIG
+					)
+				)
+				expect(configStoreToFile_spy).toHaveBeenCalledWith(
+					mainConfig.filePath,
+					{
+						addDefaultComments: true
+					}
+				)
+				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
+					new UnifiedPath(process.cwd()).join('.oaklean.local'),
+					localConfig,
+					{
+						addDefaultComments: true
+					}
 				)
 			})
 
 			test('returns true with none', async () => {
-				const mainConfig = new ProfilerConfig(
-					new UnifiedPath(process.cwd()).join('.oaklean'),
-					ProfilerConfig.intermediateFromJSON(
-						GENERATED_NONE_CONFIG_JSON
-					) as IProfilerConfig
-				)
-				const localConfig = {
-					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
-				}
+				const mainConfig = await ProfilerConfig.createMainConfig({
+					projectOptions: {
+						identifier: DEMO_PROJECT_ID
+					}
+				})
+				const localConfig = ProfilerConfig.createLocalConfig({
+					selectedSensorInterface: undefined,
+					sensorInterfaceSampleInterval: 100 as MicroSeconds_number
+				})
 				configureConfig_spy.mockResolvedValue({
 					mainConfig: mainConfig,
 					localConfig: localConfig
@@ -310,16 +417,24 @@ describe('InitCommands', () => {
 
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Main Config]')
 				expect(consoleLog_spy).toHaveBeenCalledWith(
-					JSON.stringify(mainConfig, null, 2)
+					JsoncHelper.highlightJsoncComments(DEFAULT_OAKLEAN_CONFIG)
 				)
 				expect(consoleSuccessLog_spy).toHaveBeenCalledWith('[Local Config]')
 				expect(consoleLog_spy).toHaveBeenCalledWith(
-					JSON.stringify(localConfig, null, 2)
+					JsoncHelper.highlightJsoncComments(DEFAULT_OAKLEAN_LOCAL_NONE_CONFIG)
 				)
-				expect(configStoreToFile_spy).toHaveBeenCalledWith(mainConfig.filePath)
+				expect(configStoreToFile_spy).toHaveBeenCalledWith(
+					mainConfig.filePath,
+					{
+						addDefaultComments: true
+					}
+				)
 				expect(intermediateConfigStoreToFile_spy).toHaveBeenCalledWith(
 					new UnifiedPath(process.cwd()).join('.oaklean.local'),
-					localConfig
+					localConfig,
+					{
+						addDefaultComments: true
+					}
 				)
 			})
 
@@ -350,20 +465,19 @@ describe('InitCommands', () => {
 
 			test('returns false + false', async () => {
 				configAlreadyExists_spy.mockReturnValue(true)
-				const mainConfig = new ProfilerConfig(
-					new UnifiedPath(process.cwd()).join('.oaklean'),
-					ProfilerConfig.intermediateFromJSON(
-						GENERATED_NONE_CONFIG_JSON
-					) as IProfilerConfig
-				)
-				const localConfig = {
-					runtimeOptions: GENERATED_POWERMETRICS_CONFIG_JSON.runtimeOptions
-				}
+				const mainConfig = await ProfilerConfig.createMainConfig({
+					projectOptions: {
+						identifier: DEMO_PROJECT_ID
+					}
+				})
+				const localConfig = ProfilerConfig.createLocalConfig({
+					selectedSensorInterface: undefined,
+					sensorInterfaceSampleInterval: 100 as MicroSeconds_number
+				})
 				configureConfig_spy.mockResolvedValue({
 					mainConfig: mainConfig,
 					localConfig: localConfig
 				})
-				configureConfig_spy.mockResolvedValue(mainConfig)
 				confirmConfigFileContent_spy.mockResolvedValue(false)
 				confirmOverwriteContent_spy.mockResolvedValue(false)
 
