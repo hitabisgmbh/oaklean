@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 
 import * as jsoncParser from 'jsonc-parser'
-import { z as zod } from 'zod'
+import { json, z as zod } from 'zod'
 
 import {
 	STATIC_CONFIG_FILENAME,
@@ -336,21 +336,15 @@ export class ProfilerConfig implements IProfilerConfig {
 		}
 	}
 
-	storeToFile(
-		filePath: UnifiedPath,
+	static stringifyConfig(
+		config: IProfilerConfigFileRepresentation,
 		options?: {
+			existingFileContent?: string // merges if existing content is provided
 			addDefaultComments?: boolean
 		}
 	) {
-		let content = ''
-		if (fs.existsSync(filePath.toPlatformString())) {
-			content = fs.readFileSync(filePath.toPlatformString(), 'utf8')
-		} else {
-			// Create new file with empty JSON object
-			content = '{}'
-		}
-		const jsonc = new JsoncHelper(content)
-		jsonc.updateJsoncContent(this.toJSON())
+		const jsonc = new JsoncHelper(options?.existingFileContent ?? '{}')
+		jsonc.updateJsoncContent(config)
 		let output = jsonc.toString()
 		if (options?.addDefaultComments) {
 			output =
@@ -358,6 +352,23 @@ export class ProfilerConfig implements IProfilerConfig {
 					output
 				)
 		}
+		return output
+	}
+
+	storeToFile(
+		filePath: UnifiedPath,
+		options?: {
+			addDefaultComments?: boolean
+		}
+	) {
+		let content = '{}'
+		if (fs.existsSync(filePath.toPlatformString())) {
+			content = fs.readFileSync(filePath.toPlatformString(), 'utf8')
+		}
+		const output = ProfilerConfig.stringifyConfig(this.toJSON(), {
+			existingFileContent: content,
+			addDefaultComments: options?.addDefaultComments
+		})
 
 		PermissionHelper.writeFileWithUserPermission(filePath, output)
 	}
@@ -369,22 +380,14 @@ export class ProfilerConfig implements IProfilerConfig {
 			addDefaultComments?: boolean
 		}
 	) {
-		let content = ''
+		let content = '{}'
 		if (fs.existsSync(filePath.toPlatformString())) {
 			content = fs.readFileSync(filePath.toPlatformString(), 'utf8')
-		} else {
-			// Create new file with empty JSON object
-			content = '{}'
 		}
-		const jsonc = new JsoncHelper(content)
-		jsonc.updateJsoncContent(config)
-		let output = jsonc.toString()
-		if (options?.addDefaultComments) {
-			output =
-				ProfilerConfigCommentHelper.addDefaultCommentsToConfigFileContent(
-					output
-				)
-		}
+		const output = ProfilerConfig.stringifyConfig(config, {
+			existingFileContent: content,
+			addDefaultComments: options?.addDefaultComments
+		})
 		PermissionHelper.writeFileWithUserPermission(filePath, output)
 	}
 

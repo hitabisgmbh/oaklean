@@ -339,28 +339,41 @@ function findTrailingComment(
 function flattenChanges(
 	obj: Record<string, unknown>,
 	prefix: (string | number)[] = []
-): Array<{ path: (string | number)[]; value: unknown }> {
-	const result: Array<{ path: (string | number)[]; value: unknown }> = []
+): {
+	explicitDeletions: Array<(string | number)[]>
+	flatChanges: Array<{ path: (string | number)[]; value: unknown }>
+} {
+	// contains paths to delete (explicitly set to undefined)
+	const explicitDeletions: Array<(string | number)[]> = []
+	const flatChanges: Array<{ path: (string | number)[]; value: unknown }> = []
 
 	for (const [key, value] of Object.entries(obj)) {
 		const currentPath = [...prefix, key]
 
 		if (value === undefined) {
-			result.push({ path: currentPath, value: undefined })
+			explicitDeletions.push(currentPath)
 		} else if (
 			value !== null &&
 			typeof value === 'object' &&
 			!Array.isArray(value)
 		) {
-			result.push(
-				...flattenChanges(value as Record<string, unknown>, currentPath)
+			const childChanges = flattenChanges(
+				value as Record<string, unknown>,
+				currentPath
 			)
+			if (childChanges.flatChanges.length === 0) {
+				// the object only contains undefined values, so we should set it to an empty object rather than deleting it
+				flatChanges.push({ path: currentPath, value: {} })
+			} else {
+				flatChanges.push(...childChanges.flatChanges)
+				explicitDeletions.push(...childChanges.explicitDeletions)
+			}
 		} else {
-			result.push({ path: currentPath, value })
+			flatChanges.push({ path: currentPath, value })
 		}
 	}
 
-	return result
+	return { explicitDeletions, flatChanges }
 }
 
 /**
@@ -606,15 +619,16 @@ export function remove(json: string, path: JSONPath): string {
  */
 export function merge(json: string, changes: Record<string, unknown>): string {
 	let result = json
-	const flatChanges = flattenChanges(changes)
+	const { explicitDeletions, flatChanges } = flattenChanges(changes)
+
+	// remove fields explicitly set to undefined in changes
+	for (const path of explicitDeletions) {
+		result = remove(result, path as JSONPath)
+	}
 
 	for (const { path, value } of flatChanges) {
-		if (value === undefined) {
-			result = remove(result, path as JSONPath)
-		} else {
-			const edits = jsoncModify(result, path, value, {})
-			result = applyEdits(result, edits)
-		}
+		const edits = jsoncModify(result, path, value, {})
+		result = applyEdits(result, edits)
 	}
 
 	return result
@@ -631,7 +645,7 @@ export function replace(
 
 	// Compute deletions for fields not in changes
 	const deletions = computeDeletions(json, changes)
-	const flatChanges = flattenChanges(changes)
+	const { explicitDeletions, flatChanges } = flattenChanges(changes)
 
 	// Process deletions first (from deepest to shallowest)
 	const sortedDeletions = deletions.sort(
@@ -642,14 +656,15 @@ export function replace(
 		result = remove(result, path as JSONPath)
 	}
 
+	// remove fields explicitly set to undefined in changes
+	for (const path of explicitDeletions) {
+		result = remove(result, path as JSONPath)
+	}
+
 	// Then apply updates
 	for (const { path, value } of flatChanges) {
-		if (value === undefined) {
-			result = remove(result, path as JSONPath)
-		} else {
-			const edits = jsoncModify(result, path, value, {})
-			result = applyEdits(result, edits)
-		}
+		const edits = jsoncModify(result, path, value, {})
+		result = applyEdits(result, edits)
 	}
 
 	return result

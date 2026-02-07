@@ -377,4 +377,46 @@ describe('JsoncHelper', () => {
 			expect(jsonc.toString()).toEqual(expectedContent)
 		})
 	})
+
+	describe('sortKeys', () => {
+		test('sorts keys alphabetically', () => {
+			const content = `{
+	"bKey": "value",
+	"aKey": "value"
+}`
+
+			const expectedContent = `{
+	"aKey": "value",
+	"bKey": "value"
+}`
+
+			const jsonc = new JsoncHelper(content)
+			jsonc.sortKeys()
+
+			expect(jsonc.toString()).toEqual(expectedContent)
+		})
+
+		test('sorts keys with custom comparator', () => {
+			const content = `{
+	"bKey": "value",
+	"aKey": "value"
+}`
+
+			const expectedContent = `{
+	"bKey": "value",
+	"aKey": "value"
+}`
+
+			const jsonc = new JsoncHelper(content)
+			jsonc.sortKeys({
+				comparator: (a, b) => {
+					if (a === 'bKey') return -1
+					if (b === 'bKey') return 1
+					return a.localeCompare(b)
+				}
+			})
+
+			expect(jsonc.toString()).toEqual(expectedContent)
+		})
+	})
 })

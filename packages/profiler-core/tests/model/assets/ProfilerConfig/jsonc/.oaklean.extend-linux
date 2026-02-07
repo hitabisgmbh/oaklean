@@ -33,7 +33,11 @@
 				"sampleInterval": 1
 			}
 			// end of cpu options
-		} // end of v8 options
+		},
+		// end of v8 options
+		// two comments after another
+		"seeds": {}
+		// end of seed options
 	}
 	// end of runtime options
 }

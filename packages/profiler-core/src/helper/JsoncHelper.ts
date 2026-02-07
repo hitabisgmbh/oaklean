@@ -6,6 +6,7 @@ import {
 	get,
 	replace,
 	format,
+	sort,
 	getComment,
 	setComment
 } from '../../lib/aywson/index'
@@ -41,7 +42,19 @@ export class JsoncHelper<T extends object> {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			changes as unknown as any
 		)
+		this.format()
 		return this
+	}
+
+	sortKeys(options?: {
+		comparator?: (a: string, b: string) => number
+		deep?: boolean
+	}) {
+		this._commentedJsoncContent = sort(this._commentedJsoncContent, [], {
+			comparator: options?.comparator,
+			deep: options?.deep ?? true
+		})
+		this.format()
 	}
 
 	format() {
@@ -74,6 +87,7 @@ export class JsoncHelper<T extends object> {
 				path as unknown as (string | number)[],
 				comment
 			)
+			this.format()
 		}
 	}
 

@@ -3,7 +3,6 @@ import * as fs from 'fs'
 
 import {
 	ProfilerConfig,
-	ProfilerConfigCommentHelper,
 	SensorInterfaceType,
 	LoggerHelper,
 	STATIC_CONFIG_FILENAME,
@@ -40,17 +39,17 @@ export default class InitCommands {
 		LoggerHelper.appPrefix.success('[Main Config]')
 		LoggerHelper.log(
 			JsoncHelper.highlightJsoncComments(
-				ProfilerConfigCommentHelper.addDefaultCommentsToConfigFileContent(
-					JSON.stringify(mainConfig, null, 2)
-				)
+				ProfilerConfig.stringifyConfig(mainConfig.toJSON(), {
+					addDefaultComments: true
+				})
 			)
 		)
 		LoggerHelper.appPrefix.success('[Local Config]')
 		LoggerHelper.log(
 			JsoncHelper.highlightJsoncComments(
-				ProfilerConfigCommentHelper.addDefaultCommentsToConfigFileContent(
-					JSON.stringify(localConfig, null, 2)
-				)
+				ProfilerConfig.stringifyConfig(localConfig, {
+					addDefaultComments: true
+				})
 			)
 		)
 

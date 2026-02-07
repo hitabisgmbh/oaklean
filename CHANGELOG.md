@@ -5,6 +5,7 @@
 ### Improvement
 - Added Oaklean support for Node.js v22 & v24
 - Oaklean now shares Node Inspector sessions among consumers, reducing overall overhead
+- Oaklean now supports comments within its config file
 
 ### Fixes
 - Fixed a minor parsing error in functions executed via WASM
