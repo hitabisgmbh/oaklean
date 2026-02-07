@@ -15,8 +15,7 @@ import {
 	IProfilerConfig,
 	SensorInterfaceType,
 	ProjectIdentifier_string,
-	MicroSeconds_number,
-	IProfilerConfigFileRepresentation
+	MicroSeconds_number
 } from '../../src/types'
 import { LoggerHelper } from '../../src'
 

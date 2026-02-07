@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 
 import * as jsoncParser from 'jsonc-parser'
-import { json, z as zod } from 'zod'
+import { z as zod } from 'zod'
 
 import {
 	STATIC_CONFIG_FILENAME,
