@@ -5,7 +5,9 @@ workflow:
     - when: always # Run pipeline for all other cases
 
 variables:
-  NODE_VERSION: 20.17.0
+  # This variable is used to specify which Node version's artifacts should be deployed.
+  # It should match one of the versions in the .node-image-matrix in pipeline-linux.yml
+  NODE_VERSION_TO_DEPLOY: 20.17.0
 
 stages:
   - platform-build-and-test
@@ -27,7 +29,7 @@ pipeline-linux:
     strategy: depend
 
 test-measure-artifacts-linux:
-  image: $BUILD_IMAGE_URL:$NODE_VERSION
+  image: $BUILD_IMAGE_URL:$NODE_VERSION_TO_DEPLOY
   stage: test-artifacts
   variables:
     DOWN_STREAM_PIPELINE_NAME: pipeline-linux
@@ -56,7 +58,7 @@ test-measure-artifacts-linux:
       done <<< "$ARTIFACT_JOBS"
 
 deploy-artifacts:
-  image: $BUILD_IMAGE_URL:$NODE_VERSION
+  image: $BUILD_IMAGE_URL:$NODE_VERSION_TO_DEPLOY
   stage: deploy
   only: 
     - /^release.*$/
@@ -78,7 +80,7 @@ deploy-artifacts:
     - echo "$ARTIFACT_JOBS"
     - |
       while IFS=$'\t' read -r JOB_ID JOB_NAME; do
-        if [[ "$JOB_NAME" == "$ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE: [$NODE_VERSION]" ]]; then
+        if [[ "$JOB_NAME" == "$ARTIFACT_JOB_IN_DOWNSTREAM_PIPELINE: [$NODE_VERSION_TO_DEPLOY]" ]]; then
           echo "Downloading artifacts from job $JOB_NAME ($JOB_ID) to deploy_artifacts.zip";
           ARTIFACT_URL="$GITLAB_API_ENDPOINT/projects/$CI_PROJECT_ID/jobs/$JOB_ID/artifacts";
           curl --header "$HEADER" --location "$ARTIFACT_URL" -o deploy_artifacts.zip;
@@ -87,7 +89,7 @@ deploy-artifacts:
       done <<< "$ARTIFACT_JOBS"
 
 deploy-mandatory:
-  image: $BUILD_IMAGE_URL:$NODE_VERSION
+  image: $BUILD_IMAGE_URL:$NODE_VERSION_TO_DEPLOY
   stage: deploy
   needs:
     - job: deploy-artifacts
@@ -105,7 +107,7 @@ deploy-mandatory:
     - npm run publish-registry-mandatory
 
 deploy-optional:
-  image: $BUILD_IMAGE_URL:$NODE_VERSION
+  image: $BUILD_IMAGE_URL:$NODE_VERSION_TO_DEPLOY
   stage: deploy
   when: manual
   needs:
