@@ -49,7 +49,7 @@
 		"cli-color": "^2.0.4",
 		"devtools-protocol": "^0.0.1561482",
 		"find-up": "^8.0.0",
-		"glob": "^13.0.0",
+		"glob": "^13.0.1",
 		"glob-to-regexp": "^0.4.1",
 		"json-stream-stringify": "^3.1.6",
 		"jsonc-parser": "^3.3.1",
