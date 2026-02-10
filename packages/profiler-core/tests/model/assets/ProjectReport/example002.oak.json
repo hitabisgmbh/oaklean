@@ -1108,7 +1108,7 @@
       }
     }
   },
-  "reportVersion": "0.1.6",
+  "reportVersion": "0.1.7",
   "kind": 0,
   "relativeRootDir": "../../../../../..",
   "headlessSensorValues": {
@@ -1819,7 +1819,7 @@
         "name": "html-minifier",
         "version": "4.0.0"
       },
-      "reportVersion": "0.1.6",
+      "reportVersion": "0.1.7",
       "kind": 0,
       "headlessSensorValues": {},
       "lang_internal": {
@@ -2337,7 +2337,7 @@
             "name": "clean-css",
             "version": "4.2.4"
           },
-          "reportVersion": "0.1.6",
+          "reportVersion": "0.1.7",
           "kind": 0,
           "headlessSensorValues": {},
           "intern": {
@@ -3701,7 +3701,7 @@
         "name": "v8-profiler-next",
         "version": "1.10.0"
       },
-      "reportVersion": "0.1.6",
+      "reportVersion": "0.1.7",
       "kind": 0,
       "headlessSensorValues": {},
       "lang_internal": {

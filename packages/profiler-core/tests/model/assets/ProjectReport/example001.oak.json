@@ -776,7 +776,7 @@
       }
     }
   },
-  "reportVersion": "0.1.6",
+  "reportVersion": "0.1.7",
   "kind": 0,
   "relativeRootDir": "../../../../../..",
   "headlessSensorValues": {
@@ -2051,7 +2051,7 @@
         "name": "v8-profiler-next",
         "version": "1.10.0"
       },
-      "reportVersion": "0.1.6",
+      "reportVersion": "0.1.7",
       "kind": 0,
       "headlessSensorValues": {},
       "lang_internal": {
