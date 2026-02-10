@@ -1,6 +1,11 @@
 
 # Change Log
 
+## 0.1.7
+
+### Security fixes
+Updated Packages to remove a vulnerability
+
 ## 0.1.6
 ### Improvement
 - Added Oaklean support for Node.js v22 & v24

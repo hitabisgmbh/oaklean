@@ -1,6 +1,6 @@
 {
 	"name": "@oaklean/cli",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"engines": {
 		"node": "^20.17.0 || ^22.13.0 || ^24.0.0"
 	},
@@ -42,8 +42,8 @@
 	},
 	"dependencies": {
 		"@inquirer/prompts": "^8.2.0",
-		"@oaklean/profiler": "^0.1.6",
-		"@oaklean/profiler-core": "0.1.6",
+		"@oaklean/profiler": "^0.1.7",
+		"@oaklean/profiler-core": "0.1.7",
 		"cli-color": "^2.0.4",
 		"commander": "^14.0.2",
 		"glob": "^13.0.1"

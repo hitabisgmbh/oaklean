@@ -1,6 +1,6 @@
 {
 	"name": "@oaklean/profiler",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"engines": {
 		"node": "^20.17.0 || ^22.13.0 || ^24.0.0"
 	},
@@ -46,8 +46,8 @@
 		"generate-docs": "markdown-include md-configs/README.json"
 	},
 	"dependencies": {
-		"@oaklean/cli": "0.1.6",
-		"@oaklean/profiler-core": "0.1.6",
+		"@oaklean/cli": "0.1.7",
+		"@oaklean/profiler-core": "0.1.7",
 		"@oaklean/windows-sensorinterface": "0.1.1",
 		"plist": "^3.1.0",
 		"seedrandom": "^3.0.5"

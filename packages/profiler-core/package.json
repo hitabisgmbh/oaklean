@@ -1,6 +1,6 @@
 {
 	"name": "@oaklean/profiler-core",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"engines": {
 		"node": "^20.17.0 || ^22.13.0 || ^24.0.0"
 	},
@@ -61,7 +61,7 @@
 		"zod": "^4.3.5"
 	},
 	"devDependencies": {
-		"@oaklean/profiler-jest-environment": "0.1.6",
+		"@oaklean/profiler-jest-environment": "0.1.7",
 		"@types/cli-color": "^2.0.6",
 		"@types/glob-to-regexp": "^0.4.4",
 		"@types/oboe": "^2.1.4"
